@@ -15,7 +15,7 @@ namespace RemotePlusLibrary
         [OperationContract]
         void TellMessageToServerConsole(LogItem li);
         [OperationContract]
-        void AskQuestionToServerConsole(string Question);
+        ClientBuilder RegisterClient();
         [OperationContract(Name = "TellMessageWithLogItem")]
         void TellMessage(LogItem li);
         [OperationContract(Name = "TellMessageWithLogs")]

@@ -29,7 +29,7 @@ namespace RemotePlusServer
             Extensions = new Dictionary<string, ServerExtension>();
         }
         public RegistirationObject Settings { get; private set; }
-        public IRemoteClient Client { get; set; }
+        public Client Client { get; set; }
         public bool Registered { get; private set; }
         public UserAccount LoggedInUser { get; private set; }
         public Dictionary<string, ServerExtension> Extensions { get; private set; }
@@ -46,12 +46,12 @@ namespace RemotePlusServer
             CheckRegisteration();
             if (!LoggedInUser.Role.Privilleges.CanBeep)
             {
-                Client.TellMessage("You do not have promission to use the beep function.", OutputLevel.Info);
+                Client.ClientCallback.TellMessage("You do not have promission to use the beep function.", OutputLevel.Info);
             }
             else
             {
                 Console.Beep(Hertz, Duration);
-                Client.TellMessage($"Console beeped. Hertz: {Hertz}, Duration: {Duration}", OutputLevel.Info);
+                Client.ClientCallback.TellMessage($"Console beeped. Hertz: {Hertz}, Duration: {Duration}", OutputLevel.Info);
             }
         }
 
@@ -60,7 +60,7 @@ namespace RemotePlusServer
             CheckRegisteration();
             if (!LoggedInUser.Role.Privilleges.CanPlaySound)
             {
-                Client.TellMessage("You do not have promission to use the PlaySound function.", OutputLevel.Info);
+                Client.ClientCallback.TellMessage("You do not have promission to use the PlaySound function.", OutputLevel.Info);
             }
             else
             {
@@ -74,7 +74,7 @@ namespace RemotePlusServer
             CheckRegisteration();
             if (!LoggedInUser.Role.Privilleges.CanPlaySoundLoop)
             {
-                Client.TellMessage("You do not have promission to use the CanPlaySoundLoop function.", OutputLevel.Info);
+                Client.ClientCallback.TellMessage("You do not have promission to use the CanPlaySoundLoop function.", OutputLevel.Info);
             }
             else
             {
@@ -88,7 +88,7 @@ namespace RemotePlusServer
             CheckRegisteration();
             if (!LoggedInUser.Role.Privilleges.CanPlaySoundSync)
             {
-                Client.TellMessage("You do not have promission to use the CanPlaySoundSync function.", OutputLevel.Info);
+                Client.ClientCallback.TellMessage("You do not have promission to use the CanPlaySoundSync function.", OutputLevel.Info);
             }
             else
             {
@@ -99,8 +99,9 @@ namespace RemotePlusServer
 
         public void Register(RegistirationObject Settings)
         {
+            var callback = OperationContext.Current.GetCallbackChannel<IRemoteClient>();
+            Client = callback.RegisterClient().Build(callback);
             this.Settings = Settings;
-            Client = OperationContext.Current.GetCallbackChannel<IRemoteClient>();
             if (Settings.LoginRightAway)
             {
                 foreach (UserAccount Account in ServerManager.DefaultSettings.Accounts)
@@ -115,11 +116,11 @@ namespace RemotePlusServer
             }
             else
             {
-                UserCredentials upp = Client.RequestAuthentication();
+                UserCredentials upp = Client.ClientCallback.RequestAuthentication();
                 if (upp == null)
                 {
-                    Client.TellMessage("Can't you at least provide a username and password?", OutputLevel.Info);
-                    Client.Disconnect("Authentication failed.");
+                    Client.ClientCallback.TellMessage("Can't you at least provide a username and password?", OutputLevel.Info);
+                    Client.ClientCallback.Disconnect("Authentication failed.");
                 }
                 foreach (UserAccount Account in ServerManager.DefaultSettings.Accounts)
                 {
@@ -133,8 +134,8 @@ namespace RemotePlusServer
             }
             if (Registered != true)
             {
-                Client.TellMessage("Registiration failed. Authentication failed.", OutputLevel.Info);
-                Client.Disconnect("Registiration failed.");
+                Client.ClientCallback.TellMessage("Registiration failed. Authentication failed.", OutputLevel.Info);
+                Client.ClientCallback.Disconnect("Registiration failed.");
             }
         }
 
@@ -142,7 +143,7 @@ namespace RemotePlusServer
         {
             ServerManager.Logger.AddOutput("Client registired.", Logging.OutputLevel.Info);
             Registered = true;
-            Client.TellMessage("Registiration complete.", Logging.OutputLevel.Info);
+            Client.ClientCallback.TellMessage("Registiration complete.", Logging.OutputLevel.Info);
         }
 
         public void RunProgram(string Program, string Argument)
@@ -150,7 +151,7 @@ namespace RemotePlusServer
             CheckRegisteration();
             if (!LoggedInUser.Role.Privilleges.CanRunProgram)
             {
-                Client.TellMessage("You do not have promission to use the CanRunProgram function.", OutputLevel.Info);
+                Client.ClientCallback.TellMessage("You do not have promission to use the CanRunProgram function.", OutputLevel.Info);
             }
             System.Diagnostics.Process.Start(Program, Argument);
         }
@@ -160,7 +161,7 @@ namespace RemotePlusServer
             CheckRegisteration();
             if (!LoggedInUser.Role.Privilleges.CanShowMessageBox)
             {
-                Client.TellMessage("You do not have promission to use the CanShowMessageBox function.", OutputLevel.Info);
+                Client.ClientCallback.TellMessage("You do not have promission to use the CanShowMessageBox function.", OutputLevel.Info);
             }
             else
             {
@@ -173,14 +174,14 @@ namespace RemotePlusServer
             CheckRegisteration();
             if (!LoggedInUser.Role.Privilleges.CanSpeak)
             {
-                Client.TellMessage("You do not have promission to use the Speak function.", OutputLevel.Info);
+                Client.ClientCallback.TellMessage("You do not have promission to use the Speak function.", OutputLevel.Info);
             }
             else
             {
                 System.Speech.Synthesis.SpeechSynthesizer ss = new System.Speech.Synthesis.SpeechSynthesizer();
                 ss.SelectVoiceByHints(Gender, Age);
                 ss.Speak(Message);
-                Client.TellMessage($"Server spoke. Message: {Message}, gender: {Gender.ToString()}, age: {Age.ToString()}", OutputLevel.Info);
+                Client.ClientCallback.TellMessage($"Server spoke. Message: {Message}, gender: {Gender.ToString()}, age: {Age.ToString()}", OutputLevel.Info);
             }
         }
 
@@ -188,7 +189,7 @@ namespace RemotePlusServer
         {
             if (!LoggedInUser.Role.Privilleges.CanAccessConsole)
             {
-                Client.TellMessage("You do not have promission to use the Console function.", OutputLevel.Info);
+                Client.ClientCallback.TellMessage("You do not have promission to use the Console function.", OutputLevel.Info);
             }
             var l = ServerManager.Execute(Command);
             return l;
@@ -197,9 +198,9 @@ namespace RemotePlusServer
         public void UpdateServerSettings(ServerSettings Settings)
         {
             ServerManager.DefaultSettings = Settings;
-            Client.TellMessage("Saving settings.", OutputLevel.Info);
+            Client.ClientCallback.TellMessage("Saving settings.", OutputLevel.Info);
             ServerManager.DefaultSettings.Save();
-            Client.TellMessage("Settings saved.", OutputLevel.Info);
+            Client.ClientCallback.TellMessage("Settings saved.", OutputLevel.Info);
         }
 
         public ServerSettings GetServerSettings()
@@ -226,7 +227,7 @@ namespace RemotePlusServer
             OperationStatus s = SelectedExtension.Execute(Args);
             foreach(LogItem li in s.Log)
             {
-                Client.TellMessage(li);
+                Client.ClientCallback.TellMessage(li);
             }
             return s;
         }

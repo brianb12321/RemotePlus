@@ -16,7 +16,7 @@ namespace RemotePlusLibrary.Extension
         {
             GeneralDetails = d;
         }
-        public abstract OperationStatus Worker(params object[] arguments);
+        public abstract OperationStatus Execute(params object[] arguments);
         public abstract void HaultExtension();
         public abstract void ResumeExtension();
     }

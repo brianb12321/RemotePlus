@@ -35,8 +35,7 @@
   <ItemGroup>
     <Reference Include="Logging, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\Source\Local_projects\NetworkLogging\Logging\bin\Release\Logging.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>..\Libs\Logging.dll</HintPath>
     </Reference>
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />

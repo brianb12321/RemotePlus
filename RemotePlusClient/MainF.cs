@@ -239,27 +239,6 @@ namespace RemotePlusClient
         UseSynchronizationContext = false)]
     class Callback : IRemoteClient
     {
-        public void AskQuestionToServerConsole(string Question)
-        {
-            MainF.ServerConsoleObj.AppendText(Question + "\n");
-            MainF.ServerConsoleObj.QuestionMode = true;
-            MainF.ServerConsoleObj.QuestionEvent = (answer) =>
-            {
-                MainF.Remote.ReplyToExtension(() => 
-                {
-                    string a2 = answer as string;
-                    return a2;
-                });
-                return true;
-            };
-            MainF.Remote.ResumeExtension();
-        }
-
-        private bool questionEvent(string answer)
-        {
-            return true;
-        }
-
         public void Disconnect(string Reason)
         {
             MainF.ConsoleObj.Logger.AddOutput("The server disconnected from the client. Reason: " + Reason, Logging.OutputLevel.Error, "Server Host");
@@ -300,6 +279,13 @@ namespace RemotePlusClient
         public void TellMessageToServerConsole(LogItem li)
         {
             MainF.ServerConsoleObj.AppendText(li.ToString());
+        }
+
+        public ClientBuilder RegisterClient()
+        {
+            ClientBuilder builder = new ClientBuilder();
+            builder.FriendlyName = "Default GUI Client";
+            return builder;
         }
     }
 }
