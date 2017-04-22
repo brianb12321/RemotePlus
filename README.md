@@ -1,6 +1,5 @@
 # RemotePlus An extendable remote control server.
 # What is RemotePlus?
-=====================
 RemotePlus is a remote control server/client. You run the server on a remote computer, and you run a client to execute commands on the server.
 ## What features comes with RemotePlus?
 * Flexable extension system.
