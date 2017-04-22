@@ -9,3 +9,6 @@ RemotePlus is a remote control server/client. You run the server on a remote com
 * .Net 4.6.2
 ## Setting up server
 There is no need to setup the server. The server sets itself up automatically.
+# Todo (things that can be fixed or improved.)
+* Refactor messy code.
+* Adding thread sync.
