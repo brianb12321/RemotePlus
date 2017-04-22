@@ -1,0 +1,46 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26403.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemotePlusServer", "RemotePlusServer\RemotePlusServer.csproj", "{4E41F31E-DCE5-4B9C-A2D6-20BF6ACD9C84}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemotePlusClient", "RemotePlusClient\RemotePlusClient.csproj", "{D6122622-7067-4FBA-A617-365FA3FCF809}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemotePlusLibrary", "RemotePlusLibrary\RemotePlusLibrary.csproj", "{00C22A1F-D3DF-4193-AAA8-9907D08E2511}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemotePlusLibrary.Core", "RemotePlusLibrary.Core\RemotePlusLibrary.Core.csproj", "{0334629B-6302-42A8-B159-F8646B4D8650}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemotePlusLibrary.Extension", "RemotePlusLibrary.Extension\RemotePlusLibrary.Extension.csproj", "{2AA5E768-7E0A-4B0C-A0D1-F79153902DF9}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4E41F31E-DCE5-4B9C-A2D6-20BF6ACD9C84}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4E41F31E-DCE5-4B9C-A2D6-20BF6ACD9C84}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4E41F31E-DCE5-4B9C-A2D6-20BF6ACD9C84}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4E41F31E-DCE5-4B9C-A2D6-20BF6ACD9C84}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D6122622-7067-4FBA-A617-365FA3FCF809}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D6122622-7067-4FBA-A617-365FA3FCF809}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D6122622-7067-4FBA-A617-365FA3FCF809}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D6122622-7067-4FBA-A617-365FA3FCF809}.Release|Any CPU.Build.0 = Release|Any CPU
+		{00C22A1F-D3DF-4193-AAA8-9907D08E2511}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{00C22A1F-D3DF-4193-AAA8-9907D08E2511}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{00C22A1F-D3DF-4193-AAA8-9907D08E2511}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{00C22A1F-D3DF-4193-AAA8-9907D08E2511}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0334629B-6302-42A8-B159-F8646B4D8650}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0334629B-6302-42A8-B159-F8646B4D8650}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0334629B-6302-42A8-B159-F8646B4D8650}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0334629B-6302-42A8-B159-F8646B4D8650}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2AA5E768-7E0A-4B0C-A0D1-F79153902DF9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2AA5E768-7E0A-4B0C-A0D1-F79153902DF9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2AA5E768-7E0A-4B0C-A0D1-F79153902DF9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2AA5E768-7E0A-4B0C-A0D1-F79153902DF9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

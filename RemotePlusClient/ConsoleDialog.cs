@@ -1,0 +1,27 @@
+﻿using Logging;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace RemotePlusClient
+{
+    public partial class ConsoleDialog : Form
+    {
+        public RichTextBoxLoggingMethod Logger = new RichTextBoxLoggingMethod();
+        public ConsoleDialog()
+        {
+            InitializeComponent();
+        }
+
+        private void ConsoleDialog_Load(object sender, EventArgs e)
+        {
+            Logger.AddOutput("Console opened.", OutputLevel.Info);
+        }
+    }
+}
