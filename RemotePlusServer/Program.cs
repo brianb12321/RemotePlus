@@ -98,7 +98,6 @@ namespace RemotePlusServer
             l.Add(Logger.AddOutput("Extension executed.", OutputLevel.Info));
             return l;
         }
-
         static void ScanForServerSettingsFile()
         {
             if (!File.Exists("GlobalServerSettings.config"))
@@ -112,12 +111,6 @@ namespace RemotePlusServer
                 DefaultSettings.Load();
             }
         }
-
-        private static void Default_SettingsLoaded(object sender, System.Configuration.SettingsLoadedEventArgs e)
-        {
-            Logger.AddOutput("Settings loaded.", OutputLevel.Info);
-        }
-
         public static List<Logging.LogItem> Execute(string c)
         {
             List<Logging.LogItem> l = new List<Logging.LogItem>();
