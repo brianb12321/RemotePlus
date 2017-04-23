@@ -12,8 +12,10 @@ namespace RemotePlusLibrary
     {
         [OperationContract]
         void TellMessage(string Message, Logging.OutputLevel o);
-        [OperationContract]
+        [OperationContract(Name = "TellMessageToServerConsole")]
         void TellMessageToServerConsole(LogItem li);
+        [OperationContract(Name = "TellMessageToServerConsoleUsingString")]
+        void TellMessageToServerConsole(string Message);
         [OperationContract]
         ClientBuilder RegisterClient();
         [OperationContract(Name = "TellMessageWithLogItem")]

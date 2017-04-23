@@ -48,9 +48,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CommandHelpAttribute.cs" />
     <Compile Include="ExtensionDetails.cs" />
     <Compile Include="Helper\ExtensionLoader.cs" />
     <Compile Include="IClientExtension.cs" />
+    <Compile Include="IClientLibraryStartup.cs" />
+    <Compile Include="ILibraryStartup.cs" />
     <Compile Include="OperationStatus.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServerExtension.cs" />

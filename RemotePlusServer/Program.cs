@@ -16,25 +16,27 @@ using Logging;
 
 namespace RemotePlusServer
 {
+    public delegate List<LogItem> CommandDelgate(params string[] args);
     public class ServerManager
     {
         public static CMDLogging Logger { get; } = new CMDLogging();
         public static ServiceHost host { get; private set; } = null;
         public static RemoteImpl Remote { get; } = new RemoteImpl();
+        public static Dictionary<string, CommandDelgate> Commands { get; } = new Dictionary<string, CommandDelgate>();
 
         public static ServerSettings DefaultSettings { get; set; } = new ServerSettings();
         static void Main(string[] args)
         {
+            Commands.Add("ex", ExCommand);
+            Commands.Add("ps", ProcessStartCommand);
+            Commands.Add("help", Help);
             Logger.DefaultFrom = "Server Host";
             ScanForServerSettingsFile();
+            LoadExtensionLibraries();
             RunInServerMode();
         }
-        static void RunInServerMode()
+        static void LoadExtensionLibraries()
         {
-            string url = $"net.tcp://127.0.0.1:{DefaultSettings.PortNumber}/Remote";
-            host = new ServiceHost(Remote);
-            NetTcpBinding tcp = new NetTcpBinding();
-            Logger.AddOutput("Loading extensions...", Logging.OutputLevel.Info);
             foreach (string files in Directory.GetFiles("extensions"))
             {
                 if (Path.GetExtension(files) == ".dll")
@@ -47,6 +49,13 @@ namespace RemotePlusServer
                     }
                 }
             }
+        }
+        static void RunInServerMode()
+        {
+            string url = $"net.tcp://127.0.0.1:{DefaultSettings.PortNumber}/Remote";
+            host = new ServiceHost(Remote);
+            NetTcpBinding tcp = new NetTcpBinding();
+            Logger.AddOutput("Loading extensions...", Logging.OutputLevel.Info);
             tcp.MaxReceivedMessageSize = 2147483647;
             tcp.MaxBufferSize = 2147483647;
             tcp.ReaderQuotas.MaxArrayLength = 2147483647;
@@ -60,6 +69,36 @@ namespace RemotePlusServer
             Console.ReadLine();
             host.Close();
         }
+        [CommandHelp("Starts a new process on the server.")]
+        private static List<LogItem> ProcessStartCommand(string[] args)
+        {
+            List<LogItem> l = new List<LogItem>();
+            if (args.Length > 2)
+            {
+                Remote.RunProgram((string)args[1], (string)args[2]);
+                l.Add(Logger.AddOutput("Program start command finished.", OutputLevel.Info));
+            }
+            else if (args.Length < 2)
+            {
+                Remote.RunProgram((string)args[1], "");
+                l.Add(Logger.AddOutput("Program start command finished.", OutputLevel.Info));
+            }
+            return l;
+        }
+        [CommandHelp("Executes a loaded extension on the server.")]
+        private static List<LogItem> ExCommand(object[] args)
+        {
+            List<LogItem> l = new List<LogItem>();
+            List<string> obj = new List<string>();
+            for (int i = 2; i < args.Length; i++)
+            {
+                obj.Add((string)args[i]);
+            }
+            Remote.RunExtension((string)args[1], obj.ToArray());
+            l.Add(Logger.AddOutput("Extension executed.", OutputLevel.Info));
+            return l;
+        }
+
         static void ScanForServerSettingsFile()
         {
             if (!File.Exists("GlobalServerSettings.config"))
@@ -84,16 +123,19 @@ namespace RemotePlusServer
             List<Logging.LogItem> l = new List<Logging.LogItem>();
             try
             {
-                List<string> obj = new List<string>();
+                bool FoundCommand = false;
                 string[] ca = c.Split();
-                if(ca[0] == "ex")
+                foreach (KeyValuePair<string, CommandDelgate> k in Commands)
                 {
-                    for(int i = 2; i < ca.Length; i++)
+                    if(ca[0] == k.Key)
                     {
-                        obj.Add(ca[i]);
+                        FoundCommand = true;
+                        l.AddRange(k.Value(ca));
                     }
-                    Remote.RunExtension(ca[1], obj.ToArray());
-                    l.Add(Logger.AddOutput("Extension executed.", OutputLevel.Info));
+                }
+                if (!FoundCommand)
+                {
+                    l.Add(Logger.AddOutput("Unknown command. Please type {help} for a list of commands", OutputLevel.Info));
                 }
                 return l;
             }
@@ -103,9 +145,31 @@ namespace RemotePlusServer
                 return l;
             }
         }
-        private static void Help()
+        [CommandHelp("Displays a list of commands.")]
+        private static List<LogItem> Help(string[] arguments)
         {
-            
+            List<LogItem> l = new List<Logging.LogItem>();
+            string t = "";
+            foreach (KeyValuePair<string, CommandDelgate> c in Commands)
+            {
+                if(c.Value.Method.GetCustomAttributes(false).Length > 0)
+                {
+                    foreach(object o in c.Value.Method.GetCustomAttributes(false))
+                    {
+                        if(o is CommandHelpAttribute)
+                        {
+                            CommandHelpAttribute cha = (CommandHelpAttribute)o;
+                            t += $"\n{c.Key}\t{cha.HelpMessage}";
+                        }
+                    }
+                }
+                else
+                {
+                    t += $"\n{c.Key}";
+                }
+            }
+            l.Add(new LogItem(OutputLevel.Info, t, "Server Host"));
+            return l;
         }
 
         static void Close()

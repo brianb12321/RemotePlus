@@ -15,6 +15,7 @@ using RemotePlusLibrary.Core;
 using RemotePlusLibrary.Extension;
 using RemotePlusLibrary.FileTransfer;
 using System.Net.Sockets;
+using System.Diagnostics;
 
 namespace RemotePlusServer
 {
@@ -153,7 +154,21 @@ namespace RemotePlusServer
             {
                 Client.ClientCallback.TellMessage("You do not have promission to use the CanRunProgram function.", OutputLevel.Info);
             }
-            System.Diagnostics.Process.Start(Program, Argument);
+            Process p = new Process();
+            p.StartInfo.FileName = Program;
+            p.StartInfo.Arguments = Argument;
+            p.StartInfo.UseShellExecute = false;
+            p.StartInfo.RedirectStandardError = true;
+            p.StartInfo.RedirectStandardOutput = true;
+            p.ErrorDataReceived += (sender, e) =>
+            {
+                Client.ClientCallback.TellMessageToServerConsole(e.Data);
+            };
+            p.OutputDataReceived += (sender, e) =>
+            {
+                Client.ClientCallback.TellMessageToServerConsole(e.Data);
+            };
+            p.Start();
         }
 
         public void ShowMessageBox(string Message, string Caption, System.Windows.Forms.MessageBoxIcon Icon, System.Windows.Forms.MessageBoxButtons Buttons)

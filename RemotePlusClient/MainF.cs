@@ -287,5 +287,10 @@ namespace RemotePlusClient
             builder.FriendlyName = "Default GUI Client";
             return builder;
         }
+
+        public void TellMessageToServerConsole(string Message)
+        {
+            MainF.ServerConsoleObj.AppendText(Message);
+        }
     }
 }

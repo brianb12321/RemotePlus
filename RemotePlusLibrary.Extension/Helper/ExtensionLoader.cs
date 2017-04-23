@@ -15,6 +15,11 @@ namespace RemotePlusLibrary.Extension.Helper
             Assembly a = Assembly.LoadFrom(FileName);
             foreach(Type t in a.GetTypes())
             {
+                if(t.IsClass == true && (typeof(ILibraryStartup).IsAssignableFrom(t)))
+                {
+                    ILibraryStartup st = (ILibraryStartup)Activator.CreateInstance(t);
+                    st.Init();
+                }
                 if(t.IsClass == true && (t.IsSubclassOf(typeof(ServerExtension))))
                 {
                     l.Add((ServerExtension)Activator.CreateInstance(t));
