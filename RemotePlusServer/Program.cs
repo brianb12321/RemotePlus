@@ -7,7 +7,6 @@ using System.ServiceModel;
 using RemotePlusLibrary;
 using System.Threading;
 using System.Speech.Synthesis;
-using CommandLine;
 using System.ServiceModel.Description;
 using RemotePlusLibrary.Extension;
 using RemotePlusLibrary.Extension.Helper;
