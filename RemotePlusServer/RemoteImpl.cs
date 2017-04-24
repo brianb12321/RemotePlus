@@ -169,6 +169,8 @@ namespace RemotePlusServer
                 Client.ClientCallback.TellMessageToServerConsole(e.Data);
             };
             p.Start();
+            p.BeginErrorReadLine();
+            p.BeginOutputReadLine();
         }
 
         public void ShowMessageBox(string Message, string Caption, System.Windows.Forms.MessageBoxIcon Icon, System.Windows.Forms.MessageBoxButtons Buttons)

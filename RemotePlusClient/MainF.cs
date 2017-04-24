@@ -236,6 +236,7 @@ namespace RemotePlusClient
         }
     }
     [CallbackBehavior(ConcurrencyMode = ConcurrencyMode.Reentrant,
+        IncludeExceptionDetailInFaults = true,
         UseSynchronizationContext = false)]
     class Callback : IRemoteClient
     {

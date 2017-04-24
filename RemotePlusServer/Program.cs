@@ -73,12 +73,17 @@ namespace RemotePlusServer
         private static List<LogItem> ProcessStartCommand(string[] args)
         {
             List<LogItem> l = new List<LogItem>();
-            if (args.Length > 2)
+            if (args.Length > 1)
             {
-                Remote.RunProgram((string)args[1], (string)args[2]);
+                string a = "";
+                for(int i = 2; i < args.Length; i++)
+                {
+                    a += " " + args[i];
+                }
+                Remote.RunProgram((string)args[1], a);
                 l.Add(Logger.AddOutput("Program start command finished.", OutputLevel.Info));
             }
-            else if (args.Length < 2)
+            else if (args.Length == 1)
             {
                 Remote.RunProgram((string)args[1], "");
                 l.Add(Logger.AddOutput("Program start command finished.", OutputLevel.Info));
