@@ -13,4 +13,4 @@ There is no need to setup the server. The server sets itself up automatically.
 * Refactor messy code.
 * Adding thread sync.
 # Latest builds
-If you want the latest builds, please go to http://52.173.240.155:8080/job/RemotePlusBuild/
+If you want the latest, nightly builds, please go to http://52.173.240.155:8080/job/RemotePlusBuild/
