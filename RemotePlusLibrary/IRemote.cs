@@ -56,5 +56,7 @@ namespace RemotePlusLibrary
         void ResumeExtension();
         [OperationContract]
         List<ExtensionDetails> GetExtensionNames();
+        [OperationContract]
+        List<string> GetCommands();
     }
 }

@@ -79,6 +79,7 @@
     <Compile Include="Editors\UserAccountEditor.cs" />
     <Compile Include="UserCollection.cs" />
     <Compile Include="UserCredentials.cs" />
+    <Compile Include="VariableManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />

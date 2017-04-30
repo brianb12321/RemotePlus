@@ -162,11 +162,17 @@ namespace RemotePlusServer
             p.StartInfo.RedirectStandardOutput = true;
             p.ErrorDataReceived += (sender, e) =>
             {
-                Client.ClientCallback.TellMessageToServerConsole(e.Data);
+                if (e.Data != null)
+                {
+                    Client.ClientCallback.TellMessageToServerConsole(e.Data + "\n");
+                }
             };
             p.OutputDataReceived += (sender, e) =>
             {
-                Client.ClientCallback.TellMessageToServerConsole(e.Data);
+                if (e.Data != null)
+                {
+                    Client.ClientCallback.TellMessageToServerConsole(e.Data + "\n");
+                }
             };
             p.Start();
             p.BeginErrorReadLine();
@@ -312,6 +318,11 @@ namespace RemotePlusServer
         public void ReplyToExtension(Func<object> Reply)
         {
             SelectedExtension.Response = Reply;
+        }
+
+        public List<string> GetCommands()
+        {
+            return ServerManager.Commands.Keys.ToList();
         }
     }
 }

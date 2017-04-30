@@ -14,8 +14,13 @@ namespace RemotePlusServer
     {
         public bool HandleError(Exception error)
         {
-            ServerManager.Logger.AddOutput("Fault error: " + error.Message, Logging.OutputLevel.Info);
+#if DEBUG
+            ServerManager.Logger.AddOutput("Fault error: " + error.ToString(), Logging.OutputLevel.Error);
             return true;
+#else
+            ServerManager.Logger.AddOutput("Fault error: " + error.Message, Logging.OutputLevel.Error);
+            return true;
+#endif
         }
 
         public void ProvideFault(Exception error, MessageVersion version, ref Message fault)

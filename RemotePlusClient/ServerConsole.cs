@@ -23,7 +23,11 @@ namespace RemotePlusClient
 
         private void ServerConsole_Load(object sender, EventArgs e)
         {
-
+            textBox1.AutoCompleteSource = AutoCompleteSource.CustomSource;
+            textBox1.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+            AutoCompleteStringCollection acsc = new AutoCompleteStringCollection();
+            acsc.AddRange(MainF.Remote.GetCommands().ToArray());
+            textBox1.AutoCompleteCustomSource = acsc;
         }
         public void AppendText(string Text)
         {

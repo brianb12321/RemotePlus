@@ -128,6 +128,12 @@ namespace RemotePlusClient
         {
             OpenConsole();
             Application.ThreadException += Application_ThreadException;
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+        }
+
+        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            ConsoleObj.Logger.AddOutput("Unkown error: " + ((Exception)e.ExceptionObject).Message, OutputLevel.Error);
         }
 
         private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
