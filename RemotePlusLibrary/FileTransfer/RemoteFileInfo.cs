@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace RemotePlusLibrary.FileTransfer
 {
     [MessageContract]
-    public class RemoteFileInfo : IDisposable
+    public sealed class RemoteFileInfo : IDisposable
     {
         [MessageHeader(MustUnderstand = true)]
         public string FileName;
@@ -25,6 +25,7 @@ namespace RemotePlusLibrary.FileTransfer
                 FileByteStream.Close();
                 FileByteStream = null;
             }
+            GC.SuppressFinalize(this);
         }
     }
 }

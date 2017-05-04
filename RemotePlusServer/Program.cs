@@ -27,6 +27,7 @@ namespace RemotePlusServer
         public static Dictionary<string, CommandDelgate> Commands { get; } = new Dictionary<string, CommandDelgate>();
         public static VariableManager Variables { get; private set; }
         public static ServerSettings DefaultSettings { get; set; } = new ServerSettings();
+        [STAThread]
         static void Main(string[] args)
         {
             try
@@ -44,7 +45,8 @@ namespace RemotePlusServer
             catch(Exception ex)
             {
                 Logger.AddOutput("Internal server error: " + ex.Message, OutputLevel.Error);
-                Console.WriteLine("Press enter to exit.");
+                Console.Write("Press any key to exit.");
+                Console.ReadKey();
             }
         }
 
@@ -183,7 +185,7 @@ namespace RemotePlusServer
         {
             if (!File.Exists("GlobalServerSettings.config"))
             {
-                Logger.AddOutput("The server file does not exist. Creating server settings file.", OutputLevel.Warning);
+                Logger.AddOutput("The server settings file does not exist. Creating server settings file.", OutputLevel.Warning);
                 DefaultSettings.Save();
             }
             else
