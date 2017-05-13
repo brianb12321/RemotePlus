@@ -50,7 +50,8 @@
   <ItemGroup>
     <Compile Include="CommandHelpAttribute.cs" />
     <Compile Include="ExtensionDetails.cs" />
-    <Compile Include="Helper\ExtensionLoader.cs" />
+    <Compile Include="HelpPageAttribute.cs" />
+    <Compile Include="HelpSourceType.cs" />
     <Compile Include="IClientExtension.cs" />
     <Compile Include="IClientLibraryStartup.cs" />
     <Compile Include="ILibraryStartup.cs" />

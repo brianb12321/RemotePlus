@@ -9,7 +9,6 @@ using System.Threading;
 using System.Speech.Synthesis;
 using System.ServiceModel.Description;
 using RemotePlusLibrary.Extension;
-using RemotePlusLibrary.Extension.Helper;
 using System.IO;
 using Logging;
 using System.Security.Principal;

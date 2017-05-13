@@ -1,11 +1,12 @@
-﻿using System;
+﻿using RemotePlusLibrary.Extension;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RemotePlusLibrary.Extension.Helper
+namespace RemotePlusServer
 {
     public static class ExtensionLoader
     {
@@ -18,7 +19,11 @@ namespace RemotePlusLibrary.Extension.Helper
                 if(t.IsClass == true && (typeof(ILibraryStartup).IsAssignableFrom(t)))
                 {
                     ILibraryStartup st = (ILibraryStartup)Activator.CreateInstance(t);
+                    ServerManager.Logger.AddOutput("Beginning initialization.", Logging.OutputLevel.Info);
+                    ServerManager.Logger.DefaultFrom = a.GetName().Name;
                     st.Init();
+                    ServerManager.Logger.DefaultFrom = "Server Host";
+                    ServerManager.Logger.AddOutput("finished initalization.", Logging.OutputLevel.Info);
                 }
                 if(t.IsClass == true && (t.IsSubclassOf(typeof(ServerExtension))))
                 {

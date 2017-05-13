@@ -2,6 +2,7 @@
 using RemotePlusLibrary.Extension;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,6 +12,7 @@ namespace RemotePlusServer
     public static partial class ServerManager
     {
         [CommandHelp("Starts a new process on the server.")]
+        [HelpPage("ps.txt", Source = HelpSourceType.File)]
         private static List<LogItem> ProcessStartCommand(string[] args)
         {
             List<LogItem> l = new List<LogItem>();
@@ -36,22 +38,46 @@ namespace RemotePlusServer
         {
             List<LogItem> l = new List<Logging.LogItem>();
             string t = "";
-            foreach (KeyValuePair<string, CommandDelgate> c in Commands)
+            if (arguments.Length == 2)
             {
-                if (c.Value.Method.GetCustomAttributes(false).Length > 0)
+                foreach(object a in Commands[arguments[1]].Method.GetCustomAttributes(false))
                 {
-                    foreach (object o in c.Value.Method.GetCustomAttributes(false))
+                    if(a is HelpPageAttribute)
                     {
-                        if (o is CommandHelpAttribute)
+                        var a2 = a as HelpPageAttribute;
+                        if (a2.Source == HelpSourceType.Text)
                         {
-                            CommandHelpAttribute cha = (CommandHelpAttribute)o;
-                            t += $"\n{c.Key}\t{cha.HelpMessage}";
+                            t = a2.Details;
+                        }
+                        else if(a2.Source == HelpSourceType.File)
+                        {
+                            foreach(string lines in File.ReadAllLines("helpDocs\\" + a2.Details))
+                            {
+                                t += lines + "\n";
+                            }
                         }
                     }
                 }
-                else
+            }
+            else if(arguments.Length >= 1)
+            {
+                foreach (KeyValuePair<string, CommandDelgate> c in Commands)
                 {
-                    t += $"\n{c.Key}";
+                    if (c.Value.Method.GetCustomAttributes(false).Length > 0)
+                    {
+                        foreach (object o in c.Value.Method.GetCustomAttributes(false))
+                        {
+                            if (o is CommandHelpAttribute)
+                            {
+                                CommandHelpAttribute cha = (CommandHelpAttribute)o;
+                                t += $"\n{c.Key}\t{cha.HelpMessage}";
+                            }
+                        }
+                    }
+                    else
+                    {
+                        t += $"\n{c.Key}";
+                    }
                 }
             }
             l.Add(new LogItem(OutputLevel.Info, t, "Server Host"));
