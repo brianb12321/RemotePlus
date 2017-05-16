@@ -17,7 +17,7 @@ using System.Net.NetworkInformation;
 
 namespace RemotePlusServer
 {
-    public delegate List<LogItem> CommandDelgate(params string[] args);
+    public delegate void CommandDelgate(params string[] args);
     public static partial class ServerManager
     {
         public static CMDLogging Logger { get; } = new CMDLogging();
@@ -216,7 +216,7 @@ namespace RemotePlusServer
                     if(ca[0] == k.Key)
                     {
                         FoundCommand = true;
-                        l.AddRange(k.Value(ca));
+                        k.Value(ca);
                     }
                 }
                 if (!FoundCommand)

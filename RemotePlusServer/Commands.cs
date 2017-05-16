@@ -13,9 +13,8 @@ namespace RemotePlusServer
     {
         [CommandHelp("Starts a new process on the server.")]
         [HelpPage("ps.txt", Source = HelpSourceType.File)]
-        private static List<LogItem> ProcessStartCommand(string[] args)
+        private static void ProcessStartCommand(string[] args)
         {
-            List<LogItem> l = new List<LogItem>();
             if (args.Length > 1)
             {
                 string a = "";
@@ -24,19 +23,18 @@ namespace RemotePlusServer
                     a += " " + args[i];
                 }
                 Remote.RunProgram((string)args[1], a);
-                l.Add(Logger.AddOutput("Program start command finished.", OutputLevel.Info));
+                Remote.Client.ClientCallback.TellMessageToServerConsole(Logger.AddOutput("Program start command finished.", OutputLevel.Info));
             }
             else if (args.Length == 1)
             {
                 Remote.RunProgram((string)args[1], "");
-                l.Add(Logger.AddOutput("Program start command finished.", OutputLevel.Info));
+                Remote.Client.ClientCallback.TellMessageToServerConsole(Logger.AddOutput("Program start command finished.", OutputLevel.Info));
             }
-            return l;
+            ;
         }
         [CommandHelp("Displays a list of commands.")]
-        private static List<LogItem> Help(string[] arguments)
+        private static void Help(string[] arguments)
         {
-            List<LogItem> l = new List<Logging.LogItem>();
             string t = "";
             if (arguments.Length == 2)
             {
@@ -80,26 +78,28 @@ namespace RemotePlusServer
                     }
                 }
             }
-            l.Add(new LogItem(OutputLevel.Info, t, "Server Host"));
-            return l;
+            Remote.Client.ClientCallback.TellMessageToServerConsole(new LogItem(OutputLevel.Info, t, "Server Host"));
+            ;
         }
         [CommandHelp("Executes a loaded extension on the server.")]
-        private static List<LogItem> ExCommand(object[] args)
+        private static void ExCommand(object[] args)
         {
-            List<LogItem> l = new List<LogItem>();
+            ;
             List<string> obj = new List<string>();
             for (int i = 2; i < args.Length; i++)
             {
                 obj.Add((string)args[i]);
             }
             Remote.RunExtension((string)args[1], obj.ToArray());
-            l.Add(Logger.AddOutput("Extension executed.", OutputLevel.Info));
-            return l;
+            Remote.Client.ClientCallback.TellMessageToServerConsole(Logger.AddOutput("Extension executed.", OutputLevel.Info));
         }
         [CommandHelp("Gets the server log.")]
-        private static List<LogItem> Logs(object[] args)
+        private static void Logs(object[] args)
         {
-            return Logger.buffer;
+            foreach(var l in Logger.buffer)
+            {
+                Remote.Client.ClientCallback.TellMessageToServerConsole(l);
+            }
         }
     }
 }
