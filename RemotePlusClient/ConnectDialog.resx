@@ -129,4 +129,12 @@ example:
                &lt;1&gt;://&lt;2&gt;:&lt;3&gt;/&lt;4&gt;
                net.tcp://ocalhost:9000/Romote   </value>
   </data>
+  <data name="registirationObject1.Credentials" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>
+        AAEAAAD/////AQAAAAAAAAAMAgAAAEhSZW1vdGVQbHVzTGlicmFyeSwgVmVyc2lvbj0xLjAuMC4wLCBD
+        dWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPW51bGwFAQAAACFSZW1vdGVQbHVzTGlicmFyeS5V
+        c2VyQ3JlZGVudGlhbHMCAAAAGTxVc2VybmFtZT5rX19CYWNraW5nRmllbGQZPFBhc3N3b3JkPmtfX0Jh
+        Y2tpbmdGaWVsZAEBAgAAAAYDAAAACHVzZXJuYW1lBgQAAAAIcGFzc3dvcmQL
+</value>
+  </data>
 </root>

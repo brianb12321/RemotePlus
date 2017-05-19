@@ -33,6 +33,7 @@
   <ItemGroup>
     <Reference Include="Logging">
       <HintPath>..\Libs\Logging.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -52,18 +53,22 @@
     <ProjectReference Include="..\RemotePlusLibrary.Core\RemotePlusLibrary.Core.csproj">
       <Project>{0334629b-6302-42a8-b159-f8646b4d8650}</Project>
       <Name>RemotePlusLibrary.Core</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\RemotePlusLibrary.Extension\RemotePlusLibrary.Extension.csproj">
       <Project>{2aa5e768-7e0a-4b0c-a0d1-f79153902df9}</Project>
       <Name>RemotePlusLibrary.Extension</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\RemotePlusLibrary\RemotePlusLibrary.csproj">
       <Project>{00c22a1f-d3df-4193-aaa8-9907d08e2511}</Project>
       <Name>RemotePlusLibrary</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\RemotePlusServer\RemotePlusServer.csproj">
       <Project>{4e41f31e-dce5-4b9c-a2d6-20bf6acd9c84}</Project>
       <Name>RemotePlusServer</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

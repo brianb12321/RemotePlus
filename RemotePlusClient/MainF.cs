@@ -49,8 +49,6 @@ namespace RemotePlusClient
         private void OpenConsole()
         {
             ConsoleObj = new ConsoleDialog();
-            ConsoleObj.Logger.DefaultFrom = "Client";
-            ConsoleObj.Logger.Output = ConsoleObj.richTextBox1;
             AddTabToConsoleTabControl("Console", ConsoleObj);
         }
         private void Connect(RegistirationObject Settings)
@@ -67,7 +65,7 @@ namespace RemotePlusClient
                 tcp.ReaderQuotas.MaxStringContentLength = 2147483647;
                 tcp.ReaderQuotas.MaxBytesPerRead = 2147483647;
                 tcp.ReaderQuotas.MaxNameTableCharCount = 2147483647;
-                channel = new DuplexChannelFactory<IRemote>(new Callback(), tcp, Address);
+                channel = new DuplexChannelFactory<IRemote>(new ClientCallback(), tcp, Address);
                 Remote = channel.CreateChannel();
                 ConsoleObj.Logger.AddOutput("Registering...", Logging.OutputLevel.Info);
                 Remote.Register(Settings);
@@ -84,7 +82,8 @@ namespace RemotePlusClient
         void AddTabToConsoleTabControl(string Name, Form c)
         {
             Random r = new Random();
-            Name += " " + r.Next(1, 9999).ToString();
+            string Id = r.Next(1, 9999).ToString();
+            c.Name = Id;
             c.WindowState = FormWindowState.Maximized;
             c.FormBorderStyle = FormBorderStyle.None;
             c.TopLevel = false;
@@ -97,7 +96,8 @@ namespace RemotePlusClient
         void AddTabToMainTabControl(string Name, Form c)
         {
             Random r = new Random();
-            Name += " " + r.Next(1, 9999).ToString();
+            string Id = r.Next(1, 9999).ToString();
+            c.Name = Id;
             c.WindowState = FormWindowState.Maximized;
             c.FormBorderStyle = FormBorderStyle.None;
             c.TopLevel = false;
@@ -239,65 +239,6 @@ namespace RemotePlusClient
         {
             ExtensionDetailsDialog edd = new ExtensionDetailsDialog();
             edd.ShowDialog();
-        }
-    }
-    [CallbackBehavior(ConcurrencyMode = ConcurrencyMode.Reentrant,
-        IncludeExceptionDetailInFaults = true,
-        UseSynchronizationContext = false)]
-    class Callback : IRemoteClient
-    {
-        public void Disconnect(string Reason)
-        {
-            MainF.ConsoleObj.Logger.AddOutput("The server disconnected from the client. Reason: " + Reason, Logging.OutputLevel.Error, "Server Host");
-            MainF.Disconnect();
-        }
-
-        public UserCredentials RequestAuthentication()
-        {
-            AuthenticationDialog ad = new AuthenticationDialog();
-            if(ad.ShowDialog() == DialogResult.OK)
-            {
-                return ad.UserInfo;
-            }
-            else
-            {
-                return null;
-            }
-        }
-
-        public void TellMessage(string Message, Logging.OutputLevel o)
-        {
-            MainF.ConsoleObj.Logger.AddOutput(Message, o, "Server Host");
-        }
-
-        public void TellMessage(LogItem li)
-        {
-            MainF.ConsoleObj.Logger.AddOutput(li);
-        }
-
-        public void TellMessage(LogItem[] Logs)
-        {
-            foreach(LogItem li in Logs)
-            {
-                MainF.ConsoleObj.Logger.AddOutput(li);
-            }
-        }
-
-        public void TellMessageToServerConsole(LogItem li)
-        {
-            MainF.ServerConsoleObj.AppendText(li.ToString());
-        }
-
-        public ClientBuilder RegisterClient()
-        {
-            ClientBuilder builder = new ClientBuilder();
-            builder.FriendlyName = "Default GUI Client";
-            return builder;
-        }
-
-        public void TellMessageToServerConsole(string Message)
-        {
-            MainF.ServerConsoleObj.AppendText(Message);
         }
     }
 }

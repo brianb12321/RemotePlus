@@ -29,12 +29,12 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ConnectDialog));
+            RemotePlusLibrary.RegistirationObject registirationObject1 = new RemotePlusLibrary.RegistirationObject();
             this.label1 = new System.Windows.Forms.Label();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.button1 = new System.Windows.Forms.Button();
             this.propertyGrid1 = new System.Windows.Forms.PropertyGrid();
-            this.ro = new RemotePlusLibrary.RegistirationObject();
             this.SuspendLayout();
             // 
             // label1
@@ -76,7 +76,10 @@
             // 
             this.propertyGrid1.Location = new System.Drawing.Point(364, 13);
             this.propertyGrid1.Name = "propertyGrid1";
-            this.propertyGrid1.SelectedObject = ro;
+            registirationObject1.Credentials = ((RemotePlusLibrary.UserCredentials)(resources.GetObject("registirationObject1.Credentials")));
+            registirationObject1.LoginRightAway = false;
+            registirationObject1.VerboseError = false;
+            this.propertyGrid1.SelectedObject = registirationObject1;
             this.propertyGrid1.Size = new System.Drawing.Size(297, 232);
             this.propertyGrid1.TabIndex = 4;
             // 
@@ -90,9 +93,11 @@
             this.Controls.Add(this.richTextBox1);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.label1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.Name = "ConnectDialog";
-            this.Text = "ConnectDialog";
+            this.ShowIcon = false;
+            this.Text = "Connect to a RemotePlus server";
             this.ResumeLayout(false);
             this.PerformLayout();
 

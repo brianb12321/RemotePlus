@@ -11,7 +11,6 @@ namespace RemotePlusLibrary.Extension
     public abstract class ServerExtension
     {
         public ExtensionDetails GeneralDetails { get; set; }
-        public Func<object> Response { get; set; }
         protected ServerExtension(ExtensionDetails d)
         {
             GeneralDetails = d;

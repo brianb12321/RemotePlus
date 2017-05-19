@@ -49,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommandHelpAttribute.cs" />
+    <Compile Include="CommandStatus.cs" />
     <Compile Include="ExtensionDetails.cs" />
     <Compile Include="HelpPageAttribute.cs" />
     <Compile Include="HelpSourceType.cs" />

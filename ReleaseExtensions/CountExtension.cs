@@ -20,7 +20,7 @@ namespace ReleaseExtensions
             OperationStatus s = new OperationStatus();
             for(int i = 0; i < 100; i++)
             {
-                ServerManager.Remote.Client.ClientCallback.TellMessageToServerConsole(new LogItem(OutputLevel.Info, i.ToString(), "CountEstension"));
+                ServerManager.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, i.ToString(), "CountEstension"));
             }
             return s;
         }

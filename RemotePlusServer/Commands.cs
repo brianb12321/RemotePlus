@@ -13,7 +13,7 @@ namespace RemotePlusServer
     {
         [CommandHelp("Starts a new process on the server.")]
         [HelpPage("ps.txt", Source = HelpSourceType.File)]
-        private static void ProcessStartCommand(string[] args)
+        private static int ProcessStartCommand(string[] args)
         {
             if (args.Length > 1)
             {
@@ -22,18 +22,20 @@ namespace RemotePlusServer
                 {
                     a += " " + args[i];
                 }
-                Remote.RunProgram((string)args[1], a);
-                Remote.Client.ClientCallback.TellMessageToServerConsole(Logger.AddOutput("Program start command finished.", OutputLevel.Info));
+                Remote.RunProgram(args[1], a);
+                Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, "Program start command finished.", "Server Host"));
+                return (int)CommandStatus.Success;
             }
             else if (args.Length == 1)
             {
                 Remote.RunProgram((string)args[1], "");
-                Remote.Client.ClientCallback.TellMessageToServerConsole(Logger.AddOutput("Program start command finished.", OutputLevel.Info));
+                Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, "Program start command finished.", "Server Host"));
+                return (int)CommandStatus.Success;
             }
-            ;
+            return (int)CommandStatus.Fail;
         }
         [CommandHelp("Displays a list of commands.")]
-        private static void Help(string[] arguments)
+        private static int Help(string[] arguments)
         {
             string t = "";
             if (arguments.Length == 2)
@@ -78,28 +80,30 @@ namespace RemotePlusServer
                     }
                 }
             }
-            Remote.Client.ClientCallback.TellMessageToServerConsole(new LogItem(OutputLevel.Info, t, "Server Host"));
-            ;
+            Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, t, "Server Host"));
+            return (int)CommandStatus.Success;
         }
         [CommandHelp("Executes a loaded extension on the server.")]
-        private static void ExCommand(object[] args)
+        private static int ExCommand(object[] args)
         {
-            ;
+            
             List<string> obj = new List<string>();
             for (int i = 2; i < args.Length; i++)
             {
                 obj.Add((string)args[i]);
             }
             Remote.RunExtension((string)args[1], obj.ToArray());
-            Remote.Client.ClientCallback.TellMessageToServerConsole(Logger.AddOutput("Extension executed.", OutputLevel.Info));
+            Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, "Extension executed.", "Server Host"));
+            return (int)CommandStatus.Success;
         }
         [CommandHelp("Gets the server log.")]
-        private static void Logs(object[] args)
+        private static int Logs(object[] args)
         {
             foreach(var l in Logger.buffer)
             {
-                Remote.Client.ClientCallback.TellMessageToServerConsole(l);
+                Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(l.Level, l.Message, l.From));
             }
+            return (int)CommandStatus.Success;
         }
     }
 }

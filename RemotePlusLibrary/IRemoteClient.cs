@@ -13,15 +13,15 @@ namespace RemotePlusLibrary
         [OperationContract]
         void TellMessage(string Message, Logging.OutputLevel o);
         [OperationContract(Name = "TellMessageToServerConsole")]
-        void TellMessageToServerConsole(LogItem li);
+        void TellMessageToServerConsole(UILogItem li);
         [OperationContract(Name = "TellMessageToServerConsoleUsingString")]
         void TellMessageToServerConsole(string Message);
         [OperationContract]
         ClientBuilder RegisterClient();
         [OperationContract(Name = "TellMessageWithLogItem")]
-        void TellMessage(LogItem li);
+        void TellMessage(UILogItem li);
         [OperationContract(Name = "TellMessageWithLogs")]
-        void TellMessage(LogItem[] Logs);
+        void TellMessage(UILogItem[] Logs);
         [OperationContract]
         void Disconnect(string Reason);
         [OperationContract]

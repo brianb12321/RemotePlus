@@ -60,6 +60,7 @@
     <Compile Include="AuthenticationDialog.Designer.cs">
       <DependentUpon>AuthenticationDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="ClientCallback.cs" />
     <Compile Include="CommandDialogs\BeepDialog.cs">
       <SubType>Form</SubType>
     </Compile>

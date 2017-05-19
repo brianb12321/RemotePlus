@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("RemotePlusServerCmd")]
+[assembly: AssemblyTitle("RemotePlusClientCmd")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("RemotePlusServerCmd")]
+[assembly: AssemblyProduct("RemotePlusClientCmd")]
 [assembly: AssemblyCopyright("Copyright ©  2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("18c60a06-acdd-4e01-9a21-a1e1d6ad96f4")]
+[assembly: Guid("38d2edd9-0860-4c75-8344-8ba0ac72cbf0")]
 
 // Version information for an assembly consists of the following four values:
 //

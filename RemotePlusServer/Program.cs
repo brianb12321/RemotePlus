@@ -17,7 +17,7 @@ using System.Net.NetworkInformation;
 
 namespace RemotePlusServer
 {
-    public delegate void CommandDelgate(params string[] args);
+    public delegate int CommandDelgate(params string[] args);
     public static partial class ServerManager
     {
         public static CMDLogging Logger { get; } = new CMDLogging();
@@ -204,9 +204,8 @@ namespace RemotePlusServer
                 }
             }
         }
-        public static List<Logging.LogItem> Execute(string c)
+        public static int Execute(string c)
         {
-            List<Logging.LogItem> l = new List<Logging.LogItem>();
             try
             {
                 bool FoundCommand = false;
@@ -216,19 +215,20 @@ namespace RemotePlusServer
                     if(ca[0] == k.Key)
                     {
                         FoundCommand = true;
-                        k.Value(ca);
+                        return k.Value(ca);
                     }
                 }
                 if (!FoundCommand)
                 {
-                    l.Add(Logger.AddOutput("Unknown command. Please type {help} for a list of commands", OutputLevel.Info));
+                    Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, "Unknown command. Please type {help} for a list of commands", "Server Host"));
+                    return (int)CommandStatus.Fail;
                 }
-                return l;
+                return -2;
             }
             catch (Exception ex)
             {
-                l.Add(Logger.AddOutput("Error whie executing command: " + ex.Message, OutputLevel.Error));
-                return l;
+                Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error,"Error whie executing command: " + ex.Message, "Server Host"));
+                return (int)CommandStatus.Fail;
             }
         }
         static void Close()

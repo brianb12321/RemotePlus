@@ -208,14 +208,13 @@ namespace RemotePlusServer
             }
         }
 
-        public List<LogItem> RunServerCommand(string Command)
+        public int RunServerCommand(string Command)
         {
             if (!LoggedInUser.Role.Privilleges.CanAccessConsole)
             {
                 Client.ClientCallback.TellMessage("You do not have promission to use the Console function.", OutputLevel.Info);
             }
-            var l = ServerManager.Execute(Command);
-            return l;
+            return ServerManager.Execute(Command);
         }
 
         public void UpdateServerSettings(ServerSettings Settings)
@@ -248,10 +247,7 @@ namespace RemotePlusServer
         {
             SelectedExtension = Extensions[ExtensionName];
             OperationStatus s = SelectedExtension.Execute(Args);
-            foreach(LogItem li in s.Log)
-            {
-                Client.ClientCallback.TellMessage(li);
-            }
+            s.Success = true;
             return s;
         }
 
@@ -314,12 +310,6 @@ namespace RemotePlusServer
         {
             SelectedExtension.ResumeExtension();
         }
-
-        public void ReplyToExtension(Func<object> Reply)
-        {
-            SelectedExtension.Response = Reply;
-        }
-
         public List<string> GetCommands()
         {
             return ServerManager.Commands.Keys.ToList();

@@ -33,7 +33,7 @@ namespace RemotePlusLibrary
         [OperationContract(IsOneWay = true)]
         void Register(RegistirationObject Settings);
         [OperationContract]
-        List<LogItem> RunServerCommand(string Command);
+        int RunServerCommand(string Command);
         [OperationContract(IsOneWay = true)]
         void UpdateServerSettings(ServerSettings Settings);
         [OperationContract]
@@ -48,8 +48,6 @@ namespace RemotePlusLibrary
         UserAccount GetLoggedInUser();
         [OperationContract]
         OperationStatus RunExtension(string ExtensionName, params object[] Args);
-        [OperationContract]
-        void ReplyToExtension(Func<object> Reply);
         [OperationContract(IsOneWay = true)]
         void HaultExtension();
         [OperationContract(IsOneWay = true)]

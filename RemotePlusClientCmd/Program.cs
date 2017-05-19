@@ -3,118 +3,102 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
 using RemotePlusLibrary;
+using Logging;
 using System.ServiceModel;
-using RemotePlusLibrary.Core;
 
-namespace RemotePlusServerCmd
+namespace RemotePlusClientCmd
 {
-    class Program : IRemoteClient
+    class Program
     {
-        public static IRemote Remote;
-        public static LogWrapper Logger;
-        public static LogWrapper ServerLogger;
+        public static IRemote Remote = null;
+        public static CMDLogging Logger = null;
         public static DuplexChannelFactory<IRemote> channel = null;
-        static bool readyFlag = false;
         static void Main(string[] args)
         {
             try
             {
-                Logger = new LogWrapper("Client");
-                ServerLogger = new LogWrapper("Server Host");
-                Console.Write("Enter connection url: ");
+                Logger = new CMDLogging();
+                Logger.OverrideLogItemObjectColorValue = true;
+                Console.Write("Enter url: ");
                 string url = Console.ReadLine();
-                channel = new DuplexChannelFactory<IRemote>(new Program(), new NetTcpBinding(), new EndpointAddress(url));
-                Remote = channel.CreateChannel();
-                Console.WriteLine("Pre authentication.");
+                channel = new DuplexChannelFactory<IRemote>(new ClientCallback(), new NetTcpBinding(), url);
                 Console.Write("Enter Username: ");
                 string username = Console.ReadLine();
                 Console.Write("Enter Password: ");
-                string password = Console.ReadLine();              
-                RegistirationObject robj = new RegistirationObject();
-                robj.LoginRightAway = true;
-                robj.Credentials = new UserCredentials(username, password);
-                Remote.Register(robj);
-                readyFlag = true;
-                if (readyFlag)
+                string password = Console.ReadLine();
+                RegistirationObject ro = new RegistirationObject();
+                ro.LoginRightAway = true;
+                ro.Credentials = new UserCredentials(username, password);
+                Remote = channel.CreateChannel();
+                Remote.Register(ro);
+                while (true)
                 {
-                    Console.WriteLine("RemotePlus client. Type {help} for a list of commands.");
-                    while (true)
-                    {
-                        string command = Console.ReadLine();
-                        Remote.RunServerCommand(command);
-                    }
+                    Console.WriteLine("Enter a command to the server. Type {help} for a list of commands.");
+                    Remote.RunServerCommand(Console.ReadLine());
                 }
             }
             catch (Exception ex)
             {
-                Logger.Fatal("Client error: " + ex.Message);
+#if DEBUG
+                Logger.AddOutput(new LogItem(OutputLevel.Exception, "Client error. " + ex.ToString(), "Client"));
+#else
+                Logger.AddOutput(new LogItem(OutputLevel.Exception, "Client error. " + ex.Message, "Client"));
+#endif
             }
         }
-
+    }
+    class ClientCallback : IRemoteClient
+    {
         public void Disconnect(string Reason)
         {
-            Logger.Error("The server disconnected. Reason: " + Reason);
-            channel.Close();
+            Program.Logger.AddOutput(new LogItem(OutputLevel.Error, "Server disconnected. " + Reason, "CLient"));
         }
 
         public ClientBuilder RegisterClient()
         {
             ClientBuilder cb = new ClientBuilder();
-            cb.FriendlyName = "RemotePlusClientCmd";
+            cb.FriendlyName = "RemotePlus Client Command Line";
             return cb;
         }
 
         public UserCredentials RequestAuthentication()
         {
-            Console.WriteLine("The Server Requires authentication.");
+            Console.WriteLine("The server requires authentication.");
             Console.Write("Enter Username: ");
             string username = Console.ReadLine();
             Console.Write("Enter Password: ");
             string password = Console.ReadLine();
-            readyFlag = true;
             return new UserCredentials(username, password);
         }
 
-        public void TellMessageError(string Message)
+        public void TellMessage(string Message, OutputLevel o)
         {
-            ServerLogger.Error(Message);
+            Program.Logger.AddOutput(new LogItem(o, Message, "Server Host"));
         }
 
-        public void TellMessageFatal(string Message)
+        public void TellMessage(UILogItem li)
         {
-            ServerLogger.Fatal(Message);
+            Program.Logger.AddOutput(new LogItem(li.Level, li.Message, li.From));
         }
 
-        public void TellMessageInfo(string Message)
+        public void TellMessage(UILogItem[] Logs)
         {
-            ServerLogger.Info(Message);
+            foreach(UILogItem l in Logs)
+            {
+                Program.Logger.AddOutput(new LogItem(l.Level, l.Message, l.From));
+            }
         }
 
-        public void TellMessageToServerConsoleError(string Message, string From)
+        public void TellMessageToServerConsole(UILogItem li)
         {
-            ServerLogger.Error($"{From}: {Message}");
+            li.From = "Server Console";
+            Program.Logger.AddOutput(new LogItem(li.Level, li.Message, li.From));
         }
 
-        public void TellMessageToServerConsoleFatal(string Message, string From)
+        public void TellMessageToServerConsole(string Message)
         {
-            ServerLogger.Fatal($"{From}: {Message}");
-        }
-
-        public void TellMessageToServerConsoleInfo(string Message, string From)
-        {
-            ServerLogger.Info($"{From}: {Message}");
-        }
-
-        public void TellMessageToServerConsoleWarning(string Message, string From)
-        {
-            ServerLogger.Warn($"{From}: {Message}");
-        }
-
-        public void TellMessageWarning(string Message)
-        {
-            ServerLogger.Warn(Message);
+            Console.WriteLine(Message);
         }
     }
 }

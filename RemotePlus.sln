@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemotePlusLibrary.Extension
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReleaseExtensions", "ReleaseExtensions\ReleaseExtensions.csproj", "{4A312E8C-FE94-4996-B2B4-55C9854075C8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemotePlusClientCmd", "RemotePlusClientCmd\RemotePlusClientCmd.csproj", "{38D2EDD9-0860-4C75-8344-8BA0AC72CBF0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{4A312E8C-FE94-4996-B2B4-55C9854075C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4A312E8C-FE94-4996-B2B4-55C9854075C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4A312E8C-FE94-4996-B2B4-55C9854075C8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{38D2EDD9-0860-4C75-8344-8BA0AC72CBF0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38D2EDD9-0860-4C75-8344-8BA0AC72CBF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38D2EDD9-0860-4C75-8344-8BA0AC72CBF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38D2EDD9-0860-4C75-8344-8BA0AC72CBF0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
