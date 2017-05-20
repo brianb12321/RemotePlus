@@ -21,10 +21,7 @@ namespace RemotePlusClient.CommandDialogs
 
         private void button2_Click(object sender, EventArgs e)
         {
-            RemoteFileInfo fi = new RemoteFileInfo();
-            fi.FileName = textBox1.Text;
-            fi.FileByteStream = new FileStream(textBox2.Text, FileMode.Open, FileAccess.Read);
-            MainF.Remote.UploadFile(fi);
+
         }
 
         private void button1_Click(object sender, EventArgs e)

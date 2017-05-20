@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RemotePlusLibrary.Extension
+namespace RemotePlusLibrary.Extension.CommandSystem
 {
     [DataContract]
     public enum CommandStatus : int

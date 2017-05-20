@@ -9,6 +9,7 @@ using System.Speech.Synthesis;
 using Logging;
 using RemotePlusLibrary.Extension;
 using RemotePlusLibrary.FileTransfer;
+using RemotePlusLibrary.Extension.WatcherSystem;
 
 namespace RemotePlusLibrary
 {
@@ -41,10 +42,6 @@ namespace RemotePlusLibrary
         [OperationContract(IsOneWay = true)]
         void Restart();
         [OperationContract]
-        RemoteFileInfo DownloadFile(DownloadRequest request);
-        [OperationContract(IsOneWay = true)]
-        void UploadFile(RemoteFileInfo request);
-        [OperationContract]
         UserAccount GetLoggedInUser();
         [OperationContract]
         OperationStatus RunExtension(string ExtensionName, params object[] Args);
@@ -56,5 +53,7 @@ namespace RemotePlusLibrary
         List<ExtensionDetails> GetExtensionNames();
         [OperationContract]
         List<string> GetCommands();
+        [OperationContract(IsOneWay = true)]
+        void StartWatcher(string WatcherName, object args);
     }
 }

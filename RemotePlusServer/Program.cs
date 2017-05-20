@@ -14,12 +14,15 @@ using Logging;
 using System.Security.Principal;
 using System.Management;
 using System.Net.NetworkInformation;
+using RemotePlusLibrary.Extension.CommandSystem;
+using RemotePlusLibrary.Extension.WatcherSystem;
 
 namespace RemotePlusServer
 {
     public delegate int CommandDelgate(params string[] args);
     public static partial class ServerManager
     {
+        public static Dictionary<string, WatcherBase> Watchers { get; private set; }
         public static CMDLogging Logger { get; } = new CMDLogging();
         public static ServiceHost host { get; private set; } = null;
         public static RemoteImpl Remote { get; } = new RemoteImpl();
@@ -35,6 +38,7 @@ namespace RemotePlusServer
                 InitializeCommands();
                 ScanForServerSettingsFile();
                 InitializeVariables();
+                InitializeWatchers();
                 LoadExtensionLibraries();
                 if (CheckPrerequisites())
                 {
@@ -73,49 +77,18 @@ namespace RemotePlusServer
             Commands.Add("ps", ProcessStartCommand);
             Commands.Add("help", Help);
             Commands.Add("logs", Logs);
+            Commands.Add("vars", vars);
+            Commands.Add("dateTime", dateTime);
+            Commands.Add("processes", processes);
+            Commands.Add("watchers", watchers);
         }
 
         static bool CheckPrerequisites()
         {
             Logger.AddOutput("Checking prerequisites.", OutputLevel.Info);
-            //Check for admin priv.
-            WindowsIdentity wi = WindowsIdentity.GetCurrent();
-            WindowsPrincipal p = new WindowsPrincipal(wi);
-            if(!p.IsInRole(WindowsBuiltInRole.Administrator))
-            {
-                Logger.AddOutput("The current logged in user is not part of the group \"Administrator\". This may cause certain operations to fail.", OutputLevel.Warning);
-            }
-            //Check if IP Address is static
-            //ManagementObjectSearcher searcher = new ManagementObjectSearcher(@"root\CIMV2", "SELECT * FROM Win32_NetworkAdapterConfiguration");
-            //foreach (ManagementObject mo in searcher.Get())
-            //{
-
-            //}
-            bool foundFlag = false;
-            NetworkInterface[] adapt = NetworkInterface.GetAllNetworkInterfaces();
-            if (adapt.Length == 0)
-            {
-                Logger.AddOutput("Unable to find a network adapter. The server requires at least one adapter.", OutputLevel.Error);
-            }
-            else
-            {
-                foreach (NetworkInterface nif in adapt)
-                {
-                    if (nif.GetIPProperties().GetIPv4Properties() != null)
-                    {
-                        if (!nif.GetIPProperties().GetIPv4Properties().IsDhcpEnabled)
-                        {
-                            foundFlag = true;
-                            break;
-                        }
-                    }
-                }
-                if (!foundFlag)
-                {
-                    Logger.AddOutput("You should have at least one network adapter that has a static IP. This could cause the client fail to connect to the server.", OutputLevel.Info);
-                }
-            }
-
+            //Check for prerequisites
+            ServerPrerequisites.CheckPrivilleges();
+            ServerPrerequisites.CheckNetworkInterfaces();            
             // Check results
             if(Logger.errorcount >= 1 && Logger.warningcount == 0)
             {
@@ -203,6 +176,11 @@ namespace RemotePlusServer
 #endif
                 }
             }
+        }
+        static void InitializeWatchers()
+        {
+            Logger.AddOutput("Initializing watchers.", OutputLevel.Info);
+            Watchers = new Dictionary<string, WatcherBase>();
         }
         public static int Execute(string c)
         {

@@ -13,7 +13,7 @@ using System.ServiceModel.Dispatcher;
 using System.ServiceModel.Channels;
 using RemotePlusLibrary.Core;
 using RemotePlusLibrary.Extension;
-using RemotePlusLibrary.FileTransfer;
+using RemotePlusLibrary.Extension.WatcherSystem;
 using System.Net.Sockets;
 using System.Diagnostics;
 
@@ -261,46 +261,6 @@ namespace RemotePlusServer
             return l;
         }
 
-        public RemoteFileInfo DownloadFile(DownloadRequest request)
-        {
-            RemoteFileInfo result = new RemoteFileInfo();
-            try
-            {
-                string filePath = request.DownloadFileName;
-                FileInfo fileInfo = new FileInfo(filePath);
-                if (!fileInfo.Exists)
-                {
-                    throw new FileNotFoundException("The file " + filePath + " does not exist on the server.");
-                }
-                FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read);
-                result.FileByteStream = fs;
-                result.FileName = filePath;
-                result.Length = fileInfo.Length;
-
-            }
-            catch (Exception ex)
-            {
-                throw new FaultException(ex.Message);
-            }
-            return result;
-        }
-
-        public void UploadFile(RemoteFileInfo request)
-        {
-            using (Stream stream = request.FileByteStream)
-            {
-                using (Stream sstream = new FileStream(request.FileName, FileMode.Create, FileAccess.ReadWrite))
-                {
-                    byte[] buffer = new byte[1024];
-                    int length;
-                    while ((length = stream.Read(buffer, 0, buffer.Length)) != 0)
-                    {
-                        sstream.Write(buffer, 0, length);
-                    }
-                }
-            }
-        }
-
         public void HaultExtension()
         {
             SelectedExtension.HaultExtension();
@@ -313,6 +273,11 @@ namespace RemotePlusServer
         public List<string> GetCommands()
         {
             return ServerManager.Commands.Keys.ToList();
+        }
+
+        public void StartWatcher(string WatcherName, object args)
+        {
+            ServerManager.Watchers[WatcherName].Start(args);
         }
     }
 }

@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
+            ro = new RemotePlusLibrary.RegistirationObject();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ConnectDialog));
-            RemotePlusLibrary.RegistirationObject registirationObject1 = new RemotePlusLibrary.RegistirationObject();
             this.label1 = new System.Windows.Forms.Label();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
@@ -68,7 +68,7 @@
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 3;
-            this.button1.Text = "Ok";
+            this.button1.Text = "Connect";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
@@ -76,10 +76,7 @@
             // 
             this.propertyGrid1.Location = new System.Drawing.Point(364, 13);
             this.propertyGrid1.Name = "propertyGrid1";
-            registirationObject1.Credentials = ((RemotePlusLibrary.UserCredentials)(resources.GetObject("registirationObject1.Credentials")));
-            registirationObject1.LoginRightAway = false;
-            registirationObject1.VerboseError = false;
-            this.propertyGrid1.SelectedObject = registirationObject1;
+            this.propertyGrid1.SelectedObject = ro;
             this.propertyGrid1.Size = new System.Drawing.Size(297, 232);
             this.propertyGrid1.TabIndex = 4;
             // 

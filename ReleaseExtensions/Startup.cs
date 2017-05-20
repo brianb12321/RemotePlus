@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using RemotePlusLibrary.Extension;
 using RemotePlusServer;
+using RemotePlusLibrary.Extension.CommandSystem;
 
 namespace ReleaseExtensions
 {
@@ -14,6 +15,8 @@ namespace ReleaseExtensions
         {
             ServerManager.Logger.AddOutput("Welcome to \"ReleaseExtension.\" This library contains some useful tools that demonstrates the powers of \"RemotePlus\"", Logging.OutputLevel.Info);
             ServerManager.Commands.Add("releaseExtensionAbout", releaseExtensionAbout);
+            ServerManager.Logger.AddOutput("Adding watchers.", Logging.OutputLevel.Info);
+            ServerManager.Watchers.Add("HddWatcher", new HddWatcher());
         }
         [CommandHelp("Describes about the ReleaseExtensionsLibrary.")]
         int releaseExtensionAbout(string[] args)
