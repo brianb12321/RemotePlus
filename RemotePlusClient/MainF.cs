@@ -69,9 +69,9 @@ namespace RemotePlusClient
                 Remote = channel.CreateChannel();
                 ConsoleObj.Logger.AddOutput("Registering...", Logging.OutputLevel.Info);
                 Remote.Register(Settings);
-                connectToolStripMenuItem.Enabled = false;
-                consoleToolStripMenuItem.Enabled = true;
-                settingsToolStripMenuItem.Enabled = true;
+                connectMenuItem.Enabled = false;
+                consoleMenuItem.Enabled = true;
+                settingsMenuItem.Enabled = true;
             }
             catch (Exception ex)
             {
