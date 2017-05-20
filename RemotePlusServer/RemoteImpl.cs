@@ -142,7 +142,7 @@ namespace RemotePlusServer
 
         private void RegisterComplete()
         {
-            ServerManager.Logger.AddOutput("Client registired.", Logging.OutputLevel.Info);
+            ServerManager.Logger.AddOutput($"Client \"{Client.FriendlyName}\" registired.", Logging.OutputLevel.Info);
             Registered = true;
             Client.ClientCallback.TellMessage("Registiration complete.", Logging.OutputLevel.Info);
         }
@@ -164,14 +164,42 @@ namespace RemotePlusServer
             {
                 if (e.Data != null)
                 {
-                    Client.ClientCallback.TellMessageToServerConsole(e.Data + "\n");
+                    if (Client.ExtraData.TryGetValue("ps_appendNewLine", out string val))
+                    {
+                        if (val == "true")
+                        {
+                            Client.ClientCallback.TellMessageToServerConsole(e.Data);
+                        }
+                        else
+                        {
+                            Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, $"Extra data for appendText is invalid. Value: {val}", "Server Host"));
+                        }
+                    }
+                    else
+                    {
+                        Client.ClientCallback.TellMessageToServerConsole(e.Data + "\n");
+                    }
                 }
             };
             p.OutputDataReceived += (sender, e) =>
             {
                 if (e.Data != null)
                 {
-                    Client.ClientCallback.TellMessageToServerConsole(e.Data + "\n");
+                    if (Client.ExtraData.TryGetValue("ps_appendNewLine", out string val))
+                    {
+                        if (val == "true")
+                        {
+                            Client.ClientCallback.TellMessageToServerConsole(e.Data);
+                        }
+                        else
+                        {
+                            Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, $"Extra data for appendText is invalid. Value: {val}", "Server Host"));
+                        }
+                    }
+                    else
+                    {
+                        Client.ClientCallback.TellMessageToServerConsole(e.Data + "\n");
+                    }
                 }
             };
             p.Start();

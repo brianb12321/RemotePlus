@@ -123,10 +123,10 @@ namespace RemotePlusServer
                             t += $" {args[i]}";
                         }
                         Variables.Add(args[2], t);
-                        Remote.Client.ClientCallback.TellMessageToServerConsole($"Variable {args[2]} added.");
-                        Remote.Client.ClientCallback.TellMessageToServerConsole($"Saving variable file");
+                        Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, $"Variable {args[2]} added."));
+                        Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, $"Saving variable file"));
                         Variables.Save();
-                        Remote.Client.ClientCallback.TellMessageToServerConsole($"Variable file saved.");
+                        Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, $"Variable file saved."));
                         return (int)CommandStatus.Success;
                     }
                     else

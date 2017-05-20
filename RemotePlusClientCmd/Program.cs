@@ -32,18 +32,18 @@ namespace RemotePlusClientCmd
                 ro.Credentials = new UserCredentials(username, password);
                 Remote = channel.CreateChannel();
                 Remote.Register(ro);
+                Console.WriteLine("Enter a command to the server. Type {help} for a list of commands.");
                 while (true)
                 {
-                    Console.WriteLine("Enter a command to the server. Type {help} for a list of commands.");
                     Remote.RunServerCommand(Console.ReadLine());
                 }
             }
             catch (Exception ex)
             {
 #if DEBUG
-                Logger.AddOutput(new LogItem(OutputLevel.Exception, "Client error. " + ex.ToString(), "Client"));
+                Logger.AddOutput(new LogItem(OutputLevel.Error, "Client error. " + ex.ToString(), "Client") { Color = ConsoleColor.Red });
 #else
-                Logger.AddOutput(new LogItem(OutputLevel.Exception, "Client error. " + ex.Message, "Client"));
+                Logger.AddOutput(new LogItem(OutputLevel.Error, "Client error. " + ex.Message, "Client") { Color = ConsoleColor.Red });
 #endif
             }
         }
@@ -52,13 +52,15 @@ namespace RemotePlusClientCmd
     {
         public void Disconnect(string Reason)
         {
-            Program.Logger.AddOutput(new LogItem(OutputLevel.Error, "Server disconnected. " + Reason, "CLient"));
+            Program.channel.Close();
+            Program.Logger.AddOutput(new LogItem(OutputLevel.Error, "Server disconnected. " + Reason, "CLient") { Color = ConsoleColor.Red });
         }
 
         public ClientBuilder RegisterClient()
         {
             ClientBuilder cb = new ClientBuilder();
             cb.FriendlyName = "RemotePlus Client Command Line";
+            cb.ExtraData.Add("ps_appendNewLine", "true");
             return cb;
         }
 
@@ -74,26 +76,93 @@ namespace RemotePlusClientCmd
 
         public void TellMessage(string Message, OutputLevel o)
         {
-            Program.Logger.AddOutput(new LogItem(o, Message, "Server Host"));
+            LogItem li = new LogItem(o, Message, "Server Host");
+            if (o == OutputLevel.Warning)
+            {
+                li.Color = Program.Logger.ConsoleForegroundWarning;
+            }
+            else if (o == OutputLevel.Info)
+            {
+                li.Color = Program.Logger.ConsoleForegroundInfo;
+            }
+            else if (o == OutputLevel.Error)
+            {
+                li.Color = Program.Logger.ConsoleForegroundError;
+            }
+            Program.Logger.AddOutput(li);
         }
 
         public void TellMessage(UILogItem li)
         {
-            Program.Logger.AddOutput(new LogItem(li.Level, li.Message, li.From));
+            if (Program.Logger.OverrideLogItemObjectColorValue)
+            {
+                if (li.Level == OutputLevel.Warning)
+                {
+                    li.Color = Program.Logger.ConsoleForegroundWarning;
+                }
+                else if(li.Level == OutputLevel.Info)
+                {
+                    li.Color = Program.Logger.ConsoleForegroundInfo;
+                }
+                else if (li.Level == OutputLevel.Error)
+                {
+                    li.Color = Program.Logger.ConsoleForegroundError;
+                }
+            }
+            Program.Logger.AddOutput(new LogItem(li.Level, li.Message, li.From) { Color = li.Color });
         }
 
         public void TellMessage(UILogItem[] Logs)
         {
             foreach(UILogItem l in Logs)
             {
-                Program.Logger.AddOutput(new LogItem(l.Level, l.Message, l.From));
+                if (Program.Logger.OverrideLogItemObjectColorValue)
+                {
+                    if (l.Level == OutputLevel.Warning)
+                    {
+                        l.Color = Program.Logger.ConsoleForegroundWarning;
+                    }
+                    else if (l.Level == OutputLevel.Info)
+                    {
+                        l.Color = Program.Logger.ConsoleForegroundInfo;
+                    }
+                    else if (l.Level == OutputLevel.Error)
+                    {
+                        l.Color = Program.Logger.ConsoleForegroundError;
+                    }
+                }
+                Program.Logger.AddOutput(new LogItem(l.Level, l.Message, l.From) { Color = l.Color });
             }
         }
 
         public void TellMessageToServerConsole(UILogItem li)
         {
-            li.From = "Server Console";
-            Program.Logger.AddOutput(new LogItem(li.Level, li.Message, li.From));
+            string f = "";
+            if (string.IsNullOrEmpty(li.From))
+            {
+                f = "Server Console " + "Server Host";
+            }
+            else
+            {
+                f = "Server Console " + li.From;
+            }
+            li.From = f;
+            if (Program.Logger.OverrideLogItemObjectColorValue)
+            {
+                if (li.Level == OutputLevel.Warning)
+                {
+                    li.Color = Program.Logger.ConsoleForegroundWarning;
+                }
+                else if (li.Level == OutputLevel.Info)
+                {
+                    li.Color = Program.Logger.ConsoleForegroundInfo;
+                }
+                else if (li.Level == OutputLevel.Error)
+                {
+                    li.Color = Program.Logger.ConsoleForegroundError;
+                }
+            }
+            Program.Logger.AddOutput(new LogItem(li.Level, li.Message, li.From) { Color = li.Color });
         }
 
         public void TellMessageToServerConsole(string Message)

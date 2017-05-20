@@ -10,6 +10,7 @@ namespace RemotePlusLibrary
     {
         public string FriendlyName { get; internal set; }
         public IRemoteClient ClientCallback { get; internal set; }
+        public Dictionary<string, string> ExtraData { get; internal set; }
         internal Client()
         {
 
