@@ -88,14 +88,13 @@ namespace RemotePlusServer
         }
         [CommandHelp("Executes a loaded extension on the server.")]
         private static int ExCommand(string[] args)
-        {
-            
+        {           
             List<string> obj = new List<string>();
             for (int i = 2; i < args.Length; i++)
             {
                 obj.Add((string)args[i]);
             }
-            Remote.RunExtension((string)args[1], obj.ToArray());
+            Remote.RunExtension((string)args[1], new ExtensionExecutionContext(CallType.CommandLine), obj.ToArray());
             Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, "Extension executed.", "Server Host"));
             return (int)CommandStatus.Success;
         }

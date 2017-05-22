@@ -14,8 +14,10 @@ namespace RemotePlusClient
     public partial class AuthenticationDialog : Form
     {
         public UserCredentials UserInfo { get; private set; }
-        public AuthenticationDialog()
+        public string Reason { get; private set; }
+        public AuthenticationDialog(string reason)
         {
+            Reason = reason;
             InitializeComponent();
         }
 
@@ -30,6 +32,11 @@ namespace RemotePlusClient
         {
             DialogResult = DialogResult.Cancel;
             Close();
+        }
+
+        private void AuthenticationDialog_Load(object sender, EventArgs e)
+        {
+            richTextBox1.AppendText(Reason);
         }
     }
 }

@@ -2,6 +2,7 @@
 using System.ServiceModel;
 using System.Windows.Forms;
 using Logging;
+using System;
 
 namespace RemotePlusClient
 {
@@ -16,9 +17,9 @@ namespace RemotePlusClient
             MainF.Disconnect();
         }
 
-        public UserCredentials RequestAuthentication()
+        public UserCredentials RequestAuthentication(AuthenticationRequest Request)
         {
-            AuthenticationDialog ad = new AuthenticationDialog();
+            AuthenticationDialog ad = new AuthenticationDialog(Request.Reason);
             if(ad.ShowDialog() == DialogResult.OK)
             {
                 return ad.UserInfo;
@@ -49,7 +50,15 @@ namespace RemotePlusClient
 
         public void TellMessageToServerConsole(UILogItem li)
         {
-            MainF.ServerConsoleObj.Logger.AddOutput(li);
+            if (MainF.ServerConsoleObj == null)
+            {
+                li.From = "Server Console";
+                MainF.ConsoleObj.Logger.AddOutput(li);
+            }
+            else
+            {
+                MainF.ServerConsoleObj.Logger.AddOutput(li);
+            }
         }
 
         public ClientBuilder RegisterClient()
@@ -61,7 +70,19 @@ namespace RemotePlusClient
 
         public void TellMessageToServerConsole(string Message)
         {
-            MainF.ServerConsoleObj.AppendText(Message);
+            if (MainF.ServerConsoleObj == null)
+            {
+                MainF.ConsoleObj.AppendText(Message);
+            }
+            else
+            {
+                MainF.ServerConsoleObj.AppendText(Message);
+            }
+        }
+
+        public void UpdateClientExtension(string ExtensionName, object Data)
+        {
+            MainF.ClientExtensions[ExtensionName].Update(Data);
         }
     }
 }

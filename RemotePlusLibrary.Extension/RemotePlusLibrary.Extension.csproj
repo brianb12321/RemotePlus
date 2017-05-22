@@ -48,11 +48,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ClientExtensionDetails.cs" />
     <Compile Include="CommandSystem\CommandHelpAttribute.cs" />
     <Compile Include="CommandSystem\CommandStatus.cs" />
+    <Compile Include="CallType.cs" />
     <Compile Include="ExtensionDetails.cs" />
     <Compile Include="CommandSystem\HelpPageAttribute.cs" />
     <Compile Include="CommandSystem\HelpSourceType.cs" />
+    <Compile Include="ExtensionExecutionContext.cs" />
     <Compile Include="IClientExtension.cs" />
     <Compile Include="IClientLibraryStartup.cs" />
     <Compile Include="ILibraryStartup.cs" />

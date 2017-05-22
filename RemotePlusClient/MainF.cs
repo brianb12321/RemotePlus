@@ -19,7 +19,7 @@ namespace RemotePlusClient
     public partial class MainF : Form
     {
         public static ServerConsole ServerConsoleObj = null;
-        Dictionary<string, IClientExtension> f = null;
+        public static Dictionary<string, IClientExtension> ClientExtensions = null;
         public static IRemote Remote = null;
         public static ConsoleDialog ConsoleObj = null;
         string Address { get; set; }
@@ -57,6 +57,8 @@ namespace RemotePlusClient
             {
                 NetTcpBinding tcp = new NetTcpBinding();
                 tcp.OpenTimeout = new TimeSpan(4, 1, 0);
+                tcp.ReceiveTimeout = TimeSpan.MaxValue;
+                tcp.SendTimeout = TimeSpan.MaxValue;
                 tcp.HostNameComparisonMode = HostNameComparisonMode.StrongWildcard;
                 tcp.MaxBufferSize = 2147483647;
                 tcp.MaxReceivedMessageSize = 2147483647;
@@ -179,13 +181,13 @@ namespace RemotePlusClient
             ofd.Filter = "Extension type (*.dll)|*.dll";
             if (ofd.ShowDialog() == DialogResult.OK)
             {
-                f = ExtensionManager.Load(ofd.FileName);
+                ClientExtensions = ExtensionManager.Load(ofd.FileName);
                 Task.Factory.StartNew(() =>
                 {
-                    foreach (KeyValuePair<string, IClientExtension> f2 in f)
+                    foreach (KeyValuePair<string, IClientExtension> f2 in ClientExtensions)
                     {
                         f2.Value.Init();
-                        TreeNode tn = new TreeNode(f2.Value.FriendlyName);
+                        TreeNode tn = new TreeNode(f2.Value.Details.Name);
                         tn.Name = f2.Key;
                         this.Invoke(new MethodInvoker(() => treeView2.Nodes.Add(tn)));
                     }
@@ -205,7 +207,7 @@ namespace RemotePlusClient
             {
                 if(treeView2.SelectedNode != null)
                 {
-                    Form newForm = f[treeView2.SelectedNode.Name].ExtensionForm;
+                    Form newForm = ClientExtensions[treeView2.SelectedNode.Name].ExtensionForm;
                     AddTabToMainTabControl(newForm.Name, newForm);
                 }
                 else

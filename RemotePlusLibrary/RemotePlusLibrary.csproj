@@ -55,6 +55,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AuthenticationRequest.cs" />
     <Compile Include="Client.cs" />
     <Compile Include="ClientBuilder.cs" />
     <Compile Include="Converters\ServerSettingsTypeConverter.cs" />

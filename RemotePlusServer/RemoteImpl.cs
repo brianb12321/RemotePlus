@@ -21,7 +21,8 @@ namespace RemotePlusServer
 {
     [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Reentrant,
         IncludeExceptionDetailInFaults = true,
-        InstanceContextMode = InstanceContextMode.Single)]
+        InstanceContextMode = InstanceContextMode.Single,
+        MaxItemsInObjectGraph = int.MaxValue)]
     [GlobalException(typeof(GlobalErrorHandler))]
     public class RemoteImpl : IRemote
     {
@@ -117,7 +118,7 @@ namespace RemotePlusServer
             }
             else
             {
-                UserCredentials upp = Client.ClientCallback.RequestAuthentication();
+                UserCredentials upp = Client.ClientCallback.RequestAuthentication(new AuthenticationRequest() { Reason = "The server requires credentials to register."});
                 if (upp == null)
                 {
                     Client.ClientCallback.TellMessage("Can't you at least provide a username and password?", OutputLevel.Info);
@@ -271,11 +272,9 @@ namespace RemotePlusServer
             return LoggedInUser;
         }
 
-        public OperationStatus RunExtension(string ExtensionName, params object[] Args)
+        public OperationStatus RunExtension(string ExtensionName, ExtensionExecutionContext Context, params object[] Args)
         {
-            SelectedExtension = Extensions[ExtensionName];
-            OperationStatus s = SelectedExtension.Execute(Args);
-            s.Success = true;
+            OperationStatus s = Extensions[ExtensionName].Execute(Context, Args);
             return s;
         }
 

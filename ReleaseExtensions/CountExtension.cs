@@ -15,12 +15,19 @@ namespace ReleaseExtensions
         {
         }
 
-        public override OperationStatus Execute(params object[] arguments)
+        public override OperationStatus Execute(ExtensionExecutionContext Context, params object[] arguments)
         {
             OperationStatus s = new OperationStatus();
             for(int i = 0; i < 100; i++)
             {
-                ServerManager.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, i.ToString(), "CountEstension"));
+                if (Context.Mode == CallType.GUI)
+                {
+                    ServerManager.Remote.Client.ClientCallback.UpdateClientExtension(Context.ClientExtension.Name, i);
+                }
+                else
+                {
+                    ServerManager.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, i.ToString(), "CountEstension"));
+                }
             }
             return s;
         }

@@ -27,5 +27,10 @@ namespace RemotePlusClient
             Logger.OverrideLogItemObjectColorValue = true;
             Logger.AddOutput("Console opened.", OutputLevel.Info);
         }
+
+        internal void AppendText(string message)
+        {
+            richTextBox1.AppendText(message);
+        }
     }
 }

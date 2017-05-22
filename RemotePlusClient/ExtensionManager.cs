@@ -17,8 +17,8 @@ namespace RemotePlusClient
                 if(t.IsClass == true && (typeof(IClientExtension).IsAssignableFrom(t)))
                 {
                     var f = (IClientExtension)Activator.CreateInstance(t);
-                    MainF.ConsoleObj.Logger.AddOutput("Form load: " + f.FriendlyName, Logging.OutputLevel.Info);
-                    l.Add(f.FriendlyName, f);
+                    MainF.ConsoleObj.Logger.AddOutput("Form load: " + f.Details.Name, Logging.OutputLevel.Info);
+                    l.Add(f.Details.Name, f);
                 }
             }
             return l;

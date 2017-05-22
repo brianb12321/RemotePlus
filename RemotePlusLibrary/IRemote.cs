@@ -44,7 +44,7 @@ namespace RemotePlusLibrary
         [OperationContract]
         UserAccount GetLoggedInUser();
         [OperationContract]
-        OperationStatus RunExtension(string ExtensionName, params object[] Args);
+        OperationStatus RunExtension(string ExtensionName, ExtensionExecutionContext Context, params object[] Args);
         [OperationContract(IsOneWay = true)]
         void HaultExtension();
         [OperationContract(IsOneWay = true)]

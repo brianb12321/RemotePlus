@@ -64,9 +64,9 @@ namespace RemotePlusClientCmd
             return cb;
         }
 
-        public UserCredentials RequestAuthentication()
+        public UserCredentials RequestAuthentication(AuthenticationRequest Request)
         {
-            Console.WriteLine("The server requires authentication.");
+            Console.WriteLine($"The server requires authentication. Reason: {Request.Reason}");
             Console.Write("Enter Username: ");
             string username = Console.ReadLine();
             Console.Write("Enter Password: ");
@@ -168,6 +168,11 @@ namespace RemotePlusClientCmd
         public void TellMessageToServerConsole(string Message)
         {
             Console.WriteLine(Message);
+        }
+
+        public void UpdateClientExtension(string ExtensionName, object Data)
+        {
+            
         }
     }
 }

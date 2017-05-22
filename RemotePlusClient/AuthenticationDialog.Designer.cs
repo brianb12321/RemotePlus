@@ -36,6 +36,7 @@
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.btn_cancel = new System.Windows.Forms.Button();
             this.btn_login = new System.Windows.Forms.Button();
+            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.SuspendLayout();
             // 
             // label1
@@ -100,11 +101,21 @@
             this.btn_login.UseVisualStyleBackColor = true;
             this.btn_login.Click += new System.EventHandler(this.btn_login_Click);
             // 
+            // richTextBox1
+            // 
+            this.richTextBox1.Location = new System.Drawing.Point(12, 257);
+            this.richTextBox1.Name = "richTextBox1";
+            this.richTextBox1.ReadOnly = true;
+            this.richTextBox1.Size = new System.Drawing.Size(503, 123);
+            this.richTextBox1.TabIndex = 7;
+            this.richTextBox1.Text = "";
+            // 
             // AuthenticationDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(527, 248);
+            this.ClientSize = new System.Drawing.Size(527, 392);
+            this.Controls.Add(this.richTextBox1);
             this.Controls.Add(this.btn_login);
             this.Controls.Add(this.btn_cancel);
             this.Controls.Add(this.textBox2);
@@ -117,6 +128,7 @@
             this.Name = "AuthenticationDialog";
             this.ShowIcon = false;
             this.Text = "Please login to register";
+            this.Load += new System.EventHandler(this.AuthenticationDialog_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -131,5 +143,6 @@
         private System.Windows.Forms.TextBox textBox2;
         private System.Windows.Forms.Button btn_cancel;
         private System.Windows.Forms.Button btn_login;
+        private System.Windows.Forms.RichTextBox richTextBox1;
     }
 }

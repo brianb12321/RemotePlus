@@ -10,7 +10,8 @@ namespace RemotePlusLibrary.Extension
     public interface IClientExtension
     {
         Form ExtensionForm { get; }
-        string FriendlyName { get; }
+        ClientExtensionDetails Details { get; }
         void Init();
+        void Update(object Data);
     }
 }

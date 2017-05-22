@@ -138,16 +138,7 @@ namespace RemotePlusServer
         {
             string url = $"net.tcp://0.0.0.0:{DefaultSettings.PortNumber}/Remote";
             host = new ServiceHost(Remote);
-            NetTcpBinding tcp = new NetTcpBinding();
-            tcp.MaxReceivedMessageSize = 2147483647;
-            tcp.MaxBufferSize = 2147483647;
-            tcp.ReaderQuotas.MaxArrayLength = 2147483647;
-            tcp.ReaderQuotas.MaxDepth = 2147483647;
-            tcp.ReaderQuotas.MaxStringContentLength = 2147483647;
-            tcp.ReaderQuotas.MaxBytesPerRead = 2147483647;
-            tcp.ReaderQuotas.MaxNameTableCharCount = 2147483647;
-            
-            host.AddServiceEndpoint(typeof(IRemote), tcp, url);
+            host.Description.Endpoints[0].Address = new EndpointAddress(url);
             host.Open();
             Logger.AddOutput($"Host ready. Server is listening on port {DefaultSettings.PortNumber}. Connect to configure server.", Logging.OutputLevel.Info);
             Console.ReadLine();

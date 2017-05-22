@@ -37,7 +37,9 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -47,11 +49,22 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CountExtension.cs" />
+    <Compile Include="CountForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CountForm.Designer.cs">
+      <DependentUpon>CountForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="HddWatcher.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\RemotePlusClient\RemotePlusClient.csproj">
+      <Project>{d6122622-7067-4fba-a617-365fa3fcf809}</Project>
+      <Name>RemotePlusClient</Name>
+      <Private>False</Private>
+    </ProjectReference>
     <ProjectReference Include="..\RemotePlusLibrary.Core\RemotePlusLibrary.Core.csproj">
       <Project>{0334629b-6302-42a8-b159-f8646b4d8650}</Project>
       <Name>RemotePlusLibrary.Core</Name>
@@ -72,6 +85,11 @@
       <Name>RemotePlusServer</Name>
       <Private>False</Private>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="CountForm.resx">
+      <DependentUpon>CountForm.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -10,21 +10,23 @@ namespace RemotePlusLibrary
 {
     public interface IRemoteClient
     {
-        [OperationContract]
+        [OperationContract(IsOneWay = true)]
         void TellMessage(string Message, Logging.OutputLevel o);
-        [OperationContract(Name = "TellMessageToServerConsole")]
+        [OperationContract(Name = "TellMessageToServerConsole", IsOneWay = true)]
         void TellMessageToServerConsole(UILogItem li);
-        [OperationContract(Name = "TellMessageToServerConsoleUsingString")]
+        [OperationContract(Name = "TellMessageToServerConsoleUsingString", IsOneWay = true)]
         void TellMessageToServerConsole(string Message);
         [OperationContract]
         ClientBuilder RegisterClient();
-        [OperationContract(Name = "TellMessageWithLogItem")]
+        [OperationContract(Name = "TellMessageWithLogItem", IsOneWay = true)]
         void TellMessage(UILogItem li);
-        [OperationContract(Name = "TellMessageWithLogs")]
+        [OperationContract(Name = "TellMessageWithLogs", IsOneWay = true)]
         void TellMessage(UILogItem[] Logs);
-        [OperationContract]
+        [OperationContract(IsOneWay = true)]
         void Disconnect(string Reason);
         [OperationContract]
-        UserCredentials RequestAuthentication();
+        UserCredentials RequestAuthentication(AuthenticationRequest Request);
+        [OperationContract(IsOneWay = true)]
+        void UpdateClientExtension(string ExtensionName, object Data);
     }
 }
