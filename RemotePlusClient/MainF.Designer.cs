@@ -54,6 +54,8 @@
             this.menuItem7 = new System.Windows.Forms.MenuItem();
             this.menuItem8 = new System.Windows.Forms.MenuItem();
             this.menuItem9 = new System.Windows.Forms.MenuItem();
+            this.menuItem2 = new System.Windows.Forms.MenuItem();
+            this.menuItem3 = new System.Windows.Forms.MenuItem();
             this.contextMenuStrip1.SuspendLayout();
             this.contextMenuStrip2.SuspendLayout();
             this.tcRight.SuspendLayout();
@@ -187,7 +189,8 @@
             this.mainMenu1.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
             this.menuItem1,
             this.menuItem5,
-            this.menuItem8});
+            this.menuItem8,
+            this.menuItem2});
             // 
             // menuItem1
             // 
@@ -251,6 +254,19 @@
             this.menuItem9.Text = "Close Top";
             this.menuItem9.Click += new System.EventHandler(this.closeToolStripMenuItem_Click);
             // 
+            // menuItem2
+            // 
+            this.menuItem2.Index = 3;
+            this.menuItem2.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+            this.menuItem3});
+            this.menuItem2.Text = "Scripts";
+            // 
+            // menuItem3
+            // 
+            this.menuItem3.Index = 0;
+            this.menuItem3.Text = "Load using console";
+            this.menuItem3.Click += new System.EventHandler(this.menuItem3_Click);
+            // 
             // MainF
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -299,5 +315,7 @@
         private System.Windows.Forms.MenuItem menuItem7;
         private System.Windows.Forms.MenuItem menuItem8;
         private System.Windows.Forms.MenuItem menuItem9;
+        private System.Windows.Forms.MenuItem menuItem2;
+        private System.Windows.Forms.MenuItem menuItem3;
     }
 }

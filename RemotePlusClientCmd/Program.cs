@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using RemotePlusLibrary;
 using Logging;
 using System.ServiceModel;
+using RemotePlusLibrary.Core;
 
 namespace RemotePlusClientCmd
 {
@@ -19,7 +20,9 @@ namespace RemotePlusClientCmd
             try
             {
                 Logger = new CMDLogging();
+                Logger.DefaultFrom = "CLient CMD";
                 Logger.OverrideLogItemObjectColorValue = true;
+                InitializeDefaultKnownTypes();
                 Console.Write("Enter url: ");
                 string url = Console.ReadLine();
                 channel = new DuplexChannelFactory<IRemote>(new ClientCallback(), new NetTcpBinding(), url);
@@ -37,6 +40,9 @@ namespace RemotePlusClientCmd
                 {
                     Remote.RunServerCommand(Console.ReadLine());
                 }
+#pragma warning disable CS0162 // Unreachable code detected
+                channel.Close();
+#pragma warning restore CS0162 // Unreachable code detected
             }
             catch (Exception ex)
             {
@@ -46,6 +52,12 @@ namespace RemotePlusClientCmd
                 Logger.AddOutput(new LogItem(OutputLevel.Error, "Client error. " + ex.Message, "Client") { Color = ConsoleColor.Red });
 #endif
             }
+        }
+        static void InitializeDefaultKnownTypes()
+        {
+            Logger.AddOutput("Initializing default known types.", OutputLevel.Info);
+            DefaultKnownTypeManager.LoadDefaultTypes();
+            DefaultKnownTypeManager.AddType(typeof(UserAccount));
         }
     }
     class ClientCallback : IRemoteClient
@@ -168,11 +180,6 @@ namespace RemotePlusClientCmd
         public void TellMessageToServerConsole(string Message)
         {
             Console.WriteLine(Message);
-        }
-
-        public void UpdateClientExtension(string ExtensionName, object Data)
-        {
-            
         }
     }
 }

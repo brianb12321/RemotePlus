@@ -12,6 +12,5 @@ namespace RemotePlusLibrary.Extension
         Form ExtensionForm { get; }
         ClientExtensionDetails Details { get; }
         void Init();
-        void Update(object Data);
     }
 }

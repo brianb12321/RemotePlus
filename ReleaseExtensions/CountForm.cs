@@ -7,6 +7,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -38,16 +39,16 @@ namespace ReleaseExtensions
             
         }
 
-        public void Update(object Data)
-        {
-            label1.Text = (string)Data;
-        }
-
         private void button1_Click(object sender, EventArgs e)
         {
             var context = new ExtensionExecutionContext(CallType.GUI);
             context.ClientExtension = Details;
-            MainF.Remote.RunExtension("CountExtension", context, "");
+            var s = MainF.Remote.RunExtension("CountExtension", context, "");
+            foreach(int n in (List<int>)s.Data)
+            {
+                int z = n * 2;
+                label1.Text = n.ToString();
+            }
         }
     }
 }

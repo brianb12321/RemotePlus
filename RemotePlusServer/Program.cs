@@ -16,6 +16,7 @@ using System.Management;
 using System.Net.NetworkInformation;
 using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusLibrary.Extension.WatcherSystem;
+using RemotePlusLibrary.Core;
 
 namespace RemotePlusServer
 {
@@ -35,6 +36,7 @@ namespace RemotePlusServer
             try
             {                
                 Logger.DefaultFrom = "Server Host";
+                InitalizeKnownTypes();
                 InitializeCommands();
                 ScanForServerSettingsFile();
                 InitializeVariables();
@@ -51,6 +53,13 @@ namespace RemotePlusServer
                 Console.Write("Press any key to exit.");
                 Console.ReadKey();
             }
+        }
+
+        private static void InitalizeKnownTypes()
+        {
+            Logger.AddOutput("Adding default known types.", OutputLevel.Info);
+            DefaultKnownTypeManager.LoadDefaultTypes();
+            DefaultKnownTypeManager.AddType(typeof(UserAccount));
         }
 
         private static void InitializeVariables()

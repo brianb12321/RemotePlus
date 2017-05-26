@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ReleaseExtensions
@@ -18,17 +19,19 @@ namespace ReleaseExtensions
         public override OperationStatus Execute(ExtensionExecutionContext Context, params object[] arguments)
         {
             OperationStatus s = new OperationStatus();
-            for(int i = 0; i < 100; i++)
+            List<int> il = new List<int>();
+            for (int i = 0; i < 100; i++)
             {
                 if (Context.Mode == CallType.GUI)
                 {
-                    ServerManager.Remote.Client.ClientCallback.UpdateClientExtension(Context.ClientExtension.Name, i);
+                    il.Add(i);
                 }
                 else
                 {
                     ServerManager.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, i.ToString(), "CountEstension"));
                 }
             }
+            s.Data = il;
             return s;
         }
 

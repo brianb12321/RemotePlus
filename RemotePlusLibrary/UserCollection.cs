@@ -12,7 +12,6 @@ namespace RemotePlusLibrary
 {
     [Serializable]
     [CollectionDataContract]
-    [KnownType(typeof(UserAccount))]
     public class UserCollection : CollectionBase, ICustomTypeDescriptor
     {
         public UserAccount this[int index]

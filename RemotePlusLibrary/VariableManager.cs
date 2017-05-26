@@ -43,7 +43,7 @@ namespace RemotePlusLibrary
 
         public static VariableManager Load()
         {
-            DataContractSerializer ser = new DataContractSerializer(typeof(VariableManager));
+            DataContractSerializer ser = new DataContractSerializer(typeof(VariableManager), Core.DefaultKnownTypeManager.GetKnownTypes(null));
             XmlReader reader = XmlReader.Create("Variables.xml");
             var ss = (VariableManager)ser.ReadObject(reader);
             reader.Close();
@@ -111,7 +111,7 @@ namespace RemotePlusLibrary
         }
         public void Save()
         {
-            DataContractSerializer xsSubmit = new DataContractSerializer(typeof(VariableManager));
+            DataContractSerializer xsSubmit = new DataContractSerializer(typeof(VariableManager), Core.DefaultKnownTypeManager.GetKnownTypes(null));
             var subReq = this;
             XmlWriterSettings settings = new XmlWriterSettings();
             settings.Indent = true;

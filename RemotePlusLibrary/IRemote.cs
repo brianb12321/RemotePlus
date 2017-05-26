@@ -10,11 +10,13 @@ using Logging;
 using RemotePlusLibrary.Extension;
 using RemotePlusLibrary.FileTransfer;
 using RemotePlusLibrary.Extension.WatcherSystem;
+using RemotePlusLibrary.Core;
 
 namespace RemotePlusLibrary
 {
     // NOTE: You can use the "Rename" command on the "Refactor" menu to change the interface name "IService1" in both code and config file together.
     [ServiceContract(CallbackContract = typeof(IRemoteClient))]
+    [ServiceKnownType("GetKnownTypes", typeof(DefaultKnownTypeManager))]
     public interface IRemote
     {
         [OperationContract]

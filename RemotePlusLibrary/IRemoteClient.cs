@@ -26,7 +26,5 @@ namespace RemotePlusLibrary
         void Disconnect(string Reason);
         [OperationContract]
         UserCredentials RequestAuthentication(AuthenticationRequest Request);
-        [OperationContract(IsOneWay = true)]
-        void UpdateClientExtension(string ExtensionName, object Data);
     }
 }

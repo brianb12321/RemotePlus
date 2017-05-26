@@ -79,10 +79,5 @@ namespace RemotePlusClient
                 MainF.ServerConsoleObj.AppendText(Message);
             }
         }
-
-        public void UpdateClientExtension(string ExtensionName, object Data)
-        {
-            MainF.ClientExtensions[ExtensionName].Update(Data);
-        }
     }
 }

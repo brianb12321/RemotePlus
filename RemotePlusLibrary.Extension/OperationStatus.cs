@@ -10,10 +10,10 @@ namespace RemotePlusLibrary.Extension
         [DataMember]
         public bool Success { get; set; }
         [DataMember]
-        public List<LogItem> Log { get; set; }
+        public object Data { get; set; }
         public OperationStatus()
         {
-            Log = new List<LogItem>();
+
         }
     }
 }

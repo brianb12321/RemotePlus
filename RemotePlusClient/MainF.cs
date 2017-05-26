@@ -67,6 +67,7 @@ namespace RemotePlusClient
                 tcp.ReaderQuotas.MaxStringContentLength = 2147483647;
                 tcp.ReaderQuotas.MaxBytesPerRead = 2147483647;
                 tcp.ReaderQuotas.MaxNameTableCharCount = 2147483647;
+                tcp.Security.Mode = SecurityMode.None;
                 channel = new DuplexChannelFactory<IRemote>(new ClientCallback(), tcp, Address);
                 Remote = channel.CreateChannel();
                 ConsoleObj.Logger.AddOutput("Registering...", Logging.OutputLevel.Info);
@@ -84,13 +85,14 @@ namespace RemotePlusClient
         void AddTabToConsoleTabControl(string Name, Form c)
         {
             Random r = new Random();
-            string Id = r.Next(1, 9999).ToString();
+            string Id = $"{c.Name} {r.Next(1, 9999).ToString()}";
             c.Name = Id;
             c.WindowState = FormWindowState.Maximized;
             c.FormBorderStyle = FormBorderStyle.None;
             c.TopLevel = false;
             c.Dock = DockStyle.Fill;
             TabPage t = new TabPage(Name);
+            t.Name = Id;
             t.Controls.Add(c);
             tabControl1.TabPages.Add(t);
             c.Show();
@@ -98,13 +100,14 @@ namespace RemotePlusClient
         void AddTabToMainTabControl(string Name, Form c)
         {
             Random r = new Random();
-            string Id = r.Next(1, 9999).ToString();
+            string Id = $"{c.Name} {r.Next(1, 9999).ToString()}";
             c.Name = Id;
             c.WindowState = FormWindowState.Maximized;
             c.FormBorderStyle = FormBorderStyle.None;
             c.TopLevel = false;
             c.Dock = DockStyle.Fill;
             TabPage t = new TabPage(Name);
+            t.Name = Id;
             t.Controls.Add(c);
             tabControl2.TabPages.Add(t);
             c.Show();
@@ -118,8 +121,15 @@ namespace RemotePlusClient
         {
             if (channel.State == CommunicationState.Opened)
             {
-                ServerConsoleObj = new ServerConsole();
-                AddTabToMainTabControl("Server Console", ServerConsoleObj);
+                if (ServerConsoleObj == null)
+                {
+                    ServerConsoleObj = new ServerConsole();
+                    AddTabToMainTabControl("Server Console", ServerConsoleObj);
+                }
+                else
+                {
+                    MessageBox.Show("You can't have another console seassion.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
             else
             {
@@ -221,7 +231,15 @@ namespace RemotePlusClient
         {
             if (tabControl2.TabPages.Count > 0)
             {
-                tabControl2.TabPages.Remove(tabControl2.SelectedTab);
+                if(tabControl2.SelectedTab.Name.Contains("ServerConsole"))
+                {
+                    tabControl2.TabPages.Remove(tabControl2.SelectedTab);
+                    ServerConsoleObj = null;
+                }
+                else
+                {
+                    tabControl2.TabPages.Remove(tabControl2.SelectedTab);
+                }
             }
             else
             {
@@ -241,6 +259,31 @@ namespace RemotePlusClient
         {
             ExtensionDetailsDialog edd = new ExtensionDetailsDialog();
             edd.ShowDialog();
+        }
+
+        private void menuItem3_Click(object sender, EventArgs e)
+        {
+            if (channel.State == CommunicationState.Opened)
+            {
+                OpenFileDialog ofd = new OpenFileDialog();
+                ofd.Title = "Pick a script file to run.";
+                if (ofd.ShowDialog() == DialogResult.OK)
+                {
+                    if (ServerConsoleObj == null)
+                    {
+                        ServerConsoleObj = new ServerConsole(ofd.FileName);
+                        AddTabToMainTabControl("Server Console", ServerConsoleObj);
+                    }
+                    else
+                    {
+                        ServerConsoleObj.RunScriptFile(ofd.FileName);
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("Please connect to a server to open console.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
     }
 }

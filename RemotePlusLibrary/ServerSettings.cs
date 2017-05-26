@@ -1,4 +1,5 @@
-﻿using RemotePlusLibrary.Converters;
+﻿using RemotePlusLibrary.Configuration;
+using RemotePlusLibrary.Converters;
 using RemotePlusLibrary.Editors;
 using System;
 using System.Collections.Generic;
@@ -18,16 +19,14 @@ namespace RemotePlusLibrary
 {
     [Serializable]
     [DataContract]
-    public class ServerSettings
+    public class ServerSettings : IFileConfig
     {
         #region Connection
         [DataMember]
         public int PortNumber { get; set; }
         #endregion
         #region Extension
-        [DataMember]
-        [Category("Extension")]
-        public bool DisabelExtensions { get; set; }
+
         #endregion
         #region Security
         [DataMember]
@@ -73,7 +72,7 @@ namespace RemotePlusLibrary
         #region Methods
         public void Save()
         {
-            DataContractSerializer xsSubmit = new DataContractSerializer(typeof(ServerSettings));
+            DataContractSerializer xsSubmit = new DataContractSerializer(typeof(ServerSettings), Core.DefaultKnownTypeManager.GetKnownTypes(null));
             var subReq = this;
             XmlWriterSettings settings = new XmlWriterSettings();
             settings.Indent = true;
@@ -85,12 +84,11 @@ namespace RemotePlusLibrary
         }
         public void Load()
         {
-            DataContractSerializer ser = new DataContractSerializer(typeof(ServerSettings));
+            DataContractSerializer ser = new DataContractSerializer(typeof(ServerSettings), Core.DefaultKnownTypeManager.GetKnownTypes(null));
             XmlReader reader = XmlReader.Create("GlobalServerSettings.config");
             var ss = (ServerSettings)ser.ReadObject(reader);
             this.Accounts = ss.Accounts;
             this.BannedIPs = ss.BannedIPs;
-            this.DisabelExtensions = ss.DisabelExtensions;
             this.PortNumber = ss.PortNumber;
             reader.Close();
         }
