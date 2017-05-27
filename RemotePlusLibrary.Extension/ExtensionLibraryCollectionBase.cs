@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace RemotePlusLibrary.Extension
 {
-    public abstract class ExtensionLibraryCollectionBase<T, Ed>
+    public abstract class ExtensionLibraryCollectionBase<T, E> where T : ExtensionLibraryBase<E>
     {
         public Dictionary<string, T> Libraries { get; private set; }
         public ExtensionLibraryCollectionBase()
         {
             Libraries = new Dictionary<string, T>();
         }
-        public abstract Dictionary<string, Ed> GetAllExtensions();
+        public abstract Dictionary<string, E> GetAllExtensions();
     }
 }

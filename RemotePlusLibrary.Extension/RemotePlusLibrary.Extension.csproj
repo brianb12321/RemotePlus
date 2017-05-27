@@ -62,7 +62,7 @@
     <Compile Include="ExtensionLibraryCollectionBase.cs" />
     <Compile Include="ServerExtensionLibrary.cs" />
     <Compile Include="ExtensionLibraryAttribute.cs" />
-    <Compile Include="ExtensionLibraryCollection.cs" />
+    <Compile Include="ServerExtensionLibraryCollection.cs" />
     <Compile Include="ExtensionLibraryType.cs" />
     <Compile Include="IClientExtension.cs" />
     <Compile Include="IClientLibraryStartup.cs" />
