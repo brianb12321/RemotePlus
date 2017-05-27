@@ -48,5 +48,13 @@ namespace RemotePlusServer
                 }
             }
         }
+
+        internal static void CheckSettings()
+        {
+            if(ServerManager.DefaultSettings.LogOnShutdown)
+            {
+                ServerManager.Logger.AddOutput(new LogItem(OutputLevel.Info, "NOTE: Logging is enabled for this application.", ServerManager.Logger.DefaultFrom) { Color = ConsoleColor.Cyan });
+            }
+        }
     }
 }

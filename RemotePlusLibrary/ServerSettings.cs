@@ -69,6 +69,10 @@ namespace RemotePlusLibrary
         }
 
         #endregion
+        #region Logging Settings
+        [DataMember]
+        public bool LogOnShutdown { get; set; }
+        #endregion Logging Settings
         #region Methods
         public void Save()
         {
@@ -77,7 +81,7 @@ namespace RemotePlusLibrary
             XmlWriterSettings settings = new XmlWriterSettings();
             settings.Indent = true;
             using (var sww = new StringWriter())
-            using(XmlWriter writer = XmlWriter.Create("GlobalServerSettings.config", settings))
+            using(XmlWriter writer = XmlWriter.Create("Configurations\\Server\\GlobalServerSettings.config", settings))
             {
                 xsSubmit.WriteObject(writer, subReq);
             }
@@ -85,11 +89,12 @@ namespace RemotePlusLibrary
         public void Load()
         {
             DataContractSerializer ser = new DataContractSerializer(typeof(ServerSettings), Core.DefaultKnownTypeManager.GetKnownTypes(null));
-            XmlReader reader = XmlReader.Create("GlobalServerSettings.config");
+            XmlReader reader = XmlReader.Create("Configurations\\Server\\GlobalServerSettings.config");
             var ss = (ServerSettings)ser.ReadObject(reader);
             this.Accounts = ss.Accounts;
             this.BannedIPs = ss.BannedIPs;
             this.PortNumber = ss.PortNumber;
+            this.LogOnShutdown = ss.LogOnShutdown;
             reader.Close();
         }
         #endregion

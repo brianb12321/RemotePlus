@@ -26,14 +26,17 @@ namespace RemotePlusServer
     {
         public RemoteImpl()
         {
-            Extensions = new Dictionary<string, ServerExtension>();
+
+        }
+        internal void Setup()
+        {
+            _allExtensions = ServerManager.DefaultCollection.GetAllExtensions();
         }
         public RegistirationObject Settings { get; private set; }
         public Client Client { get; set; }
         public bool Registered { get; private set; }
         public UserAccount LoggedInUser { get; private set; }
-        public Dictionary<string, ServerExtension> Extensions { get; private set; }
-        public ServerExtension SelectedExtension { get; private set; }
+        private Dictionary<string, ServerExtension> _allExtensions;
         void CheckRegisteration()
         {
             if (!Registered)
@@ -261,10 +264,6 @@ namespace RemotePlusServer
         {
             Application.Restart();
         }
-        public void AddExtension(ServerExtension ext)
-        {
-            Extensions.Add(ext.GeneralDetails.Name, ext);
-        }
         public UserAccount GetLoggedInUser()
         {
             return LoggedInUser;
@@ -272,28 +271,18 @@ namespace RemotePlusServer
 
         public OperationStatus RunExtension(string ExtensionName, ExtensionExecutionContext Context, params object[] Args)
         {
-            OperationStatus s = Extensions[ExtensionName].Execute(Context, Args);
+            OperationStatus s = _allExtensions[ExtensionName].Execute(Context, Args);
             return s;
         }
 
         public List<ExtensionDetails> GetExtensionNames()
         {
             List<ExtensionDetails> l = new List<ExtensionDetails>();
-            foreach (KeyValuePair<string, ServerExtension> s in Extensions)
+            foreach (KeyValuePair<string, ServerExtension> s in _allExtensions)
             {
                 l.Add(s.Value.GeneralDetails);
             }
             return l;
-        }
-
-        public void HaultExtension()
-        {
-            SelectedExtension.HaultExtension();
-        }
-
-        public void ResumeExtension()
-        {
-            SelectedExtension.ResumeExtension();
         }
         public List<string> GetCommands()
         {

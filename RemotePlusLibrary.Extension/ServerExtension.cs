@@ -8,13 +8,15 @@ using System.Threading.Tasks;
 
 namespace RemotePlusLibrary.Extension
 {
-    public abstract class ServerExtension
+    public abstract class ServerExtension : IExtension<ExtensionDetails>
     {
-        public ExtensionDetails GeneralDetails { get; set; }
         protected ServerExtension(ExtensionDetails d)
         {
             GeneralDetails = d;
         }
+
+        public ExtensionDetails GeneralDetails { get; private set; }
+
         public abstract OperationStatus Execute(ExtensionExecutionContext Context, params object[] arguments);
         public abstract void HaultExtension();
         public abstract void ResumeExtension();

@@ -7,10 +7,8 @@ using System.Windows.Forms;
 
 namespace RemotePlusLibrary.Extension
 {
-    public interface IClientExtension
+    public interface IClientExtension : IExtension<ClientExtensionDetails>
     {
         Form ExtensionForm { get; }
-        ClientExtensionDetails Details { get; }
-        void Init();
     }
 }

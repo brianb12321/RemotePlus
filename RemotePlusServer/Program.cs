@@ -17,6 +17,7 @@ using System.Net.NetworkInformation;
 using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusLibrary.Extension.WatcherSystem;
 using RemotePlusLibrary.Core;
+using System.Diagnostics;
 
 namespace RemotePlusServer
 {
@@ -30,11 +31,15 @@ namespace RemotePlusServer
         public static Dictionary<string, CommandDelgate> Commands { get; } = new Dictionary<string, CommandDelgate>();
         public static VariableManager Variables { get; private set; }
         public static ServerSettings DefaultSettings { get; set; } = new ServerSettings();
+        public static ServerExtensionLibraryCollection DefaultCollection { get; } = new ServerExtensionLibraryCollection();
+        private static Stopwatch sw;
         [STAThread]
         static void Main(string[] args)
         {
             try
-            {                
+            {
+                sw = new Stopwatch();
+                sw.Start();
                 Logger.DefaultFrom = "Server Host";
                 InitalizeKnownTypes();
                 InitializeCommands();
@@ -46,12 +51,30 @@ namespace RemotePlusServer
                 {
                     RunInServerMode();
                 }
+                SaveLog();
             }
             catch(Exception ex)
             {
                 Logger.AddOutput("Internal server error: " + ex.Message, OutputLevel.Error);
                 Console.Write("Press any key to exit.");
                 Console.ReadKey();
+                SaveLog();
+            }
+        }
+
+        private static void SaveLog()
+        {
+            try
+            {
+                if (DefaultSettings.LogOnShutdown)
+                {
+                    Logger.AddOutput("Saving log and closing.", OutputLevel.Info);
+                    Logger.SaveLog($"ServerLogs\\{DateTime.Now.ToShortDateString().Replace('/', '-')} {DateTime.Now.ToShortTimeString().Replace(':', '-')}.txt");
+                }
+            }
+            catch
+            {
+
             }
         }
 
@@ -97,26 +120,28 @@ namespace RemotePlusServer
             Logger.AddOutput("Checking prerequisites.", OutputLevel.Info);
             //Check for prerequisites
             ServerPrerequisites.CheckPrivilleges();
-            ServerPrerequisites.CheckNetworkInterfaces();            
+            ServerPrerequisites.CheckNetworkInterfaces();
+            ServerPrerequisites.CheckSettings();
+            sw.Stop();
             // Check results
             if(Logger.errorcount >= 1 && Logger.warningcount == 0)
             {
-                Logger.AddOutput($"Unable to start server. ({Logger.errorcount} errors", OutputLevel.Error);
+                Logger.AddOutput($"Unable to start server. ({Logger.errorcount} errors) Elapsed time: {sw.Elapsed.ToString()}", OutputLevel.Error);
                 return false;
             }
             else if(Logger.errorcount >= 1 && Logger.warningcount >= 1)
             {
-                Logger.AddOutput($"Unable to start server. ({Logger.errorcount} errors, {Logger.warningcount} warnings)", OutputLevel.Error);
+                Logger.AddOutput($"Unable to start server. ({Logger.errorcount} errors, {Logger.warningcount} warnings) Elapsed time: {sw.Elapsed.ToString()}", OutputLevel.Error);
                 return false;
             }
             else if(Logger.errorcount == 0 && Logger.warningcount >= 1)
             {
-                Logger.AddOutput($"The server can start, but with warnings. ({Logger.warningcount} warnings)", OutputLevel.Warning);
+                Logger.AddOutput($"The server can start, but with warnings. ({Logger.warningcount} warnings) Elapsed time: {sw.Elapsed.ToString()}", OutputLevel.Warning);
                 return true;
             }
             else
             {
-                Logger.AddOutput(new LogItem(OutputLevel.Info, "Validation passed.", "Server Host") { Color = ConsoleColor.Green });
+                Logger.AddOutput(new LogItem(OutputLevel.Info, $"Validation passed. Elapsed time: {sw.Elapsed.ToString()}", "Server Host") { Color = ConsoleColor.Green });
                 return true;
             }
         }
@@ -130,11 +155,8 @@ namespace RemotePlusServer
                     if (Path.GetExtension(files) == ".dll")
                     {
                         Logger.AddOutput($"Found extension file ({Path.GetFileName(files)})", Logging.OutputLevel.Info);
-                        foreach (ServerExtension ext in ExtensionLoader.Load(files))
-                        {
-                            Remote.AddExtension(ext);
-                            Logger.AddOutput($"Extension {ext.GeneralDetails.Name} loaded.", Logging.OutputLevel.Info);
-                        }
+                        var lib = ServerExtensionLibrary.LoadServerLibrary(files);
+                        DefaultCollection.Libraries.Add(lib.Name, lib);
                     }
                 }
             }
@@ -146,6 +168,7 @@ namespace RemotePlusServer
         static void RunInServerMode()
         {
             string url = $"net.tcp://0.0.0.0:{DefaultSettings.PortNumber}/Remote";
+            Remote.Setup();
             host = new ServiceHost(Remote);
             host.Description.Endpoints[0].Address = new EndpointAddress(url);
             host.Open();
@@ -155,7 +178,7 @@ namespace RemotePlusServer
         }
         static void ScanForServerSettingsFile()
         {
-            if (!File.Exists("GlobalServerSettings.config"))
+            if (!File.Exists("Configurations\\Server\\GlobalServerSettings.config"))
             {
                 Logger.AddOutput("The server settings file does not exist. Creating server settings file.", OutputLevel.Warning);
                 DefaultSettings.Save();

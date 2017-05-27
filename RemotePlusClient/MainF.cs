@@ -19,13 +19,14 @@ namespace RemotePlusClient
     public partial class MainF : Form
     {
         public static ServerConsole ServerConsoleObj = null;
-        public static Dictionary<string, IClientExtension> ClientExtensions = null;
         public static IRemote Remote = null;
         public static ConsoleDialog ConsoleObj = null;
+        public static ClientLibraryCollection DefaultCollection { get; private set; }
         string Address { get; set; }
         static DuplexChannelFactory<IRemote> channel = null;
         public MainF()
         {
+            DefaultCollection = new ClientLibraryCollection();
             InitializeComponent();
         }
         public static void Disconnect()
@@ -179,13 +180,13 @@ namespace RemotePlusClient
             ofd.Filter = "Extension type (*.dll)|*.dll";
             if (ofd.ShowDialog() == DialogResult.OK)
             {
-                ClientExtensions = ExtensionManager.Load(ofd.FileName);
+                var lib = ClientExtensionLibrary.LoadClientLibrary(ofd.FileName, (f) => MainF.ConsoleObj.Logger.AddOutput($"Form load: {f.GeneralDetails.Name}", OutputLevel.Info));
+                DefaultCollection.Libraries.Add(lib.Name, lib);
                 Task.Factory.StartNew(() =>
                 {
-                    foreach (KeyValuePair<string, IClientExtension> f2 in ClientExtensions)
+                    foreach (KeyValuePair<string, IClientExtension> f2 in DefaultCollection.GetAllExtensions())
                     {
-                        f2.Value.Init();
-                        TreeNode tn = new TreeNode(f2.Value.Details.Name);
+                        TreeNode tn = new TreeNode(f2.Value.GeneralDetails.Name);
                         tn.Name = f2.Key;
                         this.Invoke(new MethodInvoker(() => treeView2.Nodes.Add(tn)));
                     }
@@ -205,7 +206,7 @@ namespace RemotePlusClient
             {
                 if(treeView2.SelectedNode != null)
                 {
-                    Form newForm = ClientExtensions[treeView2.SelectedNode.Name].ExtensionForm;
+                    Form newForm = DefaultCollection.GetAllExtensions()[treeView2.SelectedNode.Name].ExtensionForm;
                     AddTabToMainTabControl(newForm.Name, newForm);
                 }
                 else

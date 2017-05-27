@@ -97,7 +97,6 @@
     <Compile Include="ExtensionDetailsDialog.Designer.cs">
       <DependentUpon>ExtensionDetailsDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="ExtensionManager.cs" />
     <Compile Include="MainF.cs">
       <SubType>Form</SubType>
     </Compile>

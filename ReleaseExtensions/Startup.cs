@@ -6,16 +6,23 @@ using System.Threading.Tasks;
 using RemotePlusLibrary.Extension;
 using RemotePlusServer;
 using RemotePlusLibrary.Extension.CommandSystem;
+using System.IO;
+using System.Reflection;
 
 namespace ReleaseExtensions
 {
     public class Startup : ILibraryStartup
     {
+        void ILibraryStartup.ClientInit()
+        {
+            
+        }
+
         void ILibraryStartup.Init()
         {
-            ServerManager.Logger.AddOutput("Welcome to \"ReleaseExtension.\" This library contains some useful tools that demonstrates the powers of \"RemotePlus\"", Logging.OutputLevel.Info);
+            ServerManager.Logger.AddOutput(new Logging.LogItem(Logging.OutputLevel.Info, "Welcome to \"ReleaseExtension.\" This library contains some useful tools that demonstrates the powers of \"RemotePlus\"", "ReleaseExtensions") { Color = Console.ForegroundColor});
             ServerManager.Commands.Add("releaseExtensionAbout", releaseExtensionAbout);
-            ServerManager.Logger.AddOutput("Adding watchers.", Logging.OutputLevel.Info);
+            ServerManager.Logger.AddOutput(new Logging.LogItem(Logging.OutputLevel.Info, "Adding watchers.", "ReleaseExtensions") { Color = Console.ForegroundColor });
             ServerManager.Watchers.Add("HddWatcher", new HddWatcher());
         }
         [CommandHelp("Describes about the ReleaseExtensionsLibrary.")]

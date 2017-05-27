@@ -17,7 +17,7 @@ namespace ReleaseExtensions
     {
         public Form ExtensionForm => this;
 
-        public ClientExtensionDetails Details => new ClientExtensionDetails("CountForm", "1.0.0.0");
+        public ClientExtensionDetails GeneralDetails => new ClientExtensionDetails("CountForm", "1.0.0.0");
 
         public CountForm()
         {
@@ -42,7 +42,7 @@ namespace ReleaseExtensions
         private void button1_Click(object sender, EventArgs e)
         {
             var context = new ExtensionExecutionContext(CallType.GUI);
-            context.ClientExtension = Details;
+            context.ClientExtension = GeneralDetails;
             var s = MainF.Remote.RunExtension("CountExtension", context, "");
             foreach(int n in (List<int>)s.Data)
             {
