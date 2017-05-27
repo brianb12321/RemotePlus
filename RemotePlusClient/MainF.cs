@@ -55,20 +55,8 @@ namespace RemotePlusClient
         {
             try
             {
-                NetTcpBinding tcp = new NetTcpBinding();
-                tcp.OpenTimeout = new TimeSpan(4, 1, 0);
-                tcp.ReceiveTimeout = TimeSpan.MaxValue;
-                tcp.SendTimeout = TimeSpan.MaxValue;
-                tcp.HostNameComparisonMode = HostNameComparisonMode.StrongWildcard;
-                tcp.MaxBufferSize = 2147483647;
-                tcp.MaxReceivedMessageSize = 2147483647;
-                tcp.ReaderQuotas.MaxArrayLength = 2147483647;
-                tcp.ReaderQuotas.MaxDepth = 2147483647;
-                tcp.ReaderQuotas.MaxStringContentLength = 2147483647;
-                tcp.ReaderQuotas.MaxBytesPerRead = 2147483647;
-                tcp.ReaderQuotas.MaxNameTableCharCount = 2147483647;
-                tcp.Security.Mode = SecurityMode.None;
-                channel = new DuplexChannelFactory<IRemote>(new ClientCallback(), tcp, Address);
+                channel = new DuplexChannelFactory<IRemote>(new ClientCallback(), "DefaultEndpoint");
+                channel.Endpoint.Address = new EndpointAddress(Address);
                 Remote = channel.CreateChannel();
                 ConsoleObj.Logger.AddOutput("Registering...", Logging.OutputLevel.Info);
                 Remote.Register(Settings);

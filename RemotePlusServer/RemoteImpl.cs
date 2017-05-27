@@ -20,9 +20,7 @@ using System.Diagnostics;
 namespace RemotePlusServer
 {
     [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Reentrant,
-        IncludeExceptionDetailInFaults = true,
-        InstanceContextMode = InstanceContextMode.Single,
-        MaxItemsInObjectGraph = int.MaxValue)]
+        InstanceContextMode = InstanceContextMode.Single)]
     [GlobalException(typeof(GlobalErrorHandler))]
     public class RemoteImpl : IRemote
     {

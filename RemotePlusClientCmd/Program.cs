@@ -25,7 +25,8 @@ namespace RemotePlusClientCmd
                 InitializeDefaultKnownTypes();
                 Console.Write("Enter url: ");
                 string url = Console.ReadLine();
-                channel = new DuplexChannelFactory<IRemote>(new ClientCallback(), new NetTcpBinding(), url);
+                channel = new DuplexChannelFactory<IRemote>(new ClientCallback(), "DefaultEndpoint");
+                channel.Endpoint.Address = new EndpointAddress(url);
                 Console.Write("Enter Username: ");
                 string username = Console.ReadLine();
                 Console.Write("Enter Password: ");
