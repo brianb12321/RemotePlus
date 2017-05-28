@@ -60,6 +60,8 @@
     <Compile Include="CommandSystem\HelpSourceType.cs" />
     <Compile Include="ExtensionExecutionContext.cs" />
     <Compile Include="ExtensionLibraryCollectionBase.cs" />
+    <Compile Include="Programmer.cs" />
+    <Compile Include="ServerExtensionCollectionProgrammer.cs" />
     <Compile Include="ServerExtensionLibrary.cs" />
     <Compile Include="ExtensionLibraryAttribute.cs" />
     <Compile Include="ServerExtensionLibraryCollection.cs" />
@@ -72,6 +74,8 @@
     <Compile Include="OperationStatus.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServerExtension.cs" />
+    <Compile Include="ServerExtensionLibraryProgrammer.cs" />
+    <Compile Include="ServerExtensionProgrammer.cs" />
     <Compile Include="WatcherSystem\WatcherBase.cs" />
     <Compile Include="WatcherSystem\WatcherDetails.cs" />
     <Compile Include="WatcherSystem\WatcherStatus.cs" />

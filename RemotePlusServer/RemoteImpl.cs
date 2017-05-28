@@ -293,5 +293,47 @@ namespace RemotePlusServer
         {
             ServerManager.Watchers[WatcherName].Start(args);
         }
+
+        public ServerExtensionCollectionProgrammer GetCollectionProgrammer()
+        {
+            ServerExtensionCollectionProgrammer cprog = new ServerExtensionCollectionProgrammer();
+            return cprog;
+        }
+
+        public ServerExtensionLibraryProgrammer GetServerLibraryProgrammer(string LibraryName)
+        {
+            ServerExtensionLibrary lib = ServerManager.DefaultCollection.Libraries[LibraryName];
+            ServerExtensionLibraryProgrammer slprog = new ServerExtensionLibraryProgrammer(lib.FriendlyName, lib.Name, lib.LibraryType);
+            return slprog;
+        }
+
+        public ServerExtensionProgrammer GetServerExtensionProgrammer(string ExtensionName)
+        {
+            ServerExtensionProgrammer seprog = new ServerExtensionProgrammer();
+            seprog.ExtensionDetails = ServerManager.DefaultCollection.GetAllExtensions()[ExtensionName].GeneralDetails;
+            return seprog;
+        }
+
+        public ServerExtensionProgrammer GetServerExtensionProgrammer(string LibraryName, string ExtensionName)
+        {
+            ServerExtensionProgrammer seprog = new ServerExtensionProgrammer();
+            seprog.ExtensionDetails = ServerManager.DefaultCollection.Libraries[LibraryName].Extensions[ExtensionName].GeneralDetails;
+            return seprog;
+        }
+
+        public void ProgramServerEstensionCollection(ServerExtensionCollectionProgrammer collectProgrammer)
+        {
+            
+        }
+
+        public void ProgramServerExtesnionLibrary(ServerExtensionLibraryProgrammer libProgrammer)
+        {
+            
+        }
+
+        public void ProgramServerExtension(ServerExtensionProgrammer seProgrammer)
+        {
+
+        }
     }
 }

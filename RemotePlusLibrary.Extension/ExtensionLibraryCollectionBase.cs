@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RemotePlusLibrary.Extension
 {
-    public abstract class ExtensionLibraryCollectionBase<T, E> where T : ExtensionLibraryBase<E>
+    public abstract class ExtensionLibraryCollectionBase<T, E> where T : ExtensionLibraryBase<E> 
     {
         public Dictionary<string, T> Libraries { get; private set; }
         public ExtensionLibraryCollectionBase()

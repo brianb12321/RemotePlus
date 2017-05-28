@@ -53,5 +53,19 @@ namespace RemotePlusLibrary
         List<string> GetCommands();
         [OperationContract(IsOneWay = true)]
         void StartWatcher(string WatcherName, object args);
+        [OperationContract]
+        ServerExtensionCollectionProgrammer GetCollectionProgrammer();
+        [OperationContract]
+        ServerExtensionLibraryProgrammer GetServerLibraryProgrammer(string LibraryName);
+        [OperationContract(Name = "GetServerExtensionProgrammer")]
+        ServerExtensionProgrammer GetServerExtensionProgrammer(string ExtensionName);
+        [OperationContract(Name = "GetServerExtensionProgrammerWithLibraryName")]
+        ServerExtensionProgrammer GetServerExtensionProgrammer(string LibraryName, string ExtensionName);
+        [OperationContract(IsOneWay = true)]
+        void ProgramServerEstensionCollection(ServerExtensionCollectionProgrammer collectProgrammer);
+        [OperationContract(IsOneWay = true)]
+        void ProgramServerExtesnionLibrary(ServerExtensionLibraryProgrammer libProgrammer);
+        [OperationContract(IsOneWay = true)]
+        void ProgramServerExtension(ServerExtensionProgrammer seProgrammer);
     }
 }
