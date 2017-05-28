@@ -66,6 +66,6 @@ namespace RemotePlusLibrary
         [OperationContract(IsOneWay = true)]
         void ProgramServerExtesnionLibrary(ServerExtensionLibraryProgrammer libProgrammer);
         [OperationContract(IsOneWay = true)]
-        void ProgramServerExtension(ServerExtensionProgrammer seProgrammer);
+        void ProgramServerExtension(string LibraryName, ServerExtensionProgrammer seProgrammer);
     }
 }

@@ -76,6 +76,7 @@
     <Compile Include="ServerExtension.cs" />
     <Compile Include="ServerExtensionLibraryProgrammer.cs" />
     <Compile Include="ServerExtensionProgrammer.cs" />
+    <Compile Include="ServerExtensionProgrammerUpdateEvent.cs" />
     <Compile Include="WatcherSystem\WatcherBase.cs" />
     <Compile Include="WatcherSystem\WatcherDetails.cs" />
     <Compile Include="WatcherSystem\WatcherStatus.cs" />

@@ -1,20 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.ServiceModel;
 using RemotePlusLibrary;
 using System.Windows.Forms;
-using System.IO;
 using Logging;
 using System.Speech.Synthesis;
-using System.ServiceModel.Dispatcher;
-using System.ServiceModel.Channels;
 using RemotePlusLibrary.Core;
 using RemotePlusLibrary.Extension;
-using RemotePlusLibrary.Extension.WatcherSystem;
-using System.Net.Sockets;
 using System.Diagnostics;
 
 namespace RemotePlusServer
@@ -30,6 +23,7 @@ namespace RemotePlusServer
         }
         internal void Setup()
         {
+            ServerManager.Logger.AddOutput("Added temperary extensions into dictionary.", OutputLevel.Diagnostics);
             _allExtensions = ServerManager.DefaultCollection.GetAllExtensions();
         }
         public RegistirationObject Settings { get; private set; }
@@ -39,8 +33,11 @@ namespace RemotePlusServer
         private Dictionary<string, ServerExtension> _allExtensions;
         void CheckRegisteration()
         {
+            var l = ServerManager.Logger.AddOutput("Checking registiration.", OutputLevel.Info);
+            Client.ClientCallback.TellMessage(new UILogItem(l.Level, l.Message, l.From));
             if (!Registered)
             {
+                ServerManager.Logger.AddOutput("The client is not registired to the server.", OutputLevel.Error);
                 OperationContext.Current.GetCallbackChannel<IRemoteClient>().Disconnect("you must be registered.");
             }
         }
@@ -102,11 +99,18 @@ namespace RemotePlusServer
 
         public void Register(RegistirationObject Settings)
         {
+            ServerManager.Logger.AddOutput("Instanitiating callback object.", OutputLevel.Diagnostics);
             var callback = OperationContext.Current.GetCallbackChannel<IRemoteClient>();
+            ServerManager.Logger.AddOutput("Getting ClientBuilder from client.", OutputLevel.Diagnostics);
             Client = callback.RegisterClient().Build(callback);
+            ServerManager.Logger.AddOutput("Received registiration object from client.", OutputLevel.Info);
             this.Settings = Settings;
+            var l = ServerManager.Logger.AddOutput("Processing registiration object.", OutputLevel.Diagnostics);
+            Client.ClientCallback.TellMessage(new UILogItem(l.Level, l.Message, l.From));
             if (Settings.LoginRightAway)
             {
+                var l2 = ServerManager.Logger.AddOutput("Authenticating your user credentials.", OutputLevel.Info);
+                Client.ClientCallback.TellMessage(new UILogItem(l.Level, l.Message, l.From));
                 foreach (UserAccount Account in ServerManager.DefaultSettings.Accounts)
                 {
                     if (Account.Verify(Settings.Credentials))
@@ -119,12 +123,16 @@ namespace RemotePlusServer
             }
             else
             {
+                var l3 = ServerManager.Logger.AddOutput("Awaiting credentials from the client.", OutputLevel.Info);
+                Client.ClientCallback.TellMessage(new UILogItem(l3.Level, l3.Message, l3.From));
                 UserCredentials upp = Client.ClientCallback.RequestAuthentication(new AuthenticationRequest() { Reason = "The server requires credentials to register."});
                 if (upp == null)
                 {
                     Client.ClientCallback.TellMessage("Can't you at least provide a username and password?", OutputLevel.Info);
                     Client.ClientCallback.Disconnect("Authentication failed.");
                 }
+                var l4 = ServerManager.Logger.AddOutput("Authenticating your user credentials.", OutputLevel.Info);
+                Client.ClientCallback.TellMessage(new UILogItem(l4.Level, l4.Message, l4.From));
                 foreach (UserAccount Account in ServerManager.DefaultSettings.Accounts)
                 {
                     if (Account.Verify(upp))
@@ -240,6 +248,7 @@ namespace RemotePlusServer
 
         public int RunServerCommand(string Command)
         {
+            CheckRegisteration();
             if (!LoggedInUser.Role.Privilleges.CanAccessConsole)
             {
                 Client.ClientCallback.TellMessage("You do not have promission to use the Console function.", OutputLevel.Info);
@@ -331,9 +340,14 @@ namespace RemotePlusServer
             
         }
 
-        public void ProgramServerExtension(ServerExtensionProgrammer seProgrammer)
+        public void ProgramServerExtension(string LibraryName, ServerExtensionProgrammer seProgrammer)
         {
-
+            ServerExtensionProgrammerUpdateEvent programmerEvent = new ServerExtensionProgrammerUpdateEvent(seProgrammer);
+            ServerManager.DefaultCollection.Libraries[LibraryName].Extensions[seProgrammer.ExtensionDetails.Name].ProgramRequested(programmerEvent);
+            if(!programmerEvent.Cancel)
+            {
+                //TODO Add modifications to server extension here.
+            }
         }
     }
 }

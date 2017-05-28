@@ -1,23 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.ServiceModel;
 using RemotePlusLibrary;
-using System.Threading;
-using System.Speech.Synthesis;
-using System.ServiceModel.Description;
 using RemotePlusLibrary.Extension;
 using System.IO;
 using Logging;
-using System.Security.Principal;
-using System.Management;
-using System.Net.NetworkInformation;
 using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusLibrary.Extension.WatcherSystem;
 using RemotePlusLibrary.Core;
 using System.Diagnostics;
+using System.Reflection;
 
 namespace RemotePlusServer
 {
@@ -38,9 +30,11 @@ namespace RemotePlusServer
         {
             try
             {
+                var a = Assembly.GetExecutingAssembly().GetName();
                 sw = new Stopwatch();
                 sw.Start();
                 Logger.DefaultFrom = "Server Host";
+                Console.WriteLine($"Welcome to {a.Name}, version: {a.Version.ToString()}\n\n");
                 InitalizeKnownTypes();
                 InitializeCommands();
                 ScanForServerSettingsFile();
@@ -167,15 +161,56 @@ namespace RemotePlusServer
         }
         static void RunInServerMode()
         {
+            Logger.AddOutput("Building endpoint URL.", OutputLevel.Diagnostics);
             string url = $"net.tcp://0.0.0.0:{DefaultSettings.PortNumber}/Remote";
+            Logger.AddOutput($"URL built {url}", OutputLevel.Diagnostics);
             Remote.Setup();
+            Logger.AddOutput("Creating server and loading WCF configuration.", OutputLevel.Diagnostics);
             host = new ServiceHost(Remote);
+            Logger.AddOutput("Attaching server events.", OutputLevel.Diagnostics);
+            host.Closed += Host_Closed;
+            host.Closing += Host_Closing;
+            host.Faulted += Host_Faulted;
+            host.Opened += Host_Opened;
+            host.Opening += Host_Opening;
+            host.UnknownMessageReceived += Host_UnknownMessageReceived;
+            Logger.AddOutput("Changing url of endpoint 1.", OutputLevel.Diagnostics);
             host.Description.Endpoints[0].Address = new EndpointAddress(url);
             host.Open();
-            Logger.AddOutput($"Host ready. Server is listening on port {DefaultSettings.PortNumber}. Connect to configure server.", Logging.OutputLevel.Info);
             Console.ReadLine();
             host.Close();
         }
+
+        private static void Host_UnknownMessageReceived(object sender, UnknownMessageReceivedEventArgs e)
+        {
+            Logger.AddOutput($"The server encountered an unknown message sent by the client. Message: {e.Message.ToString()}", OutputLevel.Error);
+        }
+
+        private static void Host_Opening(object sender, EventArgs e)
+        {
+            Logger.AddOutput("Opening server.", OutputLevel.Info);
+        }
+
+        private static void Host_Opened(object sender, EventArgs e)
+        {
+            Logger.AddOutput($"Host ready. Server is listening on port {DefaultSettings.PortNumber}. Connect to configure server.", Logging.OutputLevel.Info);
+        }
+
+        private static void Host_Faulted(object sender, EventArgs e)
+        {
+            Logger.AddOutput("The server state has been transferred to the faulted state.", OutputLevel.Error);
+        }
+
+        private static void Host_Closing(object sender, EventArgs e)
+        {
+            Logger.AddOutput("Closing the server.", OutputLevel.Info);
+        }
+
+        private static void Host_Closed(object sender, EventArgs e)
+        {
+            Logger.AddOutput("The server is now closed.", OutputLevel.Info);
+        }
+
         static void ScanForServerSettingsFile()
         {
             if (!File.Exists("Configurations\\Server\\GlobalServerSettings.config"))

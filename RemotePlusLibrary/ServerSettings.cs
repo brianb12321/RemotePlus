@@ -95,8 +95,16 @@ namespace RemotePlusLibrary
             this.BannedIPs = ss.BannedIPs;
             this.PortNumber = ss.PortNumber;
             this.LogOnShutdown = ss.LogOnShutdown;
+            this.CleanLogFolder = ss.CleanLogFolder;
+            this.LogFileCountThreashold = ss.LogFileCountThreashold;
             reader.Close();
         }
+        #endregion
+        #region Optimization Settings
+        [DataMember]
+        public bool CleanLogFolder { get; set; }
+        [DataMember]
+        public int LogFileCountThreashold { get; set; } = 10;
         #endregion
         public ServerSettings()
         {

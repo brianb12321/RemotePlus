@@ -10,6 +10,10 @@ namespace RemotePlusLibrary.Extension
 {
     public abstract class ServerExtension : IExtension<ExtensionDetails>
     {
+        public virtual void ProgramRequested(ServerExtensionProgrammerUpdateEvent requestProgrammer)
+        {
+
+        }
         protected ServerExtension(ExtensionDetails d)
         {
             GeneralDetails = d;

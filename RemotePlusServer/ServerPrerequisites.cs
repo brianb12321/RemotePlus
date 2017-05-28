@@ -1,6 +1,7 @@
 ﻿using Logging;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Security.Principal;
@@ -51,9 +52,27 @@ namespace RemotePlusServer
 
         internal static void CheckSettings()
         {
-            if(ServerManager.DefaultSettings.LogOnShutdown)
+            if (ServerManager.DefaultSettings.LogOnShutdown)
             {
                 ServerManager.Logger.AddOutput(new LogItem(OutputLevel.Info, "NOTE: Logging is enabled for this application.", ServerManager.Logger.DefaultFrom) { Color = ConsoleColor.Cyan });
+            }
+            if (ServerManager.DefaultSettings.CleanLogFolder)
+            {
+                ServerManager.Logger.AddOutput(new LogItem(OutputLevel.Info, $"NOTE: Logs will be cleaned out when there are {ServerManager.DefaultSettings.LogFileCountThreashold} logs in the logs foleder.", ServerManager.Logger.DefaultFrom) { Color = ConsoleColor.Cyan });
+                CheckLogCount();
+            }
+        }
+
+        private static void CheckLogCount()
+        {
+            if(Directory.GetFiles("ServerLogs").Length >= ServerManager.DefaultSettings.LogFileCountThreashold)
+            {
+                ServerManager.Logger.AddOutput(new LogItem(OutputLevel.Info, "IMPORTANT ACTION: The server logs threashold has been reached. The server logs folder will be cleared.", ServerManager.Logger.DefaultFrom ) { Color = ConsoleColor.Magenta });
+                foreach(string fileToBeDeleted in Directory.GetFiles("ServerLogs"))
+                {
+                    File.Delete(fileToBeDeleted);
+                }
+                ServerManager.Logger.AddOutput(new LogItem(OutputLevel.Info, "IMPORTANT ACTION COMPLETE: The ServerLogs folder has been purged.", ServerManager.Logger.DefaultFrom) { Color = ConsoleColor.Green });
             }
         }
     }
