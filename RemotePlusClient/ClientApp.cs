@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace RemotePlusClient
 {
-    class ClientApp
+    public class ClientApp
     {
         public static CMDLogging Logger { get; private set; }
         [STAThread]

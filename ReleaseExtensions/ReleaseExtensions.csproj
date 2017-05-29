@@ -49,6 +49,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CalculatorExtension.cs" />
+    <Compile Include="CalculatorForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CalculatorForm.Designer.cs">
+      <DependentUpon>CalculatorForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="CountExtension.cs" />
     <Compile Include="CountForm.cs">
       <SubType>Form</SubType>
@@ -88,6 +94,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="CalculatorForm.resx">
+      <DependentUpon>CalculatorForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="CountForm.resx">
       <DependentUpon>CountForm.cs</DependentUpon>
     </EmbeddedResource>

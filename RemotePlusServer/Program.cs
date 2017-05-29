@@ -149,7 +149,7 @@ namespace RemotePlusServer
                     if (Path.GetExtension(files) == ".dll")
                     {
                         Logger.AddOutput($"Found extension file ({Path.GetFileName(files)})", Logging.OutputLevel.Info);
-                        var lib = ServerExtensionLibrary.LoadServerLibrary(files);
+                        var lib = ServerExtensionLibrary.LoadServerLibrary(files, (m, o) => Logger.AddOutput(m, o));
                         DefaultCollection.Libraries.Add(lib.Name, lib);
                     }
                 }
@@ -161,20 +161,20 @@ namespace RemotePlusServer
         }
         static void RunInServerMode()
         {
-            Logger.AddOutput("Building endpoint URL.", OutputLevel.Diagnostics);
+            Logger.AddOutput("Building endpoint URL.", OutputLevel.Debug);
             string url = $"net.tcp://0.0.0.0:{DefaultSettings.PortNumber}/Remote";
-            Logger.AddOutput($"URL built {url}", OutputLevel.Diagnostics);
+            Logger.AddOutput($"URL built {url}", OutputLevel.Debug);
             Remote.Setup();
-            Logger.AddOutput("Creating server and loading WCF configuration.", OutputLevel.Diagnostics);
+            Logger.AddOutput("Creating server and loading WCF configuration.", OutputLevel.Debug);
             host = new ServiceHost(Remote);
-            Logger.AddOutput("Attaching server events.", OutputLevel.Diagnostics);
+            Logger.AddOutput("Attaching server events.", OutputLevel.Debug);
             host.Closed += Host_Closed;
             host.Closing += Host_Closing;
             host.Faulted += Host_Faulted;
             host.Opened += Host_Opened;
             host.Opening += Host_Opening;
             host.UnknownMessageReceived += Host_UnknownMessageReceived;
-            Logger.AddOutput("Changing url of endpoint 1.", OutputLevel.Diagnostics);
+            Logger.AddOutput("Changing url of endpoint 1.", OutputLevel.Debug);
             host.Description.Endpoints[0].Address = new EndpointAddress(url);
             host.Open();
             Console.ReadLine();
@@ -244,18 +244,21 @@ namespace RemotePlusServer
         {
             try
             {
+                ServerManager.Logger.AddOutput($"Executing server command {c}", OutputLevel.Info);
                 bool FoundCommand = false;
                 string[] ca = c.Split();
                 foreach (KeyValuePair<string, CommandDelgate> k in Commands)
                 {
                     if(ca[0] == k.Key)
                     {
+                        Logger.AddOutput("Found command, and executing.", OutputLevel.Debug);
                         FoundCommand = true;
                         return k.Value(ca);
                     }
                 }
                 if (!FoundCommand)
                 {
+                    Logger.AddOutput("Failed to find the command.", OutputLevel.Debug);
                     Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, "Unknown command. Please type {help} for a list of commands", "Server Host"));
                     return (int)CommandStatus.Fail;
                 }
@@ -263,6 +266,7 @@ namespace RemotePlusServer
             }
             catch (Exception ex)
             {
+                ServerManager.Logger.AddOutput("command failed: " + ex.Message, OutputLevel.Info);
                 Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error,"Error whie executing command: " + ex.Message, "Server Host"));
                 return (int)CommandStatus.Fail;
             }

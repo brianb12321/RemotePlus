@@ -11,10 +11,8 @@ namespace RemotePlusLibrary.Extension
         {
         }
 
-        public static ServerExtensionLibrary LoadServerLibrary(string FileName)
+        public static ServerExtensionLibrary LoadServerLibrary(string FileName, Action<string, OutputLevel> Callback)
         {
-            CMDLogging logger = new CMDLogging();
-            logger.DefaultFrom = "Server Host";
             ServerExtensionLibrary lib;
             Assembly a = Assembly.LoadFrom(FileName);
             ExtensionLibraryAttribute ea = a.GetCustomAttribute<ExtensionLibraryAttribute>();
@@ -27,9 +25,9 @@ namespace RemotePlusLibrary.Extension
                         throw new ArgumentException("The startup type does not implement ILibraryStartup.");
                     }
                     var st = (ILibraryStartup)Activator.CreateInstance(ea.Startup);
-                    logger.AddOutput("Beginning initialization.", Logging.OutputLevel.Info);
+                    Callback("Beginning initialization.", Logging.OutputLevel.Info);
                     st.Init();
-                    logger.AddOutput("finished initalization.", Logging.OutputLevel.Info);
+                    Callback("finished initalization.", Logging.OutputLevel.Info);
                     lib = new ServerExtensionLibrary(ea.FriendlyName, ea.Name, ea.LibraryType);
                     foreach (Type t in a.GetTypes())
                     {
@@ -37,7 +35,7 @@ namespace RemotePlusLibrary.Extension
                         {
                             var e = (ServerExtension)Activator.CreateInstance(t);
                             lib.Extensions.Add(e.GeneralDetails.Name, e);
-                            logger.AddOutput($"Extension {e.GeneralDetails.Name} loaded.", Logging.OutputLevel.Info);
+                            Callback($"Extension {e.GeneralDetails.Name} loaded.", Logging.OutputLevel.Info);
                         }
                     }
                 }

@@ -60,6 +60,7 @@
     <Compile Include="AuthenticationDialog.Designer.cs">
       <DependentUpon>AuthenticationDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="ClientApp.cs" />
     <Compile Include="ClientCallback.cs" />
     <Compile Include="CommandDialogs\BeepDialog.cs">
       <SubType>Form</SubType>
@@ -103,7 +104,6 @@
     <Compile Include="MainF.Designer.cs">
       <DependentUpon>MainF.cs</DependentUpon>
     </Compile>
-    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServerConsole.cs">
       <SubType>Form</SubType>

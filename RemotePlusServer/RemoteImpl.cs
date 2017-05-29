@@ -23,7 +23,7 @@ namespace RemotePlusServer
         }
         internal void Setup()
         {
-            ServerManager.Logger.AddOutput("Added temperary extensions into dictionary.", OutputLevel.Diagnostics);
+            ServerManager.Logger.AddOutput("Added temperary extensions into dictionary.", OutputLevel.Debug);
             _allExtensions = ServerManager.DefaultCollection.GetAllExtensions();
         }
         public RegistirationObject Settings { get; private set; }
@@ -31,9 +31,9 @@ namespace RemotePlusServer
         public bool Registered { get; private set; }
         public UserAccount LoggedInUser { get; private set; }
         private Dictionary<string, ServerExtension> _allExtensions;
-        void CheckRegisteration()
+        void CheckRegisteration(string Action)
         {
-            var l = ServerManager.Logger.AddOutput("Checking registiration.", OutputLevel.Info);
+            var l = ServerManager.Logger.AddOutput($"Checking registiration for action {Action}.", OutputLevel.Info);
             Client.ClientCallback.TellMessage(new UILogItem(l.Level, l.Message, l.From));
             if (!Registered)
             {
@@ -43,7 +43,7 @@ namespace RemotePlusServer
         }
         public void Beep(int Hertz, int Duration)
         {
-            CheckRegisteration();
+            CheckRegisteration("beep");
             if (!LoggedInUser.Role.Privilleges.CanBeep)
             {
                 Client.ClientCallback.TellMessage("You do not have promission to use the beep function.", OutputLevel.Info);
@@ -57,7 +57,7 @@ namespace RemotePlusServer
 
         public void PlaySound(string FileName)
         {
-            CheckRegisteration();
+            CheckRegisteration("PlaySound");
             if (!LoggedInUser.Role.Privilleges.CanPlaySound)
             {
                 Client.ClientCallback.TellMessage("You do not have promission to use the PlaySound function.", OutputLevel.Info);
@@ -71,7 +71,7 @@ namespace RemotePlusServer
 
         public void PlaySoundLoop(string FileName)
         {
-            CheckRegisteration();
+            CheckRegisteration("PlaySoundLoop");
             if (!LoggedInUser.Role.Privilleges.CanPlaySoundLoop)
             {
                 Client.ClientCallback.TellMessage("You do not have promission to use the CanPlaySoundLoop function.", OutputLevel.Info);
@@ -85,7 +85,7 @@ namespace RemotePlusServer
 
         public void PlaySoundSync(string FileName)
         {
-            CheckRegisteration();
+            CheckRegisteration("PlaySoundSync");
             if (!LoggedInUser.Role.Privilleges.CanPlaySoundSync)
             {
                 Client.ClientCallback.TellMessage("You do not have promission to use the CanPlaySoundSync function.", OutputLevel.Info);
@@ -99,13 +99,13 @@ namespace RemotePlusServer
 
         public void Register(RegistirationObject Settings)
         {
-            ServerManager.Logger.AddOutput("Instanitiating callback object.", OutputLevel.Diagnostics);
+            ServerManager.Logger.AddOutput("Instanitiating callback object.", OutputLevel.Debug);
             var callback = OperationContext.Current.GetCallbackChannel<IRemoteClient>();
-            ServerManager.Logger.AddOutput("Getting ClientBuilder from client.", OutputLevel.Diagnostics);
+            ServerManager.Logger.AddOutput("Getting ClientBuilder from client.", OutputLevel.Debug);
             Client = callback.RegisterClient().Build(callback);
             ServerManager.Logger.AddOutput("Received registiration object from client.", OutputLevel.Info);
             this.Settings = Settings;
-            var l = ServerManager.Logger.AddOutput("Processing registiration object.", OutputLevel.Diagnostics);
+            var l = ServerManager.Logger.AddOutput("Processing registiration object.", OutputLevel.Debug);
             Client.ClientCallback.TellMessage(new UILogItem(l.Level, l.Message, l.From));
             if (Settings.LoginRightAway)
             {
@@ -147,6 +147,7 @@ namespace RemotePlusServer
             {
                 Client.ClientCallback.TellMessage("Registiration failed. Authentication failed.", OutputLevel.Info);
                 Client.ClientCallback.Disconnect("Registiration failed.");
+                ServerManager.Logger.AddOutput($"Client {Client.FriendlyName} disconnected. Failed to register to the server. Authentication failed.", OutputLevel.Info);
             }
         }
 
@@ -159,16 +160,22 @@ namespace RemotePlusServer
 
         public void RunProgram(string Program, string Argument)
         {
-            CheckRegisteration();
+            CheckRegisteration("RunProgram");
             if (!LoggedInUser.Role.Privilleges.CanRunProgram)
             {
                 Client.ClientCallback.TellMessage("You do not have promission to use the CanRunProgram function.", OutputLevel.Info);
             }
+            ServerManager.Logger.AddOutput("Creating process component.", OutputLevel.Debug);
             Process p = new Process();
+            ServerManager.Logger.AddOutput($"File to execute: {Program}", OutputLevel.Debug);
             p.StartInfo.FileName = Program;
+            ServerManager.Logger.AddOutput($"File arguments: {Argument}", OutputLevel.Debug);
             p.StartInfo.Arguments = Argument;
+            ServerManager.Logger.AddOutput($"Shell execution is disabled.", OutputLevel.Debug);
             p.StartInfo.UseShellExecute = false;
+            ServerManager.Logger.AddOutput($"Error stream will be redirected.", OutputLevel.Debug);
             p.StartInfo.RedirectStandardError = true;
+            ServerManager.Logger.AddOutput($"Standord stream will be redirected.", OutputLevel.Debug);
             p.StartInfo.RedirectStandardOutput = true;
             p.ErrorDataReceived += (sender, e) =>
             {
@@ -176,7 +183,7 @@ namespace RemotePlusServer
                 {
                     if (Client.ExtraData.TryGetValue("ps_appendNewLine", out string val))
                     {
-                        if (val == "true")
+                        if (val == "false")
                         {
                             Client.ClientCallback.TellMessageToServerConsole(e.Data);
                         }
@@ -197,7 +204,7 @@ namespace RemotePlusServer
                 {
                     if (Client.ExtraData.TryGetValue("ps_appendNewLine", out string val))
                     {
-                        if (val == "true")
+                        if (val == "false")
                         {
                             Client.ClientCallback.TellMessageToServerConsole(e.Data);
                         }
@@ -212,14 +219,17 @@ namespace RemotePlusServer
                     }
                 }
             };
+            ServerManager.Logger.AddOutput("Starting process component.", OutputLevel.Info);
             p.Start();
+            ServerManager.Logger.AddOutput("Beginning error stream read line.", OutputLevel.Debug);
             p.BeginErrorReadLine();
+            ServerManager.Logger.AddOutput("Beginning standord stream reade line.", OutputLevel.Debug);
             p.BeginOutputReadLine();
         }
 
         public void ShowMessageBox(string Message, string Caption, System.Windows.Forms.MessageBoxIcon Icon, System.Windows.Forms.MessageBoxButtons Buttons)
         {
-            CheckRegisteration();
+            CheckRegisteration("ShowMessageBox");
             if (!LoggedInUser.Role.Privilleges.CanShowMessageBox)
             {
                 Client.ClientCallback.TellMessage("You do not have promission to use the CanShowMessageBox function.", OutputLevel.Info);
@@ -232,7 +242,7 @@ namespace RemotePlusServer
 
         public void Speak(string Message, System.Speech.Synthesis.VoiceGender Gender, VoiceAge Age)
         {
-            CheckRegisteration();
+            CheckRegisteration("Speak");
             if (!LoggedInUser.Role.Privilleges.CanSpeak)
             {
                 Client.ClientCallback.TellMessage("You do not have promission to use the Speak function.", OutputLevel.Info);
@@ -248,7 +258,7 @@ namespace RemotePlusServer
 
         public int RunServerCommand(string Command)
         {
-            CheckRegisteration();
+            CheckRegisteration("RunServerCommand");
             if (!LoggedInUser.Role.Privilleges.CanAccessConsole)
             {
                 Client.ClientCallback.TellMessage("You do not have promission to use the Console function.", OutputLevel.Info);
@@ -258,14 +268,17 @@ namespace RemotePlusServer
 
         public void UpdateServerSettings(ServerSettings Settings)
         {
+            ServerManager.Logger.AddOutput("Updating server settings.", OutputLevel.Info);
             ServerManager.DefaultSettings = Settings;
             Client.ClientCallback.TellMessage("Saving settings.", OutputLevel.Info);
             ServerManager.DefaultSettings.Save();
             Client.ClientCallback.TellMessage("Settings saved.", OutputLevel.Info);
+            ServerManager.Logger.AddOutput("Settings saved.", OutputLevel.Info);
         }
 
         public ServerSettings GetServerSettings()
         {
+            ServerManager.Logger.AddOutput("Retreiving server settings.", OutputLevel.Info);
             return ServerManager.DefaultSettings;
         }
 
@@ -280,7 +293,9 @@ namespace RemotePlusServer
 
         public OperationStatus RunExtension(string ExtensionName, ExtensionExecutionContext Context, params object[] Args)
         {
+            ServerManager.Logger.AddOutput($"Executing extension. Name: {ExtensionName}, CallType: {Context.Mode.ToString()}", OutputLevel.Info);
             OperationStatus s = _allExtensions[ExtensionName].Execute(Context, Args);
+            ServerManager.Logger.AddOutput($"Returning extension response. Success: {s.Success}", OutputLevel.Debug);
             return s;
         }
 
@@ -295,6 +310,8 @@ namespace RemotePlusServer
         }
         public List<string> GetCommands()
         {
+            ServerManager.Logger.AddOutput("Requesting commands list.", OutputLevel.Info);
+            Client.ClientCallback.TellMessage("Returning commands list.", OutputLevel.Info);
             return ServerManager.Commands.Keys.ToList();
         }
 

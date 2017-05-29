@@ -73,7 +73,7 @@ namespace RemotePlusClientCmd
         {
             ClientBuilder cb = new ClientBuilder();
             cb.FriendlyName = "RemotePlus Client Command Line";
-            cb.ExtraData.Add("ps_appendNewLine", "true");
+            cb.ExtraData.Add("ps_appendNewLine", "false");
             return cb;
         }
 
@@ -102,6 +102,10 @@ namespace RemotePlusClientCmd
             {
                 li.Color = Program.Logger.ConsoleForegroundError;
             }
+            else if(o == OutputLevel.Debug)
+            {
+                li.Color = Program.Logger.ConsoleForegroundDebug;
+            }
             Program.Logger.AddOutput(li);
         }
 
@@ -120,6 +124,10 @@ namespace RemotePlusClientCmd
                 else if (li.Level == OutputLevel.Error)
                 {
                     li.Color = Program.Logger.ConsoleForegroundError;
+                }
+                else if(li.Level == OutputLevel.Debug)
+                {
+                    li.Color = Program.Logger.ConsoleForegroundDebug;
                 }
             }
             Program.Logger.AddOutput(new LogItem(li.Level, li.Message, li.From) { Color = li.Color });
@@ -142,6 +150,10 @@ namespace RemotePlusClientCmd
                     else if (l.Level == OutputLevel.Error)
                     {
                         l.Color = Program.Logger.ConsoleForegroundError;
+                    }
+                    else if(l.Level == OutputLevel.Debug)
+                    {
+                        l.Color = Program.Logger.ConsoleForegroundDebug;
                     }
                 }
                 Program.Logger.AddOutput(new LogItem(l.Level, l.Message, l.From) { Color = l.Color });
@@ -173,6 +185,10 @@ namespace RemotePlusClientCmd
                 else if (li.Level == OutputLevel.Error)
                 {
                     li.Color = Program.Logger.ConsoleForegroundError;
+                }
+                else if(li.Level == OutputLevel.Debug)
+                {
+                    li.Color = Program.Logger.ConsoleForegroundDebug;
                 }
             }
             Program.Logger.AddOutput(new LogItem(li.Level, li.Message, li.From) { Color = li.Color });

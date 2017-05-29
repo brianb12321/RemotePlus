@@ -13,7 +13,8 @@ namespace RemotePlusClient
     {
         public void Disconnect(string Reason)
         {
-            MainF.ConsoleObj.Logger.AddOutput("The server disconnected from the client. Reason: " + Reason, Logging.OutputLevel.Error, "Server Host");
+            LogItem l = new LogItem(Logging.OutputLevel.Error, "The server disconnected from the client. Reason: " + Reason, "Server Host");
+            MainF.ConsoleObj.Logger.AddOutput(l);
             MainF.Disconnect();
         }
 
@@ -32,11 +33,13 @@ namespace RemotePlusClient
 
         public void TellMessage(string Message, Logging.OutputLevel o)
         {
+            ClientApp.Logger.AddOutput(Message, o, "Server Host");
             MainF.ConsoleObj.Logger.AddOutput(Message, o, "Server Host");
         }
 
         public void TellMessage(UILogItem li)
         {
+            ClientApp.Logger.AddOutput(new LogItem(li.Level, li.Message, li.From));
             MainF.ConsoleObj.Logger.AddOutput(li);
         }
 
@@ -44,6 +47,7 @@ namespace RemotePlusClient
         {
             foreach(LogItem li in Logs)
             {
+                ClientApp.Logger.AddOutput(new LogItem(li.Level, li.Message, li.From));
                 MainF.ConsoleObj.Logger.AddOutput(li);
             }
         }
