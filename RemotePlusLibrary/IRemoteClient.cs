@@ -8,7 +8,7 @@ using Logging;
 
 namespace RemotePlusLibrary
 {
-    public interface IRemoteClient
+    public interface IRemoteClient : IClient
     {
         [OperationContract(IsOneWay = true)]
         void TellMessage(string Message, Logging.OutputLevel o);

@@ -23,7 +23,11 @@ namespace RemotePlusLibrary
     {
         #region Connection
         [DataMember]
+        [Category("Server")]
         public int PortNumber { get; set; }
+        [DataMember]
+        [Category("Server")]
+        public bool DisableCommandClients { get; set; } = false;
         #endregion
         #region Extension
 
@@ -97,6 +101,7 @@ namespace RemotePlusLibrary
             this.LogOnShutdown = ss.LogOnShutdown;
             this.CleanLogFolder = ss.CleanLogFolder;
             this.LogFileCountThreashold = ss.LogFileCountThreashold;
+            this.DisableCommandClients = ss.DisableCommandClients;
             reader.Close();
         }
         #endregion

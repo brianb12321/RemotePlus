@@ -31,10 +31,11 @@ namespace RemotePlusServer
             try
             {
                 var a = Assembly.GetExecutingAssembly().GetName();
+                Console.WriteLine($"Welcome to {a.Name}, version: {a.Version.ToString()}\n\n");
+                Logger.DefaultFrom = "Server Host";
+                Logger.AddOutput("Starting stop watch.", OutputLevel.Debug);
                 sw = new Stopwatch();
                 sw.Start();
-                Logger.DefaultFrom = "Server Host";
-                Console.WriteLine($"Welcome to {a.Name}, version: {a.Version.ToString()}\n\n");
                 InitalizeKnownTypes();
                 InitializeCommands();
                 ScanForServerSettingsFile();
@@ -76,6 +77,7 @@ namespace RemotePlusServer
         {
             Logger.AddOutput("Adding default known types.", OutputLevel.Info);
             DefaultKnownTypeManager.LoadDefaultTypes();
+            Logger.AddOutput("Adding UserAccount to known type list.", OutputLevel.Debug);
             DefaultKnownTypeManager.AddType(typeof(UserAccount));
         }
 
@@ -107,6 +109,7 @@ namespace RemotePlusServer
             Commands.Add("dateTime", dateTime);
             Commands.Add("processes", processes);
             Commands.Add("watchers", watchers);
+            Commands.Add("version", version);
         }
 
         static bool CheckPrerequisites()
@@ -116,6 +119,7 @@ namespace RemotePlusServer
             ServerPrerequisites.CheckPrivilleges();
             ServerPrerequisites.CheckNetworkInterfaces();
             ServerPrerequisites.CheckSettings();
+            Logger.AddOutput("Stopping stop watch.", OutputLevel.Debug);
             sw.Stop();
             // Check results
             if(Logger.errorcount >= 1 && Logger.warningcount == 0)

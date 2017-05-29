@@ -233,5 +233,11 @@ namespace RemotePlusServer
                 return (int)CommandStatus.Fail;
             }
         }
+        [CommandHelp("Returns the server version.")]
+        private static int version(string[] args)
+        {
+            Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, DefaultSettings.ServerVersion));
+            return (int)CommandStatus.Success;
+        }
     }
 }

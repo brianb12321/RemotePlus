@@ -3,8 +3,10 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using RemotePlusLibrary.Extension;
 
-// RemotePlus server extension attributes
-[assembly: ExtensionLibrary(typeof(ReleaseExtensions.Startup), "ReleaseExtensions", FriendlyName = "Release Extensions", LibraryType = ExtensionLibraryType.Both)]
+// RemotePlus server extension attributes.
+[assembly: ExtensionLibrary(typeof(ReleaseExtensions.Startup), "ReleaseExtensions",
+    FriendlyName = "Release Extensions",
+    LibraryType = ExtensionLibraryType.Both)]
 
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information

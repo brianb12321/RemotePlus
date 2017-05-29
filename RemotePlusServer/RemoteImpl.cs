@@ -27,7 +27,7 @@ namespace RemotePlusServer
             _allExtensions = ServerManager.DefaultCollection.GetAllExtensions();
         }
         public RegistirationObject Settings { get; private set; }
-        public Client Client { get; set; }
+        public Client<IRemoteClient> Client { get; set; }
         public bool Registered { get; private set; }
         public UserAccount LoggedInUser { get; private set; }
         private Dictionary<string, ServerExtension> _allExtensions;
@@ -100,9 +100,22 @@ namespace RemotePlusServer
         public void Register(RegistirationObject Settings)
         {
             ServerManager.Logger.AddOutput("Instanitiating callback object.", OutputLevel.Debug);
-            var callback = OperationContext.Current.GetCallbackChannel<IRemoteClient>();
             ServerManager.Logger.AddOutput("Getting ClientBuilder from client.", OutputLevel.Debug);
-            Client = callback.RegisterClient().Build(callback);
+            if(Client != null)
+            {
+                if (ServerManager.DefaultSettings.DisableCommandClients)
+                {
+                    ServerManager.Logger.AddOutput($"The client \"{Client.FriendlyName}\" [{Client.UniqueID}] disconnected because the server does not allow command clients.", OutputLevel.Info);
+                    OperationContext.Current.GetCallbackChannel<IRemoteClient>().Disconnect("You are not allowed to connect as a command client.");
+                }
+                else
+                {
+                    ServerManager.Logger.AddOutput("Original client will now go into command mode.", OutputLevel.Info);
+                    Client.ClientCallback.TellMessage(new UILogItem(OutputLevel.Warning, "Another client is trying to connect. You will be in command mode. The response sent by the server will be re-routed to the current client. ", "Server Host"));
+                }
+            }
+            var callback = OperationContext.Current.GetCallbackChannel<IRemoteClient>();
+            Client = Client<IRemoteClient>.Build(callback.RegisterClient(), callback);
             ServerManager.Logger.AddOutput("Received registiration object from client.", OutputLevel.Info);
             this.Settings = Settings;
             var l = ServerManager.Logger.AddOutput("Processing registiration object.", OutputLevel.Debug);
@@ -147,13 +160,13 @@ namespace RemotePlusServer
             {
                 Client.ClientCallback.TellMessage("Registiration failed. Authentication failed.", OutputLevel.Info);
                 Client.ClientCallback.Disconnect("Registiration failed.");
-                ServerManager.Logger.AddOutput($"Client {Client.FriendlyName} disconnected. Failed to register to the server. Authentication failed.", OutputLevel.Info);
+                ServerManager.Logger.AddOutput($"Client {Client.FriendlyName} [{Client.UniqueID.ToString()}] disconnected. Failed to register to the server. Authentication failed.", OutputLevel.Info);
             }
         }
 
         private void RegisterComplete()
         {
-            ServerManager.Logger.AddOutput($"Client \"{Client.FriendlyName}\" registired.", Logging.OutputLevel.Info);
+            ServerManager.Logger.AddOutput($"Client \"{Client.FriendlyName}\" [{Client.UniqueID}] registired.", Logging.OutputLevel.Info);
             Registered = true;
             Client.ClientCallback.TellMessage("Registiration complete.", Logging.OutputLevel.Info);
         }
