@@ -44,6 +44,10 @@ namespace RemotePlusLibrary
         [Browsable(true)]
         public bool CanShowMessageBox { get; set; }
         [DataMember]
+        public bool CanRunExtension { get; set; }
+        [DataMember]
+        public bool CanRunWatcher { get; set; }
+        [DataMember]
         [Browsable(true)]
         [Editor(typeof(StringCollectionEditor), typeof(UITypeEditor))]
         public List<string> ExtensionRules { get; set; }
@@ -58,6 +62,8 @@ namespace RemotePlusLibrary
             this.CanShowMessageBox = true;
             this.CanSpeak = true;
             this.CanAccessSettings = true;
+            this.CanRunExtension = true;
+            this.CanRunWatcher = true;
             this.ExtensionRules = new List<string>();
         }
         public SecurityAccessRules()

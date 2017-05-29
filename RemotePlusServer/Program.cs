@@ -10,6 +10,7 @@ using RemotePlusLibrary.Extension.WatcherSystem;
 using RemotePlusLibrary.Core;
 using System.Diagnostics;
 using System.Reflection;
+using System.Windows.Forms;
 
 namespace RemotePlusServer
 {
@@ -44,9 +45,10 @@ namespace RemotePlusServer
                 LoadExtensionLibraries();
                 if (CheckPrerequisites())
                 {
-                    RunInServerMode();
+                    Application.EnableVisualStyles();
+                    Application.SetCompatibleTextRenderingDefault(false);
+                    Application.Run(new ServerControls());
                 }
-                SaveLog();
             }
             catch(Exception ex)
             {
@@ -163,7 +165,7 @@ namespace RemotePlusServer
                 Logger.AddOutput("The extensions folder does not exist.", OutputLevel.Info);
             }
         }
-        static void RunInServerMode()
+        public static void RunInServerMode()
         {
             Logger.AddOutput("Building endpoint URL.", OutputLevel.Debug);
             string url = $"net.tcp://0.0.0.0:{DefaultSettings.PortNumber}/Remote";
@@ -181,8 +183,6 @@ namespace RemotePlusServer
             Logger.AddOutput("Changing url of endpoint 1.", OutputLevel.Debug);
             host.Description.Endpoints[0].Address = new EndpointAddress(url);
             host.Open();
-            Console.ReadLine();
-            host.Close();
         }
 
         private static void Host_UnknownMessageReceived(object sender, UnknownMessageReceivedEventArgs e)
@@ -275,8 +275,9 @@ namespace RemotePlusServer
                 return (int)CommandStatus.Fail;
             }
         }
-        static void Close()
+        public static void Close()
         {
+            SaveLog();
             host.Close();
             Environment.Exit(0);
         }

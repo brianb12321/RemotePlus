@@ -33,6 +33,7 @@ namespace RemotePlusClient
         {
             if(channel != null)
             {
+                Remote.Disconnect();
                 channel.Close();
                 ConsoleObj.Logger.DefaultFrom = "Client";
                 ConsoleObj.Logger.AddOutput("Closed", Logging.OutputLevel.Info);
@@ -64,6 +65,7 @@ namespace RemotePlusClient
                 connectMenuItem.Enabled = false;
                 consoleMenuItem.Enabled = true;
                 settingsMenuItem.Enabled = true;
+                switchUserMenuItem.Enabled = true;
             }
             catch (Exception ex)
             {
@@ -273,6 +275,11 @@ namespace RemotePlusClient
             {
                 MessageBox.Show("Please connect to a server to open console.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void switchUserMenuItem_Click(object sender, EventArgs e)
+        {
+            Remote.SwitchUser();
         }
     }
 }

@@ -58,6 +58,7 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
     <Reference Include="System.Management.Instrumentation" />
     <Reference Include="System.Runtime.Serialization" />
@@ -73,6 +74,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands.cs" />
+    <Compile Include="ServerControls.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ServerControls.Designer.cs">
+      <DependentUpon>ServerControls.cs</DependentUpon>
+    </Compile>
     <Compile Include="GlobalErrorHandler.cs" />
     <Compile Include="ServerPrerequisites.cs" />
     <Compile Include="Program.cs" />
@@ -114,6 +121,11 @@
     <Content Include="HelpDocs\ps.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="ServerControls.resx">
+      <DependentUpon>ServerControls.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

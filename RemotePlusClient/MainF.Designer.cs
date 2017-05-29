@@ -49,6 +49,7 @@
             this.connectMenuItem = new System.Windows.Forms.MenuItem();
             this.consoleMenuItem = new System.Windows.Forms.MenuItem();
             this.settingsMenuItem = new System.Windows.Forms.MenuItem();
+            this.switchUserMenuItem = new System.Windows.Forms.MenuItem();
             this.menuItem5 = new System.Windows.Forms.MenuItem();
             this.menuItem6 = new System.Windows.Forms.MenuItem();
             this.menuItem7 = new System.Windows.Forms.MenuItem();
@@ -198,7 +199,8 @@
             this.menuItem1.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
             this.connectMenuItem,
             this.consoleMenuItem,
-            this.settingsMenuItem});
+            this.settingsMenuItem,
+            this.switchUserMenuItem});
             this.menuItem1.Text = "Server";
             // 
             // connectMenuItem
@@ -220,6 +222,13 @@
             this.settingsMenuItem.Index = 2;
             this.settingsMenuItem.Text = "Settings";
             this.settingsMenuItem.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
+            // 
+            // switchUserMenuItem
+            // 
+            this.switchUserMenuItem.Enabled = false;
+            this.switchUserMenuItem.Index = 3;
+            this.switchUserMenuItem.Text = "Switch user";
+            this.switchUserMenuItem.Click += new System.EventHandler(this.switchUserMenuItem_Click);
             // 
             // menuItem5
             // 
@@ -317,5 +326,6 @@
         private System.Windows.Forms.MenuItem menuItem9;
         private System.Windows.Forms.MenuItem menuItem2;
         private System.Windows.Forms.MenuItem menuItem3;
+        private System.Windows.Forms.MenuItem switchUserMenuItem;
     }
 }
