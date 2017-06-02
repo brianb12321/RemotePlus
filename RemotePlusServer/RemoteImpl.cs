@@ -10,6 +10,7 @@ using RemotePlusLibrary.Core;
 using RemotePlusLibrary.Extension;
 using System.Diagnostics;
 using RemotePlusLibrary.Extension.CommandSystem;
+using System.IO;
 
 namespace RemotePlusServer
 {
@@ -433,6 +434,22 @@ namespace RemotePlusServer
         {
             ServerManager.Logger.AddOutput($"Client \"{Client.FriendlyName}\" [{Client.UniqueID}] disconectted.", OutputLevel.Info);
             Client = null;
+        }
+
+        public void EncryptFile(string fileName, string password)
+        {
+            ServerManager.Logger.AddOutput($"Encrypting file. file name: {fileName}", OutputLevel.Info);
+            GameclubCryptoServices.CryptoService.EncryptFile(password, fileName, Path.ChangeExtension(fileName, ".ec"));
+            ServerManager.Logger.AddOutput("File encrypted.", OutputLevel.Info);
+            Client.ClientCallback.TellMessage(new UILogItem(OutputLevel.Info, $"File encrypted. File: {fileName}", "Server Host"));
+        }
+
+        public void DecryptFile(string fileName, string password)
+        {
+            ServerManager.Logger.AddOutput($"Decrypting file. file name: {fileName}", OutputLevel.Info);
+            GameclubCryptoServices.CryptoService.DecrypttFile(password, fileName, Path.ChangeExtension(fileName, ".uc"));
+            ServerManager.Logger.AddOutput("File decrypted.", OutputLevel.Info);
+            Client.ClientCallback.TellMessage(new UILogItem(OutputLevel.Info, $"File decrypted. File: {fileName}", "Server Host"));
         }
     }
 }

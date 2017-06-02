@@ -112,6 +112,8 @@ namespace RemotePlusServer
             Commands.Add("processes", processes);
             Commands.Add("watchers", watchers);
             Commands.Add("version", version);
+            Commands.Add("encrypt", svm_encyptFile);
+            Commands.Add("decrypt", svm_decryptFile);
         }
 
         static bool CheckPrerequisites()

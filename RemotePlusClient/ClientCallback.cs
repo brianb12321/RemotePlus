@@ -3,6 +3,7 @@ using System.ServiceModel;
 using System.Windows.Forms;
 using Logging;
 using System;
+using System.Net;
 
 namespace RemotePlusClient
 {

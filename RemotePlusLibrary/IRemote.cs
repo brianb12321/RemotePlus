@@ -71,5 +71,9 @@ namespace RemotePlusLibrary
         void SwitchUser();
         [OperationContract(IsOneWay = true)]
         void Disconnect();
+        [OperationContract(IsOneWay = true)]
+        void EncryptFile(string fileName, string password);
+        [OperationContract(IsOneWay = true)]
+        void DecryptFile(string fileName, string password);
     }
 }

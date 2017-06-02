@@ -239,5 +239,33 @@ namespace RemotePlusServer
             Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, DefaultSettings.ServerVersion));
             return (int)CommandStatus.Success;
         }
+        [CommandHelp("Executes the EncryptFile service method.")]
+        private static int svm_encyptFile(string[] args)
+        {
+            try
+            {
+                Remote.EncryptFile(args[1], args[2]);
+                return (int)CommandStatus.Success;
+            }
+            catch (IndexOutOfRangeException)
+            {
+                Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, "You need to provide all the information.", "SVM:EncryptFIle"));
+                return (int)CommandStatus.Fail;
+            }
+        }
+        [CommandHelp("Executes the DecryptFile service method.")]
+        private static int svm_decryptFile(string[] args)
+        {
+            try
+            {
+                Remote.DecryptFile(args[1], args[2]);
+                return (int)CommandStatus.Success;
+            }
+            catch (IndexOutOfRangeException)
+            {
+                Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, "You need to provide all the information.", "SVM:EncryptFIle"));
+                return (int)CommandStatus.Fail;
+            }
+        }
     }
 }

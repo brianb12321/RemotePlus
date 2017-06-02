@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace RemotePlusLibrary
 {
-    public class Client<C> where C : IClient
+    public class Client<C> : NetNode where C : IClient
     {
         public string FriendlyName { get; internal set; }
         public C ClientCallback { get; internal set; }

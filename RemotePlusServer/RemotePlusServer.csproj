@@ -51,6 +51,9 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="GameclubCryptoServices">
+      <HintPath>..\Libs\GameclubCryptoServices.dll</HintPath>
+    </Reference>
     <Reference Include="Logging, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Libs\Logging.dll</HintPath>
