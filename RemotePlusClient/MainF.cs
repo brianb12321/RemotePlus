@@ -172,7 +172,14 @@ namespace RemotePlusClient
 
         private void MainF_FormClosing(object sender, FormClosingEventArgs e)
         {
-            Disconnect();
+            try
+            {
+                Disconnect();
+            }
+            catch
+            {
+
+            }
         }
 
         private void loadToolStripMenuItem_Click(object sender, EventArgs e)

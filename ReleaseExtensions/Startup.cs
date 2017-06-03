@@ -24,6 +24,7 @@ namespace ReleaseExtensions
             ServerManager.Commands.Add("releaseExtensionAbout", releaseExtensionAbout);
             ServerManager.Logger.AddOutput(new Logging.LogItem(Logging.OutputLevel.Info, "Adding watchers.", "ReleaseExtensions") { Color = Console.ForegroundColor });
             ServerManager.Watchers.Add("HddWatcher", new HddWatcher());
+            ServerManager.Watchers.Add("SerialWatcher", new SerialWatcher());
         }
         [CommandHelp("Describes about the ReleaseExtensionsLibrary.")]
         int releaseExtensionAbout(string[] args)

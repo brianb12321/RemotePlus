@@ -187,7 +187,7 @@ namespace RemotePlusServer
                         string t = "";
                         for (int i = 3; i < args.Length; i++)
                         {
-                            t += $" {args[i]}";
+                            t += $"{args[i]}";
                         }
                         Remote.StartWatcher(args[2], t);
                         Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, $"Watcher {args[2]} started."));
@@ -219,6 +219,7 @@ namespace RemotePlusServer
                     {
                         sb.AppendLine($"{r.Key}");
                     }
+                    Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, "\n" + sb.ToString(), "Server Host"));
                     return (int)CommandStatus.Success;
                 }
                 else

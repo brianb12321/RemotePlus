@@ -16,12 +16,13 @@ namespace RemotePlusLibrary.Extension.WatcherSystem
         protected WatcherBase(WatcherDetails details)
         {
             Details = details;
-            UnderlyingThread = new Thread(DoWork);
+            Status = WatcherStatus.Off;
         }
         public void Start(object args)
         {
-            Status = WatcherStatus.Running;
+            UnderlyingThread = new Thread(DoWork);
             UnderlyingThread.Start(args);
+            Status = WatcherStatus.Running;
         }
         protected abstract void Stop();
         public void StopWatcher()

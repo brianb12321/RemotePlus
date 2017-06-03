@@ -70,6 +70,7 @@ namespace RemotePlusClient
         {
             ClientBuilder builder = new ClientBuilder();
             builder.FriendlyName = "Default GUI Client";
+            builder.ExtraData.Add("global_newLine", "true");
             return builder;
         }
 
