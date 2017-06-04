@@ -54,6 +54,11 @@ namespace ReleaseExtensions
             }
         }
 
+        protected override void OnFail(AggregateException exception)
+        {
+
+        }
+
         protected override void Stop()
         {
             StopFlag = true;

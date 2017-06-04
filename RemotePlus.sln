@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReleaseExtensions", "Releas
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemotePlusClientCmd", "RemotePlusClientCmd\RemotePlusClientCmd.csproj", "{38D2EDD9-0860-4C75-8344-8BA0AC72CBF0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemotePlusLibrary.Configuration", "RemotePlusLibrary.Configuration\RemotePlusLibrary.Configuration.csproj", "{8A8A5888-1CE7-46ED-B8DE-1AC7671F3426}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{38D2EDD9-0860-4C75-8344-8BA0AC72CBF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{38D2EDD9-0860-4C75-8344-8BA0AC72CBF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{38D2EDD9-0860-4C75-8344-8BA0AC72CBF0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8A8A5888-1CE7-46ED-B8DE-1AC7671F3426}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8A8A5888-1CE7-46ED-B8DE-1AC7671F3426}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8A8A5888-1CE7-46ED-B8DE-1AC7671F3426}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8A8A5888-1CE7-46ED-B8DE-1AC7671F3426}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

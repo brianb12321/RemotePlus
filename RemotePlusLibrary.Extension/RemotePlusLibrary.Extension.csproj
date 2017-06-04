@@ -79,6 +79,7 @@
     <Compile Include="ServerExtensionProgrammerUpdateEvent.cs" />
     <Compile Include="WatcherSystem\WatcherBase.cs" />
     <Compile Include="WatcherSystem\WatcherDetails.cs" />
+    <Compile Include="WatcherSystem\WatcherOperationStatus.cs" />
     <Compile Include="WatcherSystem\WatcherStatus.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

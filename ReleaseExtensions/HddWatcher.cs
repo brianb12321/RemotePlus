@@ -52,5 +52,10 @@ namespace ReleaseExtensions
                 base.SetFatal();
             }
         }
+
+        protected override void OnFail(AggregateException exception)
+        {
+            
+        }
     }
 }

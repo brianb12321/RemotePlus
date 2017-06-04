@@ -58,7 +58,6 @@
     <Compile Include="AuthenticationRequest.cs" />
     <Compile Include="Client.cs" />
     <Compile Include="ClientBuilder.cs" />
-    <Compile Include="Configuration\IFileConfig.cs" />
     <Compile Include="Converters\ServerSettingsTypeConverter.cs" />
     <Compile Include="Editors\StringCollectionEditor.cs" />
     <Compile Include="FileTransfer\DownloadRequest.cs" />
@@ -89,6 +88,10 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\RemotePlusLibrary.Configuration\RemotePlusLibrary.Configuration.csproj">
+      <Project>{8a8a5888-1ce7-46ed-b8de-1ac7671f3426}</Project>
+      <Name>RemotePlusLibrary.Configuration</Name>
+    </ProjectReference>
     <ProjectReference Include="..\RemotePlusLibrary.Core\RemotePlusLibrary.Core.csproj">
       <Project>{0334629b-6302-42a8-b159-f8646b4d8650}</Project>
       <Name>RemotePlusLibrary.Core</Name>
