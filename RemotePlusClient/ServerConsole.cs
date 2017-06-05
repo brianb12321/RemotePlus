@@ -28,10 +28,12 @@ namespace RemotePlusClient
 
         private void ServerConsole_Load(object sender, EventArgs e)
         {
-            Logger = new RichTextBoxLoggingMethod();
-            Logger.Output = richTextBox1;
-            Logger.DefaultInfoColor = Color.White;
-            Logger.OverrideLogItemObjectColorValue = true;
+            Logger = new RichTextBoxLoggingMethod()
+            {
+                Output = richTextBox1,
+                DefaultInfoColor = Color.White,
+                OverrideLogItemObjectColorValue = true
+            };
             textBox1.AutoCompleteSource = AutoCompleteSource.CustomSource;
             textBox1.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
             AutoCompleteStringCollection acsc = new AutoCompleteStringCollection();

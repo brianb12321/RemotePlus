@@ -21,9 +21,11 @@ namespace RemotePlusClientCmd
         {
             try
             {
-                Logger = new CMDLogging();
-                Logger.DefaultFrom = "CLient CMD";
-                Logger.OverrideLogItemObjectColorValue = true;
+                Logger = new CMDLogging()
+                {
+                    DefaultFrom = "CLient CMD",
+                    OverrideLogItemObjectColorValue = true
+                };
                 InitializeDefaultKnownTypes();
                 Console.Write("Enter url: ");
                 string url = Console.ReadLine();
@@ -33,9 +35,11 @@ namespace RemotePlusClientCmd
                 string username = Console.ReadLine();
                 Console.Write("Enter Password: ");
                 string password = Console.ReadLine();
-                RegistirationObject ro = new RegistirationObject();
-                ro.LoginRightAway = true;
-                ro.Credentials = new UserCredentials(username, password);
+                RegistirationObject ro = new RegistirationObject()
+                {
+                    LoginRightAway = true,
+                    Credentials = new UserCredentials(username, password)
+                };
                 Remote = channel.CreateChannel();
                 Remote.Register(ro);
                 Console.WriteLine("Enter a command to the server. Type {help} for a list of commands.");
@@ -73,8 +77,10 @@ namespace RemotePlusClientCmd
 
         public ClientBuilder RegisterClient()
         {
-            ClientBuilder cb = new ClientBuilder();
-            cb.FriendlyName = "RemotePlus Client Command Line";
+            ClientBuilder cb = new ClientBuilder()
+            {
+                FriendlyName = "RemotePlus Client Command Line"
+            };
             cb.ExtraData.Add("ps_appendNewLine", "false");
             return cb;
         }

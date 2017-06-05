@@ -69,8 +69,10 @@ namespace RemotePlusClient
 
         public ClientBuilder RegisterClient()
         {
-            ClientBuilder builder = new ClientBuilder();
-            builder.FriendlyName = "Default GUI Client";
+            ClientBuilder builder = new ClientBuilder()
+            {
+                FriendlyName = "Default GUI Client"
+            };
             builder.ExtraData.Add("global_newLine", "true");
             return builder;
         }

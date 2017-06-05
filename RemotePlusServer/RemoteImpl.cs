@@ -355,15 +355,19 @@ namespace RemotePlusServer
 
         public ServerExtensionProgrammer GetServerExtensionProgrammer(string ExtensionName)
         {
-            ServerExtensionProgrammer seprog = new ServerExtensionProgrammer();
-            seprog.ExtensionDetails = ServerManager.DefaultCollection.GetAllExtensions()[ExtensionName].GeneralDetails;
+            ServerExtensionProgrammer seprog = new ServerExtensionProgrammer()
+            {
+                ExtensionDetails = ServerManager.DefaultCollection.GetAllExtensions()[ExtensionName].GeneralDetails
+            };
             return seprog;
         }
 
         public ServerExtensionProgrammer GetServerExtensionProgrammer(string LibraryName, string ExtensionName)
         {
-            ServerExtensionProgrammer seprog = new ServerExtensionProgrammer();
-            seprog.ExtensionDetails = ServerManager.DefaultCollection.Libraries[LibraryName].Extensions[ExtensionName].GeneralDetails;
+            ServerExtensionProgrammer seprog = new ServerExtensionProgrammer()
+            {
+                ExtensionDetails = ServerManager.DefaultCollection.Libraries[LibraryName].Extensions[ExtensionName].GeneralDetails
+            };
             return seprog;
         }
 

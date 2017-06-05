@@ -19,10 +19,12 @@ namespace RemotePlusLibrary
         }
         public static Client<C> Build(ClientBuilder builder, C callback)
         {
-            Client<C> c = new Client<C>();
-            c.FriendlyName = builder.FriendlyName;
-            c.ClientCallback = callback;
-            c.ExtraData = builder.ExtraData;
+            Client<C> c = new Client<C>()
+            {
+                FriendlyName = builder.FriendlyName,
+                ClientCallback = callback,
+                ExtraData = builder.ExtraData
+            };
             return c;
         }
     }

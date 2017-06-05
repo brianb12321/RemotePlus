@@ -82,8 +82,10 @@ namespace RemotePlusClient
             c.FormBorderStyle = FormBorderStyle.None;
             c.TopLevel = false;
             c.Dock = DockStyle.Fill;
-            TabPage t = new TabPage(Name);
-            t.Name = Id;
+            TabPage t = new TabPage(Name)
+            {
+                Name = Id
+            };
             t.Controls.Add(c);
             tabControl1.TabPages.Add(t);
             c.Show();
@@ -97,8 +99,10 @@ namespace RemotePlusClient
             c.FormBorderStyle = FormBorderStyle.None;
             c.TopLevel = false;
             c.Dock = DockStyle.Fill;
-            TabPage t = new TabPage(Name);
-            t.Name = Id;
+            TabPage t = new TabPage(Name)
+            {
+                Name = Id
+            };
             t.Controls.Add(c);
             tabControl2.TabPages.Add(t);
             c.Show();
@@ -184,9 +188,11 @@ namespace RemotePlusClient
 
         private void loadToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.Title = "Choose extension library";
-            ofd.Filter = "Extension type (*.dll)|*.dll";
+            OpenFileDialog ofd = new OpenFileDialog()
+            {
+                Title = "Choose extension library",
+                Filter = "Extension type (*.dll)|*.dll"
+            };
             if (ofd.ShowDialog() == DialogResult.OK)
             {
                 var lib = ClientExtensionLibrary.LoadClientLibrary(ofd.FileName, (f) => MainF.ConsoleObj.Logger.AddOutput($"Form load: {f.GeneralDetails.Name}", OutputLevel.Info));
@@ -195,8 +201,10 @@ namespace RemotePlusClient
                 {
                     foreach (KeyValuePair<string, IClientExtension> f2 in DefaultCollection.GetAllExtensions())
                     {
-                        TreeNode tn = new TreeNode(f2.Value.GeneralDetails.Name);
-                        tn.Name = f2.Key;
+                        TreeNode tn = new TreeNode(f2.Value.GeneralDetails.Name)
+                        {
+                            Name = f2.Key
+                        };
                         this.Invoke(new MethodInvoker(() => treeView2.Nodes.Add(tn)));
                     }
                     this.Invoke(new MethodInvoker(() => MainF.ConsoleObj.Logger.AddOutput("Extension loaded.", Logging.OutputLevel.Info)));
@@ -263,8 +271,10 @@ namespace RemotePlusClient
         {
             if (channel.State == CommunicationState.Opened)
             {
-                OpenFileDialog ofd = new OpenFileDialog();
-                ofd.Title = "Pick a script file to run.";
+                OpenFileDialog ofd = new OpenFileDialog()
+                {
+                    Title = "Pick a script file to run."
+                };
                 if (ofd.ShowDialog() == DialogResult.OK)
                 {
                     if (ServerConsoleObj == null)

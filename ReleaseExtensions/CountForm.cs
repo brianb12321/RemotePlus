@@ -41,8 +41,10 @@ namespace ReleaseExtensions
 
         private void button1_Click(object sender, EventArgs e)
         {
-            var context = new ExtensionExecutionContext(CallType.GUI);
-            context.ClientExtension = GeneralDetails;
+            var context = new ExtensionExecutionContext(CallType.GUI)
+            {
+                ClientExtension = GeneralDetails
+            };
             var s = MainF.Remote.RunExtension("CountExtension", context, "");
             foreach(int n in (List<int>)s.Data)
             {

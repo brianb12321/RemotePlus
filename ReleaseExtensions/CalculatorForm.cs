@@ -25,8 +25,10 @@ namespace ReleaseExtensions
 
         private void button1_Click(object sender, EventArgs e)
         {
-            ExtensionExecutionContext context = new ExtensionExecutionContext(CallType.GUI);
-            context.ClientExtension = GeneralDetails;
+            ExtensionExecutionContext context = new ExtensionExecutionContext(CallType.GUI)
+            {
+                ClientExtension = GeneralDetails
+            };
             var os = MainF.Remote.RunExtension("CalculatorExtension", context, comboBox1.SelectedText, textBox1.Text, textBox2.Text);
             if (os.Success)
             {

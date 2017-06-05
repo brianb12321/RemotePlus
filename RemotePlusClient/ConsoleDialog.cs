@@ -21,10 +21,12 @@ namespace RemotePlusClient
 
         private void ConsoleDialog_Load(object sender, EventArgs e)
         {
-            Logger = new RichTextBoxLoggingMethod();
-            Logger.DefaultFrom = "Client";
-            Logger.Output = richTextBox1;
-            Logger.OverrideLogItemObjectColorValue = true;
+            Logger = new RichTextBoxLoggingMethod()
+            {
+                DefaultFrom = "Client",
+                Output = richTextBox1,
+                OverrideLogItemObjectColorValue = true
+            };
             Logger.AddOutput("Console opened.", OutputLevel.Info);
         }
 

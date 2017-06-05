@@ -16,8 +16,10 @@ namespace RemotePlusClient
         [STAThread]
         static void Main(string[] args)
         {
-            Logger = new CMDLogging();
-            Logger.DefaultFrom = "Client";
+            Logger = new CMDLogging()
+            {
+                DefaultFrom = "Client"
+            };
             InitializeDefaultKnownTypes();
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);

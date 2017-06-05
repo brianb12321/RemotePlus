@@ -113,8 +113,10 @@ namespace RemotePlusLibrary
         {
             DataContractSerializer xsSubmit = new DataContractSerializer(typeof(VariableManager), Core.DefaultKnownTypeManager.GetKnownTypes(null));
             var subReq = this;
-            XmlWriterSettings settings = new XmlWriterSettings();
-            settings.Indent = true;
+            XmlWriterSettings settings = new XmlWriterSettings()
+            {
+                Indent = true
+            };
             using (var sww = new StringWriter())
             using (XmlWriter writer = XmlWriter.Create("Variables.xml", settings))
             {
