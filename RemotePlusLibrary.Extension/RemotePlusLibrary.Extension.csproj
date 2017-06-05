@@ -67,7 +67,6 @@
     <Compile Include="ServerExtensionLibraryCollection.cs" />
     <Compile Include="ExtensionLibraryType.cs" />
     <Compile Include="IClientExtension.cs" />
-    <Compile Include="IClientLibraryStartup.cs" />
     <Compile Include="IExtension.cs" />
     <Compile Include="ILibraryStartup.cs" />
     <Compile Include="InvalidExtensionLibraryException.cs" />
