@@ -4,6 +4,7 @@ RemotePlus is a remote control server/client. You run the server on a remote com
 ### What features comes with RemotePlus?
 * Flexable extension system.
 * Customizable settings
+* The ability to write your own client.
 ## Setting up RemotePlus
 ### Prerequisites
 * .Net 4.6.2
@@ -80,6 +81,21 @@ Welcome to RemotePlusServer, version: 1.0.0.0
 6/5/2017 6:31:48 PM [Server Host][INFO]: Loading commands.
 6/5/2017 6:31:48 PM [Server Host][WARNING]: The server settings file does not exist. Creating server settings file.
 ```
+## Commands
+So, you want to know the commands that are pre-loaded on the server? Type `help` in the client console for a list of commands.
+## I want to build my own extension
+Please refer to the documentation for more details on how to write a server extension.
+## So, I'm a noob. How do I get started?
+Please refer to the quick start guide on how to setup and configure RemotePlus for your environment.
+## What operations are exposed?
+Please look at the `IRemote.cs` for your answer. If you want a more user friendly version, go to the documentation for your answer.
+## troubleshotting (the short version)
+### RemotePlusServer will not start
+* Make sure that all prerequisites have been met.
+* There may have been a problem (exception) that occured. Please refer to the list of exceptions in the troubleshooting guide for more support.
+### Certain folders are missing
+* Make sure that the `Configurations\Server` folder exists.
+* Make sure that the `ServerLogs` folder exists.
 ## To do (things that can be fixed or improved)
 * Refactor messy code.
 * Adding thread sync.
