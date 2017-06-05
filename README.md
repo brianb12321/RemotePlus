@@ -32,7 +32,7 @@ Welcome to RemotePlusServer, version: 1.0.0.0
 ```
 ### Setting up server
 * Make sure that you meet the prerequisites mentioned above.
-* Make sure that your `GlobalSettings.config` file matches the template below
+* Make sure that your `GlobalServerSettings.config` file matches the template below
 ``` xml
 <?xml version="1.0" encoding="utf-8"?>
 <ServerSettings xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.datacontract.org/2004/07/RemotePlusLibrary">
