@@ -26,5 +26,7 @@ namespace RemotePlusLibrary
         void Disconnect(string Reason);
         [OperationContract]
         UserCredentials RequestAuthentication(AuthenticationRequest Request);
+        [OperationContract]
+        ReturnData RequestInformation(RequestBuilder builder);
     }
 }

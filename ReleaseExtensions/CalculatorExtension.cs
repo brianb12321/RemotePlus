@@ -1,8 +1,10 @@
 ﻿using Logging;
+using RemotePlusLibrary;
 using RemotePlusLibrary.Extension;
 using RemotePlusServer;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,6 +19,8 @@ namespace ReleaseExtensions
 
         public override OperationStatus Execute(ExtensionExecutionContext Context, params object[] arguments)
         {
+            var c = ServerManager.Remote.Client.ClientCallback.RequestInformation(RequestBuilder.RequestColor());
+            ServerManager.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, $"Your color is {c.Data}", "Calculator"));
             LogItem l;
             OperationStatus Status = new OperationStatus();
             switch(arguments[0])

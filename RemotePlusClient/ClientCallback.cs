@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using Logging;
 using System;
 using System.Net;
+using System.Drawing;
 
 namespace RemotePlusClient
 {
@@ -83,6 +84,26 @@ namespace RemotePlusClient
             else
             {
                 MainF.ServerConsoleObj.AppendText(Message);
+            }
+        }
+
+        public ReturnData RequestInformation(RequestBuilder builder)
+        {
+            if(builder.Interface == RequestType.Color)
+            {
+                ColorDialog cd = new ColorDialog();
+                if(cd.ShowDialog() == DialogResult.OK)
+                {
+                    return new ReturnData(cd.Color.ToString());
+                }
+                else
+                {
+                    return new ReturnData(Color.Black.ToString().ToString());
+                }
+            }
+            else
+            {
+                return new ReturnData(null);
             }
         }
     }

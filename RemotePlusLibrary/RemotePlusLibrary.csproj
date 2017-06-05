@@ -68,6 +68,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RegistirationObject.cs" />
     <Compile Include="FileTransfer\RemoteFileInfo.cs" />
+    <Compile Include="RequestBuilder.cs" />
+    <Compile Include="RequestType.cs" />
+    <Compile Include="ReturnData.cs" />
     <Compile Include="Role.cs" />
     <Compile Include="SecurityAccessRules.cs" />
     <Compile Include="ServerSettings.cs" />

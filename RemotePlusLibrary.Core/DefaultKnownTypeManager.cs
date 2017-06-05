@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -25,6 +26,7 @@ namespace RemotePlusLibrary.Core
             _knownType.Add(typeof(List<int>));
             _knownType.Add(typeof(List<string>));
             _knownType.Add(typeof(Dictionary<string, string>));
+            _knownType.Add(typeof(Color));
         }
     }
 }

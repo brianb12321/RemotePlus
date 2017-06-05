@@ -7,6 +7,8 @@ using RemotePlusLibrary;
 using Logging;
 using System.ServiceModel;
 using RemotePlusLibrary.Core;
+using System.Windows.Forms;
+using System.Drawing;
 
 namespace RemotePlusClientCmd
 {
@@ -85,6 +87,26 @@ namespace RemotePlusClientCmd
             Console.Write("Enter Password: ");
             string password = Console.ReadLine();
             return new UserCredentials(username, password);
+        }
+
+        public ReturnData RequestInformation(RequestBuilder builder)
+        {
+            if (builder.Interface == RequestType.Color)
+            {
+                ColorDialog cd = new ColorDialog();
+                if (cd.ShowDialog() == DialogResult.OK)
+                {
+                    return new ReturnData(cd.Color.ToString());
+                }
+                else
+                {
+                    return new ReturnData(Color.Empty.ToString());
+                }
+            }
+            else
+            {
+                throw new Exception("Invalid request type.");
+            }
         }
 
         public void TellMessage(string Message, OutputLevel o)
