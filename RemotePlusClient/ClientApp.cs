@@ -1,4 +1,5 @@
 ﻿using Logging;
+using RemotePlusClient.CommonUI;
 using RemotePlusLibrary;
 using RemotePlusLibrary.Core;
 using System;
@@ -23,6 +24,7 @@ namespace RemotePlusClient
             InitializeDefaultKnownTypes();
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+            RequestDialogBoxStore.Init();
             Application.Run(new MainF());
         }
         static void InitializeDefaultKnownTypes()

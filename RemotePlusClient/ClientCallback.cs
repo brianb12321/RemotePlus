@@ -5,6 +5,7 @@ using Logging;
 using System;
 using System.Net;
 using System.Drawing;
+using RemotePlusClient.CommonUI;
 
 namespace RemotePlusClient
 {
@@ -91,22 +92,7 @@ namespace RemotePlusClient
 
         public ReturnData RequestInformation(RequestBuilder builder)
         {
-            if(builder.Interface == RequestType.Color)
-            {
-                ColorDialog cd = new ColorDialog();
-                if(cd.ShowDialog() == DialogResult.OK)
-                {
-                    return new ReturnData(cd.Color.ToString());
-                }
-                else
-                {
-                    return new ReturnData(Color.Black.ToString().ToString());
-                }
-            }
-            else
-            {
-                return new ReturnData(null);
-            }
+            return RequestDialogBoxStore.Show(builder);
         }
     }
 }

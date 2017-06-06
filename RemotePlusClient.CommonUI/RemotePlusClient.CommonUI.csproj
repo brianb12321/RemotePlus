@@ -4,17 +4,16 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{38D2EDD9-0860-4C75-8344-8BA0AC72CBF0}</ProjectGuid>
-    <OutputType>Exe</OutputType>
-    <RootNamespace>RemotePlusClientCmd</RootNamespace>
-    <AssemblyName>RemotePlusClientCmd</AssemblyName>
+    <ProjectGuid>{9EF00D4B-27F4-4C2A-BDA7-FC47246B2064}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>RemotePlusClient.CommonUI</RootNamespace>
+    <AssemblyName>RemotePlusClient.CommonUI</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -24,7 +23,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -39,7 +37,6 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -49,16 +46,24 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RequestDialogBoxStore.cs" />
+    <Compile Include="RequestStringDialogBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="RequestStringDialogBox.Designer.cs">
+      <DependentUpon>RequestStringDialogBox.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <EmbeddedResource Include="RequestStringDialogBox.resx">
+      <DependentUpon>RequestStringDialogBox.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\RemotePlusClient.CommonUI\RemotePlusClient.CommonUI.csproj">
-      <Project>{9EF00D4B-27F4-4C2A-BDA7-FC47246B2064}</Project>
-      <Name>RemotePlusClient.CommonUI</Name>
+    <ProjectReference Include="..\RemotePlusLibrary.Configuration\RemotePlusLibrary.Configuration.csproj">
+      <Project>{8a8a5888-1ce7-46ed-b8de-1ac7671f3426}</Project>
+      <Name>RemotePlusLibrary.Configuration</Name>
     </ProjectReference>
     <ProjectReference Include="..\RemotePlusLibrary.Core\RemotePlusLibrary.Core.csproj">
       <Project>{0334629b-6302-42a8-b159-f8646b4d8650}</Project>

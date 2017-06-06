@@ -8,13 +8,15 @@ using System.Threading.Tasks;
 namespace RemotePlusLibrary
 {
     [DataContract]
-    public enum RequestType
+    public enum AcquisitionMode
     {
         [EnumMember]
-        String,
+        ThrowIfCancel,
         [EnumMember]
-        Color,
+        ThrowIfNotFound,
         [EnumMember]
-        FilePath
+        None, 
+        [EnumMember]
+        ThrowIfException
     }
 }

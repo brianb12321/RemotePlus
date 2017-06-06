@@ -9,6 +9,7 @@ using System.ServiceModel;
 using RemotePlusLibrary.Core;
 using System.Windows.Forms;
 using System.Drawing;
+using RemotePlusClient.CommonUI;
 
 namespace RemotePlusClientCmd
 {
@@ -27,6 +28,7 @@ namespace RemotePlusClientCmd
                     OverrideLogItemObjectColorValue = true
                 };
                 InitializeDefaultKnownTypes();
+                RequestDialogBoxStore.Init();
                 Console.Write("Enter url: ");
                 string url = Console.ReadLine();
                 channel = new DuplexChannelFactory<IRemote>(new ClientCallback(), "DefaultEndpoint");
@@ -97,22 +99,7 @@ namespace RemotePlusClientCmd
 
         public ReturnData RequestInformation(RequestBuilder builder)
         {
-            if (builder.Interface == RequestType.Color)
-            {
-                ColorDialog cd = new ColorDialog();
-                if (cd.ShowDialog() == DialogResult.OK)
-                {
-                    return new ReturnData(cd.Color.ToString());
-                }
-                else
-                {
-                    return new ReturnData(Color.Empty.ToString());
-                }
-            }
-            else
-            {
-                throw new Exception("Invalid request type.");
-            }
+            return RequestDialogBoxStore.Show(builder);
         }
 
         public void TellMessage(string Message, OutputLevel o)
