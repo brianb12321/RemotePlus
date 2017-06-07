@@ -83,9 +83,9 @@
             // 
             this.comboBox1.FormattingEnabled = true;
             this.comboBox1.Items.AddRange(new object[] {
-            "add,",
-            "subtract,",
-            "multiply",
+            "add",
+            "subtract",
+            "multipy",
             "divide"});
             this.comboBox1.Location = new System.Drawing.Point(71, 89);
             this.comboBox1.Name = "comboBox1";

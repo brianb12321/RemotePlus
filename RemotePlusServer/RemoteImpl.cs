@@ -223,7 +223,8 @@ namespace RemotePlusServer
             }
             else
             {
-                MessageBox.Show(Message, Caption, Buttons, Icon);
+                var dr = MessageBox.Show(Message, Caption, Buttons, Icon);
+                Client.ClientCallback.TellMessage(new UILogItem(OutputLevel.Info, $"The user responded to the message box. Response: {dr.ToString()}", "Server Host"));
             }
         }
 
@@ -278,8 +279,16 @@ namespace RemotePlusServer
         public ServerSettings GetServerSettings()
         {
             CheckRegisteration("GetServerSettings");
-            ServerManager.Logger.AddOutput("Retreiving server settings.", OutputLevel.Info);
-            return ServerManager.DefaultSettings;
+            if (!LoggedInUser.Role.Privilleges.CanAccessSettings)
+            {
+                Client.ClientCallback.TellMessage(new UILogItem(OutputLevel.Error, "You do not have permission to change server settings.", "Server Host"));
+                return null;
+            }
+            else
+            {
+                ServerManager.Logger.AddOutput("Retreiving server settings.", OutputLevel.Info);
+                return ServerManager.DefaultSettings;
+            }
         }
 
         public void Restart()

@@ -9,6 +9,8 @@ using System.Text;
 using System.Threading.Tasks;
 using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusLibrary.Extension.WatcherSystem;
+using System.Speech.Synthesis;
+using System.Windows.Forms;
 
 namespace RemotePlusServer
 {
@@ -267,6 +269,178 @@ namespace RemotePlusServer
                 Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, "You need to provide all the information.", "SVM:EncryptFIle"));
                 return (int)CommandStatus.Fail;
             }
+        }
+        [CommandHelp("Wraps around the beep function.")]
+        private static int svm_beep(string[] args)
+        {
+            Remote.Beep(int.Parse(args[1]), int.Parse(args[2]));
+            return (int)CommandStatus.Success;
+        }
+        [CommandHelp("Wraps around the speak function.")]
+        private static int svm_speak(string[] args)
+        {
+            VoiceAge age = VoiceAge.Adult;
+            VoiceGender gender = VoiceGender.Male;
+            string message = "";
+            if(args[1] == "vg_male")
+            {
+                gender = VoiceGender.Male;
+            }
+            else if(args[1] == "vg_female")
+            {
+                gender = VoiceGender.Female;
+            }
+            else if(args[1] == "vg_neutral")
+            {
+                gender = VoiceGender.Neutral;
+            }
+            else if(args[1] == "vg_notSet")
+            {
+                gender = VoiceGender.NotSet;
+            }
+            else
+            {
+                Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, "You must provide a valid voice gender.", "Server Host"));
+                return (int)CommandStatus.Fail;
+            }
+            if (args[2] == "va_adult")
+            {
+                age = VoiceAge.Adult;
+            }
+            else if (args[2] == "va_child")
+            {
+                age = VoiceAge.Child;
+            }
+            else if (args[2] == "va_senior")
+            {
+                age = VoiceAge.Senior;
+            }
+            else if(args[2] == "va_teen")
+            {
+                age = VoiceAge.Teen;
+            }
+            else if (args[2] == "va_notSet")
+            {
+                age = VoiceAge.NotSet;
+            }
+            else
+            {
+                Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, "You must provide a valid voice age..", "Server Host"));
+                return (int)CommandStatus.Fail;
+            }
+            for (int i = 3; i < args.Length; i++)
+            {
+                message += args[i] + " ";
+            }
+            Remote.Speak(message, gender, age);
+            return (int)CommandStatus.Success;
+        }
+        [CommandHelp("Wraps around the showMessageBox function.")]
+        private static int svm_showMessageBox(string[] args)
+        {
+            MessageBoxButtons buttons = MessageBoxButtons.OK;
+            MessageBoxIcon icon = MessageBoxIcon.None;
+            string message = "";
+            string caption = "";
+            if (args[1] == "b_OK")
+            {
+                buttons = MessageBoxButtons.OK;
+            }
+            else if (args[1] == "b_OK_CANCEL")
+            {
+                buttons = MessageBoxButtons.OKCancel;
+            }
+            else if (args[1] == "b_ABORT_RETRY_IGNORE")
+            {
+                buttons = MessageBoxButtons.AbortRetryIgnore;
+            }
+            else if (args[1] == "b_RETRY_CANCEL")
+            {
+                buttons = MessageBoxButtons.RetryCancel;
+            }
+            else if (args[1] == "b_YES_NO")
+            {
+                buttons = MessageBoxButtons.YesNo;
+            }
+            else if (args[1] == "b_YES_NO_CANCEL")
+            {
+                buttons = MessageBoxButtons.YesNoCancel;
+            }
+            else
+            {
+                Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, "Please provide a valid MessageBox button.", "Server Host"));
+                return (int)CommandStatus.Fail;
+            }
+            if (args[2] == "i_WARNING")
+            {
+                icon = MessageBoxIcon.Warning;
+            }
+            else if (args[2] == "i_STOP")
+            {
+                icon = MessageBoxIcon.Stop;
+            }
+            else if (args[2] == "i_ERROR")
+            {
+                icon = MessageBoxIcon.Error;
+            }
+            else if (args[2] == "i_HAND")
+            {
+                icon = MessageBoxIcon.Hand;
+            }
+            else if (args[2] == "i_INFORMATION")
+            {
+                icon = MessageBoxIcon.Information;
+            }
+            else if (args[2] == "i_QUESTION")
+            {
+                icon = MessageBoxIcon.Question;
+            }
+            else if (args[2] == "i_EXCLAMATION")
+            {
+                icon = MessageBoxIcon.Exclamation;
+            }
+            else if (args[2] == "i_ASTERISK")
+            {
+                icon = MessageBoxIcon.Asterisk;
+            }
+            else
+            {
+                Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, "Please provide a valid MessageBox icon type.", "Server Host"));
+                return (int)CommandStatus.Fail;
+            }
+            int message_start = 0;
+            if (args[3] == "caption:")
+            {
+                for (int i = 4; i < args.Length; i++)
+                {
+                    if (args[i] != "message:")
+                    {
+                        caption += args[i] + " ";
+                    }
+                    else
+                    {
+                        message_start = i;
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                caption = "RemotePlusServer";
+            }
+            if(message_start != 0)
+            {
+                for(int i = message_start + 1; i < args.Length; i++)
+                {
+                    message += args[i] + " ";
+                }
+            }
+            else
+            {
+                message = "";
+            }
+            Remote.ShowMessageBox(message, caption, icon, buttons);
+            return (int)CommandStatus.Success;
         }
     }
 }

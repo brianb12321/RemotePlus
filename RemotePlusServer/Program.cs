@@ -114,6 +114,9 @@ namespace RemotePlusServer
             Commands.Add("version", version);
             Commands.Add("encrypt", svm_encyptFile);
             Commands.Add("decrypt", svm_decryptFile);
+            Commands.Add("beep", svm_beep);
+            Commands.Add("speak", svm_speak);
+            Commands.Add("showMessageBox", svm_showMessageBox);
         }
 
         static bool CheckPrerequisites()

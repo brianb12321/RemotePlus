@@ -37,11 +37,11 @@ namespace RemotePlusClientCmd
                 string username = Console.ReadLine();
                 Console.Write("Enter Password: ");
                 string password = Console.ReadLine();
-                RegistirationObject ro = new RegistirationObject()
-                {
-                    LoginRightAway = true,
-                    Credentials = new UserCredentials(username, password)
-                };
+                RegistirationObject ro = new RegistirationObject();
+                //{
+                ro.LoginRightAway = true;
+                ro.Credentials = new UserCredentials(username, password);
+                //};
                 Remote = channel.CreateChannel();
                 Remote.Register(ro);
                 Console.WriteLine("Enter a command to the server. Type {help} for a list of commands.");
@@ -69,6 +69,9 @@ namespace RemotePlusClientCmd
             DefaultKnownTypeManager.AddType(typeof(UserAccount));
         }
     }
+    [CallbackBehavior(ConcurrencyMode = ConcurrencyMode.Single,
+        IncludeExceptionDetailInFaults = true,
+        UseSynchronizationContext = false)]
     class ClientCallback : IRemoteClient
     {
         public void Disconnect(string Reason)
@@ -79,10 +82,8 @@ namespace RemotePlusClientCmd
 
         public ClientBuilder RegisterClient()
         {
-            ClientBuilder cb = new ClientBuilder()
-            {
-                FriendlyName = "RemotePlus Client Command Line"
-            };
+            ClientBuilder cb = new ClientBuilder();
+            cb.FriendlyName = "RemotePlus Client Command Line";
             cb.ExtraData.Add("ps_appendNewLine", "false");
             return cb;
         }

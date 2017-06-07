@@ -20,6 +20,11 @@ namespace ReleaseExtensions
         public override OperationStatus Execute(ExtensionExecutionContext Context, params object[] arguments)
         {
             var c = ServerManager.Remote.Client.ClientCallback.RequestInformation(RequestBuilder.RequestColor());
+            var cn = ServerManager.Remote.Client.ClientCallback.RequestInformation(RequestBuilder.RequestString("What is your favorite car make?"));
+            if(cn.AcquisitionState != RequestState.Cancel)
+            {
+                ServerManager.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, $"Your favorite car make is {cn.Data}", "Calculator"));
+            }
             ServerManager.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, $"Your color is {c.Data}", "Calculator"));
             LogItem l;
             OperationStatus Status = new OperationStatus();
