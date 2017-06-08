@@ -28,7 +28,7 @@ namespace ReleaseExtensions
                 }
                 else
                 {
-                    ServerManager.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, i.ToString(), "CountEstension"));
+                    ServerManager.Remote.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, i.ToString(), "CountEstension"));
                 }
             }
             s.Data = il;

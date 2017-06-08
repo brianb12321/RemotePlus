@@ -19,13 +19,13 @@ namespace ReleaseExtensions
 
         public override OperationStatus Execute(ExtensionExecutionContext Context, params object[] arguments)
         {
-            var c = ServerManager.Remote.Client.ClientCallback.RequestInformation(RequestBuilder.RequestColor());
-            var cn = ServerManager.Remote.Client.ClientCallback.RequestInformation(RequestBuilder.RequestString("What is your favorite car make?"));
+            var c = ServerManager.Remote.Remote.Client.ClientCallback.RequestInformation(RequestBuilder.RequestColor());
+            var cn = ServerManager.Remote.Remote.Client.ClientCallback.RequestInformation(RequestBuilder.RequestString("What is your favorite car make?"));
             if(cn.AcquisitionState != RequestState.Cancel)
             {
-                ServerManager.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, $"Your favorite car make is {cn.Data}", "Calculator"));
+                ServerManager.Remote.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, $"Your favorite car make is {cn.Data}", "Calculator"));
             }
-            ServerManager.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, $"Your color is {c.Data}", "Calculator"));
+            ServerManager.Remote.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, $"Your color is {c.Data}", "Calculator"));
             LogItem l;
             OperationStatus Status = new OperationStatus();
             switch(arguments[0])
@@ -41,7 +41,7 @@ namespace ReleaseExtensions
                     {
                         l = new LogItem(OutputLevel.Info, (double.Parse((string)arguments[1]) + double.Parse((string)arguments[2])).ToString(), "Calculator");
                         ServerManager.Logger.AddOutput("Client request addition calculation. Sum: " + l.Message, l.Level, l.From);
-                        RemotePlusServer.ServerManager.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(l.Level, l.Message, l.From));
+                        RemotePlusServer.ServerManager.Remote.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(l.Level, l.Message, l.From));
                     }
                     return Status;
                 case "multiply":
@@ -55,7 +55,7 @@ namespace ReleaseExtensions
                     {
                         l = new LogItem(OutputLevel.Info, (double.Parse((string)arguments[1]) * double.Parse((string)arguments[2])).ToString(), "Calculator");
                         ServerManager.Logger.AddOutput("Client request multiplication calculation. Product: " + l.Message, l.Level, l.From);
-                        RemotePlusServer.ServerManager.Remote.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(l.Level, l.Message, l.From));
+                        RemotePlusServer.ServerManager.Remote.Remote.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(l.Level, l.Message, l.From));
                     }
                     return Status;
                 case "divide":
@@ -69,7 +69,7 @@ namespace ReleaseExtensions
                     {
                         l = new LogItem(OutputLevel.Info, (double.Parse((string)arguments[1]) / double.Parse((string)arguments[2])).ToString(), "Calculator");
                         ServerManager.Logger.AddOutput("Client request division calculation. Quotient: " + l.Message, l.Level, l.From);
-                        RemotePlusServer.ServerManager.Remote.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(l.Level, l.Message, l.From));
+                        RemotePlusServer.ServerManager.Remote.Remote.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(l.Level, l.Message, l.From));
                     }
                     return Status;
                 case "subtract":
@@ -83,7 +83,7 @@ namespace ReleaseExtensions
                     {
                         l = new LogItem(OutputLevel.Info, (double.Parse((string)arguments[1]) - double.Parse((string)arguments[2])).ToString(), "Calculator");
                         ServerManager.Logger.AddOutput("Client request subtraction calculation. Difference: " + l.Message, l.Level, l.From);
-                        RemotePlusServer.ServerManager.Remote.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(l.Level, l.Message, l.From));
+                        RemotePlusServer.ServerManager.Remote.Remote.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(l.Level, l.Message, l.From));
                     }
                     return Status;
                 default:
@@ -95,7 +95,7 @@ namespace ReleaseExtensions
                     {
                         l = new LogItem(OutputLevel.Error, $"The action {arguments[1]} does not exist.", "Calculator");
                         ServerManager.Logger.AddOutput(l);
-                        ServerManager.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(l.Level, l.Message, l.From));
+                        ServerManager.Remote.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(l.Level, l.Message, l.From));
                     }
                     return Status;
             }

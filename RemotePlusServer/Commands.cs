@@ -27,14 +27,14 @@ namespace RemotePlusServer
                 {
                     a += " " + args[i];
                 }
-                Remote.RunProgram(args[1], a);
-                Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, "Program start command finished.", "Server Host"));
+                Remote.Remote.RunProgram(args[1], a);
+                Remote.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, "Program start command finished.", "Server Host"));
                 return (int)CommandStatus.Success;
             }
             else if (args.Length == 1)
             {
-                Remote.RunProgram((string)args[1], "");
-                Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, "Program start command finished.", "Server Host"));
+                Remote.Remote.RunProgram((string)args[1], "");
+                Remote.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, "Program start command finished.", "Server Host"));
                 return (int)CommandStatus.Success;
             }
             return (int)CommandStatus.Fail;
@@ -45,7 +45,7 @@ namespace RemotePlusServer
             string t = "";
             if (arguments.Length == 2)
             {
-                foreach(object a in Commands[arguments[1]].Method.GetCustomAttributes(false))
+                foreach(object a in Remote.Commands[arguments[1]].Method.GetCustomAttributes(false))
                 {
                     if(a is HelpPageAttribute)
                     {
@@ -66,7 +66,7 @@ namespace RemotePlusServer
             }
             else if(arguments.Length >= 1)
             {
-                foreach (KeyValuePair<string, CommandDelgate> c in Commands)
+                foreach (KeyValuePair<string, CommandDelgate> c in Remote.Commands)
                 {
                     if (c.Value.Method.GetCustomAttributes(false).Length > 0)
                     {
@@ -85,7 +85,7 @@ namespace RemotePlusServer
                     }
                 }
             }
-            Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, t, "Server Host"));
+            Remote.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, t, "Server Host"));
             return (int)CommandStatus.Success;
         }
         [CommandHelp("Executes a loaded extension on the server.")]
@@ -96,8 +96,8 @@ namespace RemotePlusServer
             {
                 obj.Add((string)args[i]);
             }
-            Remote.RunExtension((string)args[1], new ExtensionExecutionContext(CallType.CommandLine), obj.ToArray());
-            Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, "Extension executed.", "Server Host"));
+            Remote.Remote.RunExtension((string)args[1], new ExtensionExecutionContext(CallType.CommandLine), obj.ToArray());
+            Remote.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, "Extension executed.", "Server Host"));
             return (int)CommandStatus.Success;
         }
         [CommandHelp("Gets the server log.")]
@@ -105,7 +105,7 @@ namespace RemotePlusServer
         {
             foreach(var l in Logger.buffer)
             {
-                Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(l.Level, l.Message, l.From));
+                Remote.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(l.Level, l.Message, l.From));
             }
             return (int)CommandStatus.Success;
         }
@@ -123,16 +123,16 @@ namespace RemotePlusServer
                         {
                             t += $" {args[i]}";
                         }
-                        Variables.Add(args[2], t);
-                        Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, $"Variable {args[2]} added."));
-                        Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, $"Saving variable file"));
-                        Variables.Save();
-                        Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, $"Variable file saved."));
+                        Remote.Variables.Add(args[2], t);
+                        Remote.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, $"Variable {args[2]} added."));
+                        Remote.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, $"Saving variable file"));
+                        Remote.Variables.Save();
+                        Remote.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, $"Variable file saved."));
                         return (int)CommandStatus.Success;
                     }
                     else
                     {
-                        Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, "You must provide a value."));
+                        Remote.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, "You must provide a value."));
                         return (int)CommandStatus.Fail;
                     }
                 }
@@ -140,29 +140,29 @@ namespace RemotePlusServer
                 {
                     StringBuilder sb = new StringBuilder();
                     sb.AppendLine();
-                    foreach (KeyValuePair<string, string> v in Variables)
+                    foreach (KeyValuePair<string, string> v in Remote.Variables)
                     {
                         sb.AppendLine($"{v.Key}\t{v.Value}");
                     }
-                    Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, sb.ToString()));
+                    Remote.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, sb.ToString()));
                     return (int)CommandStatus.Success;
                 }
                 else
                 {
-                    Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, "Invalid action."));
+                    Remote.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, "Invalid action."));
                     return (int)CommandStatus.Fail;
                 }
             }
             else
             {
-                Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, "Please provide an action for this command."));
+                Remote.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, "Please provide an action for this command."));
                 return (int)CommandStatus.Fail;
             }
         }
         [CommandHelp("Gets the date and time set on the remote server.")]
         private static int dateTime(string[] args)
         {
-            Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, DateTime.Now.ToString()));
+            Remote.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, DateTime.Now.ToString()));
             return (int)CommandStatus.Success;
         }
         [CommandHelp("Gets the list of processes running on the remote server.")]
@@ -174,7 +174,7 @@ namespace RemotePlusServer
             {
                 sb.AppendLine($"Name: {p.ProcessName}, ID: {p.Id}, Start Time: {p.StartTime.ToString()}");
             }
-            Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, sb.ToString()));
+            Remote.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, sb.ToString()));
             return (int)CommandStatus.Success;
         }
         [CommandHelp("Manages the watchers on the remote server.")]
@@ -191,14 +191,14 @@ namespace RemotePlusServer
                         {
                             t += $"{args[i]}";
                         }
-                        Remote.StartWatcher(args[2], t);
-                        Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, $"Watcher {args[2]} started."));
+                        Remote.Remote.StartWatcher(args[2], t);
+                        Remote.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, $"Watcher {args[2]} started."));
                         return (int)CommandStatus.Success;
                     }
                     else
                     {
-                        Remote.StartWatcher(args[2], null);
-                        Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, $"Watcher {args[2]} started."));
+                        Remote.Remote.StartWatcher(args[2], null);
+                        Remote.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, $"Watcher {args[2]} started."));
                         return (int)CommandStatus.Success;
                     }
                 }
@@ -210,7 +210,7 @@ namespace RemotePlusServer
                     {
                         sb.AppendLine($"{w.Key}");
                     }
-                    Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, sb.ToString()));
+                    Remote.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, sb.ToString()));
                     return (int)CommandStatus.Success;
                 }
                 else if(args[1] == "running")
@@ -221,25 +221,25 @@ namespace RemotePlusServer
                     {
                         sb.AppendLine($"{r.Key}");
                     }
-                    Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, "\n" + sb.ToString(), "Server Host"));
+                    Remote.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, "\n" + sb.ToString(), "Server Host"));
                     return (int)CommandStatus.Success;
                 }
                 else
                 {
-                    Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, "Invalid action."));
+                    Remote.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, "Invalid action."));
                     return (int)CommandStatus.Fail;
                 }
             }
             else
             {
-                Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, "Please provide an action."));
+                Remote.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, "Please provide an action."));
                 return (int)CommandStatus.Fail;
             }
         }
         [CommandHelp("Returns the server version.")]
         private static int version(string[] args)
         {
-            Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, DefaultSettings.ServerVersion));
+            Remote.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, DefaultSettings.ServerVersion));
             return (int)CommandStatus.Success;
         }
         [CommandHelp("Executes the EncryptFile service method.")]
@@ -247,12 +247,12 @@ namespace RemotePlusServer
         {
             try
             {
-                Remote.EncryptFile(args[1], args[2]);
+                Remote.Remote.EncryptFile(args[1], args[2]);
                 return (int)CommandStatus.Success;
             }
             catch (IndexOutOfRangeException)
             {
-                Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, "You need to provide all the information.", "SVM:EncryptFIle"));
+                Remote.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, "You need to provide all the information.", "SVM:EncryptFIle"));
                 return (int)CommandStatus.Fail;
             }
         }
@@ -261,19 +261,19 @@ namespace RemotePlusServer
         {
             try
             {
-                Remote.DecryptFile(args[1], args[2]);
+                Remote.Remote.DecryptFile(args[1], args[2]);
                 return (int)CommandStatus.Success;
             }
             catch (IndexOutOfRangeException)
             {
-                Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, "You need to provide all the information.", "SVM:EncryptFIle"));
+                Remote.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, "You need to provide all the information.", "SVM:EncryptFIle"));
                 return (int)CommandStatus.Fail;
             }
         }
         [CommandHelp("Wraps around the beep function.")]
         private static int svm_beep(string[] args)
         {
-            Remote.Beep(int.Parse(args[1]), int.Parse(args[2]));
+            Remote.Remote.Beep(int.Parse(args[1]), int.Parse(args[2]));
             return (int)CommandStatus.Success;
         }
         [CommandHelp("Wraps around the speak function.")]
@@ -300,7 +300,7 @@ namespace RemotePlusServer
             }
             else
             {
-                Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, "You must provide a valid voice gender.", "Server Host"));
+                Remote.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, "You must provide a valid voice gender.", "Server Host"));
                 return (int)CommandStatus.Fail;
             }
             if (args[2] == "va_adult")
@@ -325,14 +325,14 @@ namespace RemotePlusServer
             }
             else
             {
-                Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, "You must provide a valid voice age..", "Server Host"));
+                Remote.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, "You must provide a valid voice age..", "Server Host"));
                 return (int)CommandStatus.Fail;
             }
             for (int i = 3; i < args.Length; i++)
             {
                 message += args[i] + " ";
             }
-            Remote.Speak(message, gender, age);
+            Remote.Remote.Speak(message, gender, age);
             return (int)CommandStatus.Success;
         }
         [CommandHelp("Wraps around the showMessageBox function.")]
@@ -368,7 +368,7 @@ namespace RemotePlusServer
             }
             else
             {
-                Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, "Please provide a valid MessageBox button.", "Server Host"));
+                Remote.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, "Please provide a valid MessageBox button.", "Server Host"));
                 return (int)CommandStatus.Fail;
             }
             if (args[2] == "i_WARNING")
@@ -405,7 +405,7 @@ namespace RemotePlusServer
             }
             else
             {
-                Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, "Please provide a valid MessageBox icon type.", "Server Host"));
+                Remote.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, "Please provide a valid MessageBox icon type.", "Server Host"));
                 return (int)CommandStatus.Fail;
             }
             int message_start = 0;
@@ -439,7 +439,7 @@ namespace RemotePlusServer
             {
                 message = "";
             }
-            Remote.ShowMessageBox(message, caption, icon, buttons);
+            Remote.Remote.ShowMessageBox(message, caption, icon, buttons);
             return (int)CommandStatus.Success;
         }
     }

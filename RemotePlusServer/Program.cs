@@ -19,10 +19,7 @@ namespace RemotePlusServer
     {
         public static Dictionary<string, WatcherBase> Watchers { get; private set; }
         public static CMDLogging Logger { get; } = new CMDLogging();
-        public static ServiceHost host { get; private set; } = null;
-        public static RemoteImpl Remote { get; } = new RemoteImpl();
-        public static Dictionary<string, CommandDelgate> Commands { get; } = new Dictionary<string, CommandDelgate>();
-        public static VariableManager Variables { get; private set; }
+        public static RemotePlusService<RemoteImpl> Remote;
         public static ServerSettings DefaultSettings { get; set; } = new ServerSettings();
         public static ServerExtensionLibraryCollection DefaultCollection { get; } = new ServerExtensionLibraryCollection();
         private static Stopwatch sw;
@@ -38,11 +35,11 @@ namespace RemotePlusServer
                 sw = new Stopwatch();
                 sw.Start();
                 InitalizeKnownTypes();
-                InitializeCommands();
                 ScanForServerSettingsFile();
-                InitializeVariables();
                 InitializeWatchers();
-                LoadExtensionLibraries();
+                CreateServer();
+                InitializeVariables();
+                InitializeCommands();
                 if (CheckPrerequisites())
                 {
                     Application.EnableVisualStyles();
@@ -57,6 +54,20 @@ namespace RemotePlusServer
                 Console.ReadKey();
                 SaveLog();
             }
+        }
+
+        private static void CreateServer()
+        {
+            Remote = RemotePlusService<RemoteImpl>.Create(new RemoteImpl(), DefaultSettings.PortNumber, (m, o) => Logger.AddOutput(m, o), null);
+            LoadExtensionLibraries();
+            Remote.Remote.Setup();
+            Logger.AddOutput("Attaching server events.", OutputLevel.Debug);
+            Remote.HostClosed += Host_Closed;
+            Remote.HostClosing += Host_Closing;
+            Remote.HostFaulted += Host_Faulted;
+            Remote.HostOpened += Host_Opened;
+            Remote.HostOpening += Host_Opening;
+            Remote.HostUnknownMessageReceived += Host_UnknownMessageReceived;
         }
 
         private static void SaveLog()
@@ -88,35 +99,35 @@ namespace RemotePlusServer
             if(File.Exists("Variables.xml"))
             {
                 Logger.AddOutput("Loading variables.", OutputLevel.Info);
-                Variables = VariableManager.Load();
+                Remote.Variables = VariableManager.Load();
             }
             else
             {
                 Logger.AddOutput("There is no variable file. Beginning variable initialization.", OutputLevel.Warning);
-                Variables = VariableManager.New();
-                Variables.Add("Name", "RemotePlusServer");
+                Remote.Variables = VariableManager.New();
+                Remote.Variables.Add("Name", "RemotePlusServer");
                 Logger.AddOutput("Saving file.", OutputLevel.Info);
-                Variables.Save();
+                Remote.Variables.Save();
             }
         }
 
         private static void InitializeCommands()
         {
-            Logger.AddOutput("Loading commands.", OutputLevel.Info);
-            Commands.Add("ex", ExCommand);
-            Commands.Add("ps", ProcessStartCommand);
-            Commands.Add("help", Help);
-            Commands.Add("logs", Logs);
-            Commands.Add("vars", vars);
-            Commands.Add("dateTime", dateTime);
-            Commands.Add("processes", processes);
-            Commands.Add("watchers", watchers);
-            Commands.Add("version", version);
-            Commands.Add("encrypt", svm_encyptFile);
-            Commands.Add("decrypt", svm_decryptFile);
-            Commands.Add("beep", svm_beep);
-            Commands.Add("speak", svm_speak);
-            Commands.Add("showMessageBox", svm_showMessageBox);
+            Logger.AddOutput("Loading Commands.", OutputLevel.Info);
+            Remote.Commands.Add("ex", ExCommand);
+            Remote.Commands.Add("ps", ProcessStartCommand);
+            Remote.Commands.Add("help", Help);
+            Remote.Commands.Add("logs", Logs);
+            Remote.Commands.Add("vars", vars);
+            Remote.Commands.Add("dateTime", dateTime);
+            Remote.Commands.Add("processes", processes);
+            Remote.Commands.Add("watchers", watchers);
+            Remote.Commands.Add("version", version);
+            Remote.Commands.Add("encrypt", svm_encyptFile);
+            Remote.Commands.Add("decrypt", svm_decryptFile);
+            Remote.Commands.Add("beep", svm_beep);
+            Remote.Commands.Add("speak", svm_speak);
+            Remote.Commands.Add("showMessageBox", svm_showMessageBox);
         }
 
         static bool CheckPrerequisites()
@@ -172,22 +183,8 @@ namespace RemotePlusServer
         }
         public static void RunInServerMode()
         {
-            Logger.AddOutput("Building endpoint URL.", OutputLevel.Debug);
-            string url = $"net.tcp://0.0.0.0:{DefaultSettings.PortNumber}/Remote";
-            Logger.AddOutput($"URL built {url}", OutputLevel.Debug);
-            Remote.Setup();
-            Logger.AddOutput("Creating server and loading WCF configuration.", OutputLevel.Debug);
-            host = new ServiceHost(Remote);
-            Logger.AddOutput("Attaching server events.", OutputLevel.Debug);
-            host.Closed += Host_Closed;
-            host.Closing += Host_Closing;
-            host.Faulted += Host_Faulted;
-            host.Opened += Host_Opened;
-            host.Opening += Host_Opening;
-            host.UnknownMessageReceived += Host_UnknownMessageReceived;
-            Logger.AddOutput("Changing url of endpoint 1.", OutputLevel.Debug);
-            host.Description.Endpoints[0].Address = new EndpointAddress(url);
-            host.Open();
+            Logger.AddOutput("Starting server.", OutputLevel.Info);
+            Remote.Start();
         }
 
         private static void Host_UnknownMessageReceived(object sender, UnknownMessageReceivedEventArgs e)
@@ -256,7 +253,7 @@ namespace RemotePlusServer
                 ServerManager.Logger.AddOutput($"Executing server command {c}", OutputLevel.Info);
                 bool FoundCommand = false;
                 string[] ca = c.Split();
-                foreach (KeyValuePair<string, CommandDelgate> k in Commands)
+                foreach (KeyValuePair<string, CommandDelgate> k in Remote.Commands)
                 {
                     if(ca[0] == k.Key)
                     {
@@ -268,7 +265,7 @@ namespace RemotePlusServer
                 if (!FoundCommand)
                 {
                     Logger.AddOutput("Failed to find the command.", OutputLevel.Debug);
-                    Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, "Unknown command. Please type {help} for a list of commands", "Server Host"));
+                    Remote.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, "Unknown command. Please type {help} for a list of commands", "Server Host"));
                     return (int)CommandStatus.Fail;
                 }
                 return -2;
@@ -276,14 +273,14 @@ namespace RemotePlusServer
             catch (Exception ex)
             {
                 ServerManager.Logger.AddOutput("command failed: " + ex.Message, OutputLevel.Info);
-                Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error,"Error whie executing command: " + ex.Message, "Server Host"));
+                Remote.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error,"Error whie executing command: " + ex.Message, "Server Host"));
                 return (int)CommandStatus.Fail;
             }
         }
         public static void Close()
         {
             SaveLog();
-            host.Close();
+            Remote.Close();
             Environment.Exit(0);
         }
     }

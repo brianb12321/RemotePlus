@@ -75,6 +75,7 @@ namespace RemotePlusClient
                 FriendlyName = "Default GUI Client"
             };
             builder.ExtraData.Add("global_newLine", "true");
+            builder.ExtraData.Add("ps_appendNewLine", "false");
             return builder;
         }
 

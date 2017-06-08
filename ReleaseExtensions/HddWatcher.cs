@@ -24,7 +24,7 @@ namespace ReleaseExtensions
 
         protected override void DoWork(object args)
         {
-            ServerManager.Remote.Client.ClientCallback.TellMessage(new UILogItem(OutputLevel.Info, "Your hard drive is now being checked.", Details.Name));
+            ServerManager.Remote.Remote.Client.ClientCallback.TellMessage(new UILogItem(OutputLevel.Info, "Your hard drive is now being checked.", Details.Name));
             int count = 0;
             try
             {
@@ -40,7 +40,7 @@ namespace ReleaseExtensions
                             count++;
                             if (Convert.ToInt64(obj["DiskBytesPersec"]) > 0)
                             {
-                                ServerManager.Remote.Client.ClientCallback.TellMessage(new UILogItem(Logging.OutputLevel.Info, $"hard drive is spinning. Count: {count}", Details.Name));
+                                ServerManager.Remote.Remote.Client.ClientCallback.TellMessage(new UILogItem(Logging.OutputLevel.Info, $"hard drive is spinning. Count: {count}", Details.Name));
                             }
                         }
                     }
@@ -48,7 +48,7 @@ namespace ReleaseExtensions
             }
             catch (Exception ex)
             {
-                ServerManager.Remote.Client.ClientCallback.TellMessage(new UILogItem(Logging.OutputLevel.Error, $"Failed to start watcher {base.Details.Name}. Reason: {ex.Message}"));
+                ServerManager.Remote.Remote.Client.ClientCallback.TellMessage(new UILogItem(Logging.OutputLevel.Error, $"Failed to start watcher {base.Details.Name}. Reason: {ex.Message}"));
                 base.SetFatal();
             }
         }
