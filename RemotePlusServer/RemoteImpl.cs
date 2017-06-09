@@ -333,7 +333,7 @@ namespace RemotePlusServer
             CheckRegisteration("GetCommands");
             ServerManager.Logger.AddOutput("Requesting commands list.", OutputLevel.Info);
             Client.ClientCallback.TellMessage("Returning commands list.", OutputLevel.Info);
-            return ServerManager.Remote.Commands.Keys.ToList();
+            return ServerManager.DefaultService.Commands.Keys.ToList();
         }
 
         public void StartWatcher(string WatcherName, object args)

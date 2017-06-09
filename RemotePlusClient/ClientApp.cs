@@ -24,7 +24,7 @@ namespace RemotePlusClient
             InitializeDefaultKnownTypes();
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            RequestDialogBoxStore.Init();
+            RequestStore.Init();
             Application.Run(new MainF());
         }
         static void InitializeDefaultKnownTypes()

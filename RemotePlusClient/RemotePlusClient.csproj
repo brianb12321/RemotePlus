@@ -80,6 +80,12 @@
     <Compile Include="CommandDialogs\SpeakDialog.Designer.cs">
       <DependentUpon>SpeakDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="ConnectAdvancedDialogBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ConnectAdvancedDialogBox.Designer.cs">
+      <DependentUpon>ConnectAdvancedDialogBox.cs</DependentUpon>
+    </Compile>
     <Compile Include="ConnectDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -117,6 +123,12 @@
     <Compile Include="ServerSettingsDialog.Designer.cs">
       <DependentUpon>ServerSettingsDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="ViewRequestDialogBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ViewRequestDialogBox.Designer.cs">
+      <DependentUpon>ViewRequestDialogBox.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -133,6 +145,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="CommandDialogs\SpeakDialog.resx">
       <DependentUpon>SpeakDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ConnectAdvancedDialogBox.resx">
+      <DependentUpon>ConnectAdvancedDialogBox.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ConnectDialog.resx">
       <DependentUpon>ConnectDialog.cs</DependentUpon>
@@ -151,6 +166,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ServerSettingsDialog.resx">
       <DependentUpon>ServerSettingsDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ViewRequestDialogBox.resx">
+      <DependentUpon>ViewRequestDialogBox.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

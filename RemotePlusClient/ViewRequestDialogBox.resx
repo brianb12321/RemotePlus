@@ -117,16 +117,4 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="richTextBox1.Text" xml:space="preserve">
-    <value>A address is required in order to connect to a remote server. 
-The address has the following three or four parts:
-1. The protocal. The default protocal is tcp. 
-2. The hostname. The hostname is the part that identifies the computer to connect to.
-3. The port. The port is the number that a server listens to. This is configured by the server. The default port is 9000;
-4 (optional). The name of the service. This is followed by a forward slash.
-
-example:
-               &lt;1&gt;://&lt;2&gt;:&lt;3&gt;/&lt;4&gt;
-               net.tcp://ocalhost:9000/Romote   </value>
-  </data>
 </root>

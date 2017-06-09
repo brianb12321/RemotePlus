@@ -93,7 +93,7 @@ namespace RemotePlusClient
 
         public ReturnData RequestInformation(RequestBuilder builder)
         {
-            return RequestDialogBoxStore.Show(builder);
+            return RequestStore.Show(builder);
         }
     }
 }

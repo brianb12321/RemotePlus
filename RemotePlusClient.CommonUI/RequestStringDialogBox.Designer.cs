@@ -67,8 +67,11 @@
             this.Controls.Add(this.button1);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.richTextBox1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.MaximizeBox = false;
             this.Name = "RequestStringDialogBox";
-            this.Text = "RequestStringDialogBox";
+            this.ShowIcon = false;
+            this.Text = "Request string";
             this.Load += new System.EventHandler(this.RequestStringDialogBox_Load);
             this.ResumeLayout(false);
             this.PerformLayout();

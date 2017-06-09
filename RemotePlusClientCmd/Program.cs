@@ -28,7 +28,7 @@ namespace RemotePlusClientCmd
                     OverrideLogItemObjectColorValue = true
                 };
                 InitializeDefaultKnownTypes();
-                RequestDialogBoxStore.Init();
+                RequestStore.Init();
                 Console.Write("Enter url: ");
                 string url = Console.ReadLine();
                 channel = new DuplexChannelFactory<IRemote>(new ClientCallback(), "DefaultEndpoint");
@@ -100,7 +100,7 @@ namespace RemotePlusClientCmd
 
         public ReturnData RequestInformation(RequestBuilder builder)
         {
-            return RequestDialogBoxStore.Show(builder);
+            return RequestStore.Show(builder);
         }
 
         public void TellMessage(string Message, OutputLevel o)

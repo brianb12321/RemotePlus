@@ -45,7 +45,7 @@ namespace RemotePlusClient
             if (d.ShowDialog() == DialogResult.OK)
             {
                 Address = d.Address;
-                Connect(d.ro);
+                Connect(d.RegObject);
             }
         }
         private void OpenConsole()
@@ -297,6 +297,14 @@ namespace RemotePlusClient
         private void switchUserMenuItem_Click(object sender, EventArgs e)
         {
             Remote.SwitchUser();
+        }
+
+        private void showRequests_MenuItem(object sender, EventArgs e)
+        {
+            using (ViewRequestDialogBox rdb = new ViewRequestDialogBox())
+            {
+                rdb.ShowDialog();
+            }
         }
     }
 }

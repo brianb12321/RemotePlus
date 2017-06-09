@@ -23,5 +23,9 @@ namespace RemotePlusLibrary
         {
             return new RawDataRequest(null, RequestState.Cancel);
         }
+        public static RawDataRequest Cancel(object data)
+        {
+            return new RawDataRequest(data, RequestState.Cancel);
+        }
     }
 }

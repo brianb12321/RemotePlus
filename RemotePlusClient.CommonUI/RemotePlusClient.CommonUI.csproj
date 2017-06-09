@@ -46,8 +46,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ColorRequest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RequestDialogBoxStore.cs" />
+    <Compile Include="RequestStore.cs" />
     <Compile Include="RequestStringDialogBox.cs">
       <SubType>Form</SubType>
     </Compile>

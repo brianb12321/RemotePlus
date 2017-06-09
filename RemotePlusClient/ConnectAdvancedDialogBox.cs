@@ -11,30 +11,19 @@ using System.Windows.Forms;
 
 namespace RemotePlusClient
 {
-    public partial class ConnectDialog : Form
+    public partial class ConnectAdvancedDialogBox : Form
     {
-        ConnectAdvancedDialogBox cadb = new ConnectAdvancedDialogBox();
-        public string Address { get; private set; }
         public RegistirationObject RegObject { get; private set; }
-        public ConnectDialog()
+        public ConnectAdvancedDialogBox()
         {
             InitializeComponent();
-            RegObject = new RegistirationObject();
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
+            RegObject = ro;
             DialogResult = DialogResult.OK;
-            Address = textBox1.Text;
             Close();
-        }
-
-        private void button2_Click(object sender, EventArgs e)
-        {
-            if (cadb.ShowDialog() == DialogResult.OK)
-            {
-                RegObject = cadb.RegObject;
-            }
         }
     }
 }

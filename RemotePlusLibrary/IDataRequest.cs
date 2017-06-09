@@ -9,7 +9,11 @@ namespace RemotePlusLibrary
 {
     public interface IDataRequest
     {
-        Form RequestForm { get; }
         RawDataRequest RequestData(RequestBuilder builder);
+        bool ShowProperties { get; }
+        string FriendlyName { get; }
+        string Description { get; }
+        Form GetProperties();
+        void SaveProperties(Form f);
     }
 }

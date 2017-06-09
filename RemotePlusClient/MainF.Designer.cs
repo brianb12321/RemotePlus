@@ -53,6 +53,7 @@
             this.menuItem5 = new System.Windows.Forms.MenuItem();
             this.menuItem6 = new System.Windows.Forms.MenuItem();
             this.menuItem7 = new System.Windows.Forms.MenuItem();
+            this.menuItem4 = new System.Windows.Forms.MenuItem();
             this.menuItem8 = new System.Windows.Forms.MenuItem();
             this.menuItem9 = new System.Windows.Forms.MenuItem();
             this.menuItem2 = new System.Windows.Forms.MenuItem();
@@ -235,7 +236,8 @@
             this.menuItem5.Index = 1;
             this.menuItem5.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
             this.menuItem6,
-            this.menuItem7});
+            this.menuItem7,
+            this.menuItem4});
             this.menuItem5.Text = "Extensions";
             // 
             // menuItem6
@@ -249,6 +251,12 @@
             this.menuItem7.Index = 1;
             this.menuItem7.Text = "View";
             this.menuItem7.Click += new System.EventHandler(this.getExtensionsToolStripMenuItem_Click);
+            // 
+            // menuItem4
+            // 
+            this.menuItem4.Index = 2;
+            this.menuItem4.Text = "Show requests";
+            this.menuItem4.Click += new System.EventHandler(this.showRequests_MenuItem);
             // 
             // menuItem8
             // 
@@ -327,5 +335,6 @@
         private System.Windows.Forms.MenuItem menuItem2;
         private System.Windows.Forms.MenuItem menuItem3;
         private System.Windows.Forms.MenuItem switchUserMenuItem;
+        private System.Windows.Forms.MenuItem menuItem4;
     }
 }

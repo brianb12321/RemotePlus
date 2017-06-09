@@ -15,6 +15,13 @@ namespace RemotePlusClient.CommonUI
     {
         private string data;
         private string message;
+
+        bool IDataRequest.ShowProperties => false;
+
+        string IDataRequest.FriendlyName => "Request String";
+
+        string IDataRequest.Description => "Requests the user for a string.";
+
         public RequestStringDialogBox(string _message)
         {
             message = _message;
@@ -24,7 +31,6 @@ namespace RemotePlusClient.CommonUI
         {
             InitializeComponent();
         }
-        Form IDataRequest.RequestForm => this;
 
         RawDataRequest IDataRequest.RequestData(RequestBuilder builder)
         {
@@ -48,6 +54,16 @@ namespace RemotePlusClient.CommonUI
         {
             DialogResult = DialogResult.OK;
             data = textBox1.Text;
+        }
+
+        Form IDataRequest.GetProperties()
+        {
+            throw new NotImplementedException();
+        }
+
+        void IDataRequest.SaveProperties(Form f)
+        {
+            throw new NotImplementedException();
         }
     }
 }

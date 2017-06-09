@@ -21,7 +21,7 @@ namespace ReleaseExtensions
         void ILibraryStartup.Init()
         {
             ServerManager.Logger.AddOutput(new Logging.LogItem(Logging.OutputLevel.Info, "Welcome to \"ReleaseExtension.\" This library contains some useful tools that demonstrates the powers of \"RemotePlus\"", "ReleaseExtensions") { Color = Console.ForegroundColor});
-            ServerManager.Remote.Commands.Add("releaseExtensionAbout", releaseExtensionAbout);
+            ServerManager.DefaultService.Commands.Add("releaseExtensionAbout", releaseExtensionAbout);
             ServerManager.Logger.AddOutput(new Logging.LogItem(Logging.OutputLevel.Info, "Adding watchers.", "ReleaseExtensions") { Color = Console.ForegroundColor });
             ServerManager.Watchers.Add("HddWatcher", new HddWatcher());
             ServerManager.Watchers.Add("SerialWatcher", new SerialWatcher());
@@ -29,7 +29,7 @@ namespace ReleaseExtensions
         [CommandHelp("Describes about the ReleaseExtensionsLibrary.")]
         int releaseExtensionAbout(string[] args)
         {
-            ServerManager.Remote.Remote.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(Logging.OutputLevel.Info, "ReleaseExtension is a test of the extension system."));
+            ServerManager.DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(Logging.OutputLevel.Info, "ReleaseExtension is a test of the extension system."));
             return (int)CommandStatus.Success;
         }
     }
