@@ -14,7 +14,6 @@ using System.Windows.Forms;
 
 namespace RemotePlusServer
 {
-    public delegate int CommandDelgate(params string[] args);
     public static partial class ServerManager
     {
         public static Dictionary<string, WatcherBase> Watchers { get; private set; }
@@ -253,7 +252,7 @@ namespace RemotePlusServer
                 ServerManager.Logger.AddOutput($"Executing server command {c}", OutputLevel.Info);
                 bool FoundCommand = false;
                 string[] ca = c.Split();
-                foreach (KeyValuePair<string, CommandDelgate> k in DefaultService.Commands)
+                foreach (KeyValuePair<string, CommandDelegate> k in DefaultService.Commands)
                 {
                     if(ca[0] == k.Key)
                     {

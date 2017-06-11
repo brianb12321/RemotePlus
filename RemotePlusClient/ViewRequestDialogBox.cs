@@ -39,11 +39,7 @@ namespace RemotePlusClient
             }
             else
             {
-                var form = selectedItem.GetProperties();
-                if (form.ShowDialog() == DialogResult.OK)
-                {
-                    selectedItem.SaveProperties(form);
-                }
+                selectedItem.UpdateProperties();
             }
         }
     }

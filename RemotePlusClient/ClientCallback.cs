@@ -70,7 +70,7 @@ namespace RemotePlusClient
 
         public ClientBuilder RegisterClient()
         {
-            ClientBuilder builder = new ClientBuilder()
+            ClientBuilder builder = new ClientBuilder(ClientType.GUI)
             {
                 FriendlyName = "Default GUI Client"
             };
@@ -94,6 +94,10 @@ namespace RemotePlusClient
         public ReturnData RequestInformation(RequestBuilder builder)
         {
             return RequestStore.Show(builder);
+        }
+
+        public void RegistirationComplete()
+        {
         }
     }
 }

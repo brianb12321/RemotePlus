@@ -16,7 +16,7 @@ namespace RemotePlusClient.CommonUI
         private string data;
         private string message;
 
-        bool IDataRequest.ShowProperties => false;
+        bool IDataRequest.ShowProperties => true;
 
         string IDataRequest.FriendlyName => "Request String";
 
@@ -56,14 +56,9 @@ namespace RemotePlusClient.CommonUI
             data = textBox1.Text;
         }
 
-        Form IDataRequest.GetProperties()
+        void IDataRequest.UpdateProperties()
         {
-            throw new NotImplementedException();
-        }
-
-        void IDataRequest.SaveProperties(Form f)
-        {
-            throw new NotImplementedException();
+            new RequestStringDialogBox("This is a test.").ShowDialog();
         }
     }
 }

@@ -42,50 +42,7 @@ namespace RemotePlusServer
         [CommandHelp("Displays a list of commands.")]
         private static int Help(string[] arguments)
         {
-            string t = "";
-            if (arguments.Length == 2)
-            {
-                foreach(object a in DefaultService.Commands[arguments[1]].Method.GetCustomAttributes(false))
-                {
-                    if(a is HelpPageAttribute)
-                    {
-                        var a2 = a as HelpPageAttribute;
-                        if (a2.Source == HelpSourceType.Text)
-                        {
-                            t = a2.Details;
-                        }
-                        else if(a2.Source == HelpSourceType.File)
-                        {
-                            foreach(string lines in File.ReadAllLines("helpDocs\\" + a2.Details))
-                            {
-                                t += lines + "\n";
-                            }
-                        }
-                    }
-                }
-            }
-            else if(arguments.Length >= 1)
-            {
-                foreach (KeyValuePair<string, CommandDelgate> c in DefaultService.Commands)
-                {
-                    if (c.Value.Method.GetCustomAttributes(false).Length > 0)
-                    {
-                        foreach (object o in c.Value.Method.GetCustomAttributes(false))
-                        {
-                            if (o is CommandHelpAttribute)
-                            {
-                                CommandHelpAttribute cha = (CommandHelpAttribute)o;
-                                t += $"\n{c.Key}\t{cha.HelpMessage}";
-                            }
-                        }
-                    }
-                    else
-                    {
-                        t += $"\n{c.Key}";
-                    }
-                }
-            }
-            DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, t, "Server Host"));
+            DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, RemotePlusConsole.ShowHelp(DefaultService.Commands, arguments), "Server Host"));
             return (int)CommandStatus.Success;
         }
         [CommandHelp("Executes a loaded extension on the server.")]

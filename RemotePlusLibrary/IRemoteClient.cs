@@ -28,5 +28,7 @@ namespace RemotePlusLibrary
         UserCredentials RequestAuthentication(AuthenticationRequest Request);
         [OperationContract]
         ReturnData RequestInformation(RequestBuilder builder);
+        [OperationContract(IsOneWay = true)]
+        void RegistirationComplete();
     }
 }

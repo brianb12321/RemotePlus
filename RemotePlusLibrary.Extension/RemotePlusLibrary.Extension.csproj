@@ -54,6 +54,7 @@
     <Compile Include="CommandSystem\CommandHelpAttribute.cs" />
     <Compile Include="CommandSystem\CommandStatus.cs" />
     <Compile Include="CallType.cs" />
+    <Compile Include="CommandSystem\RemotePlusConsole.cs" />
     <Compile Include="ExtensionLibraryBase.cs" />
     <Compile Include="ExtensionDetails.cs" />
     <Compile Include="CommandSystem\HelpPageAttribute.cs" />

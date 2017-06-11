@@ -137,9 +137,10 @@ namespace RemotePlusServer
         }
         private void RegisterComplete()
         {
-            ServerManager.Logger.AddOutput($"Client \"{Client.FriendlyName}\" [{Client.UniqueID}] registired.", Logging.OutputLevel.Info);
+            ServerManager.Logger.AddOutput($"Client \"{Client.FriendlyName}\" [{Client.UniqueID}] Type: {Client.ClientType} registired.", Logging.OutputLevel.Info);
             Registered = true;
             Client.ClientCallback.TellMessage("Registiration complete.", Logging.OutputLevel.Info);
+            Client.ClientCallback.RegistirationComplete();
         }
 
         public void RunProgram(string Program, string Argument)

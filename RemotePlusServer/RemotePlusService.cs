@@ -1,5 +1,6 @@
 ﻿using Logging;
 using RemotePlusLibrary;
+using RemotePlusLibrary.Extension.CommandSystem;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,7 +44,7 @@ namespace RemotePlusServer
             remove { Host.UnknownMessageReceived -= value; }
         }
         public I Remote { get; } = new I();
-        public Dictionary<string, CommandDelgate> Commands { get; } = new Dictionary<string, CommandDelgate>();
+        public Dictionary<string, CommandDelegate> Commands { get; } = new Dictionary<string, CommandDelegate>();
         public VariableManager Variables { get; set; }
         private RemotePlusService(I singleTon, int portNumber, Action<I> setupCallback)
         {

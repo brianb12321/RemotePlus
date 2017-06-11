@@ -10,18 +10,24 @@ using RemotePlusLibrary.Core;
 using System.Windows.Forms;
 using System.Drawing;
 using RemotePlusClient.CommonUI;
+using RemotePlusLibrary.Extension.CommandSystem;
 
 namespace RemotePlusClientCmd
 {
-    class Program
+    partial class Program
     {
+        public static Dictionary<string, CommandDelegate> LocalCommands = new Dictionary<string, CommandDelegate>();
         public static IRemote Remote = null;
         public static CMDLogging Logger = null;
         public static DuplexChannelFactory<IRemote> channel = null;
+        public static bool WaitFlag = true;
         static void Main(string[] args)
         {
             try
             {
+                InitCommands();
+                Application.EnableVisualStyles();
+                Application.SetCompatibleTextRenderingDefault(false);
                 Logger = new CMDLogging()
                 {
                     DefaultFrom = "CLient CMD",
@@ -47,7 +53,19 @@ namespace RemotePlusClientCmd
                 Console.WriteLine("Enter a command to the server. Type {help} for a list of commands.");
                 while (true)
                 {
-                    Remote.RunServerCommand(Console.ReadLine());
+                    if(!WaitFlag)
+                    {
+                        Console.Write(">");
+                        var c = Console.ReadLine();
+                        if (c.ToCharArray()[0] == '#')
+                        {
+                            RunLocalCommand(c);
+                        }
+                        else
+                        {
+                            Remote.RunServerCommand(c);
+                        }
+                    }
                 }
 #pragma warning disable CS0162 // Unreachable code detected
                 channel.Close();
@@ -60,6 +78,41 @@ namespace RemotePlusClientCmd
 #else
                 Logger.AddOutput(new LogItem(OutputLevel.Error, "Client error. " + ex.Message, "Client") { Color = ConsoleColor.Red });
 #endif
+            }
+        }
+
+        private static void InitCommands()
+        {
+            LocalCommands.Add("#help", Help);
+            LocalCommands.Add("#clear", clearScreen);
+            LocalCommands.Add("#close", close);
+        }
+
+        static int RunLocalCommand(string command)
+        {
+            try
+            {
+                bool FoundCommand = false;
+                string[] ca = command.Split();
+                foreach (KeyValuePair<string, CommandDelegate> k in LocalCommands)
+                {
+                    if (ca[0] == k.Key)
+                    {
+                        FoundCommand = true;
+                        return k.Value(ca);
+                    }
+                }
+                if (!FoundCommand)
+                {
+                    Logger.AddOutput("Unknown local command. Please type {#help} for a list of commands.", OutputLevel.Error);
+                    return (int)CommandStatus.Fail;
+                }
+                return -2;
+            }
+            catch (Exception ex)
+            {
+                Logger.AddOutput("Error whie executing local command: " + ex.Message, OutputLevel.Error);
+                return (int)CommandStatus.Fail;
             }
         }
         static void InitializeDefaultKnownTypes()
@@ -82,10 +135,15 @@ namespace RemotePlusClientCmd
 
         public ClientBuilder RegisterClient()
         {
-            ClientBuilder cb = new ClientBuilder();
+            ClientBuilder cb = new ClientBuilder(ClientType.CommandLine);
             cb.FriendlyName = "RemotePlus Client Command Line";
             cb.ExtraData.Add("ps_appendNewLine", "false");
             return cb;
+        }
+
+        public void RegistirationComplete()
+        {
+            Program.WaitFlag = false;
         }
 
         public UserCredentials RequestAuthentication(AuthenticationRequest Request)
@@ -151,7 +209,7 @@ namespace RemotePlusClientCmd
 
         public void TellMessage(UILogItem[] Logs)
         {
-            foreach(UILogItem l in Logs)
+            foreach (UILogItem l in Logs)
             {
                 if (Program.Logger.OverrideLogItemObjectColorValue)
                 {

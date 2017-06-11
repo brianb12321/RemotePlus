@@ -59,6 +59,7 @@
     <Compile Include="AuthenticationRequest.cs" />
     <Compile Include="Client.cs" />
     <Compile Include="ClientBuilder.cs" />
+    <Compile Include="ClientType.cs" />
     <Compile Include="Converters\ServerSettingsTypeConverter.cs" />
     <Compile Include="Editors\StringCollectionEditor.cs" />
     <Compile Include="FileTransfer\DownloadRequest.cs" />

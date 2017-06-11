@@ -17,7 +17,7 @@ namespace RemotePlusClient.CommonUI
 
         string IDataRequest.Description => "Requests a color from the user.";
 
-        Form IDataRequest.GetProperties()
+        void IDataRequest.UpdateProperties()
         {
             throw new NotImplementedException();
         }
@@ -40,10 +40,6 @@ namespace RemotePlusClient.CommonUI
                     return RawDataRequest.Cancel(Color.Black.ToString());
                 }
             }
-        }
-
-        void IDataRequest.SaveProperties(Form f)
-        {
         }
     }
 }
