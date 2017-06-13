@@ -8,10 +8,11 @@ using RemotePlusServer;
 using RemotePlusLibrary.Extension.CommandSystem;
 using System.IO;
 using System.Reflection;
+using RemotePlusLibrary.Extension.ClientModule;
 
 namespace ReleaseExtensions
 {
-    public sealed class Startup : ILibraryStartup
+    public sealed class Startup : ILibraryStartup, IClientCommandLibraryStartup
     {
         void ILibraryStartup.ClientInit()
         {
@@ -26,10 +27,22 @@ namespace ReleaseExtensions
             ServerManager.Watchers.Add("HddWatcher", new HddWatcher());
             ServerManager.Watchers.Add("SerialWatcher", new SerialWatcher());
         }
+
+        void IClientCommandLibraryStartup.ModuleLibraryInit()
+        {
+            RemotePlusClientCmd.ClientCmdManager.LocalCommands.Add("#sayHello", client_sayHello);
+        }
+
         [CommandHelp("Describes about the ReleaseExtensionsLibrary.")]
         int releaseExtensionAbout(string[] args)
         {
             ServerManager.DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(Logging.OutputLevel.Info, "ReleaseExtension is a test of the extension system."));
+            return (int)CommandStatus.Success;
+        }
+        [CommandHelp("Say hello")]
+        int client_sayHello(string[] args)
+        {
+            RemotePlusClientCmd.ClientCmdManager.Logger.AddOutput("Hello", Logging.OutputLevel.Info);
             return (int)CommandStatus.Success;
         }
     }

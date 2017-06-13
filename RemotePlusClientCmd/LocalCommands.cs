@@ -1,4 +1,5 @@
 ﻿using Logging;
+using RemotePlusLibrary.Extension.ClientModule;
 using RemotePlusLibrary.Extension.CommandSystem;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace RemotePlusClientCmd
 {
-    partial class Program
+    partial class ClientCmdManager
     {
         [CommandHelp("Shows help for local commands.")]
         static int Help(string[] args)
@@ -41,6 +42,22 @@ namespace RemotePlusClientCmd
             }
             Console.Title = sb.ToString();
             return (int)CommandStatus.Success;
+        }
+        [CommandHelp("Loads the specified client module library.")]
+        static int load_CommandFile(string[] args)
+        {
+            try
+            {
+                Logger.AddOutput($"Loading command file. {args[1]}", OutputLevel.Info);
+                ClientCommandLibraryLoader.LoadCommandLibrary(args[1]);
+                Logger.AddOutput("Finished.", OutputLevel.Info);
+                return (int)CommandStatus.Success;
+            }
+            catch (Exception ex)
+            {
+                Logger.AddOutput($"Unable to load command file: {ex.Message}", OutputLevel.Error);
+                return (int)CommandStatus.Success;
+            }
         }
     }
 }

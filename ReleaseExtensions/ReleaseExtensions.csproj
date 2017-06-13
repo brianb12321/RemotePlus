@@ -68,6 +68,11 @@
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\RemotePlusClientCmd\RemotePlusClientCmd.csproj">
+      <Project>{38d2edd9-0860-4c75-8344-8ba0ac72cbf0}</Project>
+      <Name>RemotePlusClientCmd</Name>
+      <Private>False</Private>
+    </ProjectReference>
     <ProjectReference Include="..\RemotePlusClient\RemotePlusClient.csproj">
       <Project>{d6122622-7067-4fba-a617-365fa3fcf809}</Project>
       <Name>RemotePlusClient</Name>
