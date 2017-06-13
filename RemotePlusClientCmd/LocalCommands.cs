@@ -31,5 +31,16 @@ namespace RemotePlusClientCmd
             Environment.Exit(0);
             return (int)CommandStatus.Success;
         }
+        [CommandHelp("Changes the console title.")]
+        static int title(string[] args)
+        {
+            StringBuilder sb = new StringBuilder();
+            for(int i = 1; i < args.Length; i++)
+            {
+                sb.AppendFormat("{0} ", args[i]);
+            }
+            Console.Title = sb.ToString();
+            return (int)CommandStatus.Success;
+        }
     }
 }

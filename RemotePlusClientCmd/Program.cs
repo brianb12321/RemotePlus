@@ -86,6 +86,7 @@ namespace RemotePlusClientCmd
             LocalCommands.Add("#help", Help);
             LocalCommands.Add("#clear", clearScreen);
             LocalCommands.Add("#close", close);
+            LocalCommands.Add("#title", title);
         }
 
         static int RunLocalCommand(string command)

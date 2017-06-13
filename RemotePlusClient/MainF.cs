@@ -69,7 +69,8 @@ namespace RemotePlusClient
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error connecting to client. " + ex.Message, "Connection error.", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ConsoleObj.Logger.AddOutput("Error connecting to server. " + ex.Message, OutputLevel.Error);
+                MessageBox.Show("Error connecting to server. " + ex.Message, "Connection error.", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 

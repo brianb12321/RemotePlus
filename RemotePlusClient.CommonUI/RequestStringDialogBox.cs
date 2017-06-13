@@ -8,6 +8,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using RemotePlusLibrary;
+using RemotePlusClient.CommonUI.RequestProperties;
+using RemotePlusLibrary.Configuration;
+using RemotePlusClient.CommonUI.RequestSettings;
+using System.IO;
 
 namespace RemotePlusClient.CommonUI
 {
@@ -16,7 +20,7 @@ namespace RemotePlusClient.CommonUI
         private string data;
         private string message;
 
-        bool IDataRequest.ShowProperties => true;
+        bool IDataRequest.ShowProperties => false;
 
         string IDataRequest.FriendlyName => "Request String";
 
@@ -34,10 +38,10 @@ namespace RemotePlusClient.CommonUI
 
         RawDataRequest IDataRequest.RequestData(RequestBuilder builder)
         {
-            this.message = builder.Message;
-            if(this.ShowDialog() == DialogResult.OK)
+            RequestStringDialogBox rd = new RequestStringDialogBox(builder.Message);
+            if(rd.ShowDialog() == DialogResult.OK)
             {
-                return RawDataRequest.Success(data);
+                return RawDataRequest.Success(rd.data);
             }
             else
             {
@@ -58,7 +62,15 @@ namespace RemotePlusClient.CommonUI
 
         void IDataRequest.UpdateProperties()
         {
-            new RequestStringDialogBox("This is a test.").ShowDialog();
+            using (RequestStringProperties pd = new RequestStringProperties())
+            {
+                pd.ShowDialog();
+            }
+        }
+
+        private void RequestStringDialogBox_Shown(object sender, EventArgs e)
+        {
+
         }
     }
 }

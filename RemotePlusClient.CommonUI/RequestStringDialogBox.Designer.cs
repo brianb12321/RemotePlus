@@ -73,6 +73,7 @@
             this.ShowIcon = false;
             this.Text = "Request string";
             this.Load += new System.EventHandler(this.RequestStringDialogBox_Load);
+            this.Shown += new System.EventHandler(this.RequestStringDialogBox_Shown);
             this.ResumeLayout(false);
             this.PerformLayout();
 

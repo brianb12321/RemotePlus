@@ -293,6 +293,7 @@ namespace RemotePlusServer
             return (int)CommandStatus.Success;
         }
         [CommandHelp("Wraps around the showMessageBox function.")]
+        [HelpPage("showMessageBox.txt", Source = HelpSourceType.File)]
         private static int svm_showMessageBox(string[] args)
         {
             MessageBoxButtons buttons = MessageBoxButtons.OK;

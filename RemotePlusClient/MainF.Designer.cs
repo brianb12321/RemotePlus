@@ -29,9 +29,9 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Speak");
-            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Beep");
-            System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("File Transfer");
+            System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Speak");
+            System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("Beep");
+            System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("File Transfer");
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.mi_open = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -154,16 +154,16 @@
             this.treeView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.treeView1.Location = new System.Drawing.Point(3, 3);
             this.treeView1.Name = "treeView1";
-            treeNode1.Name = "nd_speak";
-            treeNode1.Text = "Speak";
-            treeNode2.Name = "nd_beep";
-            treeNode2.Text = "Beep";
-            treeNode3.Name = "nd_FileTransfer";
-            treeNode3.Text = "File Transfer";
+            treeNode4.Name = "nd_speak";
+            treeNode4.Text = "Speak";
+            treeNode5.Name = "nd_beep";
+            treeNode5.Text = "Beep";
+            treeNode6.Name = "nd_FileTransfer";
+            treeNode6.Text = "File Transfer";
             this.treeView1.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode1,
-            treeNode2,
-            treeNode3});
+            treeNode4,
+            treeNode5,
+            treeNode6});
             this.treeView1.Size = new System.Drawing.Size(160, 394);
             this.treeView1.TabIndex = 2;
             // 
@@ -295,7 +295,7 @@
             this.Controls.Add(this.tcRight);
             this.Menu = this.mainMenu1;
             this.Name = "MainF";
-            this.Text = "MainF";
+            this.Text = "RemotePlusClient";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainF_FormClosing);
             this.Load += new System.EventHandler(this.MainF_Load);

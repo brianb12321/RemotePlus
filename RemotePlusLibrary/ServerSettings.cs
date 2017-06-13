@@ -80,23 +80,11 @@ namespace RemotePlusLibrary
         #region Methods
         public void Save()
         {
-            DataContractSerializer xsSubmit = new DataContractSerializer(typeof(ServerSettings), Core.DefaultKnownTypeManager.GetKnownTypes(null));
-            var subReq = this;
-            XmlWriterSettings settings = new XmlWriterSettings()
-            {
-                Indent = true
-            };
-            using (var sww = new StringWriter())
-            using(XmlWriter writer = XmlWriter.Create("Configurations\\Server\\GlobalServerSettings.config", settings))
-            {
-                xsSubmit.WriteObject(writer, subReq);
-            }
+            ConfigurationHelper.SaveConfig(this, "Configurations\\Server\\GlobalServerSettings.config", Core.DefaultKnownTypeManager.GetKnownTypes(null));
         }
         public void Load()
         {
-            DataContractSerializer ser = new DataContractSerializer(typeof(ServerSettings), Core.DefaultKnownTypeManager.GetKnownTypes(null));
-            XmlReader reader = XmlReader.Create("Configurations\\Server\\GlobalServerSettings.config");
-            var ss = (ServerSettings)ser.ReadObject(reader);
+            var ss = ConfigurationHelper.LoadConfig<ServerSettings>("Configurations\\Server\\GlobalServerSettings.config", Core.DefaultKnownTypeManager.GetKnownTypes(null));
             this.Accounts = ss.Accounts;
             this.BannedIPs = ss.BannedIPs;
             this.PortNumber = ss.PortNumber;
@@ -104,7 +92,6 @@ namespace RemotePlusLibrary
             this.CleanLogFolder = ss.CleanLogFolder;
             this.LogFileCountThreashold = ss.LogFileCountThreashold;
             this.DisableCommandClients = ss.DisableCommandClients;
-            reader.Close();
         }
         #endregion
         #region Optimization Settings
