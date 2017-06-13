@@ -9,7 +9,7 @@ using System.Windows.Forms;
 
 namespace RemotePlusClient.CommonUI
 {
-    public class ColorRequest : IDataRequest
+    public sealed class ColorRequest : IDataRequest
     {
         bool IDataRequest.ShowProperties => false;
 

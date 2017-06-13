@@ -1,6 +1,6 @@
 ﻿namespace RemotePlusClient.CommonUI
 {
-    partial class RequestStringDialogBox
+    sealed partial class RequestStringDialogBox
     {
         /// <summary>
         /// Required designer variable.

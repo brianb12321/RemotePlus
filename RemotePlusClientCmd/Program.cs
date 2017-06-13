@@ -21,6 +21,7 @@ namespace RemotePlusClientCmd
         public static CMDLogging Logger = null;
         public static DuplexChannelFactory<IRemote> channel = null;
         public static bool WaitFlag = true;
+        [STAThread]
         static void Main(string[] args)
         {
             try

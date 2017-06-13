@@ -11,7 +11,7 @@ using System.Reflection;
 
 namespace ReleaseExtensions
 {
-    public class Startup : ILibraryStartup
+    public sealed class Startup : ILibraryStartup
     {
         void ILibraryStartup.ClientInit()
         {

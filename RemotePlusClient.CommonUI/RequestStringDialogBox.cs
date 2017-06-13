@@ -15,7 +15,7 @@ using System.IO;
 
 namespace RemotePlusClient.CommonUI
 {
-    public partial class RequestStringDialogBox : Form, IDataRequest
+    public sealed partial class RequestStringDialogBox : Form, IDataRequest
     {
         private string data;
         private string message;
