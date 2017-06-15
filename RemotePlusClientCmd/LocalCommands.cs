@@ -1,5 +1,5 @@
 ﻿using Logging;
-using RemotePlusLibrary.Extension.ClientModule;
+using RemotePlusLibrary.Extension.ClientCommandSystem;
 using RemotePlusLibrary.Extension.CommandSystem;
 using System;
 using System.Collections.Generic;
@@ -43,7 +43,7 @@ namespace RemotePlusClientCmd
             Console.Title = sb.ToString();
             return (int)CommandStatus.Success;
         }
-        [CommandHelp("Loads the specified client module library.")]
+        [CommandHelp("Loads the specified client command library.")]
         static int load_CommandFile(string[] args)
         {
             try

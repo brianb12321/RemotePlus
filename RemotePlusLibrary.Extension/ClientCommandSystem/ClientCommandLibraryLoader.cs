@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RemotePlusLibrary.Extension.ClientModule
+namespace RemotePlusLibrary.Extension.ClientCommandSystem
 {
     public class ClientCommandLibraryLoader
     {

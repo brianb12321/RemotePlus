@@ -51,8 +51,8 @@
     <Compile Include="ClientExtensionDetails.cs" />
     <Compile Include="ClientExtensionLibrary.cs" />
     <Compile Include="ClientLibraryCollection.cs" />
-    <Compile Include="ClientModule\ClientCommandLibraryLoader.cs" />
-    <Compile Include="ClientModule\IClientModuleLibraryStartup.cs" />
+    <Compile Include="ClientCommandSystem\ClientCommandLibraryLoader.cs" />
+    <Compile Include="ClientCommandSystem\IClientModuleLibraryStartup.cs" />
     <Compile Include="CommandSystem\CommandHelpAttribute.cs" />
     <Compile Include="CommandSystem\CommandStatus.cs" />
     <Compile Include="CallType.cs" />

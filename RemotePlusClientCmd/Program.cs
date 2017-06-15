@@ -11,7 +11,7 @@ using System.Windows.Forms;
 using System.Drawing;
 using RemotePlusClient.CommonUI;
 using RemotePlusLibrary.Extension.CommandSystem;
-using RemotePlusLibrary.Extension.ClientModule;
+using RemotePlusLibrary.Extension.ClientCommandSystem;
 
 namespace RemotePlusClientCmd
 {
@@ -46,10 +46,10 @@ namespace RemotePlusClientCmd
                 Console.Write("Enter Password: ");
                 string password = Console.ReadLine();
                 RegistirationObject ro = new RegistirationObject();
-                //{
-                ro.LoginRightAway = true;
-                ro.Credentials = new UserCredentials(username, password);
-                //};
+                {
+                    ro.LoginRightAway = true;
+                    ro.Credentials = new UserCredentials(username, password);
+                };
                 Remote = channel.CreateChannel();
                 Remote.Register(ro);
                 Console.WriteLine("Enter a command to the server. Type {help} for a list of commands.");
