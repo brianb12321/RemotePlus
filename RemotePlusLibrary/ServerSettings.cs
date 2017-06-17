@@ -21,12 +21,19 @@ namespace RemotePlusLibrary
     [DataContract]
     public class ServerSettings : IFileConfig
     {
+        #region Constants
+        public const string SERVER_SETTINGS_FILE_PATH = "Configurations\\Server\\GlobalServerSettings.config";
+        public const string SERVER_SETTINGS_CATEGORY_SERVER = "Server";
+        public const string SERVER_SETTINGS_CATEGORY_SECURITY = "Security";
+        public const string SERVER_SETTINGS_CATEGORY_SERVER_INFORMATION = "Server Information";
+        public const string SERVER_SETTINGS_CATEGORY_LOGGING = "Logging";
+        #endregion Constants
         #region Connection
         [DataMember]
-        [Category("Server")]
+        [Category(SERVER_SETTINGS_CATEGORY_SERVER)]
         public int PortNumber { get; set; }
         [DataMember]
-        [Category("Server")]
+        [Category(SERVER_SETTINGS_CATEGORY_SERVER)]
         public bool DisableCommandClients { get; set; } = false;
         #endregion
         #region Extension
@@ -34,17 +41,17 @@ namespace RemotePlusLibrary
         #endregion
         #region Security
         [DataMember]
-        [Category("Security")]
+        [Category(SERVER_SETTINGS_CATEGORY_SECURITY)]
         [Editor(typeof(UserAccountEditor), typeof(UITypeEditor))]
         public UserCollection Accounts { get; set; }
         [DataMember]
         [Browsable(false)]
-        [Category("Security")]
+        [Category(SERVER_SETTINGS_CATEGORY_SECURITY)]
         public StringCollection BannedIPs { get; set; }
         #endregion
         #region Server Info
         [TypeConverter(typeof(ExpandableObjectConverter))]
-        [Category("Server Information")]
+        [Category(SERVER_SETTINGS_CATEGORY_SERVER_INFORMATION)]
         [XmlIgnore]
         public OperatingSystem ServerOS
         {
@@ -53,7 +60,7 @@ namespace RemotePlusLibrary
                 return Environment.OSVersion;
             }
         }
-        [Category("Server Information")]
+        [Category(SERVER_SETTINGS_CATEGORY_SERVER_INFORMATION)]
         [XmlIgnore]
         public string ServerVersion
         {
@@ -62,7 +69,7 @@ namespace RemotePlusLibrary
                 return Assembly.GetExecutingAssembly().GetName().Version.ToString();
             }
         }
-        [Category("Server Information")]
+        [Category(SERVER_SETTINGS_CATEGORY_SERVER_INFORMATION)]
         [XmlIgnore]
         public string ServerFolder
         {
@@ -75,16 +82,23 @@ namespace RemotePlusLibrary
         #endregion
         #region Logging Settings
         [DataMember]
+        [Category(SERVER_SETTINGS_CATEGORY_LOGGING)]
         public bool LogOnShutdown { get; set; }
+        [Category(SERVER_SETTINGS_CATEGORY_LOGGING)]
+        [DataMember]
+        public char DateDelimiter { get; set; }
+        [Category(SERVER_SETTINGS_CATEGORY_LOGGING)]
+        [DataMember]
+        public char TimeDelimiter { get; set; }
         #endregion Logging Settings
         #region Methods
         public void Save()
         {
-            ConfigurationHelper.SaveConfig(this, "Configurations\\Server\\GlobalServerSettings.config", Core.DefaultKnownTypeManager.GetKnownTypes(null));
+            ConfigurationHelper.SaveConfig(this, SERVER_SETTINGS_FILE_PATH, Core.DefaultKnownTypeManager.GetKnownTypes(null));
         }
         public void Load()
         {
-            var ss = ConfigurationHelper.LoadConfig<ServerSettings>("Configurations\\Server\\GlobalServerSettings.config", Core.DefaultKnownTypeManager.GetKnownTypes(null));
+            var ss = ConfigurationHelper.LoadConfig<ServerSettings>(SERVER_SETTINGS_FILE_PATH, Core.DefaultKnownTypeManager.GetKnownTypes(null));
             this.Accounts = ss.Accounts;
             this.BannedIPs = ss.BannedIPs;
             this.PortNumber = ss.PortNumber;
@@ -92,17 +106,23 @@ namespace RemotePlusLibrary
             this.CleanLogFolder = ss.CleanLogFolder;
             this.LogFileCountThreashold = ss.LogFileCountThreashold;
             this.DisableCommandClients = ss.DisableCommandClients;
+            this.DateDelimiter = ss.DateDelimiter;
+            this.TimeDelimiter = ss.TimeDelimiter;
         }
         #endregion
         #region Optimization Settings
         [DataMember]
+        [Category(SERVER_SETTINGS_CATEGORY_LOGGING)]
         public bool CleanLogFolder { get; set; }
+        [Category(SERVER_SETTINGS_CATEGORY_LOGGING)]
         [DataMember]
         public int LogFileCountThreashold { get; set; } = 10;
         #endregion
         public ServerSettings()
         {
             PortNumber = 9000;
+            DateDelimiter = '-';
+            TimeDelimiter = '-';
             Accounts = new UserCollection();
             Accounts.Add(new UserAccount(new UserCredentials("admin", "password"), new Role("Admin", new SecurityAccessRules())));
         }

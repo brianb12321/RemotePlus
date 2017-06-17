@@ -76,12 +76,12 @@ namespace RemotePlusServer
                 if (DefaultSettings.LogOnShutdown)
                 {
                     Logger.AddOutput("Saving log and closing.", OutputLevel.Info);
-                    Logger.SaveLog($"ServerLogs\\{DateTime.Now.ToShortDateString().Replace('/', '-')} {DateTime.Now.ToShortTimeString().Replace(':', '-')}.txt");
+                    Logger.SaveLog($"ServerLogs\\{DateTime.Now.ToShortDateString().Replace('/', DefaultSettings.DateDelimiter)} {DateTime.Now.ToShortTimeString().Replace(':', DefaultSettings.TimeDelimiter)}.txt");
                 }
             }
-            catch
+            catch (Exception ex)
             {
-
+                Logger.AddOutput($"Unable to save log file: {ex.Message}", OutputLevel.Error);
             }
         }
 
@@ -169,9 +169,16 @@ namespace RemotePlusServer
                 {
                     if (Path.GetExtension(files) == ".dll")
                     {
-                        Logger.AddOutput($"Found extension file ({Path.GetFileName(files)})", Logging.OutputLevel.Info);
-                        var lib = ServerExtensionLibrary.LoadServerLibrary(files, (m, o) => Logger.AddOutput(m, o));
-                        DefaultCollection.Libraries.Add(lib.Name, lib);
+                        try
+                        {
+                            Logger.AddOutput($"Found extension file ({Path.GetFileName(files)})", Logging.OutputLevel.Info);
+                            var lib = ServerExtensionLibrary.LoadServerLibrary(files, (m, o) => Logger.AddOutput(m, o));
+                            DefaultCollection.Libraries.Add(lib.Name, lib);
+                        }
+                        catch (Exception ex)
+                        {
+                            Logger.AddOutput($"Could not load \"{files}\" because of a load error or initialization error. Error: {ex.Message}", OutputLevel.Error);
+                        }
                     }
                 }
             }
@@ -182,7 +189,6 @@ namespace RemotePlusServer
         }
         public static void RunInServerMode()
         {
-            Logger.AddOutput("Starting server.", OutputLevel.Info);
             DefaultService.Start();
         }
 

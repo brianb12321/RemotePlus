@@ -8,7 +8,7 @@ using RemotePlusServer;
 using RemotePlusLibrary.Extension.CommandSystem;
 using System.IO;
 using System.Reflection;
-using RemotePlusLibrary.Extension.ClientModule;
+using RemotePlusLibrary.Extension.ClientCommandSystem;
 
 namespace ReleaseExtensions
 {
