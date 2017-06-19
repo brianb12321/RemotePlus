@@ -1,0 +1,13 @@
+﻿
+Wraps around the beep function. This command will cause the system to beep. This is used as a way of making an audible sound.
+Format: beep <freq> [duration]
+
+freq: The frequency specified in hertz.
+duration: The duration that the sound will be placed. Duration is messured in milliseconds.
+
+example: beep 1000 1000
+
+Remarks:
+- The beep function can cause severe headaches and can cause deaf.
+- The beep function can be used as a dog whistle.
+- Be careful using this command on remote computers.

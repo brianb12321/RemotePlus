@@ -465,5 +465,15 @@ namespace RemotePlusServer
             ServerManager.Logger.AddOutput("File decrypted.", OutputLevel.Info);
             Client.ClientCallback.TellMessage(new UILogItem(OutputLevel.Info, $"File decrypted. File: {fileName}", "Server Host"));
         }
+
+        public string GetCommandHelpPage(string command)
+        {
+            return RemotePlusConsole.ShowHelpPage(ServerManager.DefaultService.Commands, command);
+        }
+
+        public string GetCommandHelpDescription(string command)
+        {
+            return RemotePlusConsole.ShowCommandHelpDescription(ServerManager.DefaultService.Commands, command);
+        }
     }
 }

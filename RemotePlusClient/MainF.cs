@@ -307,5 +307,13 @@ namespace RemotePlusClient
                 rdb.ShowDialog();
             }
         }
+
+        private void command_browse_menuItem_Click(object sender, EventArgs e)
+        {
+            using (CommandBrowserDialog cbd = new CommandBrowserDialog())
+            {
+                cbd.ShowDialog();
+            }
+        }
     }
 }

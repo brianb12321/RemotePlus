@@ -29,9 +29,9 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Speak");
-            System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("Beep");
-            System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("File Transfer");
+            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Speak");
+            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Beep");
+            System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("File Transfer");
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.mi_open = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -58,6 +58,8 @@
             this.menuItem9 = new System.Windows.Forms.MenuItem();
             this.menuItem2 = new System.Windows.Forms.MenuItem();
             this.menuItem3 = new System.Windows.Forms.MenuItem();
+            this.menuItem10 = new System.Windows.Forms.MenuItem();
+            this.command_browse_menuItem = new System.Windows.Forms.MenuItem();
             this.contextMenuStrip1.SuspendLayout();
             this.contextMenuStrip2.SuspendLayout();
             this.tcRight.SuspendLayout();
@@ -154,16 +156,16 @@
             this.treeView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.treeView1.Location = new System.Drawing.Point(3, 3);
             this.treeView1.Name = "treeView1";
-            treeNode4.Name = "nd_speak";
-            treeNode4.Text = "Speak";
-            treeNode5.Name = "nd_beep";
-            treeNode5.Text = "Beep";
-            treeNode6.Name = "nd_FileTransfer";
-            treeNode6.Text = "File Transfer";
+            treeNode1.Name = "nd_speak";
+            treeNode1.Text = "Speak";
+            treeNode2.Name = "nd_beep";
+            treeNode2.Text = "Beep";
+            treeNode3.Name = "nd_FileTransfer";
+            treeNode3.Text = "File Transfer";
             this.treeView1.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode4,
-            treeNode5,
-            treeNode6});
+            treeNode1,
+            treeNode2,
+            treeNode3});
             this.treeView1.Size = new System.Drawing.Size(160, 394);
             this.treeView1.TabIndex = 2;
             // 
@@ -192,7 +194,8 @@
             this.menuItem1,
             this.menuItem5,
             this.menuItem8,
-            this.menuItem2});
+            this.menuItem2,
+            this.menuItem10});
             // 
             // menuItem1
             // 
@@ -284,6 +287,19 @@
             this.menuItem3.Text = "Load using console";
             this.menuItem3.Click += new System.EventHandler(this.menuItem3_Click);
             // 
+            // menuItem10
+            // 
+            this.menuItem10.Index = 4;
+            this.menuItem10.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+            this.command_browse_menuItem});
+            this.menuItem10.Text = "Commands";
+            // 
+            // command_browse_menuItem
+            // 
+            this.command_browse_menuItem.Index = 0;
+            this.command_browse_menuItem.Text = "Browse";
+            this.command_browse_menuItem.Click += new System.EventHandler(this.command_browse_menuItem_Click);
+            // 
             // MainF
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -336,5 +352,7 @@
         private System.Windows.Forms.MenuItem menuItem3;
         private System.Windows.Forms.MenuItem switchUserMenuItem;
         private System.Windows.Forms.MenuItem menuItem4;
+        private System.Windows.Forms.MenuItem menuItem10;
+        private System.Windows.Forms.MenuItem command_browse_menuItem;
     }
 }

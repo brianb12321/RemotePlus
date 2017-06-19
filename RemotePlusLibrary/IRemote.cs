@@ -75,5 +75,9 @@ namespace RemotePlusLibrary
         void EncryptFile(string fileName, string password);
         [OperationContract(IsOneWay = true)]
         void DecryptFile(string fileName, string password);
+        [OperationContract]
+        string GetCommandHelpPage(string command);
+        [OperationContract]
+        string GetCommandHelpDescription(string command);
     }
 }

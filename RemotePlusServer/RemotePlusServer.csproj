@@ -120,6 +120,9 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="app.manifest" />
+    <Content Include="HelpDocs\beep.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="HelpDocs\showMessageBox.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

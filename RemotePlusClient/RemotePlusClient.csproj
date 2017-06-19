@@ -62,6 +62,12 @@
     </Compile>
     <Compile Include="ClientApp.cs" />
     <Compile Include="ClientCallback.cs" />
+    <Compile Include="CommandBrowserDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CommandBrowserDialog.Designer.cs">
+      <DependentUpon>CommandBrowserDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="CommandDialogs\BeepDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -136,6 +142,9 @@
   <ItemGroup>
     <EmbeddedResource Include="AuthenticationDialog.resx">
       <DependentUpon>AuthenticationDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CommandBrowserDialog.resx">
+      <DependentUpon>CommandBrowserDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="CommandDialogs\BeepDialog.resx">
       <DependentUpon>BeepDialog.cs</DependentUpon>

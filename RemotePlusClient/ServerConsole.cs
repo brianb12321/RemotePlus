@@ -80,8 +80,9 @@ namespace RemotePlusClient
         {
             if(e.KeyCode == Keys.Enter)
             {
-                MainF.Remote.RunServerCommand(textBox1.Text);
+                string command = textBox1.Text;
                 textBox1.Clear();
+                MainF.Remote.RunServerCommand(command);
             }
         }
         private void richTextBox1_TextChanged(object sender, EventArgs e)

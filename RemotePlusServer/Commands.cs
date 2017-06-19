@@ -228,6 +228,7 @@ namespace RemotePlusServer
             }
         }
         [CommandHelp("Wraps around the beep function.")]
+        [HelpPage("beep.txt", Source = HelpSourceType.File)]
         private static int svm_beep(string[] args)
         {
             DefaultService.Remote.Beep(int.Parse(args[1]), int.Parse(args[2]));
