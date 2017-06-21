@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace RemotePlusLibrary.Extension
+namespace RemotePlusLibrary.Extension.Programmer
 {
     public class ServerExtensionProgrammer : Programmer
     {

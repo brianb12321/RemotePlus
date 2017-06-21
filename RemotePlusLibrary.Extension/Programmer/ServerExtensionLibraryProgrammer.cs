@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RemotePlusLibrary.Extension
+namespace RemotePlusLibrary.Extension.Programmer
 {
     [DataContract]
     public class ServerExtensionLibraryProgrammer : Programmer

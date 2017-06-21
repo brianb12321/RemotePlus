@@ -12,13 +12,11 @@ using RemotePlusLibrary.Extension.ClientCommandSystem;
 
 namespace ReleaseExtensions
 {
-    public sealed class Startup : ILibraryStartup, IClientCommandLibraryStartup
+    public sealed class Startup : ILibraryStartup, IClientCommandLibraryStartup, IClientLibraryStartup
     {
-        void ILibraryStartup.ClientInit()
+        void IClientLibraryStartup.ClientInit()
         {
-            
         }
-
         void ILibraryStartup.Init()
         {
             ServerManager.Logger.AddOutput(new Logging.LogItem(Logging.OutputLevel.Info, "Welcome to \"ReleaseExtension.\" This library contains some useful tools that demonstrates the powers of \"RemotePlus\"", "ReleaseExtensions") { Color = Console.ForegroundColor});

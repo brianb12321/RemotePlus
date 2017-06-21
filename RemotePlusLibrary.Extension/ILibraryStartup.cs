@@ -9,6 +9,5 @@ namespace RemotePlusLibrary.Extension
     public interface ILibraryStartup
     {
         void Init();
-        void ClientInit();
     }
 }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RemotePlusLibrary.Extension
+namespace RemotePlusLibrary.Extension.Programmer
 {
     public class ServerExtensionProgrammerUpdateEvent
     {

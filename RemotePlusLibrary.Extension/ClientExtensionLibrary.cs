@@ -21,11 +21,11 @@ namespace RemotePlusLibrary.Extension
             {
                 if (ea.LibraryType == ExtensionLibraryType.Client || ea.LibraryType == ExtensionLibraryType.Both)
                 {
-                    if (!typeof(ILibraryStartup).IsAssignableFrom(ea.Startup))
+                    if (!typeof(IClientLibraryStartup).IsAssignableFrom(ea.Startup))
                     {
                         throw new ArgumentException("The startup type does not implement ILibraryStartup.");
                     }
-                    var st = (ILibraryStartup)Activator.CreateInstance(ea.Startup);
+                    var st = (IClientLibraryStartup)Activator.CreateInstance(ea.Startup);
                     st.ClientInit();
                     lib = new ClientExtensionLibrary(ea.FriendlyName, ea.Name, ea.LibraryType);
                     foreach (Type t in a.GetTypes())

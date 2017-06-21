@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
-namespace RemotePlusLibrary.Extension
+namespace RemotePlusLibrary.Extension.Programmer
 {
     [DataContract]
     public abstract class Programmer
