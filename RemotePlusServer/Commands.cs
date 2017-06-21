@@ -46,6 +46,7 @@ namespace RemotePlusServer
             return (int)CommandStatus.Success;
         }
         [CommandHelp("Executes a loaded extension on the server.")]
+        [HelpPage("ex.txt", Source = HelpSourceType.File)]
         private static int ExCommand(string[] args)
         {           
             List<string> obj = new List<string>();
@@ -58,6 +59,7 @@ namespace RemotePlusServer
             return (int)CommandStatus.Success;
         }
         [CommandHelp("Gets the server log.")]
+        [HelpPage("logs.txt", Source = HelpSourceType.File)]
         private static int Logs(string[] args)
         {
             foreach(var l in Logger.buffer)
@@ -67,6 +69,7 @@ namespace RemotePlusServer
             return (int)CommandStatus.Success;
         }
         [CommandHelp("Manages variables on the server.")]
+        [HelpPage("vars.txt", Source = HelpSourceType.File)]
         private static int vars(string[] args)
         {
             if(args.Length >= 2)

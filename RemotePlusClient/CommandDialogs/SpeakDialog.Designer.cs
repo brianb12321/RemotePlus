@@ -63,9 +63,9 @@
             this.comboBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.comboBox1.FormattingEnabled = true;
             this.comboBox1.Items.AddRange(new object[] {
-            "Female,",
-            "Male,",
-            "Neutral,",
+            "Female",
+            "Male",
+            "Neutral",
             "NotSet"});
             this.comboBox1.Location = new System.Drawing.Point(15, 273);
             this.comboBox1.Name = "comboBox1";
@@ -110,10 +110,10 @@
             this.comboBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.comboBox2.FormattingEnabled = true;
             this.comboBox2.Items.AddRange(new object[] {
-            "Adult,",
-            "Child,",
-            "NotSet,",
-            "Senior,",
+            "Adult",
+            "Child",
+            "NotSet",
+            "Senior",
             "Teen"});
             this.comboBox2.Location = new System.Drawing.Point(15, 313);
             this.comboBox2.Name = "comboBox2";

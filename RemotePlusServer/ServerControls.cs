@@ -19,14 +19,28 @@ namespace RemotePlusServer
 
         private void button1_Click(object sender, EventArgs e)
         {
+#if COGNITO
             ServerManager.RunInServerMode();
             button2.Enabled = true;
             button1.Enabled = false;
+            Hide();
+#else
+            ServerManager.RunInServerMode();
+            button2.Enabled = true;
+            button1.Enabled = false;
+#endif
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
             ServerManager.Close();
+        }
+
+        private void ServerControls_Load(object sender, EventArgs e)
+        {
+#if COGNITO
+            this.ShowInTaskbar = false;
+#endif
         }
     }
 }

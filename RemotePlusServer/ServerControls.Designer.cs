@@ -69,6 +69,7 @@
             this.Name = "ServerControls";
             this.ShowIcon = false;
             this.Text = "Server controls";
+            this.Load += new System.EventHandler(this.ServerControls_Load);
             this.ResumeLayout(false);
 
         }
