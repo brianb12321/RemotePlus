@@ -16,20 +16,27 @@ RemotePlus is a remote control server/client. You run the server on a remote com
 Welcome to RemotePlusServer, version: 1.0.0.0
 
 
-6/5/2017 6:37:48 PM [Server Host][DEBUG]: Starting stop watch.
-6/5/2017 6:37:48 PM [Server Host][INFO]: Adding default known types.
-6/5/2017 6:37:48 PM [Server Host][DEBUG]: Adding UserAccount to known type list.
-6/5/2017 6:37:48 PM [Server Host][INFO]: Loading commands.
-6/5/2017 6:37:48 PM [Server Host][INFO]: Loading server settings file.
-6/5/2017 6:37:48 PM [Server Host][ERROR]: Unable to load server settings. There was an error deserializing the object of type RemotePlusLibrary.ServerSettings. The 'Credentials' start tag on line 5 position 8 does not match the end tag of 'Credentdials'. Line 8, position 9.
-6/5/2017 6:37:48 PM [Server Host][INFO]: Loading variables.
-6/5/2017 6:37:48 PM [Server Host][INFO]: Initializing watchers.
-6/5/2017 6:37:48 PM [Server Host][INFO]: Loading extensions...
-6/5/2017 6:37:48 PM [Server Host][INFO]: The extensions folder does not exist.
-6/5/2017 6:37:48 PM [Server Host][INFO]: Checking prerequisites.
-6/5/2017 6:37:48 PM [Server Host][WARNING]: The current logged in user is not part of the group "Administrator". This may cause certain operations to fail.
-6/5/2017 6:37:48 PM [Server Host][DEBUG]: Stopping stop watch.
-6/5/2017 6:37:48 PM [Server Host][ERROR]: Unable to start server. (1 errors, 1 warnings) Elapsed time: 00:00:00.6824178
+6/21/2017 7:01:35 PM [Server Host][DEBUG]: Starting stop watch.
+6/21/2017 7:01:35 PM [Server Host][INFO]: Adding default known types.
+6/21/2017 7:01:35 PM [Server Host][DEBUG]: Adding UserAccount to known type list.
+6/21/2017 7:01:35 PM [Server Host][INFO]: Loading server settings file.
+6/21/2017 7:01:35 PM [Server Host][ERROR]: Unable to load server settings. There was an error deserializing the object of type RemotePlusLibrary.ServerSettings. The 'Credentials' start tag on line 5 position 8 does not match the end tag of 'Credentdials'. Line 8, position 9.
+6/21/2017 7:01:35 PM [Server Host][INFO]: Initializing watchers.
+6/21/2017 7:01:35 PM [Server Host][DEBUG]: Building endpoint URL.
+6/21/2017 7:01:35 PM [Server Host][DEBUG]: URL built net.tcp://0.0.0.0:9000/Remote
+6/21/2017 7:01:35 PM [Server Host][DEBUG]: Creating server.
+6/21/2017 7:01:35 PM [Server Host][DEBUG]: Publishing server events.
+6/21/2017 7:01:35 PM [Server Host][DEBUG]: Changing url of endpoint 1.
+6/21/2017 7:01:35 PM [Server Host][INFO]: Loading extensions...
+6/21/2017 7:01:35 PM [Server Host][INFO]: The extensions folder does not exist.
+6/21/2017 7:01:35 PM [Server Host][DEBUG]: Added temperary extensions into dictionary.
+6/21/2017 7:01:35 PM [Server Host][DEBUG]: Attaching server events.
+6/21/2017 7:01:35 PM [Server Host][INFO]: Loading variables.
+6/21/2017 7:01:35 PM [Server Host][INFO]: Loading Commands.
+6/21/2017 7:01:35 PM [Server Host][INFO]: Checking prerequisites.
+6/21/2017 7:01:35 PM [Server Host][WARNING]: The current logged in user is not part of the group "Administrator". This may cause certain operations to fail.
+6/21/2017 7:01:35 PM [Server Host][DEBUG]: Stopping stop watch.
+6/21/2017 7:01:35 PM [Server Host][ERROR]: Unable to start server. (1 errors, 1 warnings) Elapsed time: 00:00:00.6899053
 ```
 ### Setting up server
 * Make sure that you meet the prerequisites mentioned above.
@@ -64,10 +71,12 @@ Welcome to RemotePlusServer, version: 1.0.0.0
   </Accounts>
   <BannedIPs xmlns:d2p1="http://schemas.microsoft.com/2003/10/Serialization/Arrays" i:nil="true" />
   <CleanLogFolder>false</CleanLogFolder>
+  <DateDelimiter>45</DateDelimiter>
   <DisableCommandClients>false</DisableCommandClients>
   <LogFileCountThreashold>10</LogFileCountThreashold>
   <LogOnShutdown>true</LogOnShutdown>
   <PortNumber>9000</PortNumber>
+  <TimeDelimiter>45</TimeDelimiter>
 </ServerSettings>
 ```
 If you break your `GlobalServerSettings.config` file, delete it and restart RemotePlusServer. You should see the following lines of text from the console:
@@ -75,11 +84,10 @@ If you break your `GlobalServerSettings.config` file, delete it and restart Remo
 Welcome to RemotePlusServer, version: 1.0.0.0
 
 
-6/5/2017 6:31:47 PM [Server Host][DEBUG]: Starting stop watch.
-6/5/2017 6:31:48 PM [Server Host][INFO]: Adding default known types.
-6/5/2017 6:31:48 PM [Server Host][DEBUG]: Adding UserAccount to known type list.
-6/5/2017 6:31:48 PM [Server Host][INFO]: Loading commands.
-6/5/2017 6:31:48 PM [Server Host][WARNING]: The server settings file does not exist. Creating server settings file.
+6/21/2017 7:03:19 PM [Server Host][DEBUG]: Starting stop watch.
+6/21/2017 7:03:19 PM [Server Host][INFO]: Adding default known types.
+6/21/2017 7:03:19 PM [Server Host][DEBUG]: Adding UserAccount to known type list.
+6/21/2017 7:03:19 PM [Server Host][WARNING]: The server settings file does not exist. Creating server settings file.
 ```
 ## Commands
 So, you want to know the commands that are pre-loaded on the server? Type `help` in the client console for a list of commands.

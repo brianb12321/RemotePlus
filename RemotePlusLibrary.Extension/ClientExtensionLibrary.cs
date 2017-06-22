@@ -9,7 +9,7 @@ namespace RemotePlusLibrary.Extension
 {
     public class ClientExtensionLibrary : ExtensionLibraryBase<IClientExtension>
     {
-        private ClientExtensionLibrary(string friendlyName, string name, ExtensionLibraryType type) : base(friendlyName, name, type)
+        private ClientExtensionLibrary(string friendlyName, string name, ExtensionLibraryType type, Guid g) : base(friendlyName, name, type, g)
         {
         }
         public static ClientExtensionLibrary LoadClientLibrary(string fileName, Action<IClientExtension> Callback)
@@ -25,9 +25,18 @@ namespace RemotePlusLibrary.Extension
                     {
                         throw new ArgumentException("The startup type does not implement ILibraryStartup.");
                     }
+                    Guid guid = Guid.Empty;
+                    try
+                    {
+                        guid = ParseGuid(ea.Guid);
+                    }
+                    catch (ArgumentException)
+                    {
+                        throw;
+                    }
                     var st = (IClientLibraryStartup)Activator.CreateInstance(ea.Startup);
                     st.ClientInit();
-                    lib = new ClientExtensionLibrary(ea.FriendlyName, ea.Name, ea.LibraryType);
+                    lib = new ClientExtensionLibrary(ea.FriendlyName, ea.Name, ea.LibraryType, guid);
                     foreach (Type t in a.GetTypes())
                     {
                         if (t.IsClass == true && (typeof(IClientExtension).IsAssignableFrom(t)))

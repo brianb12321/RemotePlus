@@ -4,9 +4,11 @@ using System.Runtime.InteropServices;
 using RemotePlusLibrary.Extension;
 
 // RemotePlus server extension attributes.
+// We will put in an illegal guid for now.
 [assembly: ExtensionLibrary(typeof(ReleaseExtensions.Startup), "ReleaseExtensions",
     FriendlyName = "Release Extensions",
-    LibraryType = ExtensionLibraryType.Both)]
+    LibraryType = ExtensionLibraryType.Both,
+    Guid = "bubbles.")]
 
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information

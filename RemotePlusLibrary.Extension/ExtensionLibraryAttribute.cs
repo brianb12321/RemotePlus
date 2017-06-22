@@ -13,6 +13,7 @@ namespace RemotePlusLibrary.Extension
         public ExtensionLibraryType LibraryType { get; set; }
         public string FriendlyName { get; set; }
         public string Name { get; private set; }
+        public string Guid { get; set; }
         public ExtensionLibraryAttribute(Type startup, string name)
         {
             Startup = startup;

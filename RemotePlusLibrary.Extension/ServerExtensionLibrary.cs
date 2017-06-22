@@ -7,7 +7,7 @@ namespace RemotePlusLibrary.Extension
 {
     public class ServerExtensionLibrary : ExtensionLibraryBase<ServerExtension>
     {
-        private ServerExtensionLibrary(string friendlyName, string name, ExtensionLibraryType type) : base(friendlyName, name, type)
+        private ServerExtensionLibrary(string friendlyName, string name, ExtensionLibraryType type, Guid g) : base(friendlyName, name, type, g)
         {
         }
 
@@ -24,11 +24,21 @@ namespace RemotePlusLibrary.Extension
                     {
                         throw new ArgumentException("The startup type does not implement ILibraryStartup.");
                     }
+                    Guid guid = Guid.Empty;
+                    try
+                    {
+                        guid = ParseGuid(ea.Guid);
+                    }
+                    catch (FormatException)
+                    {
+                        guid = Guid.NewGuid();
+                        Callback($"Unable to parse GUID. Using random generated GUID. GUID: [{guid.ToString()}]", OutputLevel.Warning);
+                    }
                     var st = (ILibraryStartup)Activator.CreateInstance(ea.Startup);
                     Callback("Beginning initialization.", Logging.OutputLevel.Info);
                     st.Init();
                     Callback("finished initalization.", Logging.OutputLevel.Info);
-                    lib = new ServerExtensionLibrary(ea.FriendlyName, ea.Name, ea.LibraryType);
+                    lib = new ServerExtensionLibrary(ea.FriendlyName, ea.Name, ea.LibraryType, guid);
                     foreach (Type t in a.GetTypes())
                     {
                         if (t.IsClass == true && (t.IsSubclassOf(typeof(ServerExtension))))
