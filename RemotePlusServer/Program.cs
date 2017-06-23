@@ -73,10 +73,10 @@ namespace RemotePlusServer
         {
             try
             {
-                if (DefaultSettings.LogOnShutdown)
+                if (DefaultSettings.LoggingSettings.LogOnShutdown)
                 {
                     Logger.AddOutput("Saving log and closing.", OutputLevel.Info);
-                    Logger.SaveLog($"ServerLogs\\{DateTime.Now.ToShortDateString().Replace('/', DefaultSettings.DateDelimiter)} {DateTime.Now.ToShortTimeString().Replace(':', DefaultSettings.TimeDelimiter)}.txt");
+                    Logger.SaveLog($"ServerLogs\\{DateTime.Now.ToShortDateString().Replace('/', DefaultSettings.LoggingSettings.DateDelimiter)} {DateTime.Now.ToShortTimeString().Replace(':', DefaultSettings.LoggingSettings.TimeDelimiter)}.txt");
                 }
             }
             catch (Exception ex)

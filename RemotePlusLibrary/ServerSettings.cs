@@ -1,5 +1,6 @@
 ﻿using RemotePlusLibrary.Configuration;
 using RemotePlusLibrary.Converters;
+using RemotePlusLibrary.Core;
 using RemotePlusLibrary.Editors;
 using System;
 using System.Collections.Generic;
@@ -26,7 +27,6 @@ namespace RemotePlusLibrary
         public const string SERVER_SETTINGS_CATEGORY_SERVER = "Server";
         public const string SERVER_SETTINGS_CATEGORY_SECURITY = "Security";
         public const string SERVER_SETTINGS_CATEGORY_SERVER_INFORMATION = "Server Information";
-        public const string SERVER_SETTINGS_CATEGORY_LOGGING = "Logging";
         #endregion Constants
         #region Connection
         [DataMember]
@@ -82,14 +82,8 @@ namespace RemotePlusLibrary
         #endregion
         #region Logging Settings
         [DataMember]
-        [Category(SERVER_SETTINGS_CATEGORY_LOGGING)]
-        public bool LogOnShutdown { get; set; }
-        [Category(SERVER_SETTINGS_CATEGORY_LOGGING)]
-        [DataMember]
-        public char DateDelimiter { get; set; }
-        [Category(SERVER_SETTINGS_CATEGORY_LOGGING)]
-        [DataMember]
-        public char TimeDelimiter { get; set; }
+        [TypeConverter(typeof(ExpandableObjectConverter))]
+        public LoggingSettings LoggingSettings { get; set; }
         #endregion Logging Settings
         #region Methods
         public void Save()
@@ -102,27 +96,17 @@ namespace RemotePlusLibrary
             this.Accounts = ss.Accounts;
             this.BannedIPs = ss.BannedIPs;
             this.PortNumber = ss.PortNumber;
-            this.LogOnShutdown = ss.LogOnShutdown;
-            this.CleanLogFolder = ss.CleanLogFolder;
-            this.LogFileCountThreashold = ss.LogFileCountThreashold;
             this.DisableCommandClients = ss.DisableCommandClients;
-            this.DateDelimiter = ss.DateDelimiter;
-            this.TimeDelimiter = ss.TimeDelimiter;
+            this.LoggingSettings = ss.LoggingSettings;
         }
         #endregion
         #region Optimization Settings
-        [DataMember]
-        [Category(SERVER_SETTINGS_CATEGORY_LOGGING)]
-        public bool CleanLogFolder { get; set; }
-        [Category(SERVER_SETTINGS_CATEGORY_LOGGING)]
-        [DataMember]
-        public int LogFileCountThreashold { get; set; } = 10;
+
         #endregion
         public ServerSettings()
         {
             PortNumber = 9000;
-            DateDelimiter = '-';
-            TimeDelimiter = '-';
+            LoggingSettings = new LoggingSettings();
             Accounts = new UserCollection();
             Accounts.Add(new UserAccount(new UserCredentials("admin", "password"), new Role("Admin", new SecurityAccessRules())));
         }

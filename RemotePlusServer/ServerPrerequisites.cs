@@ -52,13 +52,13 @@ namespace RemotePlusServer
 
         internal static void CheckSettings()
         {
-            if (ServerManager.DefaultSettings.LogOnShutdown)
+            if (ServerManager.DefaultSettings.LoggingSettings.LogOnShutdown)
             {
                 ServerManager.Logger.AddOutput(new LogItem(OutputLevel.Info, "NOTE: Logging is enabled for this application.", ServerManager.Logger.DefaultFrom) { Color = ConsoleColor.Cyan });
             }
-            if (ServerManager.DefaultSettings.CleanLogFolder)
+            if (ServerManager.DefaultSettings.LoggingSettings.CleanLogFolder)
             {
-                ServerManager.Logger.AddOutput(new LogItem(OutputLevel.Info, $"NOTE: Logs will be cleaned out when there are {ServerManager.DefaultSettings.LogFileCountThreashold} logs in the logs foleder.", ServerManager.Logger.DefaultFrom) { Color = ConsoleColor.Cyan });
+                ServerManager.Logger.AddOutput(new LogItem(OutputLevel.Info, $"NOTE: Logs will be cleaned out when there are {ServerManager.DefaultSettings.LoggingSettings.LogFileCountThreashold} logs in the logs foleder.", ServerManager.Logger.DefaultFrom) { Color = ConsoleColor.Cyan });
                 CheckLogCount();
             }
             CheckCommandClientSetting();
@@ -72,7 +72,7 @@ namespace RemotePlusServer
         }
         private static void CheckLogCount()
         {
-            if(Directory.GetFiles("ServerLogs").Length >= ServerManager.DefaultSettings.LogFileCountThreashold)
+            if(Directory.GetFiles("ServerLogs").Length >= ServerManager.DefaultSettings.LoggingSettings.LogFileCountThreashold)
             {
                 ServerManager.Logger.AddOutput(new LogItem(OutputLevel.Info, "IMPORTANT ACTION: The server logs threashold has been reached. The server logs folder will be cleared.", ServerManager.Logger.DefaultFrom ) { Color = ConsoleColor.Magenta });
                 foreach(string fileToBeDeleted in Directory.GetFiles("ServerLogs"))

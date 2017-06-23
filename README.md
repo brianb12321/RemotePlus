@@ -9,7 +9,7 @@ RemotePlus is a remote control server/client. You run the server on a remote com
 ### Prerequisites
 * .Net 4.6.2
 * At least one network adapter.
-* Perferred but not required, your network adapter is configured with a static IP address.
+* Recommended but not required, your network adapter is configured with a static IP address.
 * Not scared of the command line. You'll be using the command line a lot.
 * If there was a problem starting up the server, the following would happen (release mode):
 ```
@@ -70,13 +70,15 @@ Welcome to RemotePlusServer, version: 1.0.0.0
     </anyType>
   </Accounts>
   <BannedIPs xmlns:d2p1="http://schemas.microsoft.com/2003/10/Serialization/Arrays" i:nil="true" />
-  <CleanLogFolder>false</CleanLogFolder>
-  <DateDelimiter>45</DateDelimiter>
   <DisableCommandClients>false</DisableCommandClients>
-  <LogFileCountThreashold>10</LogFileCountThreashold>
-  <LogOnShutdown>true</LogOnShutdown>
+  <LoggingSettings xmlns:d2p1="http://schemas.datacontract.org/2004/07/RemotePlusLibrary.Core">
+    <d2p1:CleanLogFolder>false</d2p1:CleanLogFolder>
+    <d2p1:DateDelimiter>45</d2p1:DateDelimiter>
+    <d2p1:LogFileCountThreashold>10</d2p1:LogFileCountThreashold>
+    <d2p1:LogOnShutdown>true</d2p1:LogOnShutdown>
+    <d2p1:TimeDelimiter>45</d2p1:TimeDelimiter>
+  </LoggingSettings>
   <PortNumber>9000</PortNumber>
-  <TimeDelimiter>45</TimeDelimiter>
 </ServerSettings>
 ```
 If you break your `GlobalServerSettings.config` file, delete it and restart RemotePlusServer. You should see the following lines of text from the console:
