@@ -33,6 +33,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="JacksonSoft.CustomTabControl">
+      <HintPath>..\Libs\JacksonSoft.CustomTabControl.dll</HintPath>
+    </Reference>
     <Reference Include="Logging, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Libs\Logging.dll</HintPath>
@@ -62,6 +65,7 @@
     </Compile>
     <Compile Include="ClientApp.cs" />
     <Compile Include="ClientCallback.cs" />
+    <Compile Include="ClientSettings.cs" />
     <Compile Include="CommandBrowserDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -117,6 +121,12 @@
       <DependentUpon>MainF.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RemoteFileBrowser.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="RemoteFileBrowser.Designer.cs">
+      <DependentUpon>RemoteFileBrowser.cs</DependentUpon>
+    </Compile>
     <Compile Include="ServerConsole.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -170,6 +180,9 @@
     <EmbeddedResource Include="MainF.resx">
       <DependentUpon>MainF.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="RemoteFileBrowser.resx">
+      <DependentUpon>RemoteFileBrowser.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ServerConsole.resx">
       <DependentUpon>ServerConsole.cs</DependentUpon>
     </EmbeddedResource>
@@ -184,6 +197,10 @@
     <ProjectReference Include="..\RemotePlusClient.CommonUI\RemotePlusClient.CommonUI.csproj">
       <Project>{9ef00d4b-27f4-4c2a-bda7-fc47246b2064}</Project>
       <Name>RemotePlusClient.CommonUI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RemotePlusLibrary.Configuration\RemotePlusLibrary.Configuration.csproj">
+      <Project>{8A8A5888-1CE7-46ED-B8DE-1AC7671F3426}</Project>
+      <Name>RemotePlusLibrary.Configuration</Name>
     </ProjectReference>
     <ProjectReference Include="..\RemotePlusLibrary.Core\RemotePlusLibrary.Core.csproj">
       <Project>{0334629b-6302-42a8-b159-f8646b4d8650}</Project>

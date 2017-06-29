@@ -13,10 +13,11 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Logging;
 using System.Threading;
+using RemotePlusLibrary.Extension.Gui;
 
 namespace RemotePlusClient
 {
-    public partial class MainF : Form
+    public partial class MainF : ThemedForm
     {
         public static ServerConsole ServerConsoleObj = null;
         public static IRemote Remote = null;
@@ -28,6 +29,10 @@ namespace RemotePlusClient
         {
             DefaultCollection = new ClientLibraryCollection();
             InitializeComponent();
+            if (ClientApp.ClientSettings.DefaultTheme.ThemeEnabled)
+            {
+                InitializeTheme(ClientApp.ClientSettings.DefaultTheme);
+            }
         }
         public static void Disconnect()
         {
@@ -53,6 +58,22 @@ namespace RemotePlusClient
             ConsoleObj = new ConsoleDialog();
             AddTabToConsoleTabControl("Console", ConsoleObj);
         }
+        void EnableMenuItems()
+        {
+            connectMenuItem.Enabled = false;
+            consoleMenuItem.Enabled = true;
+            settingsMenuItem.Enabled = true;
+            switchUserMenuItem.Enabled = true;
+            browseFile_MenuItem.Enabled = true;
+        }
+        void DisableMenuItems()
+        {
+            connectMenuItem.Enabled = true;
+            consoleMenuItem.Enabled = false;
+            settingsMenuItem.Enabled = false;
+            switchUserMenuItem.Enabled = false;
+            browseFile_MenuItem.Enabled = false;
+        }
         private void Connect(RegistirationObject Settings)
         {
             try
@@ -62,10 +83,7 @@ namespace RemotePlusClient
                 Remote = channel.CreateChannel();
                 ConsoleObj.Logger.AddOutput("Registering...", Logging.OutputLevel.Info);
                 Remote.Register(Settings);
-                connectMenuItem.Enabled = false;
-                consoleMenuItem.Enabled = true;
-                settingsMenuItem.Enabled = true;
-                switchUserMenuItem.Enabled = true;
+                EnableMenuItems();
             }
             catch (Exception ex)
             {
@@ -74,7 +92,7 @@ namespace RemotePlusClient
             }
         }
 
-        void AddTabToConsoleTabControl(string Name, Form c)
+        void AddTabToConsoleTabControl(string Name, ThemedForm c)
         {
             Random r = new Random();
             string Id = $"{c.Name} {r.Next(1, 9999).ToString()}";
@@ -89,9 +107,9 @@ namespace RemotePlusClient
             };
             t.Controls.Add(c);
             tabControl1.TabPages.Add(t);
-            c.Show();
+            c.ShowAndInitializeTheme(ClientApp.ClientSettings.DefaultTheme);
         }
-        void AddTabToMainTabControl(string Name, Form c)
+        void AddTabToMainTabControl(string Name, ThemedForm c)
         {
             Random r = new Random();
             string Id = $"{c.Name} {r.Next(1, 9999).ToString()}";
@@ -106,7 +124,7 @@ namespace RemotePlusClient
             };
             t.Controls.Add(c);
             tabControl2.TabPages.Add(t);
-            c.Show();
+            c.ShowAndInitializeTheme(ClientApp.ClientSettings.DefaultTheme);
         }
         private void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)
         {
@@ -224,7 +242,7 @@ namespace RemotePlusClient
             {
                 if(treeView2.SelectedNode != null)
                 {
-                    Form newForm = DefaultCollection.GetAllExtensions()[treeView2.SelectedNode.Name].ExtensionForm;
+                    ThemedForm newForm = DefaultCollection.GetAllExtensions()[treeView2.SelectedNode.Name].ExtensionForm;
                     AddTabToMainTabControl(newForm.Name, newForm);
                 }
                 else
@@ -314,6 +332,36 @@ namespace RemotePlusClient
             {
                 cbd.ShowDialog();
             }
+        }
+
+        private void hide_right_menuItem_Click(object sender, EventArgs e)
+        {
+            tcRight.Hide();
+            CloseAll1();
+            ServerConsoleObj = null;
+            CloseAll2();
+            OpenConsole();
+            this.Refresh();
+        }
+
+        private void CloseAll1()
+        {
+            foreach(TabPage c in tabControl1.TabPages)
+            {
+                tabControl1.TabPages.Remove(c);
+            }
+        }
+        private void CloseAll2()
+        {
+            foreach (TabPage c in tabControl2.TabPages)
+            {
+                tabControl2.TabPages.Remove(c);
+            }
+        }
+
+        private void browseFile_MenuItem_Click(object sender, EventArgs e)
+        {
+            AddTabToMainTabControl("Remote file browser", new RemoteFileBrowser());
         }
     }
 }

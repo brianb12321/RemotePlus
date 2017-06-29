@@ -1,4 +1,6 @@
-﻿namespace ReleaseExtensions
+﻿using RemotePlusLibrary.Extension.Gui;
+
+namespace ReleaseExtensions
 {
     partial class CalculatorForm
     {
@@ -19,7 +21,10 @@
             }
             base.Dispose(disposing);
         }
+        protected override void InitializeTheme(Theme t)
+        {
 
+        }
         #region Windows Form Designer generated code
 
         /// <summary>
@@ -127,6 +132,7 @@
             this.Controls.Add(this.label1);
             this.Name = "CalculatorForm";
             this.Text = "CalculatorForm";
+            this.Load += new System.EventHandler(this.CalculatorForm_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

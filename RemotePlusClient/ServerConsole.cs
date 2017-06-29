@@ -1,4 +1,5 @@
 ﻿using Logging;
+using RemotePlusLibrary.Extension.Gui;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -12,7 +13,7 @@ using System.Windows.Forms;
 
 namespace RemotePlusClient
 {
-    public partial class ServerConsole : Form
+    public partial class ServerConsole : ThemedForm
     {
         public RichTextBoxLoggingMethod Logger { get; set; }
         string scriptFile;

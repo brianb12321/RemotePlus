@@ -1,4 +1,7 @@
-﻿namespace RemotePlusClient
+﻿using RemotePlusLibrary.Extension.Gui;
+using System.Windows.Forms;
+
+namespace RemotePlusClient
 {
     partial class MainF
     {
@@ -19,6 +22,38 @@
             }
             base.Dispose(disposing);
         }
+        protected override void InitializeTheme(Theme t)
+        {
+            this.BackColor = t.BackgroundColor;
+            this.ForeColor = t.TextForgroundColor;
+            this.tabControl1.DisplayStyleProvider = new System.Windows.Forms.TabStyleDefaultProvider(tabControl1) {
+                BorderColor = t.BackgroundColor,
+                BorderColorSelected = t.BackgroundColor
+            };
+            this.tabControl1.DisplayStyle = TabStyle.Default;
+            this.tabControl2.DisplayStyleProvider = new TabStyleDefaultProvider(tabControl2)
+            {
+                BorderColor = t.BackgroundColor,
+                BorderColorSelected = t.BackgroundColor
+            };
+            this.tabControl2.DisplayStyle = TabStyle.Default;
+            this.tcRight.DisplayStyleProvider = new TabStyleDefaultProvider(tcRight)
+            {
+                BorderColor = t.BackgroundColor,
+                BorderColorSelected = t.BackgroundColor
+            };
+            this.tcRight.DisplayStyle = TabStyle.Default;
+            this.tcLeft.DisplayStyleProvider = new TabStyleDefaultProvider(tcLeft)
+            {
+                BorderColor = t.BackgroundColor,
+                BorderColorSelected = t.BackgroundColor
+            };
+            this.tcLeft.DisplayStyle = TabStyle.Default;
+            this.treeView1.BackColor = t.TreeViewBackgroundColor;
+            this.treeView1.ForeColor = t.TreeViewForegrondColor;
+            this.treeView2.BackColor = t.TreeViewBackgroundColor;
+            this.treeView2.ForeColor = t.TreeViewForegrondColor;
+        }
 
         #region Windows Form Designer generated code
 
@@ -36,26 +71,28 @@
             this.mi_open = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.emi_open = new System.Windows.Forms.ToolStripMenuItem();
-            this.tcRight = new System.Windows.Forms.TabControl();
+            this.tcRight = new System.Windows.Forms.CustomTabControl();
             this.tcr_extensions = new System.Windows.Forms.TabPage();
             this.treeView2 = new System.Windows.Forms.TreeView();
-            this.tcLeft = new System.Windows.Forms.TabControl();
+            this.tcLeft = new System.Windows.Forms.CustomTabControl();
             this.tcl_da = new System.Windows.Forms.TabPage();
             this.treeView1 = new System.Windows.Forms.TreeView();
-            this.tabControl1 = new System.Windows.Forms.TabControl();
-            this.tabControl2 = new System.Windows.Forms.TabControl();
+            this.tabControl1 = new System.Windows.Forms.CustomTabControl();
+            this.tabControl2 = new System.Windows.Forms.CustomTabControl();
             this.mainMenu1 = new System.Windows.Forms.MainMenu(this.components);
             this.menuItem1 = new System.Windows.Forms.MenuItem();
             this.connectMenuItem = new System.Windows.Forms.MenuItem();
             this.consoleMenuItem = new System.Windows.Forms.MenuItem();
             this.settingsMenuItem = new System.Windows.Forms.MenuItem();
             this.switchUserMenuItem = new System.Windows.Forms.MenuItem();
+            this.browseFile_MenuItem = new System.Windows.Forms.MenuItem();
             this.menuItem5 = new System.Windows.Forms.MenuItem();
             this.menuItem6 = new System.Windows.Forms.MenuItem();
             this.menuItem7 = new System.Windows.Forms.MenuItem();
             this.menuItem4 = new System.Windows.Forms.MenuItem();
             this.menuItem8 = new System.Windows.Forms.MenuItem();
             this.menuItem9 = new System.Windows.Forms.MenuItem();
+            this.hide_right_menuItem = new System.Windows.Forms.MenuItem();
             this.menuItem2 = new System.Windows.Forms.MenuItem();
             this.menuItem3 = new System.Windows.Forms.MenuItem();
             this.menuItem10 = new System.Windows.Forms.MenuItem();
@@ -173,6 +210,7 @@
             // 
             this.tabControl1.Alignment = System.Windows.Forms.TabAlignment.Bottom;
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.tabControl1.HotTrack = true;
             this.tabControl1.Location = new System.Drawing.Point(174, 271);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
@@ -182,6 +220,7 @@
             // tabControl2
             // 
             this.tabControl2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabControl2.HotTrack = true;
             this.tabControl2.Location = new System.Drawing.Point(174, 0);
             this.tabControl2.Name = "tabControl2";
             this.tabControl2.SelectedIndex = 0;
@@ -204,7 +243,8 @@
             this.connectMenuItem,
             this.consoleMenuItem,
             this.settingsMenuItem,
-            this.switchUserMenuItem});
+            this.switchUserMenuItem,
+            this.browseFile_MenuItem});
             this.menuItem1.Text = "Server";
             // 
             // connectMenuItem
@@ -233,6 +273,13 @@
             this.switchUserMenuItem.Index = 3;
             this.switchUserMenuItem.Text = "Switch user";
             this.switchUserMenuItem.Click += new System.EventHandler(this.switchUserMenuItem_Click);
+            // 
+            // browseFile_MenuItem
+            // 
+            this.browseFile_MenuItem.Enabled = false;
+            this.browseFile_MenuItem.Index = 4;
+            this.browseFile_MenuItem.Text = "Browse Files";
+            this.browseFile_MenuItem.Click += new System.EventHandler(this.browseFile_MenuItem_Click);
             // 
             // menuItem5
             // 
@@ -265,7 +312,8 @@
             // 
             this.menuItem8.Index = 2;
             this.menuItem8.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-            this.menuItem9});
+            this.menuItem9,
+            this.hide_right_menuItem});
             this.menuItem8.Text = "Windows";
             // 
             // menuItem9
@@ -273,6 +321,12 @@
             this.menuItem9.Index = 0;
             this.menuItem9.Text = "Close Top";
             this.menuItem9.Click += new System.EventHandler(this.closeToolStripMenuItem_Click);
+            // 
+            // hide_right_menuItem
+            // 
+            this.hide_right_menuItem.Index = 1;
+            this.hide_right_menuItem.Text = "Hide right";
+            this.hide_right_menuItem.Click += new System.EventHandler(this.hide_right_menuItem_Click);
             // 
             // menuItem2
             // 
@@ -322,22 +376,22 @@
             this.tcLeft.ResumeLayout(false);
             this.tcl_da.ResumeLayout(false);
             this.ResumeLayout(false);
-
         }
 
         #endregion
+
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem mi_open;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip2;
         private System.Windows.Forms.ToolStripMenuItem emi_open;
-        private System.Windows.Forms.TabControl tcRight;
+        private System.Windows.Forms.CustomTabControl tcRight;
         private System.Windows.Forms.TabPage tcr_extensions;
         private System.Windows.Forms.TreeView treeView2;
-        private System.Windows.Forms.TabControl tcLeft;
+        private System.Windows.Forms.CustomTabControl tcLeft;
         private System.Windows.Forms.TabPage tcl_da;
         private System.Windows.Forms.TreeView treeView1;
-        private System.Windows.Forms.TabControl tabControl1;
-        private System.Windows.Forms.TabControl tabControl2;
+        private System.Windows.Forms.CustomTabControl tabControl1;
+        private System.Windows.Forms.CustomTabControl tabControl2;
         private System.Windows.Forms.MainMenu mainMenu1;
         private System.Windows.Forms.MenuItem menuItem1;
         private System.Windows.Forms.MenuItem connectMenuItem;
@@ -354,5 +408,7 @@
         private System.Windows.Forms.MenuItem menuItem4;
         private System.Windows.Forms.MenuItem menuItem10;
         private System.Windows.Forms.MenuItem command_browse_menuItem;
+        private System.Windows.Forms.MenuItem hide_right_menuItem;
+        private System.Windows.Forms.MenuItem browseFile_MenuItem;
     }
 }

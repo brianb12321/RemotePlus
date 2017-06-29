@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RemotePlusLibrary.Extension.Gui;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -11,7 +12,7 @@ using System.Windows.Forms;
 
 namespace RemotePlusClient.CommandDialogs
 {
-    public partial class SpeakDialog : Form
+    public partial class SpeakDialog : ThemedForm
     {
         public SpeakDialog()
         {

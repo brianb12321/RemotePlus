@@ -1,4 +1,6 @@
-﻿namespace RemotePlusClient.CommandDialogs
+﻿using RemotePlusLibrary.Extension.Gui;
+
+namespace RemotePlusClient.CommandDialogs
 {
     partial class BeepDialog
     {
@@ -18,6 +20,15 @@
                 components.Dispose();
             }
             base.Dispose(disposing);
+        }
+        protected override void InitializeTheme(Theme t)
+        {
+            this.BackColor = t.BackgroundColor;
+            this.ForeColor = t.TextForgroundColor;
+            this.numericUpDown1.BackColor = t.TextBoxBackgroundColor;
+            this.numericUpDown2.BackColor = t.TextBoxBackgroundColor;
+            this.numericUpDown1.ForeColor = t.TextBoxForegroundColor;
+            this.numericUpDown2.ForeColor = t.TextBoxForegroundColor;
         }
 
         #region Windows Form Designer generated code
@@ -127,6 +138,7 @@
             this.Controls.Add(this.label1);
             this.Name = "BeepDialog";
             this.Text = "BeepDialog";
+            this.Load += new System.EventHandler(this.BeepDialog_Load);
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).EndInit();
             this.ResumeLayout(false);

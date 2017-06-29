@@ -1,5 +1,6 @@
 ﻿using RemotePlusClient;
 using RemotePlusLibrary.Extension;
+using RemotePlusLibrary.Extension.Gui;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,9 +14,9 @@ using System.Windows.Forms;
 
 namespace ReleaseExtensions
 {
-    public partial class CountForm : Form, IClientExtension
+    public partial class CountForm : ThemedForm, IClientExtension
     {
-        public Form ExtensionForm => this;
+        public ThemedForm ExtensionForm => this;
 
         public ClientExtensionDetails GeneralDetails => new ClientExtensionDetails("CountForm", "1.0.0.0");
 

@@ -1,4 +1,5 @@
-﻿using RemotePlusLibrary.FileTransfer;
+﻿using RemotePlusLibrary.Extension.Gui;
+using RemotePlusLibrary.FileTransfer;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -12,7 +13,7 @@ using System.Windows.Forms;
 
 namespace RemotePlusClient.CommandDialogs
 {
-    public partial class FileTransfer : Form
+    public partial class FileTransfer : ThemedForm
     {
         public FileTransfer()
         {
@@ -36,6 +37,11 @@ namespace RemotePlusClient.CommandDialogs
             {
                 textBox1.Text = ofd.FileName;
             }
+        }
+
+        private void FileTransfer_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

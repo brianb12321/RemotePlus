@@ -1,4 +1,6 @@
-﻿namespace RemotePlusClient
+﻿using RemotePlusLibrary.Extension.Gui;
+
+namespace RemotePlusClient
 {
     partial class ConsoleDialog
     {
@@ -18,6 +20,11 @@
                 components.Dispose();
             }
             base.Dispose(disposing);
+        }
+        protected override void InitializeTheme(Theme t)
+        {
+            richTextBox1.BackColor = t.BackgroundColor;
+            richTextBox1.ForeColor = t.TextBoxForegroundColor;
         }
 
         #region Windows Form Designer generated code
@@ -50,6 +57,7 @@
             this.Name = "ConsoleDialog";
             this.Text = "ConsoleDialog";
             this.Load += new System.EventHandler(this.ConsoleDialog_Load);
+            this.TextChanged += new System.EventHandler(this.ConsoleDialog_TextChanged);
             this.ResumeLayout(false);
 
         }

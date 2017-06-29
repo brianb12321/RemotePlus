@@ -9,17 +9,18 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using RemotePlusLibrary.Extension;
 using RemotePlusClient;
+using RemotePlusLibrary.Extension.Gui;
 
 namespace ReleaseExtensions
 {
-    public partial class CalculatorForm : Form, IClientExtension
+    public partial class CalculatorForm : ThemedForm, IClientExtension
     {
         public CalculatorForm()
         {
             InitializeComponent();
         }
 
-        public Form ExtensionForm => this;
+        public ThemedForm ExtensionForm => this;
 
         public ClientExtensionDetails GeneralDetails => new ClientExtensionDetails("CalculatorForm", "1.0.0.0");
 
@@ -38,6 +39,11 @@ namespace ReleaseExtensions
             {
                 MessageBox.Show($"CalculatorExtension ran into a problem. Problem: {os.Data}");
             }
+        }
+
+        private void CalculatorForm_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

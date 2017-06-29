@@ -1,4 +1,5 @@
 ﻿using Logging;
+using RemotePlusLibrary.Extension.Gui;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -11,7 +12,7 @@ using System.Windows.Forms;
 
 namespace RemotePlusClient
 {
-    public partial class ConsoleDialog : Form
+    public partial class ConsoleDialog : ThemedForm
     {
         public RichTextBoxLoggingMethod Logger = new RichTextBoxLoggingMethod();
         public ConsoleDialog()
@@ -33,6 +34,12 @@ namespace RemotePlusClient
         internal void AppendText(string message)
         {
             richTextBox1.AppendText(message);
+        }
+
+        private void ConsoleDialog_TextChanged(object sender, EventArgs e)
+        {
+            richTextBox1.SelectionStart = richTextBox1.Text.Length;
+            richTextBox1.ScrollToCaret();
         }
     }
 }

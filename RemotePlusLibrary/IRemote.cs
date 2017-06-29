@@ -12,6 +12,7 @@ using RemotePlusLibrary.FileTransfer;
 using RemotePlusLibrary.Extension.WatcherSystem;
 using RemotePlusLibrary.Core;
 using RemotePlusLibrary.Extension.Programmer;
+using System.IO;
 
 namespace RemotePlusLibrary
 {
@@ -80,5 +81,7 @@ namespace RemotePlusLibrary
         string GetCommandHelpPage(string command);
         [OperationContract]
         string GetCommandHelpDescription(string command);
+        [OperationContract]
+        DirectoryInfo GetRemoteFiles();
     }
 }

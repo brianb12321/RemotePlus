@@ -14,13 +14,30 @@ namespace RemotePlusClient
     public partial class AuthenticationDialog : Form
     {
         public UserCredentials UserInfo { get; private set; }
-        public string Reason { get; private set; }
-        public AuthenticationDialog(string reason)
+        public AuthenticationRequest Request{ get; private set; }
+        public AuthenticationDialog(AuthenticationRequest req)
         {
-            Reason = reason;
+            Request = req;
             InitializeComponent();
         }
-
+        void CheckSeverity()
+        {
+            switch(Request.Severity)
+            {
+                case AutehnticationSeverity.Danger:
+                    panel1.BackColor = Color.Red;
+                    label4.Text = "The server is requesting authorization for a dangerous operation.";
+                    break;
+                case AutehnticationSeverity.Normal:
+                    panel1.BackColor = Color.Blue;
+                    label4.Text = "The server is requesting authroization.";
+                    break;
+                case AutehnticationSeverity.Risk:
+                    panel1.BackColor = Color.Yellow;
+                    label4.Text = "The server is requesting authorization for a risky operation.";
+                    break;
+            }
+        }
         private void btn_login_Click(object sender, EventArgs e)
         {
             UserInfo = new UserCredentials(textBox1.Text, textBox2.Text);
@@ -36,7 +53,8 @@ namespace RemotePlusClient
 
         private void AuthenticationDialog_Load(object sender, EventArgs e)
         {
-            richTextBox1.AppendText(Reason);
+            CheckSeverity();
+            richTextBox1.AppendText(Request.Reason);
         }
     }
 }

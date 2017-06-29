@@ -2,8 +2,10 @@
 using RemotePlusClient.CommonUI;
 using RemotePlusLibrary;
 using RemotePlusLibrary.Core;
+using RemotePlusLibrary.Extension.Gui;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,6 +16,7 @@ namespace RemotePlusClient
     public class ClientApp
     {
         public static CMDLogging Logger { get; private set; }
+        public static ClientSettings ClientSettings { get; } = new ClientSettings();
         [STAThread]
         static void Main(string[] args)
         {
@@ -21,6 +24,18 @@ namespace RemotePlusClient
             {
                 DefaultFrom = "Client"
             };
+            Logger.AddOutput("Loading client settings.", OutputLevel.Info);
+            if(File.Exists(ClientSettings.CLIENT_SETTING_PATH))
+            {
+                ClientSettings.Load();
+            }
+            else
+            {
+                Logger.AddOutput("No config file exists. Creating new config file.", OutputLevel.Warning);
+                ClientSettings.DefaultTheme = Theme.AwesomeWhite;
+                ClientSettings.DefaultTheme.ThemeEnabled = false;
+                ClientSettings.Save();
+            }
             InitializeDefaultKnownTypes();
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);

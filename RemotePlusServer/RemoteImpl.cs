@@ -132,7 +132,7 @@ namespace RemotePlusServer
             {
                 var l3 = ServerManager.Logger.AddOutput("Awaiting credentials from the client.", OutputLevel.Info);
                 Client.ClientCallback.TellMessage(new UILogItem(l3.Level, l3.Message, l3.From));
-                UserCredentials upp = Client.ClientCallback.RequestAuthentication(new AuthenticationRequest() { Reason = "The server requires credentials to register."});
+                UserCredentials upp = Client.ClientCallback.RequestAuthentication(new AuthenticationRequest(AutehnticationSeverity.Normal) { Reason = "The server requires credentials to register."});
                 LogIn(upp);
             }
         }
@@ -407,7 +407,7 @@ namespace RemotePlusServer
             LogOff();
             ServerManager.Logger.AddOutput("Logging in.", OutputLevel.Info ,"Server Host");
             Client.ClientCallback.TellMessage(new UILogItem(OutputLevel.Info, "Logging in.", "Server Host"));
-            var cred = Client.ClientCallback.RequestAuthentication(new AuthenticationRequest() { Reason = "Please provide a username and password to switch to." });
+            var cred = Client.ClientCallback.RequestAuthentication(new AuthenticationRequest(AutehnticationSeverity.Normal) { Reason = "Please provide a username and password to switch to." });
             LogIn(cred);
         }
         private void LogOff()
@@ -422,8 +422,10 @@ namespace RemotePlusServer
         {
             if (cred == null)
             {
+                ServerManager.Logger.AddOutput("The user did not pass in any credentials. Authentication failed.", OutputLevel.Info);
                 Client.ClientCallback.TellMessage("Can't you at least provide a username and password?", OutputLevel.Info);
                 Client.ClientCallback.Disconnect("Authentication failed.");
+                return;
             }
             var l4 = ServerManager.Logger.AddOutput("Authenticating your user credentials.", OutputLevel.Info);
             Client.ClientCallback.TellMessage(new UILogItem(l4.Level, l4.Message, l4.From));
@@ -475,6 +477,11 @@ namespace RemotePlusServer
         public string GetCommandHelpDescription(string command)
         {
             return RemotePlusConsole.ShowCommandHelpDescription(ServerManager.DefaultService.Commands, command);
+        }
+
+        public DirectoryInfo GetRemoteFiles()
+        {
+            return new DirectoryInfo($@"c:\users\{Environment.UserName}\Documents");
         }
     }
 }

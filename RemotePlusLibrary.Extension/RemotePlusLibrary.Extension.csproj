@@ -31,12 +31,16 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="JacksonSoft.CustomTabControl">
+      <HintPath>..\Libs\JacksonSoft.CustomTabControl.dll</HintPath>
+    </Reference>
     <Reference Include="Logging, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Libs\Logging.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Windows.Forms" />
@@ -63,6 +67,10 @@
     <Compile Include="CommandSystem\HelpSourceType.cs" />
     <Compile Include="ExtensionExecutionContext.cs" />
     <Compile Include="ExtensionLibraryCollectionBase.cs" />
+    <Compile Include="Gui\ThemedForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Gui\Theme.cs" />
     <Compile Include="IClientLibraryStartup.cs" />
     <Compile Include="Programmer\Programmer.cs" />
     <Compile Include="Programmer\ServerExtensionCollectionProgrammer.cs" />

@@ -56,6 +56,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AcquisitionMode.cs" />
+    <Compile Include="AutehnticationSeverity.cs" />
     <Compile Include="AuthenticationRequest.cs" />
     <Compile Include="Client.cs" />
     <Compile Include="ClientBuilder.cs" />

@@ -23,7 +23,7 @@ namespace RemotePlusClient
 
         public UserCredentials RequestAuthentication(AuthenticationRequest Request)
         {
-            AuthenticationDialog ad = new AuthenticationDialog(Request.Reason);
+            AuthenticationDialog ad = new AuthenticationDialog(Request);
             if(ad.ShowDialog() == DialogResult.OK)
             {
                 return ad.UserInfo;

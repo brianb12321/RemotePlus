@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RemotePlusLibrary.Extension.Gui;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,6 +10,6 @@ namespace RemotePlusLibrary.Extension
 {
     public interface IClientExtension : IExtension<ClientExtensionDetails>
     {
-        Form ExtensionForm { get; }
+        ThemedForm ExtensionForm { get; }
     }
 }

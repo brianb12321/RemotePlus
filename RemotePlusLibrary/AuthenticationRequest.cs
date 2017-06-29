@@ -12,5 +12,11 @@ namespace RemotePlusLibrary
     {
         [DataMember]
         public string Reason { get; set; }
+        [DataMember]
+        public AutehnticationSeverity Severity { get; set; }
+        public AuthenticationRequest(AutehnticationSeverity sev)
+        {
+            Severity = sev;
+        }
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace RemotePlusClient.CommandDialogs
+﻿using RemotePlusLibrary.Extension.Gui;
+
+namespace RemotePlusClient.CommandDialogs
 {
     partial class SpeakDialog
     {
@@ -18,6 +20,13 @@
                 components.Dispose();
             }
             base.Dispose(disposing);
+        }
+        protected override void InitializeTheme(Theme t)
+        {
+            this.BackColor = t.BackgroundColor;
+            this.ForeColor = t.TextForgroundColor;
+            this.textBox1.BackColor = t.TextBoxBackgroundColor;
+            this.textBox1.ForeColor = t.TextBoxForegroundColor;
         }
 
         #region Windows Form Designer generated code
