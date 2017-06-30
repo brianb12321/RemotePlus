@@ -99,7 +99,7 @@ Please refer to the documentation for more details on how to write a server exte
 Please refer to the quick start guide on how to setup and configure RemotePlus for your environment.
 ## What operations are exposed?
 Please look at the `IRemote.cs` for your answer. If you want a more user friendly version, go to the documentation for your answer.
-## troubleshotting (the short version)
+## troubleshooting (the short version)
 ### RemotePlusServer will not start
 * Make sure that all prerequisites have been met.
 * There may have been a problem (exception) that occured. Please refer to the list of exceptions in the troubleshooting guide for more support.

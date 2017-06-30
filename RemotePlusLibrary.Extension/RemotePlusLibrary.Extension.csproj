@@ -93,5 +93,11 @@
     <Compile Include="WatcherSystem\WatcherOperationStatus.cs" />
     <Compile Include="WatcherSystem\WatcherStatus.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\RemotePlusLibrary.Configuration\RemotePlusLibrary.Configuration.csproj">
+      <Project>{8A8A5888-1CE7-46ED-B8DE-1AC7671F3426}</Project>
+      <Name>RemotePlusLibrary.Configuration</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,9 +1,11 @@
-﻿using System.Drawing;
+﻿using RemotePlusLibrary.Configuration;
+using System.Drawing;
 using System.Runtime.Serialization;
+using System;
 
 namespace RemotePlusLibrary.Extension.Gui
 {
-    // NOTE: This will not be sent over the wire. This is merely used to serialize the palette to the client config file.
+    // NOTE: This will not be sent over the wire. This is merely used to serialize the theme to the client config file.
     [DataContract]
     public class Theme
     {
