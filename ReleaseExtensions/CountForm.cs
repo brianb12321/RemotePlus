@@ -11,6 +11,8 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using RemotePlusLibrary.Extension.ExtensionTypes;
+using RemotePlusLibrary.Extension.ExtensionTypes.ExtensionDetailTypes;
 
 namespace ReleaseExtensions
 {

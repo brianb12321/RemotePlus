@@ -4,8 +4,9 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using RemotePlusLibrary.Extension;
 
-namespace RemotePlusLibrary.Extension
+namespace RemotePlusLibrary.Extension.ExtensionTypes.ExtensionDetailTypes
 {
     [DataContract]
     public class ClientExtensionDetails : ExtensionDetails

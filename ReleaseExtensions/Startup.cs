@@ -9,6 +9,7 @@ using RemotePlusLibrary.Extension.CommandSystem;
 using System.IO;
 using System.Reflection;
 using RemotePlusLibrary.Extension.ClientCommandSystem;
+using RemotePlusLibrary.Extension.ExtensionLibraries.LibraryStartupTypes;
 
 namespace ReleaseExtensions
 {

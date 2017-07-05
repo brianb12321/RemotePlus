@@ -10,6 +10,8 @@ using System.Windows.Forms;
 using RemotePlusLibrary.Extension;
 using RemotePlusClient;
 using RemotePlusLibrary.Extension.Gui;
+using RemotePlusLibrary.Extension.ExtensionTypes.ExtensionDetailTypes;
+using RemotePlusLibrary.Extension.ExtensionTypes;
 
 namespace ReleaseExtensions
 {

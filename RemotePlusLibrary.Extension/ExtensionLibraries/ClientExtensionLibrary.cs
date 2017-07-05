@@ -4,8 +4,10 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using RemotePlusLibrary.Extension.ExtensionLibraries.LibraryStartupTypes;
+using RemotePlusLibrary.Extension.ExtensionTypes;
 
-namespace RemotePlusLibrary.Extension
+namespace RemotePlusLibrary.Extension.ExtensionLibraries
 {
     public class ClientExtensionLibrary : ExtensionLibraryBase<IClientExtension>
     {

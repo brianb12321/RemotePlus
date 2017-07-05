@@ -1,4 +1,4 @@
-﻿namespace RemotePlusLibrary.Extension
+﻿namespace RemotePlusLibrary.Extension.ExtensionLibraries.LibraryStartupTypes
 {
     public interface IClientLibraryStartup
     {

@@ -7,6 +7,8 @@ using System.IO;
 using Logging;
 using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusLibrary.Extension.WatcherSystem;
+using RemotePlusLibrary.Extension.LibraryCollections;
+using RemotePlusLibrary.Extension.ExtensionLibraries;
 using RemotePlusLibrary.Core;
 using System.Diagnostics;
 using System.Reflection;

@@ -12,6 +12,8 @@ using System.Diagnostics;
 using RemotePlusLibrary.Extension.CommandSystem;
 using System.IO;
 using RemotePlusLibrary.Extension.Programmer;
+using RemotePlusLibrary.Extension.ExtensionTypes;
+using RemotePlusLibrary.Extension.ExtensionLibraries;
 
 namespace RemotePlusServer
 {

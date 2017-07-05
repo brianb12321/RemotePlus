@@ -2,8 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using RemotePlusLibrary.Extension.ExtensionTypes;
+using RemotePlusLibrary.Extension.ExtensionLibraries.LibraryStartupTypes;
 
-namespace RemotePlusLibrary.Extension
+namespace RemotePlusLibrary.Extension.ExtensionLibraries
 {
     public class ServerExtensionLibrary : ExtensionLibraryBase<ServerExtension>
     {

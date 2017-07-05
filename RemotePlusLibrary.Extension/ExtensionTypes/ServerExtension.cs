@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using RemotePlusLibrary.Extension.Programmer;
 
-namespace RemotePlusLibrary.Extension
+namespace RemotePlusLibrary.Extension.ExtensionTypes
 {
     public abstract class ServerExtension : IExtension<ExtensionDetails>
     {

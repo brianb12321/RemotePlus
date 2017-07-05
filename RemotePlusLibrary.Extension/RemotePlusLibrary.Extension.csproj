@@ -49,9 +49,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ClientExtensionDetails.cs" />
-    <Compile Include="ClientExtensionLibrary.cs" />
-    <Compile Include="ClientLibraryCollection.cs" />
+    <Compile Include="ExtensionTypes\ExtensionDetailTypes\ClientExtensionDetails.cs" />
+    <Compile Include="ExtensionLibraries\ClientExtensionLibrary.cs" />
+    <Compile Include="LibraryCollections\ClientLibraryCollection.cs" />
     <Compile Include="ClientCommandSystem\ClientCommandLibraryLoader.cs" />
     <Compile Include="ClientCommandSystem\IClientModuleLibraryStartup.cs" />
     <Compile Include="CommandSystem\CommandBehaviorAttribute.cs" />
@@ -70,20 +70,20 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Gui\Theme.cs" />
-    <Compile Include="IClientLibraryStartup.cs" />
+    <Compile Include="ExtensionLibraries\LibraryStartupTypes\IClientLibraryStartup.cs" />
     <Compile Include="Programmer\Programmer.cs" />
     <Compile Include="Programmer\ServerExtensionCollectionProgrammer.cs" />
-    <Compile Include="ServerExtensionLibrary.cs" />
+    <Compile Include="ExtensionLibraries\ServerExtensionLibrary.cs" />
     <Compile Include="ExtensionLibraryAttribute.cs" />
-    <Compile Include="ServerExtensionLibraryCollection.cs" />
+    <Compile Include="LibraryCollections\ServerExtensionLibraryCollection.cs" />
     <Compile Include="ExtensionLibraryType.cs" />
-    <Compile Include="IClientExtension.cs" />
+    <Compile Include="ExtensionTypes\IClientExtension.cs" />
     <Compile Include="IExtension.cs" />
-    <Compile Include="ILibraryStartup.cs" />
+    <Compile Include="ExtensionLibraries\LibraryStartupTypes\ILibraryStartup.cs" />
     <Compile Include="InvalidExtensionLibraryException.cs" />
     <Compile Include="OperationStatus.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ServerExtension.cs" />
+    <Compile Include="ExtensionTypes\ServerExtension.cs" />
     <Compile Include="Programmer\ServerExtensionLibraryProgrammer.cs" />
     <Compile Include="Programmer\ServerExtensionProgrammer.cs" />
     <Compile Include="Programmer\ServerExtensionProgrammerUpdateEvent.cs" />

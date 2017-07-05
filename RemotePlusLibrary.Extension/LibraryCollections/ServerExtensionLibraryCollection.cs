@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using RemotePlusLibrary.Extension.ExtensionLibraries;
+using RemotePlusLibrary.Extension.ExtensionTypes;
 
-namespace RemotePlusLibrary.Extension
+namespace RemotePlusLibrary.Extension.LibraryCollections
 {
     public class ServerExtensionLibraryCollection : ExtensionLibraryCollectionBase<ServerExtensionLibrary, ServerExtension>
     {

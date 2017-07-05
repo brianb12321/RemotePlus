@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
+using RemotePlusLibrary.Extension.ExtensionTypes.ExtensionDetailTypes;
 
 namespace RemotePlusLibrary.Extension
 {
