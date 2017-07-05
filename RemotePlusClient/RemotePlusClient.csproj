@@ -33,9 +33,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="JacksonSoft.CustomTabControl">
-      <HintPath>..\Libs\JacksonSoft.CustomTabControl.dll</HintPath>
-    </Reference>
     <Reference Include="Logging, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Libs\Logging.dll</HintPath>

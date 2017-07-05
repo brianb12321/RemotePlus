@@ -61,11 +61,11 @@ namespace RemotePlusClientCmd
                         var c = Console.ReadLine();
                         if (c.ToCharArray()[0] == '#')
                         {
-                            RunLocalCommand(c);
+                            RunLocalCommand(c, CommandExecutionMode.Client);
                         }
                         else
                         {
-                            Remote.RunServerCommand(c);
+                            Remote.RunServerCommand(c, CommandExecutionMode.Client);
                         }
                     }
                 }
@@ -92,7 +92,7 @@ namespace RemotePlusClientCmd
             LocalCommands.Add("#load-commandFile", load_CommandFile);
         }
 
-        static int RunLocalCommand(string command)
+        static int RunLocalCommand(string command, CommandExecutionMode commandMode)
         {
             try
             {
@@ -102,6 +102,15 @@ namespace RemotePlusClientCmd
                 {
                     if (ca[0] == k.Key)
                     {
+                        var ba = RemotePlusConsole.GetCommandBehavior(k.Value);
+                        if (ba != null)
+                        {
+                            if (commandMode != ba.ExecutionType)
+                            {
+                                Logger.AddOutput($"The command requires you to be in {ba.ExecutionType} mode.", OutputLevel.Error);
+                                return (int)CommandStatus.AccessDenied;
+                            }
+                        }
                         FoundCommand = true;
                         return k.Value(ca);
                     }

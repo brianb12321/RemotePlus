@@ -26,29 +26,6 @@ namespace RemotePlusClient
         {
             this.BackColor = t.BackgroundColor;
             this.ForeColor = t.TextForgroundColor;
-            this.tabControl1.DisplayStyleProvider = new System.Windows.Forms.TabStyleDefaultProvider(tabControl1) {
-                BorderColor = t.BackgroundColor,
-                BorderColorSelected = t.BackgroundColor
-            };
-            this.tabControl1.DisplayStyle = TabStyle.Default;
-            this.tabControl2.DisplayStyleProvider = new TabStyleDefaultProvider(tabControl2)
-            {
-                BorderColor = t.BackgroundColor,
-                BorderColorSelected = t.BackgroundColor
-            };
-            this.tabControl2.DisplayStyle = TabStyle.Default;
-            this.tcRight.DisplayStyleProvider = new TabStyleDefaultProvider(tcRight)
-            {
-                BorderColor = t.BackgroundColor,
-                BorderColorSelected = t.BackgroundColor
-            };
-            this.tcRight.DisplayStyle = TabStyle.Default;
-            this.tcLeft.DisplayStyleProvider = new TabStyleDefaultProvider(tcLeft)
-            {
-                BorderColor = t.BackgroundColor,
-                BorderColorSelected = t.BackgroundColor
-            };
-            this.tcLeft.DisplayStyle = TabStyle.Default;
             this.treeView1.BackColor = t.TreeViewBackgroundColor;
             this.treeView1.ForeColor = t.TreeViewForegrondColor;
             this.treeView2.BackColor = t.TreeViewBackgroundColor;
@@ -71,14 +48,14 @@ namespace RemotePlusClient
             this.mi_open = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.emi_open = new System.Windows.Forms.ToolStripMenuItem();
-            this.tcRight = new System.Windows.Forms.CustomTabControl();
+            this.tcRight = new System.Windows.Forms.TabControl();
             this.tcr_extensions = new System.Windows.Forms.TabPage();
             this.treeView2 = new System.Windows.Forms.TreeView();
-            this.tcLeft = new System.Windows.Forms.CustomTabControl();
+            this.tcLeft = new System.Windows.Forms.TabControl();
             this.tcl_da = new System.Windows.Forms.TabPage();
             this.treeView1 = new System.Windows.Forms.TreeView();
-            this.tabControl1 = new System.Windows.Forms.CustomTabControl();
-            this.tabControl2 = new System.Windows.Forms.CustomTabControl();
+            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabControl2 = new System.Windows.Forms.TabControl();
             this.mainMenu1 = new System.Windows.Forms.MainMenu(this.components);
             this.menuItem1 = new System.Windows.Forms.MenuItem();
             this.connectMenuItem = new System.Windows.Forms.MenuItem();
@@ -139,6 +116,7 @@ namespace RemotePlusClient
             this.tcRight.Alignment = System.Windows.Forms.TabAlignment.Bottom;
             this.tcRight.Controls.Add(this.tcr_extensions);
             this.tcRight.Dock = System.Windows.Forms.DockStyle.Right;
+            this.tcRight.HotTrack = true;
             this.tcRight.Location = new System.Drawing.Point(652, 0);
             this.tcRight.Name = "tcRight";
             this.tcRight.SelectedIndex = 0;
@@ -170,6 +148,7 @@ namespace RemotePlusClient
             this.tcLeft.Alignment = System.Windows.Forms.TabAlignment.Bottom;
             this.tcLeft.Controls.Add(this.tcl_da);
             this.tcLeft.Dock = System.Windows.Forms.DockStyle.Left;
+            this.tcLeft.HotTrack = true;
             this.tcLeft.Location = new System.Drawing.Point(0, 0);
             this.tcLeft.Name = "tcLeft";
             this.tcLeft.SelectedIndex = 0;
@@ -376,6 +355,7 @@ namespace RemotePlusClient
             this.tcLeft.ResumeLayout(false);
             this.tcl_da.ResumeLayout(false);
             this.ResumeLayout(false);
+
         }
 
         #endregion
@@ -384,14 +364,14 @@ namespace RemotePlusClient
         private System.Windows.Forms.ToolStripMenuItem mi_open;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip2;
         private System.Windows.Forms.ToolStripMenuItem emi_open;
-        private System.Windows.Forms.CustomTabControl tcRight;
+        private System.Windows.Forms.TabControl tcRight;
         private System.Windows.Forms.TabPage tcr_extensions;
         private System.Windows.Forms.TreeView treeView2;
-        private System.Windows.Forms.CustomTabControl tcLeft;
+        private System.Windows.Forms.TabControl tcLeft;
         private System.Windows.Forms.TabPage tcl_da;
         private System.Windows.Forms.TreeView treeView1;
-        private System.Windows.Forms.CustomTabControl tabControl1;
-        private System.Windows.Forms.CustomTabControl tabControl2;
+        private System.Windows.Forms.TabControl tabControl1;
+        private System.Windows.Forms.TabControl tabControl2;
         private System.Windows.Forms.MainMenu mainMenu1;
         private System.Windows.Forms.MenuItem menuItem1;
         private System.Windows.Forms.MenuItem connectMenuItem;

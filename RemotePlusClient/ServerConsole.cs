@@ -1,4 +1,5 @@
 ﻿using Logging;
+using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusLibrary.Extension.Gui;
 using System;
 using System.Collections.Generic;
@@ -53,7 +54,7 @@ namespace RemotePlusClient
                 StreamReader sr = new StreamReader(scriptFile);
                 while (!sr.EndOfStream)
                 {
-                    MainF.Remote.RunServerCommand(await sr.ReadLineAsync());
+                    MainF.Remote.RunServerCommand(await sr.ReadLineAsync(), CommandExecutionMode.Script);
                 }
             }
             catch (FileNotFoundException)
@@ -68,7 +69,7 @@ namespace RemotePlusClient
                 StreamReader sr = new StreamReader(f);
                 while (!sr.EndOfStream)
                 {
-                    MainF.Remote.RunServerCommand(await sr.ReadLineAsync());
+                    MainF.Remote.RunServerCommand(await sr.ReadLineAsync(), CommandExecutionMode.Script);
                 }
             }
             catch (FileNotFoundException)
@@ -83,7 +84,7 @@ namespace RemotePlusClient
             {
                 string command = textBox1.Text;
                 textBox1.Clear();
-                MainF.Remote.RunServerCommand(command);
+                MainF.Remote.RunServerCommand(command, CommandExecutionMode.Client);
             }
         }
         private void richTextBox1_TextChanged(object sender, EventArgs e)

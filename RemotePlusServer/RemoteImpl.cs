@@ -246,7 +246,7 @@ namespace RemotePlusServer
             }
         }
 
-        public int RunServerCommand(string Command)
+        public int RunServerCommand(string Command, CommandExecutionMode commandMode)
         {
             CheckRegisteration("RunServerCommand");
             if (!LoggedInUser.Role.Privilleges.CanAccessConsole)
@@ -256,7 +256,7 @@ namespace RemotePlusServer
             }
             else
             {
-                return ServerManager.Execute(Command);
+                return ServerManager.Execute(Command, commandMode);
             }
         }
 

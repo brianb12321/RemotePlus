@@ -251,7 +251,7 @@ namespace RemotePlusServer
             Logger.AddOutput("Initializing watchers.", OutputLevel.Info);
             Watchers = new Dictionary<string, WatcherBase>();
         }
-        public static int Execute(string c)
+        public static int Execute(string c, CommandExecutionMode commandMode)
         {
             try
             {
@@ -262,6 +262,16 @@ namespace RemotePlusServer
                 {
                     if(ca[0] == k.Key)
                     {
+                        var ba = RemotePlusConsole.GetCommandBehavior(k.Value);
+                        if(ba != null)
+                        {
+                            if(commandMode != ba.ExecutionType)
+                            {
+                                Logger.AddOutput($"The command requires you to be in {ba.ExecutionType} mode.", OutputLevel.Error);
+                                DefaultService.Remote.Client.ClientCallback.TellMessage($"The command requires you to be in {ba.ExecutionType} mode.", OutputLevel.Error);
+                                return (int)CommandStatus.AccessDenied;
+                            }
+                        }
                         Logger.AddOutput("Found command, and executing.", OutputLevel.Debug);
                         FoundCommand = true;
                         return k.Value(ca);

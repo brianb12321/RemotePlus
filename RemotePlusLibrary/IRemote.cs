@@ -13,6 +13,7 @@ using RemotePlusLibrary.Extension.WatcherSystem;
 using RemotePlusLibrary.Core;
 using RemotePlusLibrary.Extension.Programmer;
 using System.IO;
+using RemotePlusLibrary.Extension.CommandSystem;
 
 namespace RemotePlusLibrary
 {
@@ -38,7 +39,7 @@ namespace RemotePlusLibrary
         [OperationContract(IsOneWay = true)]
         void Register(RegistirationObject Settings);
         [OperationContract]
-        int RunServerCommand(string Command);
+        int RunServerCommand(string Command, CommandExecutionMode commandMode);
         [OperationContract(IsOneWay = true)]
         void UpdateServerSettings(ServerSettings Settings);
         [OperationContract]

@@ -119,5 +119,25 @@ namespace RemotePlusLibrary.Extension.CommandSystem
             }
             return t;
         }
+        public static CommandBehaviorAttribute GetCommandBehavior(CommandDelegate command)
+        {
+            try
+            {
+                object a = command.Method.GetCustomAttributes(false).Where(t => t is CommandBehaviorAttribute)
+                .First();
+                if (a != null)
+                {
+                    return (CommandBehaviorAttribute)a;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch
+            {
+                return null;
+            }
+        }
     }
 }
