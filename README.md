@@ -75,6 +75,7 @@ Welcome to RemotePlusServer, version: 1.0.0.0
     <d2p1:CleanLogFolder>false</d2p1:CleanLogFolder>
     <d2p1:DateDelimiter>45</d2p1:DateDelimiter>
     <d2p1:LogFileCountThreashold>10</d2p1:LogFileCountThreashold>
+	<d2p1:LogFolder>ServerLogs</d2p1:LogFolder>
     <d2p1:LogOnShutdown>true</d2p1:LogOnShutdown>
     <d2p1:TimeDelimiter>45</d2p1:TimeDelimiter>
   </LoggingSettings>
