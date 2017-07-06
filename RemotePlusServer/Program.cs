@@ -78,7 +78,7 @@ namespace RemotePlusServer
                 if (DefaultSettings.LoggingSettings.LogOnShutdown)
                 {
                     Logger.AddOutput("Saving log and closing.", OutputLevel.Info);
-                    Logger.SaveLog($"ServerLogs\\{DateTime.Now.ToShortDateString().Replace('/', DefaultSettings.LoggingSettings.DateDelimiter)} {DateTime.Now.ToShortTimeString().Replace(':', DefaultSettings.LoggingSettings.TimeDelimiter)}.txt");
+                    Logger.SaveLog($"{DefaultSettings.LoggingSettings.LogFolder}\\{DateTime.Now.ToShortDateString().Replace('/', DefaultSettings.LoggingSettings.DateDelimiter)} {DateTime.Now.ToShortTimeString().Replace(':', DefaultSettings.LoggingSettings.TimeDelimiter)}.txt");
                 }
             }
             catch (Exception ex)
@@ -255,6 +255,8 @@ namespace RemotePlusServer
         }
         public static int Execute(string c, CommandExecutionMode commandMode)
         {
+            bool throwFlag = false;
+            StatusCodeDeliveryMethod scdm = StatusCodeDeliveryMethod.DoNotDeliver;
             try
             {
                 ServerManager.Logger.AddOutput($"Executing server command {c}", OutputLevel.Info);
@@ -273,10 +275,27 @@ namespace RemotePlusServer
                                 DefaultService.Remote.Client.ClientCallback.TellMessage($"The command requires you to be in {ba.ExecutionType} mode.", OutputLevel.Error);
                                 return (int)CommandStatus.AccessDenied;
                             }
+                            if(ba.DoNotCatchExceptions)
+                            {
+                                throwFlag = true;
+                            }
+                            if(ba.StatusCodeDeliveryMethod != StatusCodeDeliveryMethod.DoNotDeliver)
+                            {
+                                scdm = ba.StatusCodeDeliveryMethod;
+                            }
                         }
                         Logger.AddOutput("Found command, and executing.", OutputLevel.Debug);
                         FoundCommand = true;
-                        return k.Value(ca);
+                        var sc = k.Value(ca);
+                        if(scdm == StatusCodeDeliveryMethod.TellMessage)
+                        {
+                            DefaultService.Remote.Client.ClientCallback.TellMessage($"Command {k.Key} finished with status code {sc.ToString()}", OutputLevel.Info);
+                        }
+                        else if(scdm == StatusCodeDeliveryMethod.TellMessageToServerConsole)
+                        {
+                            DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, $"Command {k.Key} finished with status code {sc.ToString()}"));
+                        }
+                        return sc;
                     }
                 }
                 if (!FoundCommand)
@@ -289,9 +308,16 @@ namespace RemotePlusServer
             }
             catch (Exception ex)
             {
-                ServerManager.Logger.AddOutput("command failed: " + ex.Message, OutputLevel.Info);
-                DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error,"Error whie executing command: " + ex.Message, "Server Host"));
-                return (int)CommandStatus.Fail;
+                if (throwFlag)
+                {
+                    throw;
+                }
+                else
+                {
+                    ServerManager.Logger.AddOutput("command failed: " + ex.Message, OutputLevel.Info);
+                    DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, "Error whie executing command: " + ex.Message, "Server Host"));
+                    return (int)CommandStatus.Fail;
+                }
             }
         }
         public static void Close()

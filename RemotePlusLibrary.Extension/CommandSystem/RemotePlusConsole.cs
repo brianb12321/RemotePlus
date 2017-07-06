@@ -21,20 +21,35 @@ namespace RemotePlusLibrary.Extension.CommandSystem
             {
                 foreach (KeyValuePair<string, CommandDelegate> c in commands)
                 {
+                    bool index = true;
+                    var behavior = GetCommandBehavior(c.Value);
+                    if (behavior != null)
+                    {
+                        if (!behavior.IndexCommandInHelp)
+                        {
+                            index = false;
+                        }
+                    }
                     if (c.Value.Method.GetCustomAttributes(false).Length > 0)
                     {
                         foreach (object o in c.Value.Method.GetCustomAttributes(false))
                         {
                             if (o is CommandHelpAttribute)
                             {
-                                CommandHelpAttribute cha = (CommandHelpAttribute)o;
-                                t += $"\n{c.Key}\t{cha.HelpMessage}";
+                                if(index == true)
+                                {
+                                    CommandHelpAttribute cha = (CommandHelpAttribute)o;
+                                    t += $"\n{c.Key}\t{cha.HelpMessage}";
+                                }
                             }
                         }
                     }
                     else
                     {
-                        t += $"\n{c.Key}";
+                        if (index == true)
+                        {
+                            t += $"\n{c.Key}";
+                        }
                     }
                 }
             }

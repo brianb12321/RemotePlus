@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace RemotePlusLibrary.Core
 {
+    // This is a temperary class for the settings used when writing to a log file.
     [DataContract]
     public class LoggingSettings
     {
@@ -26,7 +27,10 @@ namespace RemotePlusLibrary.Core
         public bool CleanLogFolder { get; set; }
         [Category(LOGGING_SETTINGS_CATEGORY_LOGGING)]
         [DataMember]
-        public int LogFileCountThreashold { get; set; } = 10;
+        public int LogFileCountThreashold { get; set; }
+        [DataMember]
+        [Category(LOGGING_SETTINGS_CATEGORY_LOGGING)]
+        public string LogFolder { get; set; }
         public LoggingSettings()
         {
             LogOnShutdown = true;
@@ -34,6 +38,7 @@ namespace RemotePlusLibrary.Core
             TimeDelimiter = '-';
             CleanLogFolder = false;
             LogFileCountThreashold = 10;
+            LogFolder = "ServerLogs";
         }
     }
 }

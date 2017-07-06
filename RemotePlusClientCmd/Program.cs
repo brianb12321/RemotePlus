@@ -94,6 +94,8 @@ namespace RemotePlusClientCmd
 
         static int RunLocalCommand(string command, CommandExecutionMode commandMode)
         {
+            bool throwFlag = false;
+            StatusCodeDeliveryMethod scdm = StatusCodeDeliveryMethod.DoNotDeliver;
             try
             {
                 bool FoundCommand = false;
@@ -110,9 +112,26 @@ namespace RemotePlusClientCmd
                                 Logger.AddOutput($"The command requires you to be in {ba.ExecutionType} mode.", OutputLevel.Error);
                                 return (int)CommandStatus.AccessDenied;
                             }
+                            if (ba.DoNotCatchExceptions)
+                            {
+                                throwFlag = true;
+                            }
+                            if (ba.StatusCodeDeliveryMethod != StatusCodeDeliveryMethod.DoNotDeliver)
+                            {
+                                scdm = StatusCodeDeliveryMethod.TellMessageToServerConsole;
+                            }
                         }
                         FoundCommand = true;
-                        return k.Value(ca);
+                        var sc = k.Value(ca);
+                        if (scdm == StatusCodeDeliveryMethod.TellMessage)
+                        {
+                            Logger.AddOutput($"Command {k.Key} finished with status code {sc.ToString()}", OutputLevel.Info);
+                        }
+                        else if (scdm == StatusCodeDeliveryMethod.TellMessageToServerConsole)
+                        {
+                            Logger.AddOutput($"Command {k.Key} finished with status code {sc.ToString()}", OutputLevel.Info);
+                        }
+                        return sc;
                     }
                 }
                 if (!FoundCommand)
@@ -124,8 +143,15 @@ namespace RemotePlusClientCmd
             }
             catch (Exception ex)
             {
-                Logger.AddOutput("Error whie executing local command: " + ex.Message, OutputLevel.Error);
-                return (int)CommandStatus.Fail;
+                if (throwFlag)
+                {
+                    throw;
+                }
+                else
+                {
+                    Logger.AddOutput("Error whie executing local command: " + ex.Message, OutputLevel.Error);
+                    return (int)CommandStatus.Fail;
+                }
             }
         }
         static void InitializeDefaultKnownTypes()

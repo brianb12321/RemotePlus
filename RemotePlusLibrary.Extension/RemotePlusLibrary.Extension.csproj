@@ -49,6 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CommandSystem\StatusCodeDeliveryMethod.cs" />
     <Compile Include="ExtensionTypes\ExtensionDetailTypes\ClientExtensionDetails.cs" />
     <Compile Include="ExtensionLibraries\ClientExtensionLibrary.cs" />
     <Compile Include="LibraryCollections\ClientLibraryCollection.cs" />
