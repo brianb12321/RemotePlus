@@ -129,6 +129,7 @@ namespace RemotePlusServer
             DefaultService.Commands.Add("beep", svm_beep);
             DefaultService.Commands.Add("speak", svm_speak);
             DefaultService.Commands.Add("showMessageBox", svm_showMessageBox);
+            DefaultService.Commands.Add("path", path);
         }
 
         static bool CheckPrerequisites()

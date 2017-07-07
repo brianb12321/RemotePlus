@@ -404,5 +404,11 @@ namespace RemotePlusServer
             DefaultService.Remote.ShowMessageBox(message, caption, icon, buttons);
             return (int)CommandStatus.Success;
         }
+        [CommandHelp("Displays the path of the current server folder.")]
+        private static int path(string[] args)
+        {
+            DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, $"The path to the server is {Environment.CurrentDirectory}"));
+            return (int)CommandStatus.Success;
+        }
     }
 }
