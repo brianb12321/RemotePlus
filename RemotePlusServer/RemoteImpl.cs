@@ -14,6 +14,7 @@ using System.IO;
 using RemotePlusLibrary.Extension.Programmer;
 using RemotePlusLibrary.Extension.ExtensionTypes;
 using RemotePlusLibrary.Extension.ExtensionLibraries;
+using RemotePlusLibrary.Core.EmailService;
 
 namespace RemotePlusServer
 {
@@ -484,6 +485,54 @@ namespace RemotePlusServer
         public DirectoryInfo GetRemoteFiles()
         {
             return new DirectoryInfo($@"c:\users\{Environment.UserName}\Documents");
+        }
+
+        public EmailSettings GetServerEmailSettings()
+        {
+            CheckRegisteration("GetServerEmailSettings");
+            if (!LoggedInUser.Role.Privilleges.CanAccessSettings)
+            {
+                Client.ClientCallback.TellMessage(new UILogItem(OutputLevel.Error, "You do not have permission to change email server settings.", "Server Host"));
+                return null;
+            }
+            else
+            {
+                ServerManager.Logger.AddOutput("Retreiving email server settings.", OutputLevel.Info);
+                return ServerManager.DefaultEmailSettings;
+            }
+        }
+
+        public void UpdateServerEmailSettings(EmailSettings emailSetting)
+        {
+            CheckRegisteration("UpdateServerEmailSettings");
+            if (!LoggedInUser.Role.Privilleges.CanAccessSettings)
+            {
+                Client.ClientCallback.TellMessage(new UILogItem(OutputLevel.Error, "You do not have permission to change server email settings.", "Server Host"));
+            }
+            else
+            {
+                ServerManager.Logger.AddOutput("Updating server email settings.", OutputLevel.Info);
+                ServerManager.DefaultEmailSettings = emailSetting;
+                Client.ClientCallback.TellMessage("Saving settings.", OutputLevel.Info);
+                ServerManager.DefaultEmailSettings.Save();
+                Client.ClientCallback.TellMessage("Settings saved.", OutputLevel.Info);
+                ServerManager.Logger.AddOutput("Settings saved.", OutputLevel.Info);
+            }
+        }
+
+        public bool SendEmail(string To, string Subject, string Message)
+        {
+            EmailClient client = new EmailClient(ServerManager.DefaultEmailSettings);
+            if(client.SendEmail(To, Subject, Message, out Exception err))
+            {
+                Client.ClientCallback.TellMessage(new UILogItem(OutputLevel.Info, "Email message sent.", "Server Host"));
+                return true;
+            }
+            else
+            {
+                Client.ClientCallback.TellMessage(new UILogItem(OutputLevel.Error, $"Email message failed: {err.ToString()}", "Server Host"));
+                return false;
+            }
         }
     }
 }

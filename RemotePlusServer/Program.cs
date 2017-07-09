@@ -13,6 +13,7 @@ using RemotePlusLibrary.Core;
 using System.Diagnostics;
 using System.Reflection;
 using System.Windows.Forms;
+using RemotePlusLibrary.Core.EmailService;
 
 namespace RemotePlusServer
 {
@@ -22,6 +23,7 @@ namespace RemotePlusServer
         public static CMDLogging Logger { get; } = new CMDLogging();
         public static RemotePlusService<RemoteImpl> DefaultService { get; private set; }
         public static ServerSettings DefaultSettings { get; set; } = new ServerSettings();
+        public static EmailSettings DefaultEmailSettings { get; set; } = new EmailSettings();
         public static ServerExtensionLibraryCollection DefaultCollection { get; } = new ServerExtensionLibraryCollection();
         private static Stopwatch sw;
         [STAThread]
@@ -37,6 +39,7 @@ namespace RemotePlusServer
                 sw.Start();
                 InitalizeKnownTypes();
                 ScanForServerSettingsFile();
+                ScanForEmailSettingsFile();
                 InitializeWatchers();
                 CreateServer();
                 InitializeVariables();
@@ -54,6 +57,31 @@ namespace RemotePlusServer
                 Console.Write("Press any key to exit.");
                 Console.ReadKey();
                 SaveLog();
+            }
+        }
+
+        private static void ScanForEmailSettingsFile()
+        {
+            if (!File.Exists(EmailSettings.EMAIL_CONFIG_FILE))
+            {
+                Logger.AddOutput("The email settings file does not exist. Creating server settings file.", OutputLevel.Warning);
+                DefaultEmailSettings.Save();
+            }
+            else
+            {
+                Logger.AddOutput("Loading email settings file.", OutputLevel.Info);
+                try
+                {
+                    DefaultEmailSettings.Load();
+                }
+                catch (Exception ex)
+                {
+#if DEBUG
+                    Logger.AddOutput("Unable to load email settings. " + ex.ToString(), OutputLevel.Error);
+#else
+                    Logger.AddOutput("Unable to load email settings. " + ex.Message, OutputLevel.Error);
+#endif
+                }
             }
         }
 

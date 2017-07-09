@@ -22,7 +22,8 @@ namespace RemotePlusClient
         {
             Logger = new CMDLogging()
             {
-                DefaultFrom = "Client"
+                DefaultFrom = "Client",
+                OverrideLogItemObjectColorValue = true
             };
             Logger.AddOutput("Loading client settings.", OutputLevel.Info);
             if(File.Exists(ClientSettings.CLIENT_SETTING_PATH))

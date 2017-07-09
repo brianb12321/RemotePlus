@@ -14,6 +14,7 @@ using RemotePlusLibrary.Core;
 using RemotePlusLibrary.Extension.Programmer;
 using System.IO;
 using RemotePlusLibrary.Extension.CommandSystem;
+using RemotePlusLibrary.Core.EmailService;
 
 namespace RemotePlusLibrary
 {
@@ -84,5 +85,11 @@ namespace RemotePlusLibrary
         string GetCommandHelpDescription(string command);
         [OperationContract]
         DirectoryInfo GetRemoteFiles();
+        [OperationContract]
+        EmailSettings GetServerEmailSettings();
+        [OperationContract]
+        void UpdateServerEmailSettings(EmailSettings emailSetting);
+        [OperationContract]
+        bool SendEmail(string To, string Subject, string Message);
     }
 }

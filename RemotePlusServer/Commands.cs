@@ -11,6 +11,7 @@ using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusLibrary.Extension.WatcherSystem;
 using System.Speech.Synthesis;
 using System.Windows.Forms;
+using RemotePlusLibrary.Core.EmailService;
 
 namespace RemotePlusServer
 {
@@ -410,5 +411,22 @@ namespace RemotePlusServer
             DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, $"The path to the server is {Environment.CurrentDirectory}"));
             return (int)CommandStatus.Success;
         }
+        [CommandHelp("Sends a sample email.")]
+        [CommandBehavior(IndexCommandInHelp = false)]
+        private static int sample_Email(string[] args)
+        {
+            EmailClient client = new EmailClient(ServerManager.DefaultEmailSettings);
+            if(client.SendEmail("This is a test email from RemotePlus", "test email from RemotePlus", out Exception err))
+            {
+                DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, "Email sent"));
+                return (int)CommandStatus.Success;
+            }
+            else
+            {
+                DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, $"Unable to send email. {err.Message}"));
+                return (int)CommandStatus.Fail;
+            }
+        }
+
     }
 }

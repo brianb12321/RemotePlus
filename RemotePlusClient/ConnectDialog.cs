@@ -36,5 +36,16 @@ namespace RemotePlusClient
                 RegObject = cadb.RegObject;
             }
         }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            using (ConnectionBuilderDialogBox cb = new ConnectionBuilderDialogBox())
+            {
+                if(cb.ShowDialog() == DialogResult.OK)
+                {
+                    textBox1.Text = cb.NewUrl;
+                }
+            }
+        }
     }
 }

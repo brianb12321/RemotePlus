@@ -94,6 +94,10 @@
     <Compile Include="RemoteImpl.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\RemotePlusLibrary.Core.EmailService\RemotePlusLibrary.Core.EmailService.csproj">
+      <Project>{166C0846-95A7-4134-9A6C-BB2E5C9C4594}</Project>
+      <Name>RemotePlusLibrary.Core.EmailService</Name>
+    </ProjectReference>
     <ProjectReference Include="..\RemotePlusLibrary.Core\RemotePlusLibrary.Core.csproj">
       <Project>{0334629b-6302-42a8-b159-f8646b4d8650}</Project>
       <Name>RemotePlusLibrary.Core</Name>

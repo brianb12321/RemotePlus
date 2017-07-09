@@ -74,6 +74,9 @@ namespace RemotePlusClient
             this.menuItem3 = new System.Windows.Forms.MenuItem();
             this.menuItem10 = new System.Windows.Forms.MenuItem();
             this.command_browse_menuItem = new System.Windows.Forms.MenuItem();
+            this.menuItem11 = new System.Windows.Forms.MenuItem();
+            this.configure_menuItem = new System.Windows.Forms.MenuItem();
+            this.sendEmail_menuItem = new System.Windows.Forms.MenuItem();
             this.contextMenuStrip1.SuspendLayout();
             this.contextMenuStrip2.SuspendLayout();
             this.tcRight.SuspendLayout();
@@ -213,7 +216,8 @@ namespace RemotePlusClient
             this.menuItem5,
             this.menuItem8,
             this.menuItem2,
-            this.menuItem10});
+            this.menuItem10,
+            this.menuItem11});
             // 
             // menuItem1
             // 
@@ -333,6 +337,26 @@ namespace RemotePlusClient
             this.command_browse_menuItem.Text = "Browse";
             this.command_browse_menuItem.Click += new System.EventHandler(this.command_browse_menuItem_Click);
             // 
+            // menuItem11
+            // 
+            this.menuItem11.Index = 5;
+            this.menuItem11.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+            this.configure_menuItem,
+            this.sendEmail_menuItem});
+            this.menuItem11.Text = "Email";
+            // 
+            // configure_menuItem
+            // 
+            this.configure_menuItem.Index = 0;
+            this.configure_menuItem.Text = "Configure";
+            this.configure_menuItem.Click += new System.EventHandler(this.configure_menuItem_Click);
+            // 
+            // sendEmail_menuItem
+            // 
+            this.sendEmail_menuItem.Index = 1;
+            this.sendEmail_menuItem.Text = "Send Email";
+            this.sendEmail_menuItem.Click += new System.EventHandler(this.sendEmail_menuItem_Click);
+            // 
             // MainF
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -390,5 +414,8 @@ namespace RemotePlusClient
         private System.Windows.Forms.MenuItem command_browse_menuItem;
         private System.Windows.Forms.MenuItem hide_right_menuItem;
         private System.Windows.Forms.MenuItem browseFile_MenuItem;
+        private MenuItem menuItem11;
+        private MenuItem configure_menuItem;
+        private MenuItem sendEmail_menuItem;
     }
 }

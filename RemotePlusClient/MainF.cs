@@ -366,5 +366,21 @@ namespace RemotePlusClient
         {
             AddTabToMainTabControl("Remote file browser", new RemoteFileBrowser());
         }
+
+        private void configure_menuItem_Click(object sender, EventArgs e)
+        {
+            using (CommonUI.EmailGui.ConfigureEmailDialogBox emailConfig = new CommonUI.EmailGui.ConfigureEmailDialogBox(Remote.GetServerEmailSettings()))
+            {
+                if(emailConfig.ShowDialog() == DialogResult.OK)
+                {
+                    Remote.UpdateServerEmailSettings(emailConfig.EmailSettings);
+                }
+            }
+        }
+
+        private void sendEmail_menuItem_Click(object sender, EventArgs e)
+        {
+            AddTabToMainTabControl("Send email", new CommonUI.EmailGui.SendEmailForm(Remote));
+        }
     }
 }
