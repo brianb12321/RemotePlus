@@ -53,10 +53,15 @@ namespace RemotePlusServer
             }
             catch(Exception ex)
             {
+#if !COGNITO
                 Logger.AddOutput("Internal server error: " + ex.Message, OutputLevel.Error);
                 Console.Write("Press any key to exit.");
-                Console.ReadKey();
                 SaveLog();
+#else
+                MessageBox.Show("Internal server error: " + ex.Message);
+                SaveLog();
+#endif
+
             }
         }
 
