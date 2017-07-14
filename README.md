@@ -70,7 +70,6 @@ Welcome to RemotePlusServer, version: 1.0.0.0
     </anyType>
   </Accounts>
   <BannedIPs xmlns:d2p1="http://schemas.microsoft.com/2003/10/Serialization/Arrays" i:nil="true" />
-  <DisableCommandClients>false</DisableCommandClients>
   <LoggingSettings xmlns:d2p1="http://schemas.datacontract.org/2004/07/RemotePlusLibrary.Core">
     <d2p1:CleanLogFolder>false</d2p1:CleanLogFolder>
     <d2p1:DateDelimiter>45</d2p1:DateDelimiter>

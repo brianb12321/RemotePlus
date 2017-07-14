@@ -61,14 +61,6 @@ namespace RemotePlusServer
                 ServerManager.Logger.AddOutput(new LogItem(OutputLevel.Info, $"NOTE: Logs will be cleaned out when there are {ServerManager.DefaultSettings.LoggingSettings.LogFileCountThreashold} logs in the logs foleder.", ServerManager.Logger.DefaultFrom) { Color = ConsoleColor.Cyan });
                 CheckLogCount();
             }
-            CheckCommandClientSetting();
-        }
-        private static void CheckCommandClientSetting()
-        {
-            if(ServerManager.DefaultSettings.DisableCommandClients)
-            {
-                ServerManager.Logger.AddOutput(new LogItem(OutputLevel.Info, "NOTE: The server prohibits the use of command clients.", ServerManager.Logger.DefaultFrom) { Color = ConsoleColor.Cyan });
-            }
         }
         private static void CheckLogCount()
         {

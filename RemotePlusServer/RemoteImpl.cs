@@ -107,19 +107,6 @@ namespace RemotePlusServer
         {
             ServerManager.Logger.AddOutput("Instanitiating callback object.", OutputLevel.Debug);
             ServerManager.Logger.AddOutput("Getting ClientBuilder from client.", OutputLevel.Debug);
-            if(Client != null)
-            {
-                if (ServerManager.DefaultSettings.DisableCommandClients)
-                {
-                    ServerManager.Logger.AddOutput($"The client \"{Client.FriendlyName}\" [{Client.UniqueID}] disconnected because the server does not allow command clients.", OutputLevel.Info);
-                    OperationContext.Current.GetCallbackChannel<IRemoteClient>().Disconnect("You are not allowed to connect as a command client.");
-                }
-                else
-                {
-                    ServerManager.Logger.AddOutput("Original client will now go into command mode.", OutputLevel.Info);
-                    Client.ClientCallback.TellMessage(new UILogItem(OutputLevel.Warning, "Another client is trying to connect. You will be in command mode. The response sent by the server will be re-routed to the current client. ", "Server Host"));
-                }
-            }
             var callback = OperationContext.Current.GetCallbackChannel<IRemoteClient>();
             Client = Client<IRemoteClient>.Build(callback.RegisterClient(), callback);
             ServerManager.Logger.AddOutput("Received registiration object from client.", OutputLevel.Info);
@@ -128,7 +115,6 @@ namespace RemotePlusServer
             Client.ClientCallback.TellMessage(new UILogItem(l.Level, l.Message, l.From));
             if (Settings.LoginRightAway)
             {
-                var l2 = ServerManager.Logger.AddOutput("Authenticating your user credentials.", OutputLevel.Info);
                 LogIn(Settings.Credentials);
             }
             else
@@ -401,7 +387,7 @@ namespace RemotePlusServer
             ServerManager.DefaultCollection.Libraries[LibraryName].Extensions[seProgrammer.ExtensionDetails.Name].ProgramRequested(programmerEvent);
             if(!programmerEvent.Cancel)
             {
-                //TODO Add modifications to server extension here.
+                //TODO: Add modifications to server extension here.
             }
         }
 
@@ -445,7 +431,6 @@ namespace RemotePlusServer
             {
                 Client.ClientCallback.TellMessage("Registiration failed. Authentication failed.", OutputLevel.Info);
                 Client.ClientCallback.Disconnect("Registiration failed.");
-                Client = null;
                 ServerManager.Logger.AddOutput($"Client {Client.FriendlyName} [{Client.UniqueID.ToString()}] disconnected. Failed to register to the server. Authentication failed.", OutputLevel.Info);
             }
         }
@@ -453,7 +438,6 @@ namespace RemotePlusServer
         public void Disconnect()
         {
             ServerManager.Logger.AddOutput($"Client \"{Client.FriendlyName}\" [{Client.UniqueID}] disconectted.", OutputLevel.Info);
-            Client = null;
         }
 
         public void EncryptFile(string fileName, string password)

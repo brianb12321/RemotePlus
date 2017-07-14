@@ -32,9 +32,6 @@ namespace RemotePlusLibrary
         [DataMember]
         [Category(SERVER_SETTINGS_CATEGORY_SERVER)]
         public int PortNumber { get; set; }
-        [DataMember]
-        [Category(SERVER_SETTINGS_CATEGORY_SERVER)]
-        public bool DisableCommandClients { get; set; } = false;
         #endregion
         #region Extension
 
@@ -96,7 +93,6 @@ namespace RemotePlusLibrary
             this.Accounts = ss.Accounts;
             this.BannedIPs = ss.BannedIPs;
             this.PortNumber = ss.PortNumber;
-            this.DisableCommandClients = ss.DisableCommandClients;
             this.LoggingSettings = ss.LoggingSettings;
         }
         #endregion
