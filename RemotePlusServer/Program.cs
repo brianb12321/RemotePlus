@@ -32,9 +32,9 @@ namespace RemotePlusServer
             try
             {
 #if !DEBUG
-                AppDomain.CurrentDomain.FirstChanceException += (sender, e) => Logger.AddOutput($"Unhandled exception during server execution: {e.Exception.Message}", OutputLevel.Error);
+                AppDomain.CurrentDomain.FirstChanceException += (sender, e) => Logger.AddOutput($"Error occured during server execution: {e.Exception.Message}", OutputLevel.Error);
 #else
-                AppDomain.CurrentDomain.FirstChanceException += (sender, e) => Logger.AddOutput($"Unhandled exception during server execution: {e.Exception.ToString()}", OutputLevel.Error);
+                AppDomain.CurrentDomain.FirstChanceException += (sender, e) => Logger.AddOutput($"Error occured during server execution: {e.Exception.ToString()}", OutputLevel.Error);
 #endif
                 var a = Assembly.GetExecutingAssembly().GetName();
                 Console.WriteLine($"Welcome to {a.Name}, version: {a.Version.ToString()}\n\n");
@@ -299,51 +299,46 @@ namespace RemotePlusServer
             try
             {
                 ServerManager.Logger.AddOutput($"Executing server command {c}", OutputLevel.Info);
-                bool FoundCommand = false;
                 string[] ca = c.Split();
-                foreach (KeyValuePair<string, CommandDelegate> k in DefaultService.Commands)
+                try
                 {
-                    if(ca[0] == k.Key)
+                    var command = DefaultService.Commands[ca[0]];
+                    var ba = RemotePlusConsole.GetCommandBehavior(command);
+                    if (ba != null)
                     {
-                        var ba = RemotePlusConsole.GetCommandBehavior(k.Value);
-                        if(ba != null)
+                        if (commandMode != ba.ExecutionType)
                         {
-                            if(commandMode != ba.ExecutionType)
-                            {
-                                Logger.AddOutput($"The command requires you to be in {ba.ExecutionType} mode.", OutputLevel.Error);
-                                DefaultService.Remote.Client.ClientCallback.TellMessage($"The command requires you to be in {ba.ExecutionType} mode.", OutputLevel.Error);
-                                return (int)CommandStatus.AccessDenied;
-                            }
-                            if(ba.DoNotCatchExceptions)
-                            {
-                                throwFlag = true;
-                            }
-                            if(ba.StatusCodeDeliveryMethod != StatusCodeDeliveryMethod.DoNotDeliver)
-                            {
-                                scdm = ba.StatusCodeDeliveryMethod;
-                            }
+                            Logger.AddOutput($"The command requires you to be in {ba.ExecutionType} mode.", OutputLevel.Error);
+                            DefaultService.Remote.Client.ClientCallback.TellMessage($"The command requires you to be in {ba.ExecutionType} mode.", OutputLevel.Error);
+                            return (int)CommandStatus.AccessDenied;
                         }
-                        Logger.AddOutput("Found command, and executing.", OutputLevel.Debug);
-                        FoundCommand = true;
-                        var sc = k.Value(ca);
-                        if(scdm == StatusCodeDeliveryMethod.TellMessage)
+                        if (ba.DoNotCatchExceptions)
                         {
-                            DefaultService.Remote.Client.ClientCallback.TellMessage($"Command {k.Key} finished with status code {sc.ToString()}", OutputLevel.Info);
+                            throwFlag = true;
                         }
-                        else if(scdm == StatusCodeDeliveryMethod.TellMessageToServerConsole)
+                        if (ba.StatusCodeDeliveryMethod != StatusCodeDeliveryMethod.DoNotDeliver)
                         {
-                            DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, $"Command {k.Key} finished with status code {sc.ToString()}"));
+                            scdm = ba.StatusCodeDeliveryMethod;
                         }
-                        return sc;
                     }
+                    Logger.AddOutput("Found command, and executing.", OutputLevel.Debug);
+                    var sc = command(ca);
+                    if (scdm == StatusCodeDeliveryMethod.TellMessage)
+                    {
+                        DefaultService.Remote.Client.ClientCallback.TellMessage($"Command {ca[0]} finished with status code {sc.ToString()}", OutputLevel.Info);
+                    }
+                    else if (scdm == StatusCodeDeliveryMethod.TellMessageToServerConsole)
+                    {
+                        DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, $"Command {ca[0]} finished with status code {sc.ToString()}"));
+                    }
+                    return sc;
                 }
-                if (!FoundCommand)
+                catch (KeyNotFoundException)
                 {
                     Logger.AddOutput("Failed to find the command.", OutputLevel.Debug);
                     DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, "Unknown command. Please type {help} for a list of commands", "Server Host"));
                     return (int)CommandStatus.Fail;
                 }
-                return -2;
             }
             catch (Exception ex)
             {

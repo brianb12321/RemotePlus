@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.14
+VisualStudioVersion = 15.0.26430.15
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemotePlusServer", "RemotePlusServer\RemotePlusServer.csproj", "{4E41F31E-DCE5-4B9C-A2D6-20BF6ACD9C84}"
 EndProject
@@ -22,6 +22,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemotePlusClient.CommonUI", "RemotePlusClient.CommonUI\RemotePlusClient.CommonUI.csproj", "{9EF00D4B-27F4-4C2A-BDA7-FC47246B2064}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemotePlusLibrary.Core.EmailService", "RemotePlusLibrary.Core.EmailService\RemotePlusLibrary.Core.EmailService.csproj", "{166C0846-95A7-4134-9A6C-BB2E5C9C4594}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Extension Libraries", "Extension Libraries", "{F1A31AC8-6688-4F6C-A0BB-7A02998BB3BA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonWebCommands", "CommonWebCommands\CommonWebCommands.csproj", "{AB549757-6EB2-4A4A-BD87-320D9AB98301}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -69,8 +73,16 @@ Global
 		{166C0846-95A7-4134-9A6C-BB2E5C9C4594}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{166C0846-95A7-4134-9A6C-BB2E5C9C4594}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{166C0846-95A7-4134-9A6C-BB2E5C9C4594}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB549757-6EB2-4A4A-BD87-320D9AB98301}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB549757-6EB2-4A4A-BD87-320D9AB98301}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB549757-6EB2-4A4A-BD87-320D9AB98301}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB549757-6EB2-4A4A-BD87-320D9AB98301}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{4A312E8C-FE94-4996-B2B4-55C9854075C8} = {F1A31AC8-6688-4F6C-A0BB-7A02998BB3BA}
+		{AB549757-6EB2-4A4A-BD87-320D9AB98301} = {F1A31AC8-6688-4F6C-A0BB-7A02998BB3BA}
 	EndGlobalSection
 EndGlobal
