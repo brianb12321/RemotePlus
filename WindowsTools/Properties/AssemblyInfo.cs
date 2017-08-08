@@ -8,30 +8,6 @@ using WindowsTools;
     FriendlyName = "Windows Tools",
     LibraryType = ExtensionLibraryType.Server)]
 
-[assembly: RequiresDependency("boom.wav", "1.0.0.0",
-    DependencyType = DependencyType.Resource,
-    LoadIfNotLoaded = true)]
-[assembly: RequiresDependency("step.wav", "1.0.0.0",
-    DependencyType = DependencyType.Resource,
-    LoadIfNotLoaded = true)]
-
-[assembly: RequiresDependency("door.wav", "1.0.0.0",
-    DependencyType = DependencyType.Resource,
-    LoadIfNotLoaded = true)]
-
-[assembly: RequiresDependency("reload.wav", "1.0.0.0",
-    DependencyType = DependencyType.Resource,
-    LoadIfNotLoaded = true)]
-
-[assembly: RequiresDependency("woohoo.wav", "1.0.0.0",
-    DependencyType = DependencyType.Resource,
-    LoadIfNotLoaded = true)]
-
-[assembly: RequiresDependency("death.wav", "1.0.0.0",
-    DependencyType = DependencyType.Resource,
-    LoadIfNotLoaded = true)]
-
-
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
