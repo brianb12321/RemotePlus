@@ -41,5 +41,35 @@ namespace CommonWebCommands
                 throw;
             }
         }
+        [CommandHelp("Starts a new Opera seassion")]
+        public static int opera(string[] args)
+        {
+            try
+            {
+                ServerManager.DefaultService.Remote.RunProgram("cmd.exe", $"/c \"start opera.exe {args[1]}\"");
+                ServerManager.DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(Logging.OutputLevel.Info, "Opera started", "WebCommands"));
+                return (int)CommandStatus.Success;
+            }
+            catch
+            {
+                return (int)CommandStatus.Fail;
+                throw;
+            }
+        }
+        [CommandHelp("Starts a new Firefox seassion")]
+        public static int firefox(string[] args)
+        {
+            try
+            {
+                ServerManager.DefaultService.Remote.RunProgram("cmd.exe", $"/c \"start firefox.exe {args[1]}\"");
+                ServerManager.DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(Logging.OutputLevel.Info, "Firefox started", "WebCommands"));
+                return (int)CommandStatus.Success;
+            }
+            catch
+            {
+                return (int)CommandStatus.Fail;
+                throw;
+            }
+        }
     }
 }

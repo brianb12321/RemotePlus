@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace RemotePlusLibrary
 {
+    /// <summary>
+    /// Provides settings used to build the client.
+    /// </summary>
     [DataContract]
     public class ClientBuilder
     {
