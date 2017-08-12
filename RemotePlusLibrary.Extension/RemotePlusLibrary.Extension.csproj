@@ -52,6 +52,7 @@
     <Compile Include="CommandSystem\StatusCodeDeliveryMethod.cs" />
     <Compile Include="ExtensionTypes\ExtensionDetailTypes\ClientExtensionDetails.cs" />
     <Compile Include="ExtensionLibraries\ClientExtensionLibrary.cs" />
+    <Compile Include="LibraryBuilder.cs" />
     <Compile Include="LibraryCollections\ClientLibraryCollection.cs" />
     <Compile Include="ClientCommandSystem\ClientCommandLibraryLoader.cs" />
     <Compile Include="ClientCommandSystem\IClientModuleLibraryStartup.cs" />
