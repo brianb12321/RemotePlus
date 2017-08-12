@@ -217,7 +217,7 @@ namespace RemotePlusClient
             };
             if (ofd.ShowDialog() == DialogResult.OK)
             {
-                var lib = ClientExtensionLibrary.LoadClientLibrary(ofd.FileName, (f) => MainF.ConsoleObj.Logger.AddOutput($"Form load: {f.GeneralDetails.Name}", OutputLevel.Info));
+                var lib = ClientExtensionLibrary.LoadClientLibrary(ofd.FileName, (f) => MainF.ConsoleObj.Logger.AddOutput($"Form load: {f.GeneralDetails.Name}", OutputLevel.Info), (m, o) => ConsoleObj.Logger.AddOutput(new UILogItem(o, m, "Extension Loader")));
                 DefaultCollection.Libraries.Add(lib.Name, lib);
                 Task.Factory.StartNew(() =>
                 {

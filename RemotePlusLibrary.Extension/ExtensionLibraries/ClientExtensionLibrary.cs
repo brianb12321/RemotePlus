@@ -6,15 +6,17 @@ using System.Text;
 using System.Threading.Tasks;
 using RemotePlusLibrary.Extension.ExtensionLibraries.LibraryStartupTypes;
 using RemotePlusLibrary.Extension.ExtensionTypes;
+using Logging;
+using System.IO;
 
 namespace RemotePlusLibrary.Extension.ExtensionLibraries
 {
     public class ClientExtensionLibrary : ExtensionLibraryBase<IClientExtension>
     {
-        private ClientExtensionLibrary(string friendlyName, string name, ExtensionLibraryType type, Guid g) : base(friendlyName, name, type, g)
+        private ClientExtensionLibrary(string friendlyName, string name, ExtensionLibraryType type, Guid g, RequiresDependencyAttribute[] deps) : base(friendlyName, name, type, g, deps)
         {
         }
-        public static ClientExtensionLibrary LoadClientLibrary(string fileName, Action<IClientExtension> Callback)
+        public static ClientExtensionLibrary LoadClientLibrary(string fileName, Action<IClientExtension> callback, Action<string, OutputLevel> logCallback)
         {
             Assembly a = Assembly.LoadFrom(fileName);
             ClientExtensionLibrary lib;
@@ -36,16 +38,16 @@ namespace RemotePlusLibrary.Extension.ExtensionLibraries
                     {
                         throw;
                     }
+                    var deps = LoadClientDependencies(a, logCallback, callback);
                     var st = (IClientLibraryStartup)Activator.CreateInstance(ea.Startup);
-                    LibraryBuilder lb = new LibraryBuilder();
-                    st.ClientInit(lb);
-                    lib = new ClientExtensionLibrary(ea.FriendlyName, ea.Name, ea.LibraryType, guid);
+                    st.ClientInit();
+                    lib = new ClientExtensionLibrary(ea.FriendlyName, ea.Name, ea.LibraryType, guid, deps);
                     foreach (Type t in a.GetTypes())
                     {
                         if (t.IsClass == true && (typeof(IClientExtension).IsAssignableFrom(t)))
                         {
                             var f = (IClientExtension)Activator.CreateInstance(t);
-                            Callback(f);
+                            callback(f);
                             lib.Extensions.Add(f.GeneralDetails.Name, f);
                         }
                     }
@@ -60,6 +62,53 @@ namespace RemotePlusLibrary.Extension.ExtensionLibraries
                 throw new InvalidExtensionLibraryException("The client library must have the ExtensionLibraryAttribute.");
             }
             return lib;
+        }
+        private static RequiresDependencyAttribute[] LoadClientDependencies(Assembly a, Action<string, OutputLevel> logCallback, Action<IClientExtension> callback)
+        {
+            logCallback($"Searching dependencies for {a.GetName().Name}", OutputLevel.Info);
+            RequiresDependencyAttribute[] deps = ExtensionLibraryBase<ServerExtensionLibrary>.FindDependencies(a);
+            foreach (RequiresDependencyAttribute d in deps)
+            {
+                if (File.Exists(d.DependencyName))
+                {
+                    logCallback($"Found dependency {d.DependencyName}", OutputLevel.Info);
+                    if (d.DependencyType != DependencyType.Resource)
+                    {
+                        try
+                        {
+                            Assembly da = Assembly.LoadFrom(d.DependencyName);
+                            if (da.GetName().Version != d.Version)
+                            {
+                                throw new DependencyException($"Library {d.DependencyName}, version {da.GetName().Version} does not match requred version of {d.Version}");
+                            }
+                            else
+                            {
+                                if (d.LoadIfNotLoaded && d.DependencyType == DependencyType.RemotePlusLib)
+                                {
+                                    logCallback($"Loading dependency {d.DependencyName}", OutputLevel.Info);
+                                    ClientExtensionLibrary.LoadClientLibrary(d.DependencyName, callback, logCallback);
+                                }
+                            }
+                        }
+                        catch
+                        {
+                            throw;
+                        }
+                    }
+                }
+                else
+                {
+                    if (d.DependencyType == DependencyType.Resource)
+                    {
+                        throw new DependencyException($"Library {a.GetName().Name} is dependent on {d.DependencyName}");
+                    }
+                    else
+                    {
+                        throw new DependencyException($"Library {a.GetName().Name} is dependent on {d.DependencyName}, version {d.Version.ToString()}");
+                    }
+                }
+            }
+            return deps;
         }
     }
 }

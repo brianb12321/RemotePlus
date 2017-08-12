@@ -19,6 +19,9 @@ using RemotePlusLibrary.Core.EmailService;
 namespace RemotePlusLibrary
 {
     // NOTE: You can use the "Rename" command on the "Refactor" menu to change the interface name "IService1" in both code and config file together.
+    /// <summary>
+    /// The operations that the client can perform on the server.
+    /// </summary>
     [ServiceContract(CallbackContract = typeof(IRemoteClient))]
     [ServiceKnownType("GetKnownTypes", typeof(DefaultKnownTypeManager))]
     public interface IRemote
