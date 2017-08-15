@@ -14,6 +14,7 @@ namespace RemotePlusLibrary.Extension
         public string FriendlyName { get; set; }
         public string Name { get; private set; }
         public string Guid { get; set; }
+        public string Version { get; set; } = "1.0.0.0";
         public ExtensionLibraryAttribute(Type startup, string name)
         {
             Startup = startup;

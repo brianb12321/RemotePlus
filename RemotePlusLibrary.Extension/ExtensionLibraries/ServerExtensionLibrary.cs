@@ -10,7 +10,7 @@ namespace RemotePlusLibrary.Extension.ExtensionLibraries
 {
     public class ServerExtensionLibrary : ExtensionLibraryBase<ServerExtension>
     {
-        private ServerExtensionLibrary(string friendlyName, string name, ExtensionLibraryType type, Guid g, RequiresDependencyAttribute[] deps) : base(friendlyName, name, type, g, deps)
+        private ServerExtensionLibrary(string friendlyName, string name, ExtensionLibraryType type, Guid g, RequiresDependencyAttribute[] deps, Version v) : base(friendlyName, name, type, g, deps, v)
         {
         }
 
@@ -37,12 +37,13 @@ namespace RemotePlusLibrary.Extension.ExtensionLibraries
                         guid = Guid.NewGuid();
                         callback($"Unable to parse GUID. Using random generated GUID. GUID: [{guid.ToString()}]", OutputLevel.Warning);
                     }
+                    Version version = ParseVersion(ea.Version);
                     var deps = LoadDependencies(a, callback);
                     var st = (ILibraryStartup)Activator.CreateInstance(ea.Startup);
                     callback("Beginning initialization.", Logging.OutputLevel.Info);
-                    st.Init();
+                    st.Init(new LibraryBuilder(ea.Name, ea.Version, ea.LibraryType));
                     callback("finished initalization.", Logging.OutputLevel.Info);
-                    lib = new ServerExtensionLibrary(ea.FriendlyName, ea.Name, ea.LibraryType, guid, deps);
+                    lib = new ServerExtensionLibrary(ea.FriendlyName, ea.Name, ea.LibraryType, guid, deps, version);
                     foreach (Type t in a.GetTypes())
                     {
                         if (t.IsClass == true && (t.IsSubclassOf(typeof(ServerExtension))))

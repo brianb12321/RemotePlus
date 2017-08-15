@@ -8,5 +8,14 @@ namespace RemotePlusLibrary.Extension
 {
     public class LibraryBuilder
     {
+        public string Name { get; private set; }
+        public string Version { get; private set; }
+        public ExtensionLibraryType LibraryType { get; private set; }
+        public LibraryBuilder(string n, string v, ExtensionLibraryType lt)
+        {
+            Name = n;
+            Version = v;
+            LibraryType = lt;
+        }
     }
 }

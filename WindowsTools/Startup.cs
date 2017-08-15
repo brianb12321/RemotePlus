@@ -1,4 +1,5 @@
-﻿using RemotePlusLibrary.Extension.ExtensionLibraries.LibraryStartupTypes;
+﻿using RemotePlusLibrary.Extension;
+using RemotePlusLibrary.Extension.ExtensionLibraries.LibraryStartupTypes;
 using RemotePlusServer;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ namespace WindowsTools
 {
     public class Startup : ILibraryStartup
     {
-        public void Init()
+        public void Init(LibraryBuilder builder)
         {
             ServerManager.Logger.AddOutput("Adding OS commands", Logging.OutputLevel.Info, "WindowsTools");
             ServerManager.DefaultService.Commands.Add("sendKey", OSCommands.sendKey);

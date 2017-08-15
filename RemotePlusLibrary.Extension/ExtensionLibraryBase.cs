@@ -16,12 +16,14 @@ namespace RemotePlusLibrary.Extension
         public string Name { get; private set; }
         public ExtensionLibraryType LibraryType { get; private set; }
         public Guid Guid { get; private set; }
-        protected ExtensionLibraryBase(string friendlyName, string name, ExtensionLibraryType type, Guid g, RequiresDependencyAttribute[] deps)
+        public Version Version { get; private set; }
+        protected ExtensionLibraryBase(string friendlyName, string name, ExtensionLibraryType type, Guid g, RequiresDependencyAttribute[] deps, Version v)
         {
             FriendlyName = friendlyName;
             Name = name;
             LibraryType = type;
             Guid = g;
+            Version = v;
             Extensions = new Dictionary<string, T>();
             Dependencies = deps.ToList();
         }
@@ -41,6 +43,10 @@ namespace RemotePlusLibrary.Extension
         {
             RequiresDependencyAttribute[] dep = file.GetCustomAttributes<RequiresDependencyAttribute>().ToArray();
             return dep;
+        }
+        public static Version ParseVersion(string version)
+        {
+            return Version.Parse(version);
         }
     }
 }
