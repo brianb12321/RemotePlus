@@ -10,6 +10,7 @@ namespace RemotePlusLibrary.Core.EmailService
     [DataContract]
     public class AdvancedEmailSettings
     {
+        [DataMember]
         public bool ApplyTimeStamp { get; set; }
     }
 }

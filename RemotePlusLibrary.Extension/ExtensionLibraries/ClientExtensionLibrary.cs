@@ -41,7 +41,7 @@ namespace RemotePlusLibrary.Extension.ExtensionLibraries
                     Version version = ExtensionLibraryBase<ClientExtensionLibrary>.ParseVersion(ea.Version);
                     var deps = LoadClientDependencies(a, logCallback, callback);
                     var st = (IClientLibraryStartup)Activator.CreateInstance(ea.Startup);
-                    st.ClientInit(new LibraryBuilder(ea.Name, ea.Version, ea.LibraryType));
+                    st.ClientInit(new LibraryBuilder(ea.Name, ea.FriendlyName, ea.Version, ea.LibraryType));
                     lib = new ClientExtensionLibrary(ea.FriendlyName, ea.Name, ea.LibraryType, guid, deps, version);
                     foreach (Type t in a.GetTypes())
                     {

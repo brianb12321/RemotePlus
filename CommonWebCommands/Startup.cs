@@ -12,7 +12,7 @@ namespace CommonWebCommands
 {
     public class Startup : ILibraryStartup
     {
-        public void Init(LibraryBuilder builder)
+        public void Init(ILibraryBuilder builder)
         {
             ServerManager.Logger.AddOutput("Welcome to WebCommands.", Logging.OutputLevel.Info, "WebCommands");
             ServerManager.Logger.AddOutput("Adding Chrome", Logging.OutputLevel.Info, "WebCommands");

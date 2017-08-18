@@ -41,7 +41,7 @@ namespace RemotePlusLibrary.Extension.ExtensionLibraries
                     var deps = LoadDependencies(a, callback);
                     var st = (ILibraryStartup)Activator.CreateInstance(ea.Startup);
                     callback("Beginning initialization.", Logging.OutputLevel.Info);
-                    st.Init(new LibraryBuilder(ea.Name, ea.Version, ea.LibraryType));
+                    st.Init(new LibraryBuilder(ea.Name, ea.FriendlyName, ea.Version, ea.LibraryType));
                     callback("finished initalization.", Logging.OutputLevel.Info);
                     lib = new ServerExtensionLibrary(ea.FriendlyName, ea.Name, ea.LibraryType, guid, deps, version);
                     foreach (Type t in a.GetTypes())

@@ -6,16 +6,23 @@ using System.Threading.Tasks;
 
 namespace RemotePlusLibrary.Extension
 {
-    public class LibraryBuilder
+    public class LibraryBuilder : ILibraryBuilder
     {
-        public string Name { get; private set; }
-        public string Version { get; private set; }
-        public ExtensionLibraryType LibraryType { get; private set; }
-        public LibraryBuilder(string n, string v, ExtensionLibraryType lt)
+
+        public LibraryBuilder(string n, string fn, string v, ExtensionLibraryType lt)
         {
             Name = n;
+            FriendlyName = fn;
             Version = v;
             LibraryType = lt;
         }
+
+        public string Name { get; private set; }
+
+        public string Version { get; private set; }
+
+        public ExtensionLibraryType LibraryType { get; private set; }
+
+        public string FriendlyName { get; private set; }
     }
 }

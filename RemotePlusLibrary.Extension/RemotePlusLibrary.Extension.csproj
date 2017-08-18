@@ -54,6 +54,7 @@
     <Compile Include="DependencyType.cs" />
     <Compile Include="ExtensionTypes\ExtensionDetailTypes\ClientExtensionDetails.cs" />
     <Compile Include="ExtensionLibraries\ClientExtensionLibrary.cs" />
+    <Compile Include="ILibraryBuilder.cs" />
     <Compile Include="LibraryBuilder.cs" />
     <Compile Include="LibraryCollections\ClientLibraryCollection.cs" />
     <Compile Include="ClientCommandSystem\ClientCommandLibraryLoader.cs" />
