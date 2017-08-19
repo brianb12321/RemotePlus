@@ -14,6 +14,7 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Windows.Forms;
 using RemotePlusLibrary.Core.EmailService;
+using RemotePlusLibrary.Extension.ExtensionLibraries.InitEnvironments;
 
 namespace RemotePlusServer
 {
@@ -213,7 +214,8 @@ namespace RemotePlusServer
                         try
                         {
                             Logger.AddOutput($"Found extension file ({Path.GetFileName(files)})", Logging.OutputLevel.Info);
-                            var lib = ServerExtensionLibrary.LoadServerLibrary(files, (m, o) => Logger.AddOutput(m, o));
+                            ServerInitEnvironment env = new ServerInitEnvironment((Logger.errorcount > 0) ? true : false);
+                            var lib = ServerExtensionLibrary.LoadServerLibrary(files, (m, o) => Logger.AddOutput(m, o), env);
                             DefaultCollection.Libraries.Add(lib.Name, lib);
                         }
                         catch (Exception ex)

@@ -52,8 +52,11 @@
     <Compile Include="CommandSystem\StatusCodeDeliveryMethod.cs" />
     <Compile Include="DependencyException.cs" />
     <Compile Include="DependencyType.cs" />
+    <Compile Include="ExtensionLibraries\InitEnvironments\ClientInitEnvironment..cs" />
+    <Compile Include="ExtensionLibraries\InitEnvironments\ServerInitEnvironment.cs" />
     <Compile Include="ExtensionTypes\ExtensionDetailTypes\ClientExtensionDetails.cs" />
     <Compile Include="ExtensionLibraries\ClientExtensionLibrary.cs" />
+    <Compile Include="IInitEnvironment.cs" />
     <Compile Include="ILibraryBuilder.cs" />
     <Compile Include="LibraryBuilder.cs" />
     <Compile Include="LibraryCollections\ClientLibraryCollection.cs" />

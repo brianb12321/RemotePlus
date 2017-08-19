@@ -8,6 +8,10 @@ using System.Threading.Tasks;
 
 namespace RemotePlusLibrary.Extension
 {
+    /// <summary>
+    /// Represents an extension library that can be loaded into the system.
+    /// </summary>
+    /// <typeparam name="T">The extension that the library type will load</typeparam>
     public abstract class ExtensionLibraryBase<T>
     {
         public List<RequiresDependencyAttribute> Dependencies { get; private set; }

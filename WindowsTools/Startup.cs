@@ -11,7 +11,7 @@ namespace WindowsTools
 {
     public class Startup : ILibraryStartup
     {
-        public void Init(ILibraryBuilder builder)
+        public void Init(ILibraryBuilder builder, IInitEnvironment env)
         {
             ServerManager.Logger.AddOutput("Adding OS commands", Logging.OutputLevel.Info, "WindowsTools");
             ServerManager.DefaultService.Commands.Add("sendKey", OSCommands.sendKey);

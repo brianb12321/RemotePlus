@@ -8,6 +8,6 @@ namespace RemotePlusLibrary.Extension.ExtensionLibraries.LibraryStartupTypes
 {
     public interface ILibraryStartup
     {
-        void Init(ILibraryBuilder builder);
+        void Init(ILibraryBuilder builder, IInitEnvironment env);
     }
 }
