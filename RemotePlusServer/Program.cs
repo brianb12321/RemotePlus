@@ -207,6 +207,7 @@ namespace RemotePlusServer
             Logger.AddOutput("Loading extensions...", Logging.OutputLevel.Info);
             if (Directory.Exists("extensions"))
             {
+                ServerInitEnvironment env = new ServerInitEnvironment(false);
                 foreach (string files in Directory.GetFiles("extensions"))
                 {
                     if (Path.GetExtension(files) == ".dll")
@@ -214,7 +215,7 @@ namespace RemotePlusServer
                         try
                         {
                             Logger.AddOutput($"Found extension file ({Path.GetFileName(files)})", Logging.OutputLevel.Info);
-                            ServerInitEnvironment env = new ServerInitEnvironment((Logger.errorcount > 0) ? true : false);
+                            env.PreviousError = Logger.errorcount > 0 ? true : false;
                             var lib = ServerExtensionLibrary.LoadServerLibrary(files, (m, o) => Logger.AddOutput(m, o), env);
                             DefaultCollection.Libraries.Add(lib.Name, lib);
                         }
@@ -222,6 +223,7 @@ namespace RemotePlusServer
                         {
                             Logger.AddOutput($"Could not load \"{files}\" because of a load error or initialization error. Error: {ex.Message}", OutputLevel.Error);
                         }
+                        env.InitPosition++;
                     }
                 }
             }

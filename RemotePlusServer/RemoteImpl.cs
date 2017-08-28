@@ -245,7 +245,20 @@ namespace RemotePlusServer
             }
             else
             {
-                return ServerManager.Execute(Command, commandMode);
+                string[] cs = Command.Split('&');
+                if (cs.Length == 1)
+                {
+                    return ServerManager.Execute(cs[0], commandMode);
+                }
+                else
+                {
+                    int rs = 0;
+                    foreach(string c in cs)
+                    {
+                        rs += (int)ServerManager.Execute(c, CommandExecutionMode.Client);
+                    }
+                    return rs;
+                }
             }
         }
 

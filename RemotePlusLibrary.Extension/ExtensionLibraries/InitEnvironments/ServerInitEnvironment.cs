@@ -9,9 +9,13 @@ namespace RemotePlusLibrary.Extension.ExtensionLibraries.InitEnvironments
 {
     public class ServerInitEnvironment : IInitEnvironment
     {
-        public bool PreviousError { get; private set; }
+        public bool PreviousError { get; set; }
+
+        public int InitPosition { get; set; }
+
         public ServerInitEnvironment(bool pe)
         {
+            InitPosition = 1;
             PreviousError = pe;
         }
     }
