@@ -15,11 +15,13 @@ namespace ReleaseExtensions
 {
     public sealed class Startup : ILibraryStartup, IClientCommandLibraryStartup, IClientLibraryStartup
     {
-        void IClientLibraryStartup.ClientInit(ILibraryBuilder builder)
+        void IClientLibraryStartup.ClientInit(ILibraryBuilder builder, IInitEnvironment env)
         {
+            RemotePlusClient.MainF.ConsoleObj.Logger.AddOutput($"Client position {env.InitPosition}", Logging.OutputLevel.Debug, "ReleaseExtensions");
         }
-        void ILibraryStartup.Init(ILibraryBuilder builder)
+        void ILibraryStartup.Init(ILibraryBuilder builder, IInitEnvironment env)
         {
+            ServerManager.Logger.AddOutput($"Init position {env.InitPosition}", Logging.OutputLevel.Debug, "ReleaseExtensions");
             ServerManager.Logger.AddOutput(new Logging.LogItem(Logging.OutputLevel.Info, "Welcome to \"ReleaseExtension.\" This library contains some useful tools that demonstrates the powers of \"RemotePlus\"", "ReleaseExtensions") { Color = Console.ForegroundColor});
             ServerManager.DefaultService.Commands.Add("releaseExtensionAbout", releaseExtensionAbout);
             ServerManager.Logger.AddOutput(new Logging.LogItem(Logging.OutputLevel.Info, "Adding watchers.", "ReleaseExtensions") { Color = Console.ForegroundColor });

@@ -2,6 +2,6 @@
 {
     public interface IClientLibraryStartup
     {
-        void ClientInit(ILibraryBuilder builder);
+        void ClientInit(ILibraryBuilder builder, IInitEnvironment env);
     }
 }

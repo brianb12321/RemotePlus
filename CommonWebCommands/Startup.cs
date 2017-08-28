@@ -12,8 +12,9 @@ namespace CommonWebCommands
 {
     public class Startup : ILibraryStartup
     {
-        public void Init(ILibraryBuilder builder)
+        public void Init(ILibraryBuilder builder, IInitEnvironment env)
         {
+            ServerManager.Logger.AddOutput($"Current position {env.InitPosition}", Logging.OutputLevel.Debug, "WebCommands");
             ServerManager.Logger.AddOutput("Welcome to WebCommands.", Logging.OutputLevel.Info, "WebCommands");
             ServerManager.Logger.AddOutput("Adding Chrome", Logging.OutputLevel.Info, "WebCommands");
             CheckChrome();

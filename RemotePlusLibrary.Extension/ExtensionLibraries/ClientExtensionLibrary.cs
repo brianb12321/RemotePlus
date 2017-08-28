@@ -16,7 +16,7 @@ namespace RemotePlusLibrary.Extension.ExtensionLibraries
         private ClientExtensionLibrary(string friendlyName, string name, ExtensionLibraryType type, Guid g, RequiresDependencyAttribute[] deps, Version v) : base(friendlyName, name, type, g, deps, v)
         {
         }
-        public static ClientExtensionLibrary LoadClientLibrary(string fileName, Action<IClientExtension> callback, Action<string, OutputLevel> logCallback)
+        public static ClientExtensionLibrary LoadClientLibrary(string fileName, Action<IClientExtension> callback, Action<string, OutputLevel> logCallback, IInitEnvironment env)
         {
             Assembly a = Assembly.LoadFrom(fileName);
             ClientExtensionLibrary lib;
@@ -25,10 +25,6 @@ namespace RemotePlusLibrary.Extension.ExtensionLibraries
             {
                 if (ea.LibraryType == ExtensionLibraryType.Client || ea.LibraryType == ExtensionLibraryType.Both)
                 {
-                    if (!typeof(IClientLibraryStartup).IsAssignableFrom(ea.Startup))
-                    {
-                        throw new ArgumentException("The startup type does not implement ILibraryStartup.");
-                    }
                     Guid guid = Guid.Empty;
                     try
                     {
@@ -39,17 +35,24 @@ namespace RemotePlusLibrary.Extension.ExtensionLibraries
                         throw;
                     }
                     Version version = ExtensionLibraryBase<ClientExtensionLibrary>.ParseVersion(ea.Version);
-                    var deps = LoadClientDependencies(a, logCallback, callback);
-                    var st = (IClientLibraryStartup)Activator.CreateInstance(ea.Startup);
-                    st.ClientInit(new LibraryBuilder(ea.Name, ea.FriendlyName, ea.Version, ea.LibraryType));
-                    lib = new ClientExtensionLibrary(ea.FriendlyName, ea.Name, ea.LibraryType, guid, deps, version);
-                    foreach (Type t in a.GetTypes())
+                    var deps = LoadClientDependencies(a, logCallback, callback, env);
+                    if (!typeof(IClientLibraryStartup).IsAssignableFrom(ea.Startup))
                     {
-                        if (t.IsClass == true && (typeof(IClientExtension).IsAssignableFrom(t)))
+                        throw new ArgumentException("The startup type does not implement ILibraryStartup.");
+                    }
+                    else
+                    {
+                        var st = (IClientLibraryStartup)Activator.CreateInstance(ea.Startup);
+                        st.ClientInit(new LibraryBuilder(ea.Name, ea.FriendlyName, ea.Version, ea.LibraryType), env);
+                        lib = new ClientExtensionLibrary(ea.FriendlyName, ea.Name, ea.LibraryType, guid, deps, version);
+                        foreach (Type t in a.GetTypes())
                         {
-                            var f = (IClientExtension)Activator.CreateInstance(t);
-                            callback(f);
-                            lib.Extensions.Add(f.GeneralDetails.Name, f);
+                            if (t.IsClass == true && (typeof(IClientExtension).IsAssignableFrom(t)))
+                            {
+                                var f = (IClientExtension)Activator.CreateInstance(t);
+                                callback(f);
+                                lib.Extensions.Add(f.GeneralDetails.Name, f);
+                            }
                         }
                     }
                 }
@@ -64,7 +67,7 @@ namespace RemotePlusLibrary.Extension.ExtensionLibraries
             }
             return lib;
         }
-        private static RequiresDependencyAttribute[] LoadClientDependencies(Assembly a, Action<string, OutputLevel> logCallback, Action<IClientExtension> callback)
+        private static RequiresDependencyAttribute[] LoadClientDependencies(Assembly a, Action<string, OutputLevel> logCallback, Action<IClientExtension> callback, IInitEnvironment env)
         {
             logCallback($"Searching dependencies for {a.GetName().Name}", OutputLevel.Info);
             RequiresDependencyAttribute[] deps = ExtensionLibraryBase<ServerExtensionLibrary>.FindDependencies(a);
@@ -87,7 +90,7 @@ namespace RemotePlusLibrary.Extension.ExtensionLibraries
                                 if (d.LoadIfNotLoaded && d.DependencyType == DependencyType.RemotePlusLib)
                                 {
                                     logCallback($"Loading dependency {d.DependencyName}", OutputLevel.Info);
-                                    ClientExtensionLibrary.LoadClientLibrary(d.DependencyName, callback, logCallback);
+                                    ClientExtensionLibrary.LoadClientLibrary(d.DependencyName, callback, logCallback, env);
                                 }
                             }
                         }

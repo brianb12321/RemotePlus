@@ -17,6 +17,7 @@ using RemotePlusLibrary.Extension.Gui;
 using RemotePlusLibrary.Extension.LibraryCollections;
 using RemotePlusLibrary.Extension.ExtensionLibraries;
 using RemotePlusLibrary.Extension.ExtensionTypes;
+using RemotePlusLibrary.Extension.ExtensionLibraries.InitEnvironments;
 
 namespace RemotePlusClient
 {
@@ -217,7 +218,11 @@ namespace RemotePlusClient
             };
             if (ofd.ShowDialog() == DialogResult.OK)
             {
-                var lib = ClientExtensionLibrary.LoadClientLibrary(ofd.FileName, (f) => MainF.ConsoleObj.Logger.AddOutput($"Form load: {f.GeneralDetails.Name}", OutputLevel.Info), (m, o) => ConsoleObj.Logger.AddOutput(new UILogItem(o, m, "Extension Loader")));
+                ClientInitEnvironment env = new ClientInitEnvironment((ServerConsoleObj.Logger.errorcount > 0) ? true : false);
+                var lib = ClientExtensionLibrary.LoadClientLibrary(ofd.FileName,
+                    (f) => MainF.ConsoleObj.Logger.AddOutput($"Form load: {f.GeneralDetails.Name}", OutputLevel.Info),
+                    (m, o) => ConsoleObj.Logger.AddOutput(new UILogItem(o, m, "Extension Loader")),
+                    env);
                 DefaultCollection.Libraries.Add(lib.Name, lib);
                 Task.Factory.StartNew(() =>
                 {
