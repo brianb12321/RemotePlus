@@ -49,6 +49,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CommandSystem\CommandClasses\CommandPipeline.cs" />
+    <Compile Include="CommandSystem\CommandClasses\CommandRequest.cs" />
+    <Compile Include="CommandSystem\CommandClasses\CommandResponse.cs" />
+    <Compile Include="CommandSystem\CommandClasses\CommandRoutine.cs" />
     <Compile Include="CommandSystem\StatusCodeDeliveryMethod.cs" />
     <Compile Include="DependencyException.cs" />
     <Compile Include="DependencyType.cs" />

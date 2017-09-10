@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace RemotePlusLibrary.Extension.CommandSystem
 {
-    public delegate int CommandDelegate(string[] args);
+    public delegate CommandResponse CommandDelegate(CommandRequest request, CommandPipeline pipeline);
     public static class RemotePlusConsole
     {
         public static string ShowHelp(IDictionary<string, CommandDelegate> commands, string[] args)
