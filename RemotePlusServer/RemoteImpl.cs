@@ -251,7 +251,7 @@ namespace RemotePlusServer
                 string[] cs = Command.Split('&');
                 if (cs.Length == 1)
                 {
-                    var request = new CommandRequest(cs);
+                    var request = new CommandRequest(cs[0].Split(' '));
                     pipe.Add(0, new CommandRoutine(request, ServerManager.Execute(request, commandMode, pipe)));
                 }
                 else
@@ -485,7 +485,7 @@ namespace RemotePlusServer
 
         public DirectoryInfo GetRemoteFiles()
         {
-            return new DirectoryInfo($@"c:\users\{Environment.UserName}\Documents");
+            return new DirectoryInfo($@"c:\users\{Environment.UserName}");
         }
 
         public EmailSettings GetServerEmailSettings()

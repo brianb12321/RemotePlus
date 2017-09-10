@@ -15,6 +15,7 @@ namespace RemotePlusClient
 {
     public class ClientApp
     {
+        public static MainF MainWindow;
         public static CMDLogging Logger { get; private set; }
         public static ClientSettings ClientSettings { get; } = new ClientSettings();
         [STAThread]
@@ -41,7 +42,8 @@ namespace RemotePlusClient
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             RequestStore.Init();
-            Application.Run(new MainF());
+            MainWindow = new MainF();
+            Application.Run(MainWindow);
         }
         static void InitializeDefaultKnownTypes()
         {

@@ -23,6 +23,8 @@ namespace RemotePlusClient
 {
     public partial class MainF : ThemedForm
     {
+        public Dictionary<string, ThemedForm> BottumPages;
+        public Dictionary<string, ThemedForm> TopPages;
         public static ServerConsole ServerConsoleObj = null;
         public static IRemote Remote = null;
         public static ConsoleDialog ConsoleObj = null;
@@ -98,8 +100,7 @@ namespace RemotePlusClient
 
         void AddTabToConsoleTabControl(string Name, ThemedForm c)
         {
-            Random r = new Random();
-            string Id = $"{c.Name} {r.Next(1, 9999).ToString()}";
+            string Id = $"{Name}";
             c.Name = Id;
             c.WindowState = FormWindowState.Maximized;
             c.FormBorderStyle = FormBorderStyle.None;
@@ -107,16 +108,16 @@ namespace RemotePlusClient
             c.Dock = DockStyle.Fill;
             TabPage t = new TabPage(Name)
             {
-                Name = Id
+                Name = Id,
             };
+            BottumPages.Add(Id, c);
             t.Controls.Add(c);
             tabControl1.TabPages.Add(t);
             c.ShowAndInitializeTheme(ClientApp.ClientSettings.DefaultTheme);
         }
         void AddTabToMainTabControl(string Name, ThemedForm c)
         {
-            Random r = new Random();
-            string Id = $"{c.Name} {r.Next(1, 9999).ToString()}";
+            string Id = $"{Name}";
             c.Name = Id;
             c.WindowState = FormWindowState.Maximized;
             c.FormBorderStyle = FormBorderStyle.None;
@@ -126,13 +127,18 @@ namespace RemotePlusClient
             {
                 Name = Id
             };
+            TopPages.Add(Id, c);
             t.Controls.Add(c);
             tabControl2.TabPages.Add(t);
             c.ShowAndInitializeTheme(ClientApp.ClientSettings.DefaultTheme);
         }
         private void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)
         {
+#if DEBUG
+            ConsoleObj.Logger.AddOutput("Unknown error: " + e.Exception.ToString(), Logging.OutputLevel.Error);
+#else
             ConsoleObj.Logger.AddOutput("Unknown error: " + e.Exception.Message, Logging.OutputLevel.Error);
+#endif
         }
 
         private void consoleToolStripMenuItem_Click(object sender, EventArgs e)
@@ -156,6 +162,8 @@ namespace RemotePlusClient
         }
         private void MainF_Load(object sender, EventArgs e)
         {
+            TopPages = new Dictionary<string, ThemedForm>();
+            BottumPages = new Dictionary<string, ThemedForm>();
             OpenConsole();
             Application.ThreadException += Application_ThreadException;
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
@@ -163,7 +171,11 @@ namespace RemotePlusClient
 
         private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
+#if DEBUG
+            ConsoleObj.Logger.AddOutput("Unkown error: " + ((Exception)e.ExceptionObject).ToString(), OutputLevel.Error);
+#else
             ConsoleObj.Logger.AddOutput("Unkown error: " + ((Exception)e.ExceptionObject).Message, OutputLevel.Error);
+#endif
         }
 
         private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
@@ -205,7 +217,6 @@ namespace RemotePlusClient
             }
             catch
             {
-
             }
         }
 
@@ -267,10 +278,12 @@ namespace RemotePlusClient
                 if(tabControl2.SelectedTab.Name.Contains("ServerConsole"))
                 {
                     tabControl2.TabPages.Remove(tabControl2.SelectedTab);
+                    TopPages.Remove("ServerConsole");
                     ServerConsoleObj = null;
                 }
                 else
                 {
+                    TopPages.Remove(tabControl2.SelectedTab.Name);
                     tabControl2.TabPages.Remove(tabControl2.SelectedTab);
                 }
             }
@@ -356,6 +369,7 @@ namespace RemotePlusClient
         {
             foreach(TabPage c in tabControl1.TabPages)
             {
+                BottumPages.Remove(c.Name);
                 tabControl1.TabPages.Remove(c);
             }
         }
@@ -363,13 +377,14 @@ namespace RemotePlusClient
         {
             foreach (TabPage c in tabControl2.TabPages)
             {
+                TopPages.Remove(c.Name);
                 tabControl2.TabPages.Remove(c);
             }
         }
 
         private void browseFile_MenuItem_Click(object sender, EventArgs e)
         {
-            AddTabToMainTabControl("Remote file browser", new RemoteFileBrowser());
+            AddTabToMainTabControl("Remote File Browser", new RemoteFileBrowser());
         }
 
         private void configure_menuItem_Click(object sender, EventArgs e)
@@ -386,6 +401,31 @@ namespace RemotePlusClient
         private void sendEmail_menuItem_Click(object sender, EventArgs e)
         {
             AddTabToMainTabControl("Send email", new CommonUI.EmailGui.SendEmailForm(Remote));
+        }
+
+        private void mi_pipeLineBrowser_Click(object sender, EventArgs e)
+        {
+            AddTabToConsoleTabControl(CommandPipelineViewer.NAME, new CommandPipelineViewer());
+        }
+
+        private void mi_closeConsoleArea_Click(object sender, EventArgs e)
+        {
+            if (tabControl1.TabPages.Count > 0)
+            {
+                if (tabControl1.SelectedTab.Name.Contains("Console"))
+                {
+                    MessageBox.Show("Cannot remove console.", "RemotePlusClient", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                else
+                {
+                    BottumPages.Remove(tabControl1.SelectedTab.Name);
+                    tabControl1.TabPages.Remove(tabControl1.SelectedTab);
+                }
+            }
+            else
+            {
+                MessageBox.Show("There are no tabs to close.");
+            }
         }
     }
 }

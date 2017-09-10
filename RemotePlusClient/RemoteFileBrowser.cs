@@ -12,17 +12,18 @@ using System.Windows.Forms;
 
 namespace RemotePlusClient
 {
+    //Credit goes to Microsoft article at https://docs.microsoft.com/en-us/dotnet/framework/winforms/controls/creating-an-explorer-style-interface-with-the-listview-and-treeview
     public partial class RemoteFileBrowser : ThemedForm
     {
         public RemoteFileBrowser()
         {
             InitializeComponent();
-            Task.Run(() => PopulateTreeView());
         }
 
         private void RemoteFileBrowser_Load(object sender, EventArgs e)
         {
             MainF.ConsoleObj.Logger.AddOutput("Downloading file data from server. This may take a while.", Logging.OutputLevel.Info);
+            Task.Run(() => this.Invoke(new MethodInvoker(delegate { PopulateTreeView(); })));
         }
         void PopulateTreeView()
         {
@@ -69,42 +70,44 @@ namespace RemotePlusClient
             }
         }
 
+        private void treeView1_Click(object sender, EventArgs e)
+        {
+            textBox1.Text = ((DirectoryInfo)treeView1.SelectedNode.Tag).FullName;
+        }
+
         private void treeView1_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {
             TreeNode newSelected = e.Node;
             listView1.Items.Clear();
             DirectoryInfo nodeDirInfo = (DirectoryInfo)newSelected.Tag;
+            textBox1.Text = nodeDirInfo.FullName;
             ListViewItem.ListViewSubItem[] subItems;
             ListViewItem item = null;
+
             foreach (DirectoryInfo dir in nodeDirInfo.GetDirectories())
             {
-                try
-                {
-                    item = new ListViewItem(dir.Name, 0);
-                    subItems = new ListViewItem.ListViewSubItem[] { new ListViewItem.ListViewSubItem(item, "Directory"), new ListViewItem.ListViewSubItem(item, dir.LastAccessTime.ToShortDateString()) };
-                    item.SubItems.AddRange(subItems);
-                    listView1.Items.Add(item);
-                }
-                catch (Exception ex)
-                {
-                    MainF.ConsoleObj.Logger.AddOutput($"Directory failed to be loaded: {ex.Message}", Logging.OutputLevel.Warning);
-                }
+                item = new ListViewItem(dir.Name, 0);
+                subItems = new ListViewItem.ListViewSubItem[]
+                          {new ListViewItem.ListViewSubItem(item, "Directory"),
+                   new ListViewItem.ListViewSubItem(item,
+                dir.LastAccessTime.ToShortDateString())};
+                item.SubItems.AddRange(subItems);
+                listView1.Items.Add(item);
             }
             foreach (FileInfo file in nodeDirInfo.GetFiles())
             {
-                try
-                {
-                    item = new ListViewItem(file.Name, 1);
-                    subItems = new ListViewItem.ListViewSubItem[] { new ListViewItem.ListViewSubItem(item, "File"), new ListViewItem.ListViewSubItem(item, file.LastAccessTime.ToShortDateString()) };
-                    item.SubItems.AddRange(subItems);
-                    listView1.Items.Add(item);
-                }
-                catch (Exception ex)
-                {
-                    MainF.ConsoleObj.Logger.AddOutput($"File failed to be loaded: {ex.Message}", Logging.OutputLevel.Warning);
-                }
+                item = new ListViewItem(file.Name, 1);
+                subItems = new ListViewItem.ListViewSubItem[]
+                          { new ListViewItem.ListViewSubItem(item, "File"),
+                   new ListViewItem.ListViewSubItem(item,
+                file.LastAccessTime.ToShortDateString())};
+
+                item.SubItems.AddRange(subItems);
+                listView1.Items.Add(item);
             }
+
             listView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
+
         }
     }
 }

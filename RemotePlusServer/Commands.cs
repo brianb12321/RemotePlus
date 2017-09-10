@@ -333,7 +333,7 @@ namespace RemotePlusServer
             else
             {
                 DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, "Please provide a valid MessageBox button.", "Server Host"));
-                return new CommandResponse((int)CommandStatus.Fail);
+                return new CommandResponse((int)CommandStatus.Fail) { CustomStatusMessage = "Invalid messageBox button." };
             }
             if (args.Arguments[2] == "i_WARNING")
             {
@@ -370,7 +370,7 @@ namespace RemotePlusServer
             else
             {
                 DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, "Please provide a valid MessageBox icon type.", "Server Host"));
-                return new CommandResponse((int)CommandStatus.Fail);
+                return new CommandResponse((int)CommandStatus.Fail) { CustomStatusMessage = "Invalid MessageBox icon" };
             }
             int message_start = 0;
             if (args.Arguments[3] == "caption:")
@@ -404,7 +404,12 @@ namespace RemotePlusServer
                 message = "";
             }
             DefaultService.Remote.ShowMessageBox(message, caption, icon, buttons);
-            return new CommandResponse((int)CommandStatus.Success);
+            CommandResponse response = new CommandResponse((int)CommandStatus.Success);
+            response.Metadata.Add("Buttons", buttons.ToString());
+            response.Metadata.Add("Icon", icon.ToString());
+            response.Metadata.Add("Caption", caption);
+            response.Metadata.Add("Message", message);
+            return response;
         }
         [CommandHelp("Displays the path of the current server folder.")]
         private static CommandResponse path(CommandRequest args, CommandPipeline pipe)

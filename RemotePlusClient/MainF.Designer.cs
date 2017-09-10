@@ -41,9 +41,9 @@ namespace RemotePlusClient
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Speak");
-            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Beep");
-            System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("File Transfer");
+            System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Speak");
+            System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("Beep");
+            System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("File Transfer");
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.mi_open = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -74,9 +74,11 @@ namespace RemotePlusClient
             this.menuItem3 = new System.Windows.Forms.MenuItem();
             this.menuItem10 = new System.Windows.Forms.MenuItem();
             this.command_browse_menuItem = new System.Windows.Forms.MenuItem();
+            this.mi_pipeLineBrowser = new System.Windows.Forms.MenuItem();
             this.menuItem11 = new System.Windows.Forms.MenuItem();
             this.configure_menuItem = new System.Windows.Forms.MenuItem();
             this.sendEmail_menuItem = new System.Windows.Forms.MenuItem();
+            this.mi_closeConsoleArea = new System.Windows.Forms.MenuItem();
             this.contextMenuStrip1.SuspendLayout();
             this.contextMenuStrip2.SuspendLayout();
             this.tcRight.SuspendLayout();
@@ -175,16 +177,16 @@ namespace RemotePlusClient
             this.treeView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.treeView1.Location = new System.Drawing.Point(3, 3);
             this.treeView1.Name = "treeView1";
-            treeNode1.Name = "nd_speak";
-            treeNode1.Text = "Speak";
-            treeNode2.Name = "nd_beep";
-            treeNode2.Text = "Beep";
-            treeNode3.Name = "nd_FileTransfer";
-            treeNode3.Text = "File Transfer";
+            treeNode4.Name = "nd_speak";
+            treeNode4.Text = "Speak";
+            treeNode5.Name = "nd_beep";
+            treeNode5.Text = "Beep";
+            treeNode6.Name = "nd_FileTransfer";
+            treeNode6.Text = "File Transfer";
             this.treeView1.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode1,
-            treeNode2,
-            treeNode3});
+            treeNode4,
+            treeNode5,
+            treeNode6});
             this.treeView1.Size = new System.Drawing.Size(160, 394);
             this.treeView1.TabIndex = 2;
             // 
@@ -296,7 +298,8 @@ namespace RemotePlusClient
             this.menuItem8.Index = 2;
             this.menuItem8.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
             this.menuItem9,
-            this.hide_right_menuItem});
+            this.hide_right_menuItem,
+            this.mi_closeConsoleArea});
             this.menuItem8.Text = "Windows";
             // 
             // menuItem9
@@ -328,7 +331,8 @@ namespace RemotePlusClient
             // 
             this.menuItem10.Index = 4;
             this.menuItem10.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-            this.command_browse_menuItem});
+            this.command_browse_menuItem,
+            this.mi_pipeLineBrowser});
             this.menuItem10.Text = "Commands";
             // 
             // command_browse_menuItem
@@ -336,6 +340,12 @@ namespace RemotePlusClient
             this.command_browse_menuItem.Index = 0;
             this.command_browse_menuItem.Text = "Browse";
             this.command_browse_menuItem.Click += new System.EventHandler(this.command_browse_menuItem_Click);
+            // 
+            // mi_pipeLineBrowser
+            // 
+            this.mi_pipeLineBrowser.Index = 1;
+            this.mi_pipeLineBrowser.Text = "Pipeline Browser";
+            this.mi_pipeLineBrowser.Click += new System.EventHandler(this.mi_pipeLineBrowser_Click);
             // 
             // menuItem11
             // 
@@ -356,6 +366,12 @@ namespace RemotePlusClient
             this.sendEmail_menuItem.Index = 1;
             this.sendEmail_menuItem.Text = "Send Email";
             this.sendEmail_menuItem.Click += new System.EventHandler(this.sendEmail_menuItem_Click);
+            // 
+            // mi_closeConsoleArea
+            // 
+            this.mi_closeConsoleArea.Index = 2;
+            this.mi_closeConsoleArea.Text = "Close Console Area";
+            this.mi_closeConsoleArea.Click += new System.EventHandler(this.mi_closeConsoleArea_Click);
             // 
             // MainF
             // 
@@ -417,5 +433,7 @@ namespace RemotePlusClient
         private MenuItem menuItem11;
         private MenuItem configure_menuItem;
         private MenuItem sendEmail_menuItem;
+        private MenuItem mi_pipeLineBrowser;
+        private MenuItem mi_closeConsoleArea;
     }
 }

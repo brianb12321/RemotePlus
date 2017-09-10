@@ -12,8 +12,13 @@ namespace RemotePlusLibrary.Extension.CommandSystem.CommandClasses
     {
         [DataMember]
         public int ResponseCode { get; set; }
+        [DataMember]
+        public string CustomStatusMessage { get; set; }
+        [DataMember]
+        public Dictionary<string, string> Metadata { get; set; }
         public CommandResponse(int code)
         {
+            Metadata = new Dictionary<string, string>();
             ResponseCode = code;
         }
     }

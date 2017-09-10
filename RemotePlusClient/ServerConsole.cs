@@ -11,6 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
 
 namespace RemotePlusClient
 {
@@ -84,9 +85,19 @@ namespace RemotePlusClient
             {
                 string command = textBox1.Text;
                 textBox1.Clear();
-                MainF.Remote.RunServerCommand(command, CommandExecutionMode.Client);
+                var result = MainF.Remote.RunServerCommand(command, CommandExecutionMode.Client);
+                PostResult(result);
             }
         }
+
+        private void PostResult(CommandPipeline result)
+        {
+            if (ClientApp.MainWindow.BottumPages.ContainsKey(CommandPipelineViewer.NAME))
+            {
+                ((CommandPipelineViewer)ClientApp.MainWindow.BottumPages[CommandPipelineViewer.NAME]).UpdatePipeline(result);
+            }
+        }
+
         private void richTextBox1_TextChanged(object sender, EventArgs e)
         {
             richTextBox1.SelectionStart = richTextBox1.Text.Length;

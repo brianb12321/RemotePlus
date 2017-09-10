@@ -87,6 +87,12 @@
     <Compile Include="CommandDialogs\SpeakDialog.Designer.cs">
       <DependentUpon>SpeakDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="CommandPipelineViewer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CommandPipelineViewer.Designer.cs">
+      <DependentUpon>CommandPipelineViewer.cs</DependentUpon>
+    </Compile>
     <Compile Include="ConnectAdvancedDialogBox.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -167,6 +173,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="CommandDialogs\SpeakDialog.resx">
       <DependentUpon>SpeakDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CommandPipelineViewer.resx">
+      <DependentUpon>CommandPipelineViewer.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ConnectAdvancedDialogBox.resx">
       <DependentUpon>ConnectAdvancedDialogBox.cs</DependentUpon>

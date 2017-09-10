@@ -23,5 +23,14 @@ namespace RemotePlusLibrary.Extension.CommandSystem.CommandClasses
         {
             return Arguments[0];
         }
+        public string GetFullCommand()
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach(string a in Arguments)
+            {
+                sb.Append(a);
+            }
+            return sb.ToString();
+        }
     }
 }
