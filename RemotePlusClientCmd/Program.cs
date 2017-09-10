@@ -12,6 +12,7 @@ using System.Drawing;
 using RemotePlusClient.CommonUI;
 using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusLibrary.Extension.ClientCommandSystem;
+using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
 
 namespace RemotePlusClientCmd
 {
@@ -101,7 +102,8 @@ namespace RemotePlusClientCmd
                     var c = Console.ReadLine();
                     if (c.ToCharArray()[0] == '#')
                     {
-                        RunLocalCommand(c, CommandExecutionMode.Client);
+                        //TODO: Add pipeline feature
+                        RunLocalCommand(new CommandRequest(c.Split(' ')), CommandExecutionMode.Client, null);
                     }
                     else
                     {
@@ -113,7 +115,7 @@ namespace RemotePlusClientCmd
             channel.Close();
 #pragma warning restore CS0162 // Unreachable code detected
         }
-        static int Input(string i)
+        static CommandPipeline Input(string i)
         {
             return Remote.RunServerCommand(i, CommandExecutionMode.Client);
         }
@@ -126,17 +128,16 @@ namespace RemotePlusClientCmd
             LocalCommands.Add("#load-commandFile", load_CommandFile);
         }
 
-        static int RunLocalCommand(string command, CommandExecutionMode commandMode)
+        static CommandResponse RunLocalCommand(CommandRequest request, CommandExecutionMode commandMode, CommandPipeline pipe)
         {
             bool throwFlag = false;
             StatusCodeDeliveryMethod scdm = StatusCodeDeliveryMethod.DoNotDeliver;
             try
             {
                 bool FoundCommand = false;
-                string[] ca = command.Split();
                 foreach (KeyValuePair<string, CommandDelegate> k in LocalCommands)
                 {
-                    if (ca[0] == k.Key)
+                    if (request.Arguments[0] == k.Key)
                     {
                         var ba = RemotePlusConsole.GetCommandBehavior(k.Value);
                         if (ba != null)
@@ -144,7 +145,7 @@ namespace RemotePlusClientCmd
                             if (commandMode != ba.ExecutionType)
                             {
                                 Logger.AddOutput($"The command requires you to be in {ba.ExecutionType} mode.", OutputLevel.Error);
-                                return (int)CommandStatus.AccessDenied;
+                                return new CommandResponse((int)CommandStatus.AccessDenied);
                             }
                             if (ba.DoNotCatchExceptions)
                             {
@@ -156,7 +157,7 @@ namespace RemotePlusClientCmd
                             }
                         }
                         FoundCommand = true;
-                        var sc = k.Value(ca);
+                        var sc = k.Value(request, pipe);
                         if (scdm == StatusCodeDeliveryMethod.TellMessage)
                         {
                             Logger.AddOutput($"Command {k.Key} finished with status code {sc.ToString()}", OutputLevel.Info);
@@ -171,9 +172,9 @@ namespace RemotePlusClientCmd
                 if (!FoundCommand)
                 {
                     Logger.AddOutput("Unknown local command. Please type {#help} for a list of commands.", OutputLevel.Error);
-                    return (int)CommandStatus.Fail;
+                    return new CommandResponse((int)CommandStatus.Fail);
                 }
-                return -2;
+                return new CommandResponse(-2);
             }
             catch (Exception ex)
             {
@@ -184,7 +185,7 @@ namespace RemotePlusClientCmd
                 else
                 {
                     Logger.AddOutput("Error whie executing local command: " + ex.Message, OutputLevel.Error);
-                    return (int)CommandStatus.Fail;
+                    return new CommandResponse((int)CommandStatus.Fail);
                 }
             }
         }

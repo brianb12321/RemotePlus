@@ -10,6 +10,7 @@ using System.IO;
 using System.Reflection;
 using RemotePlusLibrary.Extension.ClientCommandSystem;
 using RemotePlusLibrary.Extension.ExtensionLibraries.LibraryStartupTypes;
+using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
 
 namespace ReleaseExtensions
 {
@@ -35,16 +36,16 @@ namespace ReleaseExtensions
         }
 
         [CommandHelp("Describes about the ReleaseExtensionsLibrary.")]
-        int releaseExtensionAbout(string[] args)
+        CommandResponse releaseExtensionAbout(CommandRequest args, CommandPipeline pipe)
         {
             ServerManager.DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(Logging.OutputLevel.Info, "ReleaseExtension is a test of the extension system."));
-            return (int)CommandStatus.Success;
+            return new CommandResponse((int)CommandStatus.Success);
         }
         [CommandHelp("Say hello")]
-        int client_sayHello(string[] args)
+        CommandResponse client_sayHello(CommandRequest args, CommandPipeline pipe)
         {
             RemotePlusClientCmd.ClientCmdManager.Logger.AddOutput("Hello", Logging.OutputLevel.Info);
-            return (int)CommandStatus.Success;
+            return new CommandResponse((int)CommandStatus.Success);
         }
     }
 }

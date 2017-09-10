@@ -15,6 +15,7 @@ using RemotePlusLibrary.Extension.Programmer;
 using RemotePlusLibrary.Extension.ExtensionTypes;
 using RemotePlusLibrary.Extension.ExtensionLibraries;
 using RemotePlusLibrary.Core.EmailService;
+using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
 
 namespace RemotePlusServer
 {
@@ -219,7 +220,7 @@ namespace RemotePlusServer
             }
         }
 
-        public void Speak(string Message, System.Speech.Synthesis.VoiceGender Gender, VoiceAge Age)
+        public void Speak(string Message, VoiceGender Gender, VoiceAge Age)
         {
             CheckRegisteration("Speak");
             if (!LoggedInUser.Role.Privilleges.CanSpeak)
@@ -235,31 +236,34 @@ namespace RemotePlusServer
             }
         }
 
-        public int RunServerCommand(string Command, CommandExecutionMode commandMode)
+        public CommandPipeline RunServerCommand(string Command, CommandExecutionMode commandMode)
         {
+            CommandPipeline pipe = new CommandPipeline();
+            int pos = 0;
             CheckRegisteration("RunServerCommand");
             if (!LoggedInUser.Role.Privilleges.CanAccessConsole)
             {
                 Client.ClientCallback.TellMessage("You do not have promission to use the Console function.", OutputLevel.Info);
-                return (int)CommandStatus.Fail;
+                return null;
             }
             else
             {
                 string[] cs = Command.Split('&');
                 if (cs.Length == 1)
                 {
-                    return ServerManager.Execute(cs[0], commandMode);
+                    var request = new CommandRequest(cs);
+                    pipe.Add(0, new CommandRoutine(request, ServerManager.Execute(request, commandMode, pipe)));
                 }
                 else
                 {
-                    int rs = 0;
                     foreach(string c in cs)
                     {
-                        rs += (int)ServerManager.Execute(c, CommandExecutionMode.Client);
+                        CommandRequest req = new CommandRequest(c.Split(' '));
+                        pipe.Add(pos++, new CommandRoutine(req, ServerManager.Execute(req, CommandExecutionMode.Client, pipe)));
                     }
-                    return rs;
                 }
             }
+            return pipe;
         }
 
         public void UpdateServerSettings(ServerSettings Settings)

@@ -15,6 +15,7 @@ using System.Reflection;
 using System.Windows.Forms;
 using RemotePlusLibrary.Core.EmailService;
 using RemotePlusLibrary.Extension.ExtensionLibraries.InitEnvironments;
+using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
 
 namespace RemotePlusServer
 {
@@ -296,17 +297,16 @@ namespace RemotePlusServer
             Logger.AddOutput("Initializing watchers.", OutputLevel.Info);
             Watchers = new Dictionary<string, WatcherBase>();
         }
-        public static int Execute(string c, CommandExecutionMode commandMode)
+        public static CommandResponse Execute(CommandRequest c, CommandExecutionMode commandMode, CommandPipeline pipe)
         {
             bool throwFlag = false;
             StatusCodeDeliveryMethod scdm = StatusCodeDeliveryMethod.DoNotDeliver;
             try
             {
-                ServerManager.Logger.AddOutput($"Executing server command {c}", OutputLevel.Info);
-                string[] ca = c.Split();
+                ServerManager.Logger.AddOutput($"Executing server command {c.Arguments[0]}", OutputLevel.Info);
                 try
                 {
-                    var command = DefaultService.Commands[ca[0]];
+                    var command = DefaultService.Commands[c.Arguments[0]];
                     var ba = RemotePlusConsole.GetCommandBehavior(command);
                     if (ba != null)
                     {
@@ -314,7 +314,7 @@ namespace RemotePlusServer
                         {
                             Logger.AddOutput($"The command requires you to be in {ba.ExecutionType} mode.", OutputLevel.Error);
                             DefaultService.Remote.Client.ClientCallback.TellMessage($"The command requires you to be in {ba.ExecutionType} mode.", OutputLevel.Error);
-                            return (int)CommandStatus.AccessDenied;
+                            return new CommandResponse((int)CommandStatus.AccessDenied);
                         }
                         if (ba.DoNotCatchExceptions)
                         {
@@ -326,14 +326,14 @@ namespace RemotePlusServer
                         }
                     }
                     Logger.AddOutput("Found command, and executing.", OutputLevel.Debug);
-                    var sc = command(ca);
+                    var sc = command(c, pipe);
                     if (scdm == StatusCodeDeliveryMethod.TellMessage)
                     {
-                        DefaultService.Remote.Client.ClientCallback.TellMessage($"Command {ca[0]} finished with status code {sc.ToString()}", OutputLevel.Info);
+                        DefaultService.Remote.Client.ClientCallback.TellMessage($"Command {c.Arguments[0]} finished with status code {sc.ToString()}", OutputLevel.Info);
                     }
                     else if (scdm == StatusCodeDeliveryMethod.TellMessageToServerConsole)
                     {
-                        DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, $"Command {ca[0]} finished with status code {sc.ToString()}"));
+                        DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, $"Command {c.Arguments[0]} finished with status code {sc.ToString()}"));
                     }
                     return sc;
                 }
@@ -341,7 +341,7 @@ namespace RemotePlusServer
                 {
                     Logger.AddOutput("Failed to find the command.", OutputLevel.Debug);
                     DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, "Unknown command. Please type {help} for a list of commands", "Server Host"));
-                    return (int)CommandStatus.Fail;
+                    return new CommandResponse((int)CommandStatus.Fail);
                 }
             }
             catch (Exception ex)
@@ -354,7 +354,7 @@ namespace RemotePlusServer
                 {
                     ServerManager.Logger.AddOutput("command failed: " + ex.Message, OutputLevel.Info);
                     DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, "Error whie executing command: " + ex.Message, "Server Host"));
-                    return (int)CommandStatus.Fail;
+                    return new CommandResponse((int)CommandStatus.Fail);
                 }
             }
         }

@@ -6,68 +6,69 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusServer;
+using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
 
 namespace CommonWebCommands
 {
     public static class WebCommands
     {
         [CommandHelp("Starts a new chrome seassion.")]
-        public static int chrome(string[] args)
+        public static CommandResponse chrome(CommandRequest args, CommandPipeline pipe)
         {
             try
             {
-                ServerManager.DefaultService.Remote.RunProgram("cmd.exe", $"/c \"start chrome.exe {args[1]}\"");
+                ServerManager.DefaultService.Remote.RunProgram("cmd.exe", $"/c \"start chrome.exe {args.Arguments[1]}\"");
                 ServerManager.DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(Logging.OutputLevel.Info, "chrome started", "WebCommands"));
-                return (int)CommandStatus.Success;
+                return new CommandResponse((int)CommandStatus.Success);
             }
             catch
             {
-                return (int)CommandStatus.Fail;
+                return new CommandResponse((int)CommandStatus.Fail);
                 throw;
             }
         }
         [CommandHelp("Starts a new internet explorer seassion.")]
-        public static int ie(string[] args)
+        public static CommandResponse ie(CommandRequest args, CommandPipeline pipe)
         {
             try
             {
-                ServerManager.DefaultService.Remote.RunProgram("cmd.exe", $"/c \"start iexplore.exe {args[1]}\"");
+                ServerManager.DefaultService.Remote.RunProgram("cmd.exe", $"/c \"start iexplore.exe {args.Arguments[1]}\"");
                 ServerManager.DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(Logging.OutputLevel.Info, "chrome started", "WebCommands"));
-                return (int)CommandStatus.Success;
+                return new CommandResponse((int)CommandStatus.Success);
             }
             catch
             {
-                return (int)CommandStatus.Fail;
+                return new CommandResponse((int)CommandStatus.Fail);
                 throw;
             }
         }
         [CommandHelp("Starts a new Opera seassion")]
-        public static int opera(string[] args)
+        public static CommandResponse opera(CommandRequest args, CommandPipeline pipe)
         {
             try
             {
-                ServerManager.DefaultService.Remote.RunProgram("cmd.exe", $"/c \"start opera.exe {args[1]}\"");
+                ServerManager.DefaultService.Remote.RunProgram("cmd.exe", $"/c \"start opera.exe {args.Arguments[1]}\"");
                 ServerManager.DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(Logging.OutputLevel.Info, "Opera started", "WebCommands"));
-                return (int)CommandStatus.Success;
+                return new CommandResponse((int)CommandStatus.Success);
             }
             catch
             {
-                return (int)CommandStatus.Fail;
+                return new CommandResponse((int)CommandStatus.Fail);
                 throw;
             }
         }
         [CommandHelp("Starts a new Firefox seassion")]
-        public static int firefox(string[] args)
+        public static CommandResponse firefox(CommandRequest args, CommandPipeline pipe)
         {
             try
             {
-                ServerManager.DefaultService.Remote.RunProgram("cmd.exe", $"/c \"start firefox.exe {args[1]}\"");
+                ServerManager.DefaultService.Remote.RunProgram("cmd.exe", $"/c \"start firefox.exe {args.Arguments[1]}\"");
                 ServerManager.DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(Logging.OutputLevel.Info, "Firefox started", "WebCommands"));
-                return (int)CommandStatus.Success;
+                return new CommandResponse((int)CommandStatus.Success);
             }
             catch
             {
-                return (int)CommandStatus.Fail;
+                return new CommandResponse((int)CommandStatus.Fail);
                 throw;
             }
         }
