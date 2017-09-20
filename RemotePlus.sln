@@ -3,31 +3,31 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26430.16
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemotePlusServer", "RemotePlusServer\RemotePlusServer.csproj", "{4E41F31E-DCE5-4B9C-A2D6-20BF6ACD9C84}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemotePlusServer", "src\RemotePlusServer\RemotePlusServer.csproj", "{4E41F31E-DCE5-4B9C-A2D6-20BF6ACD9C84}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemotePlusClient", "RemotePlusClient\RemotePlusClient.csproj", "{D6122622-7067-4FBA-A617-365FA3FCF809}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemotePlusClient", "src\RemotePlusClient\RemotePlusClient.csproj", "{D6122622-7067-4FBA-A617-365FA3FCF809}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemotePlusLibrary", "RemotePlusLibrary\RemotePlusLibrary.csproj", "{00C22A1F-D3DF-4193-AAA8-9907D08E2511}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemotePlusLibrary", "src\RemotePlusLibrary\RemotePlusLibrary.csproj", "{00C22A1F-D3DF-4193-AAA8-9907D08E2511}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemotePlusLibrary.Core", "RemotePlusLibrary.Core\RemotePlusLibrary.Core.csproj", "{0334629B-6302-42A8-B159-F8646B4D8650}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemotePlusLibrary.Core", "src\RemotePlusLibrary.Core\RemotePlusLibrary.Core.csproj", "{0334629B-6302-42A8-B159-F8646B4D8650}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemotePlusLibrary.Extension", "RemotePlusLibrary.Extension\RemotePlusLibrary.Extension.csproj", "{2AA5E768-7E0A-4B0C-A0D1-F79153902DF9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemotePlusLibrary.Extension", "src\RemotePlusLibrary.Extension\RemotePlusLibrary.Extension.csproj", "{2AA5E768-7E0A-4B0C-A0D1-F79153902DF9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReleaseExtensions", "ReleaseExtensions\ReleaseExtensions.csproj", "{4A312E8C-FE94-4996-B2B4-55C9854075C8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReleaseExtensions", "src\ReleaseExtensionLibraries\ReleaseExtensions\ReleaseExtensions.csproj", "{4A312E8C-FE94-4996-B2B4-55C9854075C8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemotePlusClientCmd", "RemotePlusClientCmd\RemotePlusClientCmd.csproj", "{38D2EDD9-0860-4C75-8344-8BA0AC72CBF0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemotePlusClientCmd", "src\RemotePlusClientCmd\RemotePlusClientCmd.csproj", "{38D2EDD9-0860-4C75-8344-8BA0AC72CBF0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemotePlusLibrary.Configuration", "RemotePlusLibrary.Configuration\RemotePlusLibrary.Configuration.csproj", "{8A8A5888-1CE7-46ED-B8DE-1AC7671F3426}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemotePlusLibrary.Configuration", "src\RemotePlusLibrary.Configuration\RemotePlusLibrary.Configuration.csproj", "{8A8A5888-1CE7-46ED-B8DE-1AC7671F3426}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemotePlusClient.CommonUI", "RemotePlusClient.CommonUI\RemotePlusClient.CommonUI.csproj", "{9EF00D4B-27F4-4C2A-BDA7-FC47246B2064}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemotePlusClient.CommonUI", "src\RemotePlusClient.CommonUI\RemotePlusClient.CommonUI.csproj", "{9EF00D4B-27F4-4C2A-BDA7-FC47246B2064}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemotePlusLibrary.Core.EmailService", "RemotePlusLibrary.Core.EmailService\RemotePlusLibrary.Core.EmailService.csproj", "{166C0846-95A7-4134-9A6C-BB2E5C9C4594}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemotePlusLibrary.Core.EmailService", "src\RemotePlusLibrary.Core.EmailService\RemotePlusLibrary.Core.EmailService.csproj", "{166C0846-95A7-4134-9A6C-BB2E5C9C4594}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Extension Libraries", "Extension Libraries", "{F1A31AC8-6688-4F6C-A0BB-7A02998BB3BA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonWebCommands", "CommonWebCommands\CommonWebCommands.csproj", "{AB549757-6EB2-4A4A-BD87-320D9AB98301}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonWebCommands", "src\ReleaseExtensionLibraries\CommonWebCommands\CommonWebCommands.csproj", "{AB549757-6EB2-4A4A-BD87-320D9AB98301}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsTools", "WindowsTools\WindowsTools.csproj", "{C2E44C89-7521-4B30-B522-BECD525B1E51}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsTools", "src\ReleaseExtensionLibraries\WindowsTools\WindowsTools.csproj", "{C2E44C89-7521-4B30-B522-BECD525B1E51}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

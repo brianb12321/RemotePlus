@@ -17,7 +17,7 @@
     <DebugSymbols>false</DebugSymbols>
     <DebugType>none</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\RemotePlusServer\bin\Debug\extensions\</OutputPath>
+    <OutputPath>..\..\RemotePlusServer\bin\Debug\extensions\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -32,11 +32,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="GameclubCryptoServices">
-      <HintPath>..\Libs\GameclubCryptoServices.dll</HintPath>
+      <HintPath>..\..\..\Libs\GameclubCryptoServices.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Logging">
-      <HintPath>..\Libs\Logging.dll</HintPath>
+      <HintPath>..\..\..\Libs\Logging.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
@@ -55,32 +55,32 @@
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\RemotePlusLibrary.Configuration\RemotePlusLibrary.Configuration.csproj">
+    <ProjectReference Include="..\..\RemotePlusLibrary.Configuration\RemotePlusLibrary.Configuration.csproj">
       <Project>{8a8a5888-1ce7-46ed-b8de-1ac7671f3426}</Project>
       <Name>RemotePlusLibrary.Configuration</Name>
       <Private>False</Private>
     </ProjectReference>
-    <ProjectReference Include="..\RemotePlusLibrary.Core.EmailService\RemotePlusLibrary.Core.EmailService.csproj">
+    <ProjectReference Include="..\..\RemotePlusLibrary.Core.EmailService\RemotePlusLibrary.Core.EmailService.csproj">
       <Project>{166c0846-95a7-4134-9a6c-bb2e5c9c4594}</Project>
       <Name>RemotePlusLibrary.Core.EmailService</Name>
       <Private>False</Private>
     </ProjectReference>
-    <ProjectReference Include="..\RemotePlusLibrary.Core\RemotePlusLibrary.Core.csproj">
+    <ProjectReference Include="..\..\RemotePlusLibrary.Core\RemotePlusLibrary.Core.csproj">
       <Project>{0334629b-6302-42a8-b159-f8646b4d8650}</Project>
       <Name>RemotePlusLibrary.Core</Name>
       <Private>False</Private>
     </ProjectReference>
-    <ProjectReference Include="..\RemotePlusLibrary.Extension\RemotePlusLibrary.Extension.csproj">
+    <ProjectReference Include="..\..\RemotePlusLibrary.Extension\RemotePlusLibrary.Extension.csproj">
       <Project>{2aa5e768-7e0a-4b0c-a0d1-f79153902df9}</Project>
       <Name>RemotePlusLibrary.Extension</Name>
       <Private>False</Private>
     </ProjectReference>
-    <ProjectReference Include="..\RemotePlusLibrary\RemotePlusLibrary.csproj">
+    <ProjectReference Include="..\..\RemotePlusLibrary\RemotePlusLibrary.csproj">
       <Project>{00C22A1F-D3DF-4193-AAA8-9907D08E2511}</Project>
       <Name>RemotePlusLibrary</Name>
       <Private>False</Private>
     </ProjectReference>
-    <ProjectReference Include="..\RemotePlusServer\RemotePlusServer.csproj">
+    <ProjectReference Include="..\..\RemotePlusServer\RemotePlusServer.csproj">
       <Project>{4e41f31e-dce5-4b9c-a2d6-20bf6acd9c84}</Project>
       <Name>RemotePlusServer</Name>
       <Private>False</Private>
