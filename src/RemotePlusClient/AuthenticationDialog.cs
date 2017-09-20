@@ -30,7 +30,7 @@ namespace RemotePlusClient
                     break;
                 case AutehnticationSeverity.Normal:
                     panel1.BackColor = Color.Blue;
-                    label4.Text = "The server is requesting authroization.";
+                    label4.Text = "The server is requesting authorization.";
                     break;
                 case AutehnticationSeverity.Risk:
                     panel1.BackColor = Color.Yellow;

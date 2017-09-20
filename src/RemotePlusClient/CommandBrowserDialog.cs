@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RemotePlusLibrary.Extension.CommandSystem;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -18,7 +19,7 @@ namespace RemotePlusClient
         }
         IEnumerable<string> GetCommandNames()
         {
-            return MainF.Remote.GetCommands();
+            return MainF.Remote.GetCommandsAsStrings();
         }
         private void CommandBrowserDialog_Load(object sender, EventArgs e)
         {

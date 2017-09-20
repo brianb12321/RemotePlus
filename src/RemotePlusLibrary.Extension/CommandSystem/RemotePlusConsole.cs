@@ -155,5 +155,45 @@ namespace RemotePlusLibrary.Extension.CommandSystem
                 return null;
             }
         }
+        public static CommandHelpAttribute GetCommandHelp(CommandDelegate command)
+        {
+            try
+            {
+                object a = command.Method.GetCustomAttributes(false).Where(t => t is CommandHelpAttribute)
+                .First();
+                if (a != null)
+                {
+                    return (CommandHelpAttribute)a;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch
+            {
+                return null;
+            }
+        }
+        public static HelpPageAttribute GetCommandHelpPage(CommandDelegate command)
+        {
+            try
+            {
+                object a = command.Method.GetCustomAttributes(false).Where(t => t is HelpPageAttribute)
+                .First();
+                if (a != null)
+                {
+                    return (HelpPageAttribute)a;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch
+            {
+                return null;
+            }
+        }
     }
 }

@@ -336,12 +336,22 @@ namespace RemotePlusServer
             }
             return l;
         }
-        public List<string> GetCommands()
+        public IEnumerable<CommandDescription> GetCommands()
         {
+            List<CommandDescription> rc = new List<CommandDescription>();
             CheckRegisteration("GetCommands");
             ServerManager.Logger.AddOutput("Requesting commands list.", OutputLevel.Info);
             Client.ClientCallback.TellMessage("Returning commands list.", OutputLevel.Info);
-            return ServerManager.DefaultService.Commands.Keys.ToList();
+            foreach(KeyValuePair<string, CommandDelegate> currentCommand in ServerManager.DefaultService.Commands)
+            {
+                rc.Add(new CommandDescription() { Help = RemotePlusConsole.GetCommandHelp(currentCommand.Value), Behavior = RemotePlusConsole.GetCommandBehavior(currentCommand.Value), HelpPage = RemotePlusConsole.GetCommandHelpPage(currentCommand.Value), CommandName = currentCommand.Key });
+            }
+            return rc;
+        }
+        public IEnumerable<string> GetCommandsAsStrings()
+        {
+            CheckRegisteration("GetCommandsAsStrings");
+            return ServerManager.DefaultService.Commands.Keys;
         }
 
         public void StartWatcher(string WatcherName, object args)

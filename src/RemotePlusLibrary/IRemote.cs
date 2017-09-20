@@ -58,7 +58,9 @@ namespace RemotePlusLibrary
         [OperationContract]
         List<ExtensionDetails> GetExtensionNames();
         [OperationContract]
-        List<string> GetCommands();
+        IEnumerable<string> GetCommandsAsStrings();
+        [OperationContract]
+        IEnumerable<CommandDescription> GetCommands();
         [OperationContract(IsOneWay = true)]
         void StartWatcher(string WatcherName, object args);
         [OperationContract]

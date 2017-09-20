@@ -40,7 +40,7 @@ namespace RemotePlusClient
             textBox1.AutoCompleteSource = AutoCompleteSource.CustomSource;
             textBox1.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
             AutoCompleteStringCollection acsc = new AutoCompleteStringCollection();
-            acsc.AddRange(MainF.Remote.GetCommands().ToArray());
+            acsc.AddRange(MainF.Remote.GetCommandsAsStrings().ToArray());
             textBox1.AutoCompleteCustomSource = acsc;
             if (!string.IsNullOrEmpty(scriptFile))
             {
