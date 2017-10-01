@@ -80,6 +80,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands.cs" />
+    <Compile Include="ExtensionSystem\ServerExtensionLibrary.cs" />
+    <Compile Include="ExtensionSystem\ServerInitEnvironment.cs" />
     <Compile Include="RemotePlusService.cs" />
     <Compile Include="ServerControls.cs">
       <SubType>Form</SubType>
@@ -88,6 +90,7 @@
       <DependentUpon>ServerControls.cs</DependentUpon>
     </Compile>
     <Compile Include="GlobalErrorHandler.cs" />
+    <Compile Include="ExtensionSystem\ServerExtensionLibraryCollection.cs" />
     <Compile Include="ServerPrerequisites.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

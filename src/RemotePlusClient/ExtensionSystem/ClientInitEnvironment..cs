@@ -5,15 +5,15 @@ using System.Text;
 using System.Threading.Tasks;
 using RemotePlusLibrary.Extension;
 
-namespace RemotePlusLibrary.Extension.ExtensionLibraries.InitEnvironments
+namespace RemotePlusClient.ExtensionSystem
 {
-    public class ServerInitEnvironment : IInitEnvironment
+    public class ClientInitEnvironment : IInitEnvironment
     {
         public bool PreviousError { get; set; }
 
         public int InitPosition { get; set; }
 
-        public ServerInitEnvironment(bool pe)
+        public ClientInitEnvironment(bool pe)
         {
             InitPosition = 1;
             PreviousError = pe;

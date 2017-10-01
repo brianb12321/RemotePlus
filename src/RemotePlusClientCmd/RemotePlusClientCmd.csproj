@@ -53,6 +53,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClientCallback.cs" />
+    <Compile Include="ClientCommandSystem\ClientCommandLibraryLoader.cs" />
+    <Compile Include="ClientCommandSystem\IClientModuleLibraryStartup.cs" />
     <Compile Include="CommandLineOptions.cs" />
     <Compile Include="LocalCommands.cs" />
     <Compile Include="Program.cs" />

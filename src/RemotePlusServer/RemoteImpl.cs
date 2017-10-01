@@ -12,10 +12,9 @@ using System.Diagnostics;
 using RemotePlusLibrary.Extension.CommandSystem;
 using System.IO;
 using RemotePlusLibrary.Extension.Programmer;
-using RemotePlusLibrary.Extension.ExtensionTypes;
-using RemotePlusLibrary.Extension.ExtensionLibraries;
 using RemotePlusLibrary.Core.EmailService;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
+using RemotePlusServer.ExtensionSystem;
 
 namespace RemotePlusServer
 {
@@ -352,19 +351,6 @@ namespace RemotePlusServer
         {
             CheckRegisteration("GetCommandsAsStrings");
             return ServerManager.DefaultService.Commands.Keys;
-        }
-
-        public void StartWatcher(string WatcherName, object args)
-        {
-            CheckRegisteration("StartWatcher");
-            if (!LoggedInUser.Role.Privilleges.CanRunWatcher)
-            {
-                Client.ClientCallback.TellMessage(new UILogItem(OutputLevel.Error, "You do not have permission to start a watcher.", "Server Host"));
-            }
-            else
-            {
-                ServerManager.Watchers[WatcherName].Start(args);
-            }
         }
 
         public ServerExtensionCollectionProgrammer GetCollectionProgrammer()

@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using RemotePlusLibrary.Extension.ExtensionTypes.ExtensionDetailTypes;
+using RemotePlusLibrary.Extension;
 
-namespace RemotePlusLibrary.Extension.ExtensionTypes
+namespace RemotePlusClient.ExtensionSystem
 {
     public interface IClientExtension : IExtension<ClientExtensionDetails>
     {

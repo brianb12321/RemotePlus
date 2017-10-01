@@ -11,7 +11,6 @@ using System.Windows.Forms;
 using System.Drawing;
 using RemotePlusClient.CommonUI;
 using RemotePlusLibrary.Extension.CommandSystem;
-using RemotePlusLibrary.Extension.ClientCommandSystem;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
 
 namespace RemotePlusClientCmd

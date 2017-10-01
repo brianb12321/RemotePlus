@@ -8,7 +8,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using RemotePlusLibrary.Extension.CommandSystem;
-using RemotePlusLibrary.Extension.WatcherSystem;
 using System.Speech.Synthesis;
 using System.Windows.Forms;
 using RemotePlusLibrary.Core.EmailService;
@@ -138,65 +137,6 @@ namespace RemotePlusServer
             }
             DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, sb.ToString()));
             return new CommandResponse((int)CommandStatus.Success);
-        }
-        [CommandHelp("Manages the watchers on the remote server.")]
-        private static CommandResponse watchers(CommandRequest args, CommandPipeline pipe)
-        {
-            if (args.Arguments.Length >= 2)
-            {
-                if(args.Arguments[1] == "run")
-                {
-                    if (args.Arguments.Length >= 4)
-                    {
-                        string t = "";
-                        for (int i = 3; i < args.Arguments.Length; i++)
-                        {
-                            t += $"{args.Arguments[i]}";
-                        }
-                        DefaultService.Remote.StartWatcher(args.Arguments[2], t);
-                        DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, $"Watcher {args.Arguments[2]} started."));
-                        return new CommandResponse((int)CommandStatus.Success);
-                    }
-                    else
-                    {
-                        DefaultService.Remote.StartWatcher(args.Arguments[2], null);
-                        DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, $"Watcher {args.Arguments[2]} started."));
-                        return new CommandResponse((int)CommandStatus.Success);
-                    }
-                }
-                else if(args.Arguments[1] == "all")
-                {
-                    StringBuilder sb = new StringBuilder();
-                    sb.AppendLine();
-                    foreach (KeyValuePair<string, WatcherBase> w in Watchers)
-                    {
-                        sb.AppendLine($"{w.Key}");
-                    }
-                    DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, sb.ToString()));
-                    return new CommandResponse((int)CommandStatus.Success);
-                }
-                else if(args.Arguments[1] == "running")
-                {
-                    StringBuilder sb = new StringBuilder();
-                    sb.AppendLine();
-                    foreach (KeyValuePair<string, WatcherBase> r in Watchers.Where(t => t.Value.Status == WatcherStatus.Running))
-                    {
-                        sb.AppendLine($"{r.Key}");
-                    }
-                    DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, "\n" + sb.ToString(), "Server Host"));
-                    return new CommandResponse((int)CommandStatus.Success);
-                }
-                else
-                {
-                    DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, "Invalid action."));
-                    return new CommandResponse((int)CommandStatus.Fail);
-                }
-            }
-            else
-            {
-                DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, "Please provide an action."));
-                return new CommandResponse((int)CommandStatus.Fail);
-            }
         }
         [CommandHelp("Returns the server version.")]
         private static CommandResponse version(CommandRequest args, CommandPipeline pipe)

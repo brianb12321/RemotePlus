@@ -6,10 +6,11 @@ using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
 using RemotePlusLibrary.Extension.Programmer;
+using RemotePlusLibrary.Extension;
 
-namespace RemotePlusLibrary.Extension.ExtensionTypes
+namespace RemotePlusLibrary.Extension
 {
-    public abstract class ServerExtension : IExtension<ExtensionDetails>
+    public abstract class ServerExtension : RemotePlusLibrary.Extension.IExtension<ExtensionDetails>
     {
         public virtual void ProgramRequested(ServerExtensionProgrammerUpdateEvent requestProgrammer)
         {

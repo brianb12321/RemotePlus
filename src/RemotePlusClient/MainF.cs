@@ -14,10 +14,7 @@ using System.Windows.Forms;
 using Logging;
 using System.Threading;
 using RemotePlusLibrary.Extension.Gui;
-using RemotePlusLibrary.Extension.LibraryCollections;
-using RemotePlusLibrary.Extension.ExtensionLibraries;
-using RemotePlusLibrary.Extension.ExtensionTypes;
-using RemotePlusLibrary.Extension.ExtensionLibraries.InitEnvironments;
+using RemotePlusClient.ExtensionSystem;
 
 namespace RemotePlusClient
 {

@@ -1,5 +1,5 @@
 ﻿using Logging;
-using RemotePlusLibrary.Extension.ClientCommandSystem;
+using RemotePlusClientCmd.ClientCommandSystem;
 using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
 using System;

@@ -2,11 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using RemotePlusLibrary.Extension.ExtensionTypes;
-using RemotePlusLibrary.Extension.ExtensionLibraries.LibraryStartupTypes;
 using System.IO;
+using RemotePlusLibrary.Extension;
 
-namespace RemotePlusLibrary.Extension.ExtensionLibraries
+namespace RemotePlusServer.ExtensionSystem
 {
     /// <summary>
     /// Represents a server extension library.

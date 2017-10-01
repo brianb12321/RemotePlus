@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace RemotePlusLibrary.Extension
 {
+    [Serializable]
     public class DependencyException : Exception
     {
         public DependencyException()

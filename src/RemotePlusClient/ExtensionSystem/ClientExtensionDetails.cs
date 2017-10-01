@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using RemotePlusLibrary.Extension;
 
-namespace RemotePlusLibrary.Extension.ExtensionTypes.ExtensionDetailTypes
+namespace RemotePlusClient.ExtensionSystem
 {
     [DataContract]
     public class ClientExtensionDetails : ExtensionDetails

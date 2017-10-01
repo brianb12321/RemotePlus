@@ -4,12 +4,11 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using RemotePlusLibrary.Extension.ExtensionLibraries.LibraryStartupTypes;
-using RemotePlusLibrary.Extension.ExtensionTypes;
 using Logging;
 using System.IO;
+using RemotePlusLibrary.Extension;
 
-namespace RemotePlusLibrary.Extension.ExtensionLibraries
+namespace RemotePlusClient.ExtensionSystem
 {
     public class ClientExtensionLibrary : ExtensionLibraryBase<IClientExtension>
     {
@@ -70,7 +69,7 @@ namespace RemotePlusLibrary.Extension.ExtensionLibraries
         private static RequiresDependencyAttribute[] LoadClientDependencies(Assembly a, Action<string, OutputLevel> logCallback, Action<IClientExtension> callback, IInitEnvironment env)
         {
             logCallback($"Searching dependencies for {a.GetName().Name}", OutputLevel.Info);
-            RequiresDependencyAttribute[] deps = ExtensionLibraryBase<ServerExtensionLibrary>.FindDependencies(a);
+            RequiresDependencyAttribute[] deps = ExtensionLibraryBase<ClientExtensionLibrary>.FindDependencies(a);
             foreach (RequiresDependencyAttribute d in deps)
             {
                 if (File.Exists(d.DependencyName))

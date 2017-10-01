@@ -6,22 +6,18 @@ using RemotePlusLibrary.Extension;
 using System.IO;
 using Logging;
 using RemotePlusLibrary.Extension.CommandSystem;
-using RemotePlusLibrary.Extension.WatcherSystem;
-using RemotePlusLibrary.Extension.LibraryCollections;
-using RemotePlusLibrary.Extension.ExtensionLibraries;
 using RemotePlusLibrary.Core;
 using System.Diagnostics;
 using System.Reflection;
 using System.Windows.Forms;
 using RemotePlusLibrary.Core.EmailService;
-using RemotePlusLibrary.Extension.ExtensionLibraries.InitEnvironments;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
+using RemotePlusServer.ExtensionSystem;
 
 namespace RemotePlusServer
 {
     public static partial class ServerManager
     {
-        public static Dictionary<string, WatcherBase> Watchers { get; private set; }
         public static CMDLogging Logger { get; } = new CMDLogging();
         public static RemotePlusService<RemoteImpl> DefaultService { get; private set; }
         public static ServerSettings DefaultSettings { get; set; } = new ServerSettings();
@@ -47,7 +43,6 @@ namespace RemotePlusServer
                 InitalizeKnownTypes();
                 ScanForServerSettingsFile();
                 ScanForEmailSettingsFile();
-                InitializeWatchers();
                 CreateServer();
                 InitializeVariables();
                 InitializeCommands();
@@ -162,7 +157,6 @@ namespace RemotePlusServer
             DefaultService.Commands.Add("vars", vars);
             DefaultService.Commands.Add("dateTime", dateTime);
             DefaultService.Commands.Add("processes", processes);
-            DefaultService.Commands.Add("watchers", watchers);
             DefaultService.Commands.Add("version", version);
             DefaultService.Commands.Add("encrypt", svm_encyptFile);
             DefaultService.Commands.Add("decrypt", svm_decryptFile);
@@ -291,11 +285,6 @@ namespace RemotePlusServer
 #endif
                 }
             }
-        }
-        static void InitializeWatchers()
-        {
-            Logger.AddOutput("Initializing watchers.", OutputLevel.Info);
-            Watchers = new Dictionary<string, WatcherBase>();
         }
         public static CommandResponse Execute(CommandRequest c, CommandExecutionMode commandMode, CommandPipeline pipe)
         {
