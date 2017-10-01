@@ -1,4 +1,5 @@
-﻿using RemotePlusLibrary.Extension.Gui;
+﻿using RemotePlusClient.ExtensionSystem;
+using RemotePlusLibrary.Extension.Gui;
 using RemotePlusLibrary.FileTransfer;
 using System;
 using System.Collections.Generic;
@@ -11,10 +12,14 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace RemotePlusClient.CommandDialogs
+namespace ClientTools
 {
-    public partial class FileTransfer : ThemedForm
+    public partial class FileTransfer : ThemedForm, IClientExtension
     {
+        public ThemedForm ExtensionForm => this;
+
+        public ClientExtensionDetails GeneralDetails => new ClientExtensionDetails("FileTransfer", "1.0.0.0");
+
         public FileTransfer()
         {
             InitializeComponent();

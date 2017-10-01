@@ -1,4 +1,6 @@
-﻿using RemotePlusLibrary.Extension.Gui;
+﻿using RemotePlusClient;
+using RemotePlusClient.ExtensionSystem;
+using RemotePlusLibrary.Extension.Gui;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -10,10 +12,14 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace RemotePlusClient.CommandDialogs
+namespace ClientTools
 {
-    public partial class SpeakDialog : ThemedForm
+    public partial class SpeakDialog : ThemedForm, IClientExtension
     {
+        public ThemedForm ExtensionForm => this;
+
+        public ClientExtensionDetails GeneralDetails => new ClientExtensionDetails("Speak", "1.0.0.0");
+
         public SpeakDialog()
         {
             InitializeComponent();
@@ -75,7 +81,6 @@ namespace RemotePlusClient.CommandDialogs
                 age = VoiceAge.Teen;
             }
             MainF.Remote.Speak(textBox1.Text, gender, age);
-
         }
     }
 }

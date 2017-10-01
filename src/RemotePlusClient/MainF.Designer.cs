@@ -28,8 +28,6 @@ namespace RemotePlusClient
             this.ForeColor = t.TextForgroundColor;
             this.treeView1.BackColor = t.TreeViewBackgroundColor;
             this.treeView1.ForeColor = t.TreeViewForegrondColor;
-            this.treeView2.BackColor = t.TreeViewBackgroundColor;
-            this.treeView2.ForeColor = t.TreeViewForegrondColor;
         }
 
         #region Windows Form Designer generated code
@@ -41,16 +39,10 @@ namespace RemotePlusClient
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Speak");
-            System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("Beep");
-            System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("File Transfer");
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.mi_open = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.emi_open = new System.Windows.Forms.ToolStripMenuItem();
-            this.tcRight = new System.Windows.Forms.TabControl();
-            this.tcr_extensions = new System.Windows.Forms.TabPage();
-            this.treeView2 = new System.Windows.Forms.TreeView();
             this.tcLeft = new System.Windows.Forms.TabControl();
             this.tcl_da = new System.Windows.Forms.TabPage();
             this.treeView1 = new System.Windows.Forms.TreeView();
@@ -69,7 +61,7 @@ namespace RemotePlusClient
             this.menuItem4 = new System.Windows.Forms.MenuItem();
             this.menuItem8 = new System.Windows.Forms.MenuItem();
             this.menuItem9 = new System.Windows.Forms.MenuItem();
-            this.hide_right_menuItem = new System.Windows.Forms.MenuItem();
+            this.mi_closeConsoleArea = new System.Windows.Forms.MenuItem();
             this.menuItem2 = new System.Windows.Forms.MenuItem();
             this.menuItem3 = new System.Windows.Forms.MenuItem();
             this.menuItem10 = new System.Windows.Forms.MenuItem();
@@ -78,11 +70,7 @@ namespace RemotePlusClient
             this.menuItem11 = new System.Windows.Forms.MenuItem();
             this.configure_menuItem = new System.Windows.Forms.MenuItem();
             this.sendEmail_menuItem = new System.Windows.Forms.MenuItem();
-            this.mi_closeConsoleArea = new System.Windows.Forms.MenuItem();
             this.contextMenuStrip1.SuspendLayout();
-            this.contextMenuStrip2.SuspendLayout();
-            this.tcRight.SuspendLayout();
-            this.tcr_extensions.SuspendLayout();
             this.tcLeft.SuspendLayout();
             this.tcl_da.SuspendLayout();
             this.SuspendLayout();
@@ -103,11 +91,8 @@ namespace RemotePlusClient
             // 
             // contextMenuStrip2
             // 
-            this.contextMenuStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.emi_open});
             this.contextMenuStrip2.Name = "contextMenuStrip2";
-            this.contextMenuStrip2.Size = new System.Drawing.Size(104, 26);
-            this.contextMenuStrip2.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.contextMenuStrip2_ItemClicked);
+            this.contextMenuStrip2.Size = new System.Drawing.Size(61, 4);
             // 
             // emi_open
             // 
@@ -115,38 +100,6 @@ namespace RemotePlusClient
             this.emi_open.Size = new System.Drawing.Size(103, 22);
             this.emi_open.Text = "Open";
             this.emi_open.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
-            // 
-            // tcRight
-            // 
-            this.tcRight.Alignment = System.Windows.Forms.TabAlignment.Bottom;
-            this.tcRight.Controls.Add(this.tcr_extensions);
-            this.tcRight.Dock = System.Windows.Forms.DockStyle.Right;
-            this.tcRight.HotTrack = true;
-            this.tcRight.Location = new System.Drawing.Point(652, 0);
-            this.tcRight.Name = "tcRight";
-            this.tcRight.SelectedIndex = 0;
-            this.tcRight.Size = new System.Drawing.Size(183, 426);
-            this.tcRight.TabIndex = 6;
-            // 
-            // tcr_extensions
-            // 
-            this.tcr_extensions.Controls.Add(this.treeView2);
-            this.tcr_extensions.Location = new System.Drawing.Point(4, 4);
-            this.tcr_extensions.Name = "tcr_extensions";
-            this.tcr_extensions.Padding = new System.Windows.Forms.Padding(3);
-            this.tcr_extensions.Size = new System.Drawing.Size(175, 400);
-            this.tcr_extensions.TabIndex = 1;
-            this.tcr_extensions.Text = "Extensions";
-            this.tcr_extensions.UseVisualStyleBackColor = true;
-            // 
-            // treeView2
-            // 
-            this.treeView2.ContextMenuStrip = this.contextMenuStrip2;
-            this.treeView2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.treeView2.Location = new System.Drawing.Point(3, 3);
-            this.treeView2.Name = "treeView2";
-            this.treeView2.Size = new System.Drawing.Size(169, 394);
-            this.treeView2.TabIndex = 5;
             // 
             // tcLeft
             // 
@@ -177,16 +130,6 @@ namespace RemotePlusClient
             this.treeView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.treeView1.Location = new System.Drawing.Point(3, 3);
             this.treeView1.Name = "treeView1";
-            treeNode4.Name = "nd_speak";
-            treeNode4.Text = "Speak";
-            treeNode5.Name = "nd_beep";
-            treeNode5.Text = "Beep";
-            treeNode6.Name = "nd_FileTransfer";
-            treeNode6.Text = "File Transfer";
-            this.treeView1.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode4,
-            treeNode5,
-            treeNode6});
             this.treeView1.Size = new System.Drawing.Size(160, 394);
             this.treeView1.TabIndex = 2;
             // 
@@ -198,7 +141,7 @@ namespace RemotePlusClient
             this.tabControl1.Location = new System.Drawing.Point(174, 271);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(478, 155);
+            this.tabControl1.Size = new System.Drawing.Size(661, 155);
             this.tabControl1.TabIndex = 8;
             // 
             // tabControl2
@@ -208,7 +151,7 @@ namespace RemotePlusClient
             this.tabControl2.Location = new System.Drawing.Point(174, 0);
             this.tabControl2.Name = "tabControl2";
             this.tabControl2.SelectedIndex = 0;
-            this.tabControl2.Size = new System.Drawing.Size(478, 271);
+            this.tabControl2.Size = new System.Drawing.Size(661, 271);
             this.tabControl2.TabIndex = 9;
             // 
             // mainMenu1
@@ -298,7 +241,6 @@ namespace RemotePlusClient
             this.menuItem8.Index = 2;
             this.menuItem8.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
             this.menuItem9,
-            this.hide_right_menuItem,
             this.mi_closeConsoleArea});
             this.menuItem8.Text = "Windows";
             // 
@@ -308,11 +250,11 @@ namespace RemotePlusClient
             this.menuItem9.Text = "Close Top";
             this.menuItem9.Click += new System.EventHandler(this.closeToolStripMenuItem_Click);
             // 
-            // hide_right_menuItem
+            // mi_closeConsoleArea
             // 
-            this.hide_right_menuItem.Index = 1;
-            this.hide_right_menuItem.Text = "Hide right";
-            this.hide_right_menuItem.Click += new System.EventHandler(this.hide_right_menuItem_Click);
+            this.mi_closeConsoleArea.Index = 1;
+            this.mi_closeConsoleArea.Text = "Close Console Area";
+            this.mi_closeConsoleArea.Click += new System.EventHandler(this.mi_closeConsoleArea_Click);
             // 
             // menuItem2
             // 
@@ -367,12 +309,6 @@ namespace RemotePlusClient
             this.sendEmail_menuItem.Text = "Send Email";
             this.sendEmail_menuItem.Click += new System.EventHandler(this.sendEmail_menuItem_Click);
             // 
-            // mi_closeConsoleArea
-            // 
-            this.mi_closeConsoleArea.Index = 2;
-            this.mi_closeConsoleArea.Text = "Close Console Area";
-            this.mi_closeConsoleArea.Click += new System.EventHandler(this.mi_closeConsoleArea_Click);
-            // 
             // MainF
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -381,7 +317,6 @@ namespace RemotePlusClient
             this.Controls.Add(this.tabControl2);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.tcLeft);
-            this.Controls.Add(this.tcRight);
             this.Menu = this.mainMenu1;
             this.Name = "MainF";
             this.Text = "RemotePlusClient";
@@ -389,9 +324,6 @@ namespace RemotePlusClient
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainF_FormClosing);
             this.Load += new System.EventHandler(this.MainF_Load);
             this.contextMenuStrip1.ResumeLayout(false);
-            this.contextMenuStrip2.ResumeLayout(false);
-            this.tcRight.ResumeLayout(false);
-            this.tcr_extensions.ResumeLayout(false);
             this.tcLeft.ResumeLayout(false);
             this.tcl_da.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -404,9 +336,6 @@ namespace RemotePlusClient
         private System.Windows.Forms.ToolStripMenuItem mi_open;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip2;
         private System.Windows.Forms.ToolStripMenuItem emi_open;
-        private System.Windows.Forms.TabControl tcRight;
-        private System.Windows.Forms.TabPage tcr_extensions;
-        private System.Windows.Forms.TreeView treeView2;
         private System.Windows.Forms.TabControl tcLeft;
         private System.Windows.Forms.TabPage tcl_da;
         private System.Windows.Forms.TreeView treeView1;
@@ -428,7 +357,6 @@ namespace RemotePlusClient
         private System.Windows.Forms.MenuItem menuItem4;
         private System.Windows.Forms.MenuItem menuItem10;
         private System.Windows.Forms.MenuItem command_browse_menuItem;
-        private System.Windows.Forms.MenuItem hide_right_menuItem;
         private System.Windows.Forms.MenuItem browseFile_MenuItem;
         private MenuItem menuItem11;
         private MenuItem configure_menuItem;

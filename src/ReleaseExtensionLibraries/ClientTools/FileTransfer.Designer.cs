@@ -1,6 +1,6 @@
 ﻿using RemotePlusLibrary.Extension.Gui;
 
-namespace RemotePlusClient.CommandDialogs
+namespace ClientTools
 {
     partial class FileTransfer
     {

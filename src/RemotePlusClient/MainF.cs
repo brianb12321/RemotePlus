@@ -1,5 +1,4 @@
-﻿using RemotePlusClient.CommandDialogs;
-using RemotePlusLibrary;
+﻿using RemotePlusLibrary;
 using RemotePlusLibrary.Extension;
 using System;
 using System.Collections.Generic;
@@ -184,20 +183,11 @@ namespace RemotePlusClient
         {
             if (e.ClickedItem.Name == "mi_open")
             {
-                if(treeView1.SelectedNode.Name == "nd_speak")
-                {
-                    AddTabToMainTabControl("Speak", new SpeakDialog());
-                }
-                else if(treeView1.SelectedNode.Name == "nd_beep")
-                {
-                    AddTabToMainTabControl("Beep", new BeepDialog());
-                }
-                else if(treeView1.SelectedNode.Name == "nd_FileTransfer")
-                {
-                    AddTabToMainTabControl("FileTransfer", new FileTransfer());
-                }
+                var collection = DefaultCollection.GetAllExtensions();
+                var name = collection[treeView1.SelectedNode.Name].GeneralDetails.Name;
+                var form = collection[treeView1.SelectedNode.Name].ExtensionForm;
+                AddTabToMainTabControl(name, form);
             }
-
         }
 
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -226,7 +216,7 @@ namespace RemotePlusClient
             };
             if (ofd.ShowDialog() == DialogResult.OK)
             {
-                ClientInitEnvironment env = new ClientInitEnvironment((ServerConsoleObj.Logger.errorcount > 0) ? true : false);
+                ClientInitEnvironment env = new ClientInitEnvironment((ConsoleObj.Logger.errorcount > 0) ? true : false);
                 var lib = ClientExtensionLibrary.LoadClientLibrary(ofd.FileName,
                     (f) => MainF.ConsoleObj.Logger.AddOutput($"Form load: {f.GeneralDetails.Name}", OutputLevel.Info),
                     (m, o) => ConsoleObj.Logger.AddOutput(new UILogItem(o, m, "Extension Loader")),
@@ -240,7 +230,7 @@ namespace RemotePlusClient
                         {
                             Name = f2.Key
                         };
-                        this.Invoke(new MethodInvoker(() => treeView2.Nodes.Add(tn)));
+                        this.Invoke(new MethodInvoker(() => treeView1.Nodes.Add(tn)));
                     }
                     this.Invoke(new MethodInvoker(() => MainF.ConsoleObj.Logger.AddOutput("Extension loaded.", Logging.OutputLevel.Info)));
                 });
@@ -250,22 +240,6 @@ namespace RemotePlusClient
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
 
-        }
-
-        private void contextMenuStrip2_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
-        {
-            if(e.ClickedItem.Name == "emi_open")
-            {
-                if(treeView2.SelectedNode != null)
-                {
-                    ThemedForm newForm = DefaultCollection.GetAllExtensions()[treeView2.SelectedNode.Name].ExtensionForm;
-                    AddTabToMainTabControl(newForm.Name, newForm);
-                }
-                else
-                {
-                    MessageBox.Show("Please select a node.");
-                }
-            }
         }
 
         private void closeToolStripMenuItem_Click(object sender, EventArgs e)
@@ -352,15 +326,6 @@ namespace RemotePlusClient
             }
         }
 
-        private void hide_right_menuItem_Click(object sender, EventArgs e)
-        {
-            tcRight.Hide();
-            CloseAll1();
-            ServerConsoleObj = null;
-            CloseAll2();
-            OpenConsole();
-            this.Refresh();
-        }
 
         private void CloseAll1()
         {

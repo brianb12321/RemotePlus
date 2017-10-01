@@ -72,24 +72,6 @@
     <Compile Include="CommandBrowserDialog.Designer.cs">
       <DependentUpon>CommandBrowserDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="CommandDialogs\BeepDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="CommandDialogs\BeepDialog.Designer.cs">
-      <DependentUpon>BeepDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="CommandDialogs\FileTransfer.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="CommandDialogs\FileTransfer.Designer.cs">
-      <DependentUpon>FileTransfer.cs</DependentUpon>
-    </Compile>
-    <Compile Include="CommandDialogs\SpeakDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="CommandDialogs\SpeakDialog.Designer.cs">
-      <DependentUpon>SpeakDialog.cs</DependentUpon>
-    </Compile>
     <Compile Include="CommandPipelineViewer.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -154,6 +136,7 @@
     <Compile Include="ServerSettingsDialog.Designer.cs">
       <DependentUpon>ServerSettingsDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="UINodeType.cs" />
     <Compile Include="ViewRequestDialogBox.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -170,15 +153,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="CommandBrowserDialog.resx">
       <DependentUpon>CommandBrowserDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="CommandDialogs\BeepDialog.resx">
-      <DependentUpon>BeepDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="CommandDialogs\FileTransfer.resx">
-      <DependentUpon>FileTransfer.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="CommandDialogs\SpeakDialog.resx">
-      <DependentUpon>SpeakDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="CommandPipelineViewer.resx">
       <DependentUpon>CommandPipelineViewer.cs</DependentUpon>
