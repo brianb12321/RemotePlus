@@ -12,5 +12,7 @@ namespace RemotePlusClient.ExtensionSystem
     public interface IClientExtension : IExtension<ClientExtensionDetails>
     {
         ThemedForm ExtensionForm { get; }
+        bool StaticPositioned { get; }
+        FormPosition Position { get; }
     }
 }

@@ -18,6 +18,7 @@ namespace RemotePlusClient
     public partial class ServerConsole : ThemedForm
     {
         public RichTextBoxLoggingMethod Logger { get; set; }
+        public ConsoleSettings settings = null;
         string scriptFile;
         public ServerConsole()
         {
@@ -31,12 +32,28 @@ namespace RemotePlusClient
 
         private void ServerConsole_Load(object sender, EventArgs e)
         {
+            settings = new ConsoleSettings();
+            #region Initialize Settings
+            try
+            {
+                settings.Load();
+            }
+            catch (FileNotFoundException)
+            {
+                MainF.ConsoleObj.Logger.AddOutput("Created new console config file.", OutputLevel.Info, "ServerConsole");
+                settings.Save();
+            }
+            #endregion Initialize Settings
             Logger = new RichTextBoxLoggingMethod()
             {
                 Output = richTextBox1,
                 DefaultInfoColor = Color.White,
-                OverrideLogItemObjectColorValue = true
+                OverrideLogItemObjectColorValue = true,
             };
+            Logger.DefaultInfoColor = settings.DefaultInfoColor;
+            Logger.DefaultErrorColor = settings.DefaultErrorColor;
+            Logger.DefaultWarningColor = settings.DefaultWarningColor;
+            Logger.DefaultDebugColor = settings.DefaultDebugColor;
             textBox1.AutoCompleteSource = AutoCompleteSource.CustomSource;
             textBox1.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
             AutoCompleteStringCollection acsc = new AutoCompleteStringCollection();
@@ -107,6 +124,14 @@ namespace RemotePlusClient
         internal void AppendText(string message)
         {
             richTextBox1.AppendText($"{message}\n");
+        }
+
+        private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (ConsoleSettingsDialogBox csd = new ConsoleSettingsDialogBox(settings))
+            {
+                csd.ShowDialog();
+            }
         }
     }
 }

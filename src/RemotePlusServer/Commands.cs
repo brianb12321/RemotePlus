@@ -43,8 +43,11 @@ namespace RemotePlusServer
         [CommandHelp("Displays a list of commands.")]
         private static CommandResponse Help(CommandRequest args, CommandPipeline pipe)
         {
-            DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, RemotePlusConsole.ShowHelp(DefaultService.Commands, args.Arguments), "Server Host"));
-            return new CommandResponse((int)CommandStatus.Success);
+            var helpString = RemotePlusConsole.ShowHelp(DefaultService.Commands, args.Arguments);
+            DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, helpString, "Server Host"));
+            var response = new CommandResponse((int)CommandStatus.Success);
+            response.Metadata.Add("helpText", helpString);
+            return response;
         }
         [CommandHelp("Executes a loaded extension on the server.")]
         [HelpPage("ex.txt", Source = HelpSourceType.File)]

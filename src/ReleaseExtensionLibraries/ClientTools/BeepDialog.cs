@@ -19,6 +19,10 @@ namespace ClientTools
 
         public ClientExtensionDetails GeneralDetails => new ClientExtensionDetails("Beep", "1.0.0.0");
 
+        public bool StaticPositioned => true;
+
+        public FormPosition Position => FormPosition.Top;
+
         public BeepDialog()
         {
             InitializeComponent();

@@ -14,6 +14,8 @@ namespace RemotePlusLibrary.Extension
         public string Name { get; private set; }
         [DataMember]
         public string Version { get; private set; }
+        [DataMember]
+        public string Description { get; set; }
         public ExtensionDetails(string Name, string Version)
         {
             this.Name = Name;

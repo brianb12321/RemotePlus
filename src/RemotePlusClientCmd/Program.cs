@@ -101,8 +101,30 @@ namespace RemotePlusClientCmd
                     var c = Console.ReadLine();
                     if (c.ToCharArray()[0] == '#')
                     {
-                        //TODO: Add pipeline feature
-                        RunLocalCommand(new CommandRequest(c.Split(' ')), CommandExecutionMode.Client, null);
+                        var splittedCommand = c.Split('&');
+                        int position = 0;
+                        foreach (string command in splittedCommand)
+                        {
+                            CommandPipeline pipeline = new CommandPipeline();
+                            CommandRequest request = new CommandRequest(command.Split(' ')
+                                .Select(t =>
+                                {
+                                    // Makes sure that a string that already has a # sign does not have two # signs
+                                    if(!t.Contains("#"))
+                                    {
+                                        return t.Insert(0, "#");
+                                    }
+                                    else
+                                    {
+                                        // Leave string alone
+                                        return t;
+                                    }
+                                })
+                                .ToArray());
+                            var response = RunLocalCommand(request, CommandExecutionMode.Client, pipeline);
+                            pipeline.Add(position, new CommandRoutine(request, response));
+                            position += 1;
+                        }
                     }
                     else
                     {

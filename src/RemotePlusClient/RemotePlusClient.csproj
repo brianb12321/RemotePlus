@@ -62,6 +62,13 @@
     </Compile>
     <Compile Include="ClientApp.cs" />
     <Compile Include="ClientCallback.cs" />
+    <Compile Include="ConsoleSettings.cs" />
+    <Compile Include="ConsoleSettingsDialogBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ConsoleSettingsDialogBox.Designer.cs">
+      <DependentUpon>ConsoleSettingsDialogBox.cs</DependentUpon>
+    </Compile>
     <Compile Include="ExtensionSystem\ClientExtensionDetails.cs" />
     <Compile Include="ExtensionSystem\ClientInitEnvironment..cs" />
     <Compile Include="ExtensionSystem\ClientLibraryCollection.cs" />
@@ -109,6 +116,7 @@
       <DependentUpon>ExtensionDetailsDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="ExtensionSystem\ClientExtensionLibrary.cs" />
+    <Compile Include="ExtensionSystem\FormPosition.cs" />
     <Compile Include="ExtensionSystem\IClientExtension.cs" />
     <Compile Include="ExtensionSystem\IClientLibraryStartup.cs" />
     <Compile Include="MainF.cs">
@@ -168,6 +176,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ConsoleDialog.resx">
       <DependentUpon>ConsoleDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ConsoleSettingsDialogBox.resx">
+      <DependentUpon>ConsoleSettingsDialogBox.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ExtensionDetailsDialog.resx">
       <DependentUpon>ExtensionDetailsDialog.cs</DependentUpon>

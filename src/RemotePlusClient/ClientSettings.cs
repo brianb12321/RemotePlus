@@ -15,10 +15,13 @@ namespace RemotePlusClient
         public const string CLIENT_SETTING_PATH = "Configurations\\CLient\\GlobalClientSettings.config";
         [DataMember]
         public Theme DefaultTheme { get; set; }
+        [DataMember]
+        public bool DisableCommandDownloadForConsole { get; set; } = false;
         public void Load()
         {
             var c = ConfigurationHelper.LoadConfig<ClientSettings>(CLIENT_SETTING_PATH, RemotePlusLibrary.Core.DefaultKnownTypeManager.GetKnownTypes(null));
             DefaultTheme = c.DefaultTheme;
+            DisableCommandDownloadForConsole = c.DisableCommandDownloadForConsole;
         }
 
         public void Save()

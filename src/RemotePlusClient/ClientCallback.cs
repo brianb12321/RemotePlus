@@ -12,8 +12,30 @@ namespace RemotePlusClient
     [CallbackBehavior(ConcurrencyMode = ConcurrencyMode.Reentrant,
         IncludeExceptionDetailInFaults = true,
         UseSynchronizationContext = false)]
-    class ClientCallback : IRemoteClient
+    public class ClientCallback : IRemoteClient
     {
+        public bool SwapFlag { get; private set; }
+        public bool ConsoleStreamEnabled { get; private set; } = true;
+        Logger consoleStream = null;
+        /// <summary>
+        /// Tells the client which textbox to use for the server output
+        /// </summary>
+        /// <param name="logger"></param>
+        public void SwapConsoleStream(Logger logger)
+        {
+            consoleStream = logger;
+            SwapFlag = true;
+        }
+        public void DisableConsoleStream()
+        {
+            ConsoleStreamEnabled = false;
+        }
+        public void EnableConsoleStream()
+        {
+            ConsoleStreamEnabled = true;
+        }
+
+        #region Callback Methods
         public void Disconnect(string Reason)
         {
             LogItem l = new LogItem(Logging.OutputLevel.Error, "The server disconnected from the client. Reason: " + Reason, "Server Host");
@@ -36,22 +58,52 @@ namespace RemotePlusClient
 
         public void TellMessage(string Message, Logging.OutputLevel o)
         {
-            ClientApp.Logger.AddOutput(Message, o, "Server Host");
-            MainF.ConsoleObj.Logger.AddOutput(Message, o, "Server Host");
+            if (ConsoleStreamEnabled)
+            {
+                if (!SwapFlag)
+                {
+                    ClientApp.Logger.AddOutput(Message, o, "Server Host");
+                }
+                else
+                {
+                    consoleStream.AddOutput(Message, o, "Server Host");
+                }
+                MainF.ConsoleObj.Logger.AddOutput(Message, o, "Server Host");
+            }
         }
 
         public void TellMessage(UILogItem li)
         {
-            ClientApp.Logger.AddOutput(new LogItem(li.Level, li.Message, li.From));
-            MainF.ConsoleObj.Logger.AddOutput(li);
+            if (ConsoleStreamEnabled)
+            {
+                if (!SwapFlag)
+                {
+                    ClientApp.Logger.AddOutput(new LogItem(li.Level, li.Message, li.From));
+                }
+                else
+                {
+                    consoleStream.AddOutput(new LogItem(li.Level, li.Message, li.From));
+                }
+                MainF.ConsoleObj.Logger.AddOutput(li);
+            }
         }
 
         public void TellMessage(UILogItem[] Logs)
         {
-            foreach(LogItem li in Logs)
+            if (ConsoleStreamEnabled)
             {
-                ClientApp.Logger.AddOutput(new LogItem(li.Level, li.Message, li.From));
-                MainF.ConsoleObj.Logger.AddOutput(li);
+                foreach (LogItem li in Logs)
+                {
+                    if (!SwapFlag)
+                    {
+                        ClientApp.Logger.AddOutput(new LogItem(li.Level, li.Message, li.From));
+                    }
+                    else
+                    {
+                        consoleStream.AddOutput(new LogItem(li.Level, li.Message, li.From));
+                    }
+                    MainF.ConsoleObj.Logger.AddOutput(li);
+                }
             }
         }
 
@@ -99,5 +151,7 @@ namespace RemotePlusClient
         public void RegistirationComplete()
         {
         }
+        #endregion
+
     }
 }

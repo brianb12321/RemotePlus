@@ -24,6 +24,7 @@ namespace RemotePlusClient
         public static ServerConsole ServerConsoleObj = null;
         public static IRemote Remote = null;
         public static ConsoleDialog ConsoleObj = null;
+        public static ClientCallback LocalCallback = null;
         public static ClientLibraryCollection DefaultCollection { get; private set; }
         string Address { get; set; }
         static DuplexChannelFactory<IRemote> channel = null;
@@ -80,7 +81,8 @@ namespace RemotePlusClient
         {
             try
             {
-                channel = new DuplexChannelFactory<IRemote>(new ClientCallback(), "DefaultEndpoint");
+                LocalCallback = new ClientCallback();
+                channel = new DuplexChannelFactory<IRemote>(LocalCallback, "DefaultEndpoint");
                 channel.Endpoint.Address = new EndpointAddress(Address);
                 Remote = channel.CreateChannel();
                 ConsoleObj.Logger.AddOutput("Registering...", Logging.OutputLevel.Info);
@@ -127,6 +129,10 @@ namespace RemotePlusClient
             t.Controls.Add(c);
             tabControl2.TabPages.Add(t);
             c.ShowAndInitializeTheme(ClientApp.ClientSettings.DefaultTheme);
+        }
+        void MoveFormDown(string name)
+        {
+            
         }
         private void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)
         {
@@ -184,9 +190,16 @@ namespace RemotePlusClient
             if (e.ClickedItem.Name == "mi_open")
             {
                 var collection = DefaultCollection.GetAllExtensions();
-                var name = collection[treeView1.SelectedNode.Name].GeneralDetails.Name;
-                var form = collection[treeView1.SelectedNode.Name].ExtensionForm;
-                AddTabToMainTabControl(name, form);
+                var extension = collection[treeView1.SelectedNode.Name];
+                switch(extension.Position)
+                {
+                    case FormPosition.Top:
+                        AddTabToMainTabControl(extension.GeneralDetails.Name, extension.ExtensionForm);
+                        break;
+                    case FormPosition.Bottum:
+                        AddTabToConsoleTabControl(extension.GeneralDetails.Name, extension.ExtensionForm);
+                        break;
+                }
             }
         }
 
@@ -228,7 +241,8 @@ namespace RemotePlusClient
                     {
                         TreeNode tn = new TreeNode(f2.Value.GeneralDetails.Name)
                         {
-                            Name = f2.Key
+                            Name = f2.Key,
+                            Tag = f2.Value
                         };
                         this.Invoke(new MethodInvoker(() => treeView1.Nodes.Add(tn)));
                     }
@@ -242,20 +256,31 @@ namespace RemotePlusClient
 
         }
 
+        #region Page Control Methods
+        void RemoveTopExtension(TabPage page)
+        {
+            tabControl2.TabPages.Remove(page);
+            TopPages.Remove(page.Name);
+        }
+        void RemoveBottumExtension(TabPage page)
+        {
+            tabControl1.TabPages.Remove(page);
+            BottumPages.Remove(page.Name);
+        }
+        #endregion
+
         private void closeToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (tabControl2.TabPages.Count > 0)
             {
                 if(tabControl2.SelectedTab.Name.Contains("ServerConsole"))
                 {
-                    tabControl2.TabPages.Remove(tabControl2.SelectedTab);
-                    TopPages.Remove("ServerConsole");
+                    RemoveTopExtension(tabControl2.SelectedTab);
                     ServerConsoleObj = null;
                 }
                 else
                 {
-                    TopPages.Remove(tabControl2.SelectedTab.Name);
-                    tabControl2.TabPages.Remove(tabControl2.SelectedTab);
+                    RemoveTopExtension(tabControl2.SelectedTab);
                 }
             }
             else
@@ -380,13 +405,20 @@ namespace RemotePlusClient
                 }
                 else
                 {
-                    BottumPages.Remove(tabControl1.SelectedTab.Name);
-                    tabControl1.TabPages.Remove(tabControl1.SelectedTab);
+                    RemoveBottumExtension(tabControl1.SelectedTab);
                 }
             }
-            else
+            else // Never should happen
             {
-                MessageBox.Show("There are no tabs to close.");
+                MessageBox.Show("There are no tabs to close. If you see this message, there is a bug in the program.");
+            }
+        }
+
+        private void cms_extensionFormTop_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+            switch(e.ClickedItem.Name)
+            {
+                //TODO: Add functionality.
             }
         }
     }

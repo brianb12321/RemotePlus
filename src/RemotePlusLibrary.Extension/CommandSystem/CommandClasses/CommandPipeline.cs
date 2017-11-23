@@ -16,6 +16,7 @@ namespace RemotePlusLibrary.Extension.CommandSystem.CommandClasses
         {
             _internalDictionary = new Dictionary<int, CommandRoutine>();
         }
+
         #region IDictionary
         public CommandRoutine this[int commandPosition] { get => _internalDictionary[commandPosition]; set => _internalDictionary[commandPosition] = value; }
         [DataMember]
@@ -85,13 +86,14 @@ namespace RemotePlusLibrary.Extension.CommandSystem.CommandClasses
             return _internalDictionary.GetEnumerator();
         }
 #endregion IDictionary
+
         /// <summary>
         /// Gets the latest command in the command pipeline.
         /// </summary>
         /// <returns>The command routine that represents the latest command.</returns>
         public CommandRoutine GetLatest()
         {
-            return this[Count];
+            return this[Count - 1];
         }
     }
 }
