@@ -31,14 +31,7 @@ namespace RemotePlusClient.CommonUI
             }
             else
             {
-                if (builder.AcqMode == AcquisitionMode.ThrowIfCancel)
-                {
-                    throw new RequestException($"Request {builder.Interface} canceled.");
-                }
-                else
-                {
-                    return RawDataRequest.Cancel(Color.Black.ToString());
-                }
+                return RawDataRequest.Cancel(Color.Black.ToString());
             }
         }
     }

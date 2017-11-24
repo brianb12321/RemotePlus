@@ -35,6 +35,10 @@ namespace RemotePlusClientCmd
             };
             InitializeDefaultKnownTypes();
             RequestStore.Init();
+            RequestStore.Add("rcmd_menu", new Requests.ConsoleMenuRequest());
+            RequestStore.Add("rcmd_smenu", new Requests.SelectableConsoleMenu());
+            RequestStore.Add("rcmd_messageBox", new Requests.RCmdMessageBox());
+            RequestStore.Add("rcmd_textBox", new Requests.RCmdTextBox());
             if (args.Length == 0)
             {
                 try

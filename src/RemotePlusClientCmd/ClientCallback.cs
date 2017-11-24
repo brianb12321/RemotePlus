@@ -154,7 +154,7 @@ namespace RemotePlusClientCmd
 
         public void TellMessageToServerConsole(string Message)
         {
-            Console.WriteLine(Message);
+            Console.Write(Message);
         }
     }
 }
