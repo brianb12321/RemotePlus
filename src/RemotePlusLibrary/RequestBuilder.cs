@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
+using System.Windows.Forms;
 
 namespace RemotePlusLibrary
 {
@@ -34,6 +35,15 @@ namespace RemotePlusLibrary
         public static RequestBuilder RequestFilePath(string title)
         {
             return new RequestBuilder("r_filePath", title, null);
+        }
+        public static RequestBuilder RequestMessageBox(string message, string title, MessageBoxButtons buttons, MessageBoxIcon icon)
+        {
+            Dictionary<string, string> args = new Dictionary<string, string>();
+            args.Add("Caption", title);
+            args.Add("Buttons", buttons.ToString());
+            args.Add("Icon", icon.ToString());
+            RequestBuilder rb = new RequestBuilder("r_messageBox", message, args);
+            return rb;
         }
     }
 }

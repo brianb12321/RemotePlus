@@ -16,6 +16,7 @@ namespace RemotePlusClient.CommonUI
         {
             requestForms.Add("r_string", new RequestStringDialogBox());
             requestForms.Add("r_color", new ColorRequest());
+            requestForms.Add("r_messageBox", new MessageBoxRequest());
         }
         public static void Add(string name, IDataRequest requestForm)
         {

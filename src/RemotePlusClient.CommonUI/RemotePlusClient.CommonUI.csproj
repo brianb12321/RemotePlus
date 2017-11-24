@@ -66,6 +66,7 @@
     <Compile Include="EmailGui\SendEmailForm.Designer.cs">
       <DependentUpon>SendEmailForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="MessageBoxRequest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RequestProperties\RequestStringProperties.cs">
       <SubType>Form</SubType>
