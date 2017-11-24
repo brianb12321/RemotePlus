@@ -1,4 +1,6 @@
 ﻿using RemotePlusLibrary.Extension;
+using RemotePlusLibrary.Extension.CommandSystem;
+using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
 using RemotePlusServer;
 using System;
 using System.Collections.Generic;
@@ -15,6 +17,9 @@ namespace WindowsTools
             ServerManager.Logger.AddOutput($"Init position {env.InitPosition}", Logging.OutputLevel.Debug, "WindowsTools");
             ServerManager.Logger.AddOutput("Adding OS commands", Logging.OutputLevel.Info, "WindowsTools");
             ServerManager.DefaultService.Commands.Add("sendKey", OSCommands.sendKey);
+            ServerManager.Logger.AddOutput("Adding dskClean command", Logging.OutputLevel.Info, "WindowsTools");
+            ServerManager.DefaultService.Commands.Add("dskClean", dskClean.dskCleanCommand);
         }
+        
     }
 }
