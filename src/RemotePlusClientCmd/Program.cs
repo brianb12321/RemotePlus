@@ -25,6 +25,7 @@ namespace RemotePlusClientCmd
         [STAThread]
         static void Main(string[] args)
         {
+            ShowBanner();
             InitCommands();
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
@@ -140,12 +141,63 @@ namespace RemotePlusClientCmd
             channel.Close();
 #pragma warning restore CS0162 // Unreachable code detected
         }
+
+        public static void ShowBanner()
+        {
+            Random r = new Random();
+            Colorful.Console.WriteAscii("REMOTE PLUS!", Color.FromArgb(226, 186, 255));
+            var message = "FUN TIP! " + GetRandomTip(r) + "\n";
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine(message);
+            Console.ResetColor();
+        }
+
+        private static string GetRandomTip(Random rand)
+        {
+            string[] messages =
+            {
+                "Don't use this software unless you own these systems!",
+                "If something doesn't work, don't panic.",
+                "When there's a fire, do not use the elevators!",
+                "Executing del sys32 /R won't totally kill your system since most of the files are protected.",
+                "Don't trust anyone who says deleting System32 will speed up your computers.",
+                "Always look everywhere before crossing the street.",
+                "If your computer has lots of temp files, use dskClean (which is part of the WIndowsTools extension library) to clean those pesky files.",
+                "Never kill a process you don't know about.",
+                "The movie, Jaws, is just a horror story about Sharks, people are exaggerating shark attacks to much.",
+                "It is more likely for a vending machine to fall on someone then a Shark attack.",
+                "It is more likely for you to be struck by lightning then winning big at the casino.",
+                "If your hand is higher then 12, don't double down in Black Jack.",
+                "There's a secret level in The Legend of Zelda Four Swords Anniversary Edition™ if you get enough Rupees.",
+                "Here is a slice of Pi 3.141592653589793238462643383279028841971693993751058209749445923078164062862089986280348253421170679821480865132823066470938446095505822317253594081284811194502841027019385211055596446229489549303819644288109756",
+                "The battle in The Princess Pride is really cool but unrealistic.",
+                "Lake Superior is the coldest lake in the United States.",
+                "Those Youtube vidoes on how to speed up Minecraft work, but you should just get a new computer then wrestling threw all the settings, and besides the game will look ugly at the end.",
+                "The Enigma Machine was used during World War 2 for transmitting encrypted information between the Germans.",
+                "If you want that cool synthesized voice like the voice in War Games, download NVDA (which is on GitHub)",
+                "You can have dark mode on GitHub. The OctoCat would love to show you how to install the plugin.",
+                "You can chain commands in RemotePlus by using the & symbole.",
+                "Always install AntiVirus software on your computer.",
+                "Always keep your AntiVirus software up to date.",
+                "Never cook a pizza on a light bulb.",
+                "Alexander Hamilton, the director of the treasury during the Presidency of Thomas Jefferson, was slain during a duel with Auron Burr, the vice-President of Thomas Jefferson.",
+                "There is a national holiday for each day of the year.",
+                "A Doe is a female dear, a Buck is a male dear.",
+                "When on a hard problem during a math test, skip that one and go to the next one. It will save you a'lot of time.",
+                "If you don't know a word don't say it. You could sound imbecilic.",
+                "Do use sesquipedalian words especially people who have HippopotomonstrosesquiPedaliophobia",
+                "Fedex has an arrow in its name."
+            };
+            return messages[rand.Next(messages.Length)];
+        }
+
         static CommandPipeline Input(string i)
         {
             return Remote.RunServerCommand(i, CommandExecutionMode.Client);
         }
         private static void InitCommands()
         {
+            LocalCommands.Add("#banner", banner);
             LocalCommands.Add("#help", Help);
             LocalCommands.Add("#clear", clearScreen);
             LocalCommands.Add("#close", close);

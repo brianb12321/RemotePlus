@@ -53,7 +53,7 @@ namespace RemotePlusLibrary
         [OperationContract]
         UserAccount GetLoggedInUser();
         [OperationContract]
-        OperationStatus RunExtension(string ExtensionName, ExtensionExecutionContext Context, params object[] Args);
+        ExtensionReturn RunExtension(string ExtensionName, ExtensionExecutionContext Context, string[] args);
         [OperationContract]
         List<ExtensionDetails> GetExtensionNames();
         [OperationContract]

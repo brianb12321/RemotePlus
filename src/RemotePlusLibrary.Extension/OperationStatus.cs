@@ -5,15 +5,15 @@ using System.Runtime.Serialization;
 namespace RemotePlusLibrary.Extension
 {
     [DataContract]
-    public class OperationStatus
+    public class ExtensionReturn
     {
         [DataMember]
-        public bool Success { get; set; }
+        public int ReturnCode { get; set; }
         [DataMember]
         public object Data { get; set; }
-        public OperationStatus()
+        public ExtensionReturn(int rc)
         {
-
+            ReturnCode = rc;
         }
     }
 }

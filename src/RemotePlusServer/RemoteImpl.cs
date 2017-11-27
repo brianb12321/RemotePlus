@@ -105,6 +105,7 @@ namespace RemotePlusServer
 
         public void Register(RegistirationObject Settings)
         {
+            ServerManager.Logger.AddOutput("A new client is awaiting registiration.", OutputLevel.Info);
             ServerManager.Logger.AddOutput("Instanitiating callback object.", OutputLevel.Debug);
             ServerManager.Logger.AddOutput("Getting ClientBuilder from client.", OutputLevel.Debug);
             var callback = OperationContext.Current.GetCallbackChannel<IRemoteClient>();
@@ -308,20 +309,35 @@ namespace RemotePlusServer
             return LoggedInUser;
         }
 
-        public OperationStatus RunExtension(string ExtensionName, ExtensionExecutionContext Context, params object[] Args)
+        public ExtensionReturn RunExtension(string ExtensionName, ExtensionExecutionContext Context, string[] args)
         {
             CheckRegisteration("RunExtension");
             if (!LoggedInUser.Role.Privilleges.CanRunExtension)
             {
                 Client.ClientCallback.TellMessage(new UILogItem(OutputLevel.Error, "You do not have permission to run an extension.", "Server Host"));
-                return new OperationStatus() { Success = false };
+                return new ExtensionReturn(ExtensionStatusCodes.ACCESS_DENIED);
             }
             else
             {
                 ServerManager.Logger.AddOutput($"Executing extension. Name: {ExtensionName}, CallType: {Context.Mode.ToString()}", OutputLevel.Info);
-                OperationStatus s = _allExtensions[ExtensionName].Execute(Context, Args);
-                ServerManager.Logger.AddOutput($"Returnaing extension response. Success: {s.Success}", OutputLevel.Debug);
-                return s;
+                try
+                {
+                    ServerExtension e = _allExtensions[ExtensionName];
+                    if (e.SupportClientTypes != ClientSupportedTypes.Both && ((Client.ClientType == ClientType.CommandLine && e.SupportClientTypes == ClientSupportedTypes.GUI) || (Client.ClientType == ClientType.GUI && e.SupportClientTypes == ClientSupportedTypes.CommandLine)))
+                    {
+                        ServerManager.Logger.AddOutput($"Unsupported client type. Please use a {e.SupportClientTypes} client instead.", OutputLevel.Info);
+                        Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, $"Unsupported client type. Please use a {e.SupportClientTypes} client instead.", "Server Host"));
+                    }
+                    var s = e.Execute(Context, args);
+                    ServerManager.Logger.AddOutput($"Returnaing extension response. Success: {(s.ReturnCode == 0 ? true : false)}", OutputLevel.Debug);
+                    return s;
+                }
+                catch (KeyNotFoundException)
+                {
+                    ServerManager.Logger.AddOutput($"Extension {ExtensionName} does not exist.", OutputLevel.Error);
+                    Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, $"Extension {ExtensionName} does not exist.", "Server Host"));
+                    return new ExtensionReturn(ExtensionStatusCodes.EXTENSION_NOT_FOUND);
+                }
             }
         }
 

@@ -13,6 +13,12 @@ namespace RemotePlusClientCmd
 {
     partial class ClientCmdManager
     {
+        [CommandHelp("Shows the banner.")]
+        static CommandResponse banner(CommandRequest args, CommandPipeline pipe)
+        {
+            ClientCmdManager.ShowBanner();
+            return new CommandResponse((int)CommandStatus.Success);
+        }
         [CommandHelp("Shows help for local commands.")]
         static CommandResponse Help(CommandRequest args, CommandPipeline pipe)
         {

@@ -31,6 +31,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsTools", "src\Release
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientTools", "src\ReleaseExtensionLibraries\ClientTools\ClientTools.csproj", "{EF18A56F-EFE1-4F51-85A0-BC16AD09D534}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Client Tools", "Client Tools", "{226F51EE-BDDE-4542-8E89-9CCBA27DE5D7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemotePlusClientCmd.RequestHelpers", "src\Client Tools\RemotePlusClientCmd.RequestHelpers\RemotePlusClientCmd.RequestHelpers.csproj", "{4F29FED8-1EDF-44F6-93CB-9000415802B1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -89,6 +93,10 @@ Global
 		{EF18A56F-EFE1-4F51-85A0-BC16AD09D534}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EF18A56F-EFE1-4F51-85A0-BC16AD09D534}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EF18A56F-EFE1-4F51-85A0-BC16AD09D534}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4F29FED8-1EDF-44F6-93CB-9000415802B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F29FED8-1EDF-44F6-93CB-9000415802B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F29FED8-1EDF-44F6-93CB-9000415802B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F29FED8-1EDF-44F6-93CB-9000415802B1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -98,6 +106,7 @@ Global
 		{AB549757-6EB2-4A4A-BD87-320D9AB98301} = {F1A31AC8-6688-4F6C-A0BB-7A02998BB3BA}
 		{C2E44C89-7521-4B30-B522-BECD525B1E51} = {F1A31AC8-6688-4F6C-A0BB-7A02998BB3BA}
 		{EF18A56F-EFE1-4F51-85A0-BC16AD09D534} = {F1A31AC8-6688-4F6C-A0BB-7A02998BB3BA}
+		{4F29FED8-1EDF-44F6-93CB-9000415802B1} = {226F51EE-BDDE-4542-8E89-9CCBA27DE5D7}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9F01F222-18F6-4F4E-8767-A858D379C71E}

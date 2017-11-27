@@ -52,14 +52,12 @@ namespace RemotePlusServer
         [CommandHelp("Executes a loaded extension on the server.")]
         [HelpPage("ex.txt", Source = HelpSourceType.File)]
         private static CommandResponse ExCommand(CommandRequest args, CommandPipeline pipe)
-        {           
-            List<string> obj = new List<string>();
-            for (int i = 2; i < args.Arguments.Length; i++)
+        {
+            var statusCode = DefaultService.Remote.RunExtension((string)args.Arguments[1], new ExtensionExecutionContext(CallType.CommandLine), args.Arguments.Skip(1).ToArray()).ReturnCode;
+            if (statusCode != ExtensionStatusCodes.EXTENSION_NOT_FOUND)
             {
-                obj.Add((string)args.Arguments[i]);
+                DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, "Extension executed.", "Server Host"));
             }
-            DefaultService.Remote.RunExtension((string)args.Arguments[1], new ExtensionExecutionContext(CallType.CommandLine), obj.ToArray());
-            DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, "Extension executed.", "Server Host"));
             return new CommandResponse((int)CommandStatus.Success);
         }
         [CommandHelp("Gets the server log.")]

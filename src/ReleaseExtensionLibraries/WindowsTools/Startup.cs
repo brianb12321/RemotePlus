@@ -19,7 +19,8 @@ namespace WindowsTools
             ServerManager.DefaultService.Commands.Add("sendKey", OSCommands.sendKey);
             ServerManager.Logger.AddOutput("Adding dskClean command", Logging.OutputLevel.Info, "WindowsTools");
             ServerManager.DefaultService.Commands.Add("dskClean", dskClean.dskCleanCommand);
+            ServerManager.Logger.AddOutput("Adding filem command", Logging.OutputLevel.Info, "WindowsTools");
+            ServerManager.DefaultService.Commands.Add("fileM", Filem.filem_command);
         }
-        
     }
 }

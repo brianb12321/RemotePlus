@@ -49,6 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ClientSupportedTypes.cs" />
     <Compile Include="CommandSystem\CommandClasses\CommandPipeline.cs" />
     <Compile Include="CommandSystem\CommandClasses\CommandRequest.cs" />
     <Compile Include="CommandSystem\CommandClasses\CommandResponse.cs" />
@@ -57,6 +58,7 @@
     <Compile Include="CommandSystem\StatusCodeDeliveryMethod.cs" />
     <Compile Include="DependencyException.cs" />
     <Compile Include="DependencyType.cs" />
+    <Compile Include="ExtensionStatusCodes.cs" />
     <Compile Include="IInitEnvironment.cs" />
     <Compile Include="ILibraryBuilder.cs" />
     <Compile Include="LibraryBuilder.cs" />

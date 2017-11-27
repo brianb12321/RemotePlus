@@ -417,8 +417,10 @@ namespace RemotePlusClient
         private void cms_extensionFormTop_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
             switch(e.ClickedItem.Name)
+#pragma warning disable CS1522 // Empty switch block
             {
-                //TODO: Add functionality.
+#pragma warning restore CS1522 // Empty switch block
+                              //TODO: Add functionality.
             }
         }
     }

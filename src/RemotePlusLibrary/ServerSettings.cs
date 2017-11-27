@@ -18,17 +18,35 @@ using System.Xml.Serialization;
 
 namespace RemotePlusLibrary
 {
+    /// <summary>
+    /// Represents the configuration settings for the server.
+    /// </summary>
     [Serializable]
     [DataContract]
     public class ServerSettings : IFileConfig
     {
         #region Constants
+        /// <summary>
+        /// The path to the server settings file.
+        /// </summary>
         public const string SERVER_SETTINGS_FILE_PATH = "Configurations\\Server\\GlobalServerSettings.config";
+        /// <summary>
+        /// The category used for server settings.
+        /// </summary>
         public const string SERVER_SETTINGS_CATEGORY_SERVER = "Server";
+        /// <summary>
+        /// The category used for security settings.
+        /// </summary>
         public const string SERVER_SETTINGS_CATEGORY_SECURITY = "Security";
+        /// <summary>
+        /// The category used for information settings.
+        /// </summary>
         public const string SERVER_SETTINGS_CATEGORY_SERVER_INFORMATION = "Server Information";
         #endregion Constants
         #region Connection
+        /// <summary>
+        /// The port number used for listening.
+        /// </summary>
         [DataMember]
         [Category(SERVER_SETTINGS_CATEGORY_SERVER)]
         public int PortNumber { get; set; }
@@ -37,6 +55,9 @@ namespace RemotePlusLibrary
 
         #endregion
         #region Security
+        /// <summary>
+        /// Encapsulates all the user accounts that are on the server.
+        /// </summary>
         [DataMember]
         [Category(SERVER_SETTINGS_CATEGORY_SECURITY)]
         [Editor(typeof(UserAccountEditor), typeof(UITypeEditor))]
@@ -78,6 +99,9 @@ namespace RemotePlusLibrary
 
         #endregion
         #region Logging Settings
+        /// <summary>
+        /// Represents all the settings used by the logger.
+        /// </summary>
         [DataMember]
         [TypeConverter(typeof(ExpandableObjectConverter))]
         public LoggingSettings LoggingSettings { get; set; }

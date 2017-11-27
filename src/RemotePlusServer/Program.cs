@@ -16,12 +16,30 @@ using RemotePlusServer.ExtensionSystem;
 
 namespace RemotePlusServer
 {
+    /// <summary>
+    /// Provides global access to the server instance.
+    /// </summary>
     public static partial class ServerManager
     {
+        /// <summary>
+        /// The global logger for the server.
+        /// </summary>
         public static CMDLogging Logger { get; } = new CMDLogging();
+        /// <summary>
+        /// The global service that is running on the server. Use this property to access server specific functions.
+        /// </summary>
         public static RemotePlusService<RemoteImpl> DefaultService { get; private set; }
+        /// <summary>
+        /// The main server configuration. Provides settings for the main server.
+        /// </summary>
         public static ServerSettings DefaultSettings { get; set; } = new ServerSettings();
+        /// <summary>
+        /// The main email configuration. Provides settings for the default SMTP settings and sets the behavior of the SMTP client.
+        /// </summary>
         public static EmailSettings DefaultEmailSettings { get; set; } = new EmailSettings();
+        /// <summary>
+        /// The global container that all house the libraries that are loaded into the system.
+        /// </summary>
         public static ServerExtensionLibraryCollection DefaultCollection { get; } = new ServerExtensionLibraryCollection();
         private static Stopwatch sw;
         [STAThread]
@@ -199,13 +217,24 @@ namespace RemotePlusServer
         }
         static void LoadExtensionLibraries()
         {
+            List<string> excludedFiles = new List<string>();
             Logger.AddOutput("Loading extensions...", Logging.OutputLevel.Info);
             if (Directory.Exists("extensions"))
             {
+                if (File.Exists("extensions\\excludes.txt"))
+                {
+                    Logger.AddOutput("Found an excludes.txt file. Reading file...", OutputLevel.Info);
+                    foreach(string excludedFile in File.ReadLines("extensions\\excludes.txt"))
+                    {
+                        Logger.AddOutput($"{excludedFile} is excluded from the extension search.", OutputLevel.Info);
+                        excludedFiles.Add("extensions\\" + excludedFile);
+                    }
+                    Logger.AddOutput("Finished reading extension exclusion file.", OutputLevel.Info);
+                }
                 ServerInitEnvironment env = new ServerInitEnvironment(false);
                 foreach (string files in Directory.GetFiles("extensions"))
                 {
-                    if (Path.GetExtension(files) == ".dll")
+                    if (Path.GetExtension(files) == ".dll" && !excludedFiles.Contains(files))
                     {
                         try
                         {

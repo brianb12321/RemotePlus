@@ -12,6 +12,7 @@ namespace RemotePlusLibrary.Extension
 {
     public abstract class ServerExtension : RemotePlusLibrary.Extension.IExtension<ExtensionDetails>
     {
+        public ClientSupportedTypes SupportClientTypes { get; set; }
         public virtual void ProgramRequested(ServerExtensionProgrammerUpdateEvent requestProgrammer)
         {
 
@@ -20,11 +21,8 @@ namespace RemotePlusLibrary.Extension
         {
             GeneralDetails = d;
         }
-
         public ExtensionDetails GeneralDetails { get; private set; }
 
-        public abstract OperationStatus Execute(ExtensionExecutionContext Context, params object[] arguments);
-        public abstract void HaultExtension();
-        public abstract void ResumeExtension();
+        public abstract ExtensionReturn Execute(ExtensionExecutionContext Context, string[] arguments);
     }
 }

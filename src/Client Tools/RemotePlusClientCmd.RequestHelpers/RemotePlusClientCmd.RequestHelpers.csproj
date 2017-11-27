@@ -4,20 +4,20 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{C2E44C89-7521-4B30-B522-BECD525B1E51}</ProjectGuid>
+    <ProjectGuid>{4F29FED8-1EDF-44F6-93CB-9000415802B1}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>WindowsTools</RootNamespace>
-    <AssemblyName>WindowsTools</AssemblyName>
+    <RootNamespace>RemotePlusClientCmd.RequestHelpers</RootNamespace>
+    <AssemblyName>RemotePlusClientCmd.RequestHelpers</AssemblyName>
     <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
-    <DebugType>pdbonly</DebugType>
+    <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\RemotePlusServer\bin\Debug\extensions\</OutputPath>
+    <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -31,17 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="GameclubCryptoServices">
-      <HintPath>..\..\..\Libs\GameclubCryptoServices.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Logging">
-      <HintPath>..\..\..\Libs\Logging.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -50,39 +42,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="dskClean.cs" />
-    <Compile Include="Filem.cs" />
-    <Compile Include="OSCommands.cs" />
+    <Compile Include="CmdTextBox.cs" />
+    <Compile Include="IURIWrappercs.cs" />
+    <Compile Include="SMenuBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Client Tools\RemotePlusClientCmd.RequestHelpers\RemotePlusClientCmd.RequestHelpers.csproj">
-      <Project>{4f29fed8-1edf-44f6-93cb-9000415802b1}</Project>
-      <Name>RemotePlusClientCmd.RequestHelpers</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\RemotePlusLibrary.Configuration\RemotePlusLibrary.Configuration.csproj">
-      <Project>{8a8a5888-1ce7-46ed-b8de-1ac7671f3426}</Project>
-      <Name>RemotePlusLibrary.Configuration</Name>
-      <Private>False</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\..\RemotePlusLibrary.Core.EmailService\RemotePlusLibrary.Core.EmailService.csproj">
-      <Project>{166c0846-95a7-4134-9a6c-bb2e5c9c4594}</Project>
-      <Name>RemotePlusLibrary.Core.EmailService</Name>
-      <Private>False</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\..\RemotePlusLibrary.Core\RemotePlusLibrary.Core.csproj">
-      <Project>{0334629b-6302-42a8-b159-f8646b4d8650}</Project>
-      <Name>RemotePlusLibrary.Core</Name>
-      <Private>False</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\..\RemotePlusLibrary.Extension\RemotePlusLibrary.Extension.csproj">
-      <Project>{2aa5e768-7e0a-4b0c-a0d1-f79153902df9}</Project>
-      <Name>RemotePlusLibrary.Extension</Name>
-      <Private>False</Private>
-    </ProjectReference>
     <ProjectReference Include="..\..\RemotePlusLibrary\RemotePlusLibrary.csproj">
-      <Project>{00C22A1F-D3DF-4193-AAA8-9907D08E2511}</Project>
+      <Project>{00c22a1f-d3df-4193-aaa8-9907d08e2511}</Project>
       <Name>RemotePlusLibrary</Name>
       <Private>False</Private>
     </ProjectReference>
