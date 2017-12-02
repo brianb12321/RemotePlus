@@ -30,10 +30,10 @@ namespace WindowsTools
         [CommandHelp("Allows you to manage files on the remote file system.")]
         public static CommandResponse filem_command(CommandRequest args, CommandPipeline pipe)
         {
-            if(RemotePlusServer.ServerManager.DefaultService.Remote.Client.ClientType != RemotePlusLibrary.ClientType.CommandLine)
+            if(ServerManager.DefaultService.Remote.Client.ClientType != ClientType.CommandLine)
             {
                 SendMessage("FileM is currently only availible to command line users.", OutputLevel.Error);
-                return new CommandResponse(-999);
+                return new CommandResponse(-999); // Random Error Code
             }
             SMenuBuilder menu = new SMenuBuilder("Please select a file operation below.");
             menu.MenuOptions.Add("Open file");
@@ -90,6 +90,12 @@ namespace WindowsTools
             var choice = menu.BuildAndSend();
             switch(choice)
             {
+                case 0:
+                    AppendFile(file.FullName);
+                    break;
+                case 1:
+                    OverrideFile(file.FullName);
+                    break;
                 case 2:
                     DeleteFile(file.FullName);
                     break;
@@ -97,6 +103,20 @@ namespace WindowsTools
                     return;
             }
         }
+
+        private static void AppendFile(string fullName)
+        {
+            string message = (string)ServerManager.DefaultService.Remote.Client.ClientCallback.RequestInformation(new RequestBuilder("rcmd_multitextBox", "Please enter text to append to the file. When finished, hit {ENTER}", null)).Data;
+            File.AppendAllText(fullName, message);
+            SendMessage($"File {fullName} appended.", OutputLevel.Info);
+        }
+        private static void OverrideFile(string file)
+        {
+            string message = (string)ServerManager.DefaultService.Remote.Client.ClientCallback.RequestInformation(new RequestBuilder("rcmd_multitextBox", "Please enter text to override. When finished, hit {ENTER}", null)).Data;
+            File.WriteAllText(file, message);
+            SendMessage($"File {file} overwritten.", OutputLevel.Info);
+        }
+
         static void DeleteFile(string file)
         {
             var result = (DialogResult)Enum.Parse(typeof(DialogResult), (string)ServerManager.DefaultService.Remote.Client.ClientCallback.RequestInformation(RequestBuilder.RequestMessageBox($"Are you sure that you want to delete {Path.GetFileName(file)}? You cannot revert once completed.", "File Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)).Data);

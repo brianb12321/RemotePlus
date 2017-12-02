@@ -40,6 +40,7 @@ namespace RemotePlusClientCmd
             RequestStore.Add("rcmd_smenu", new Requests.SelectableConsoleMenu());
             RequestStore.Add("rcmd_messageBox", new Requests.RCmdMessageBox());
             RequestStore.Add("rcmd_textBox", new Requests.RCmdTextBox());
+            RequestStore.Add("rcmd_multitextBox", new Requests.RCmdMultiLineTextbox());
             if (args.Length == 0)
             {
                 try
@@ -111,21 +112,7 @@ namespace RemotePlusClientCmd
                         foreach (string command in splittedCommand)
                         {
                             CommandPipeline pipeline = new CommandPipeline();
-                            CommandRequest request = new CommandRequest(command.Split(' ')
-                                .Select(t =>
-                                {
-                                    // Makes sure that a string that already has a # sign does not have two # signs
-                                    if(!t.Contains("#"))
-                                    {
-                                        return t.Insert(0, "#");
-                                    }
-                                    else
-                                    {
-                                        // Leave string alone
-                                        return t;
-                                    }
-                                })
-                                .ToArray());
+                            CommandRequest request = new CommandRequest(command.Split(' ').ToArray());
                             var response = RunLocalCommand(request, CommandExecutionMode.Client, pipeline);
                             pipeline.Add(position, new CommandRoutine(request, response));
                             position += 1;

@@ -67,6 +67,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Requests\ConsoleMenuRequest.cs" />
     <Compile Include="Requests\RCmdMessageBox.cs" />
+    <Compile Include="Requests\RCmdMultiLineTextbox.cs" />
     <Compile Include="Requests\RCmdTextBox.cs" />
     <Compile Include="Requests\SelectableConsoleMenu.cs" />
   </ItemGroup>
