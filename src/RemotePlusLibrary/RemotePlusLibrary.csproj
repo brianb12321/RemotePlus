@@ -64,6 +64,8 @@
     <Compile Include="Converters\ServerSettingsTypeConverter.cs" />
     <Compile Include="Editors\StringCollectionEditor.cs" />
     <Compile Include="FileTransfer\DownloadRequest.cs" />
+    <Compile Include="FileTransfer\RemoteDirectory.cs" />
+    <Compile Include="FileTransfer\RemoteFiles.cs" />
     <Compile Include="IClient.cs" />
     <Compile Include="IDataRequest.cs" />
     <Compile Include="IRemote.cs" />

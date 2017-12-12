@@ -328,11 +328,32 @@ namespace RemotePlusServer
                     var ba = RemotePlusConsole.GetCommandBehavior(command);
                     if (ba != null)
                     {
+                        if(ba.TopChainCommand && pipe.Count > 0)
+                        {
+                            Logger.AddOutput($"This is a top-level command.", OutputLevel.Error);
+                            DefaultService.Remote.Client.ClientCallback.TellMessage($"This is a top-level command.", OutputLevel.Error);
+                            return new CommandResponse((int)CommandStatus.AccessDenied);
+                        }
                         if (commandMode != ba.ExecutionType)
                         {
                             Logger.AddOutput($"The command requires you to be in {ba.ExecutionType} mode.", OutputLevel.Error);
                             DefaultService.Remote.Client.ClientCallback.TellMessage($"The command requires you to be in {ba.ExecutionType} mode.", OutputLevel.Error);
                             return new CommandResponse((int)CommandStatus.AccessDenied);
+                        }
+                        if(ba.SupportClients != ClientSupportedTypes.Both && ((DefaultService.Remote.Client.ClientType == ClientType.GUI && ba.SupportClients != ClientSupportedTypes.GUI) || (DefaultService.Remote.Client.ClientType == ClientType.CommandLine && ba.SupportClients != ClientSupportedTypes.CommandLine)))
+                        {
+                            if(string.IsNullOrEmpty(ba.ClientRejectionMessage))
+                            {
+                                Logger.AddOutput($"Your client must be a {ba.SupportClients.ToString()} client.", OutputLevel.Error);
+                                DefaultService.Remote.Client.ClientCallback.TellMessage($"Your client must be a {ba.SupportClients.ToString()} client.", OutputLevel.Error);
+                                return new CommandResponse((int)CommandStatus.UnsupportedClient);
+                            }
+                            else
+                            {
+                                Logger.AddOutput(ba.ClientRejectionMessage, OutputLevel.Error);
+                                DefaultService.Remote.Client.ClientCallback.TellMessage(ba.ClientRejectionMessage, OutputLevel.Error);
+                                return new CommandResponse((int)CommandStatus.UnsupportedClient);
+                            }
                         }
                         if (ba.DoNotCatchExceptions)
                         {

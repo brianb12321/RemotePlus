@@ -17,6 +17,11 @@ namespace RemotePlusClientCmd.Requests
 
         string IDataRequest.Description => "Provides a simple command line based text box";
 
+        public void Update(string message)
+        {
+            throw new NotImplementedException();
+        }
+
         RawDataRequest IDataRequest.RequestData(RequestBuilder builder)
         {
             return RawDataRequest.Success((string)new InputBox<string>($"{builder.Message}: ").ReadLine());

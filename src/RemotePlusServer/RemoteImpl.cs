@@ -15,11 +15,13 @@ using RemotePlusLibrary.Extension.Programmer;
 using RemotePlusLibrary.Core.EmailService;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
 using RemotePlusServer.ExtensionSystem;
+using RemotePlusLibrary.FileTransfer;
 
 namespace RemotePlusServer
 {
-    [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Reentrant,
-        InstanceContextMode = InstanceContextMode.Single)]
+    [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Multiple,
+        InstanceContextMode = InstanceContextMode.Single,
+        UseSynchronizationContext = false)]
     [GlobalException(typeof(GlobalErrorHandler))]
     public class RemoteImpl : IRemote
     {
@@ -366,6 +368,7 @@ namespace RemotePlusServer
         public IEnumerable<string> GetCommandsAsStrings()
         {
             CheckRegisteration("GetCommandsAsStrings");
+            Client.ClientCallback.SendSignal("operation_completed", "");
             return ServerManager.DefaultService.Commands.Keys;
         }
 
@@ -402,12 +405,11 @@ namespace RemotePlusServer
 
         public void ProgramServerEstensionCollection(ServerExtensionCollectionProgrammer collectProgrammer)
         {
-            
+
         }
 
         public void ProgramServerExtesnionLibrary(ServerExtensionLibraryProgrammer libProgrammer)
         {
-            
         }
 
         public void ProgramServerExtension(string LibraryName, ServerExtensionProgrammer seProgrammer)
@@ -494,10 +496,64 @@ namespace RemotePlusServer
         {
             return RemotePlusConsole.ShowCommandHelpDescription(ServerManager.DefaultService.Commands, command);
         }
-
-        public DirectoryInfo GetRemoteFiles()
+        int num = 0;
+        public RemoteDirectory GetRemoteFiles(bool usingRequest)
         {
-            return new DirectoryInfo($@"c:\users\{Environment.UserName}");
+            DirectoryInfo subDir = new DirectoryInfo($@"c:\users\{Environment.UserName}");
+            string signal = usingRequest ? "r_fileTransfer" : "fileTransfer";
+            RemoteDirectory r = new RemoteDirectory(subDir.FullName, subDir.LastAccessTime);
+            try
+            {
+                foreach (var file in subDir.GetFiles())
+                {
+                    r.Files.Add(new RemoteFile(file.FullName, file.CreationTime, file.LastAccessTime));
+                }
+            }
+            catch (Exception ex) { }
+            directoryhelper(subDir.GetDirectories(), r, () => Client.ClientCallback.SendSignal(signal, (num++).ToString()));
+            return r;
+        }
+        void directoryhelper(DirectoryInfo[] rootDirs, RemoteDirectory rd, Action callback)
+        {
+            //Loop through all directories in the root directory.
+            foreach (var dir in rootDirs)
+            {
+                try
+                {
+                    callback();
+                    //Get files from each sub directory.
+                    FileInfo[] files = dir.GetFiles();
+                    //Create a RemoteDirectory object that contains the files in the sub directory.
+                    RemoteDirectory nrd = new RemoteDirectory(dir.FullName, dir.LastAccessTime);
+                    //Loop through each file in the sub directory.
+                    foreach (FileInfo f in files)
+                    {
+                        try
+                        {
+                            RemoteFile rf = new RemoteFile(f.FullName, f.CreationTime, f.LastAccessTime);
+                            //Add the files to the directory object.
+                            nrd.Files.Add(rf);
+                        }
+                        catch
+                        {
+
+                        }
+                    }
+                    //Get the next set of directories.
+                    DirectoryInfo[] sb = dir.GetDirectories();
+                    //Check if their is a next set of directores.
+                    if (sb.Length != 0)
+                    {
+                        //Loop through again.
+                        directoryhelper(sb, nrd, callback);
+                    }
+                    rd.Directories.Add(nrd);
+                }
+                catch
+                {
+                    // throw new FaultException($"File def download error: {ex.Message}");
+                }
+            }
         }
 
         public EmailSettings GetServerEmailSettings()

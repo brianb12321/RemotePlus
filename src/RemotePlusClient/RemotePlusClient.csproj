@@ -132,6 +132,7 @@
     <Compile Include="RemoteFileBrowser.Designer.cs">
       <DependentUpon>RemoteFileBrowser.cs</DependentUpon>
     </Compile>
+    <Compile Include="SelectFileRequest.cs" />
     <Compile Include="ServerConsole.cs">
       <SubType>Form</SubType>
     </Compile>

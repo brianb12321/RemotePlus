@@ -87,7 +87,7 @@ namespace RemotePlusLibrary
         [OperationContract]
         string GetCommandHelpDescription(string command);
         [OperationContract]
-        DirectoryInfo GetRemoteFiles();
+        RemoteDirectory GetRemoteFiles(bool useRequest);
         [OperationContract]
         EmailSettings GetServerEmailSettings();
         [OperationContract]

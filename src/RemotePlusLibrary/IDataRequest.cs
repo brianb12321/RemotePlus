@@ -34,5 +34,6 @@ namespace RemotePlusLibrary
         /// Updates the properties.
         /// </summary>
         void UpdateProperties();
+        void Update(string message);
     }
 }

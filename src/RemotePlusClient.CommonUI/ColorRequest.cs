@@ -34,5 +34,10 @@ namespace RemotePlusClient.CommonUI
                 return RawDataRequest.Cancel(Color.Black.ToString());
             }
         }
+
+        public void Update(string message)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

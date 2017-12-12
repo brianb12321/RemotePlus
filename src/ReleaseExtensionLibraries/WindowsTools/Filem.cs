@@ -28,13 +28,16 @@ namespace WindowsTools
             RemotePlusServer.ServerManager.Logger.AddOutput(message, level, "FileM");
         }
         [CommandHelp("Allows you to manage files on the remote file system.")]
+        [CommandBehavior(SupportClients = RemotePlusLibrary.Extension.ClientSupportedTypes.CommandLine,
+            ClientRejectionMessage = "FileM is not supported for GUI clients yet.",
+            CommandDevelepmentState = RemotePlusLibrary.Extension.ExtensionDevelopmentState.InDevelopment)]
         public static CommandResponse filem_command(CommandRequest args, CommandPipeline pipe)
         {
-            if(ServerManager.DefaultService.Remote.Client.ClientType != ClientType.CommandLine)
-            {
-                SendMessage("FileM is currently only availible to command line users.", OutputLevel.Error);
-                return new CommandResponse(-999); // Random Error Code
-            }
+            //if(ServerManager.DefaultService.Remote.Client.ClientType != ClientType.CommandLine)
+            //{
+            //    SendMessage("FileM is currently only availible to command line users.", OutputLevel.Error);
+            //    return new CommandResponse(-999); // Random Error Code
+            //}
             SMenuBuilder menu = new SMenuBuilder("Please select a file operation below.");
             menu.MenuOptions.Add("Open file");
             menu.MenuOptions.Add("Open directory");
@@ -56,15 +59,16 @@ namespace WindowsTools
         }
         static void openFile()
         {
-            var filePath = new CmdTextBox("Enter file path to open").BuildAndSend();
+            string file = (string)ServerManager.DefaultService.Remote.Client.ClientCallback.RequestInformation(RequestBuilder.RequestFile()).Data;
+            //var filePath = new CmdTextBox("Enter file path to open").BuildAndSend();
             try
             {
-                showFIleMenu(new FileInfo(filePath));
+                showFIleMenu(new FileInfo(file));
 
             }
             catch(FileNotFoundException)
             {
-                SendMessage($"The file {filePath} cannot be opened. It does not exist.", OutputLevel.Error);
+                SendMessage($"The file {file} cannot be opened. It does not exist.", OutputLevel.Error);
             }
         }
         static void showFIleMenu(FileInfo file)

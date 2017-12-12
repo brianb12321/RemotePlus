@@ -15,6 +15,11 @@ namespace RemotePlusClientCmd.Requests
 
         string IDataRequest.Description => "Provides a simple menu";
 
+        public void Update(string message)
+        {
+            throw new NotImplementedException();
+        }
+
         RawDataRequest IDataRequest.RequestData(RequestBuilder builder)
         {
             while(true)

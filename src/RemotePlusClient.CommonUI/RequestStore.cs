@@ -11,6 +11,7 @@ namespace RemotePlusClient.CommonUI
 {
     public static class RequestStore
     {
+        static IDataRequest current;
         static Dictionary<string, IDataRequest> requestForms = new Dictionary<string, IDataRequest>();
         public static void Init()
         {
@@ -37,6 +38,7 @@ namespace RemotePlusClient.CommonUI
                 var keyFound = requestForms.TryGetValue(builder.Interface, out IDataRequest val);
                 if (keyFound)
                 {
+                    current = val;
                     var rd = val.RequestData(builder);
                     if (rd.State == RequestState.OK)
                     {
@@ -77,6 +79,10 @@ namespace RemotePlusClient.CommonUI
                     return new ReturnData(null, RequestState.Failed);
                 }
             }
+        }
+        public static IDataRequest GetCurrent()
+        {
+            return current;
         }
     }
 }

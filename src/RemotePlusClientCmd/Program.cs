@@ -12,6 +12,7 @@ using System.Drawing;
 using RemotePlusClient.CommonUI;
 using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
+using RemotePlusLibrary.Extension;
 
 namespace RemotePlusClientCmd
 {
@@ -41,6 +42,7 @@ namespace RemotePlusClientCmd
             RequestStore.Add("rcmd_messageBox", new Requests.RCmdMessageBox());
             RequestStore.Add("rcmd_textBox", new Requests.RCmdTextBox());
             RequestStore.Add("rcmd_multitextBox", new Requests.RCmdMultiLineTextbox());
+            RequestStore.Add("global_selectFile", new Requests.SelectFileRequest());
             if (args.Length == 0)
             {
                 try
@@ -206,6 +208,11 @@ namespace RemotePlusClientCmd
                         var ba = RemotePlusConsole.GetCommandBehavior(k.Value);
                         if (ba != null)
                         {
+                            if (ba.TopChainCommand && pipe.Count > 0)
+                            {
+                                Logger.AddOutput($"This is a top-level command.", OutputLevel.Error);
+                                return new CommandResponse((int)CommandStatus.AccessDenied);
+                            }
                             if (commandMode != ba.ExecutionType)
                             {
                                 Logger.AddOutput($"The command requires you to be in {ba.ExecutionType} mode.", OutputLevel.Error);

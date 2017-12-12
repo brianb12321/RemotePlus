@@ -58,6 +58,7 @@
     <Compile Include="CommandSystem\StatusCodeDeliveryMethod.cs" />
     <Compile Include="DependencyException.cs" />
     <Compile Include="DependencyType.cs" />
+    <Compile Include="ExtensionDevelopmentState.cs" />
     <Compile Include="ExtensionStatusCodes.cs" />
     <Compile Include="IInitEnvironment.cs" />
     <Compile Include="ILibraryBuilder.cs" />

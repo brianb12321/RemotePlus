@@ -3,18 +3,21 @@ using RemotePlusLibrary;
 using Logging;
 using System.ServiceModel;
 using RemotePlusClient.CommonUI;
+using System.Windows.Forms;
 
 namespace RemotePlusClientCmd
 {
-    [CallbackBehavior(ConcurrencyMode = ConcurrencyMode.Single,
+    [CallbackBehavior(ConcurrencyMode = ConcurrencyMode.Multiple,
         IncludeExceptionDetailInFaults = true,
         UseSynchronizationContext = false)]
     class ClientCallback : IRemoteClient
     {
         public void Disconnect(string Reason)
         {
+            //ClientCmdManager.WaitFlag = true;
             ClientCmdManager.channel.Close();
             ClientCmdManager.Logger.AddOutput(new LogItem(OutputLevel.Error, "Server disconnected. " + Reason, "CLient") { Color = ConsoleColor.Red });
+            //ClientCmdManager.WaitFlag = false;
         }
 
         public ClientBuilder RegisterClient()
@@ -32,11 +35,13 @@ namespace RemotePlusClientCmd
 
         public UserCredentials RequestAuthentication(AuthenticationRequest Request)
         {
+            //ClientCmdManager.WaitFlag = true;
             Console.WriteLine($"The server requires authentication. Reason: {Request.Reason}");
             Console.Write("Enter Username: ");
             string username = Console.ReadLine();
             Console.Write("Enter Password: ");
             string password = Console.ReadLine();
+            //ClientCmdManager.WaitFlag = false;
             return new UserCredentials(username, password);
         }
 
@@ -45,8 +50,24 @@ namespace RemotePlusClientCmd
             return RequestStore.Show(builder);
         }
 
+        public void SendSignal(string signal, string value)
+        {
+            //ClientCmdManager.WaitFlag = true;
+            switch (signal)
+            {
+                case "r_fileTransfer":
+                    RequestStore.GetCurrent().Update(value);
+                    break;
+                case "operation_completed":
+                    ClientCmdManager.WaitFlag = false;
+                    break;
+            }
+            //ClientCmdManager.WaitFlag = false;
+        }
+
         public void TellMessage(string Message, OutputLevel o)
         {
+            //ClientCmdManager.WaitFlag = true;
             LogItem li = new LogItem(o, Message, "Server Host");
             if (o == OutputLevel.Warning)
             {
@@ -65,10 +86,12 @@ namespace RemotePlusClientCmd
                 li.Color = ClientCmdManager.Logger.ConsoleForegroundDebug;
             }
             ClientCmdManager.Logger.AddOutput(li);
+            //ClientCmdManager.WaitFlag = false;
         }
 
         public void TellMessage(UILogItem li)
         {
+            //ClientCmdManager.WaitFlag = true;
             if (ClientCmdManager.Logger.OverrideLogItemObjectColorValue)
             {
                 if (li.Level == OutputLevel.Warning)
@@ -89,10 +112,12 @@ namespace RemotePlusClientCmd
                 }
             }
             ClientCmdManager.Logger.AddOutput(new LogItem(li.Level, li.Message, li.From) { Color = li.Color });
+            //ClientCmdManager.WaitFlag = false;
         }
 
         public void TellMessage(UILogItem[] Logs)
         {
+            //ClientCmdManager.WaitFlag = true;
             foreach (UILogItem l in Logs)
             {
                 if (ClientCmdManager.Logger.OverrideLogItemObjectColorValue)
@@ -115,11 +140,13 @@ namespace RemotePlusClientCmd
                     }
                 }
                 ClientCmdManager.Logger.AddOutput(new LogItem(l.Level, l.Message, l.From) { Color = l.Color });
+                //ClientCmdManager.WaitFlag = false;
             }
         }
 
         public void TellMessageToServerConsole(UILogItem li)
         {
+            //ClientCmdManager.WaitFlag = true;
             string f = "";
             if (string.IsNullOrEmpty(li.From))
             {
@@ -150,11 +177,14 @@ namespace RemotePlusClientCmd
                 }
             }
             ClientCmdManager.Logger.AddOutput(new LogItem(li.Level, li.Message, li.From) { Color = li.Color });
+            //ClientCmdManager.WaitFlag = false;
         }
 
         public void TellMessageToServerConsole(string Message)
         {
+            //ClientCmdManager.WaitFlag = true;
             Console.Write(Message);
+            //ClientCmdManager.WaitFlag = false;
         }
     }
 }

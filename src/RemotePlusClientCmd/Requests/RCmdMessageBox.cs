@@ -16,6 +16,11 @@ namespace RemotePlusClientCmd.Requests
 
         string IDataRequest.Description => "Displays a message box on the command line.";
 
+        public void Update(string message)
+        {
+            throw new NotImplementedException();
+        }
+
         RawDataRequest IDataRequest.RequestData(RequestBuilder builder)
         {
             ConsoLovers.ConsoleToolkit.ConsoleMessageBox cmb = new ConsoLovers.ConsoleToolkit.ConsoleMessageBox();

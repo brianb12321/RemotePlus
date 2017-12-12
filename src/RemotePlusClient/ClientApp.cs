@@ -42,6 +42,7 @@ namespace RemotePlusClient
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             RequestStore.Init();
+            RequestStore.Add("global_selectFile", new SelectFileRequest());
             MainWindow = new MainF();
             Application.Run(MainWindow);
         }

@@ -25,13 +25,25 @@ namespace RemotePlusClientCmd.Requests
                 string result = Console.ReadLine();
                 if(result.Length > 0)
                 {
-                    sb.AppendLine(result);
+                    if (string.IsNullOrWhiteSpace(result))
+                    {
+                        sb.AppendLine();
+                    }
+                    else
+                    {
+                        sb.AppendLine(result);
+                    }
                 }
                 else
                 {
                     return RawDataRequest.Success(sb.ToString());
                 }
             }
+        }
+
+        public void Update(string message)
+        {
+            throw new NotImplementedException();
         }
 
         public void UpdateProperties()

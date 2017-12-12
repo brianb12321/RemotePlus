@@ -72,5 +72,10 @@ namespace RemotePlusClient.CommonUI
         {
 
         }
+
+        public void Update(string message)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

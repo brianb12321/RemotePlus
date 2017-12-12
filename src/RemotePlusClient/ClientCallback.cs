@@ -151,6 +151,19 @@ namespace RemotePlusClient
         public void RegistirationComplete()
         {
         }
+
+        public void SendSignal(string signal, string value)
+        {
+            switch(signal)
+            {
+                case "fileTransfer":
+                    ((RemoteFileBrowser)((MainF)Form.ActiveForm).TopPages["Remote File Browser"]).CountValue = int.Parse(value);
+                    break;
+                case "r_fileTransfer":
+                    RequestStore.GetCurrent().Update(value);
+                    break;
+            }
+        }
         #endregion
 
     }

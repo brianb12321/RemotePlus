@@ -15,6 +15,8 @@ namespace RemotePlusLibrary.Extension.CommandSystem
         [DataMember]
         Fail = -1,
         [DataMember]
-        AccessDenied = -2
+        AccessDenied = -2,
+        [DataMember]
+        UnsupportedClient = -3
     }
 }

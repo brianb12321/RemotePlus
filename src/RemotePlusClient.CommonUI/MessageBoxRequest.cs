@@ -16,6 +16,11 @@ namespace RemotePlusClient.CommonUI
 
         string IDataRequest.Description => "Shows a message box to the user.";
 
+        public void Update(string message)
+        {
+            throw new NotImplementedException();
+        }
+
         RawDataRequest IDataRequest.RequestData(RequestBuilder builder)
         {
             try

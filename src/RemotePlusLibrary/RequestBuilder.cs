@@ -63,5 +63,9 @@ namespace RemotePlusLibrary
             RequestBuilder rb = new RequestBuilder("r_messageBox", message, args);
             return rb;
         }
+        public static RequestBuilder RequestFile()
+        {
+            return new RequestBuilder("global_selectFile", null, null);
+        }
     }
 }

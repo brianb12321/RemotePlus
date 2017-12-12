@@ -1,4 +1,4 @@
-﻿using RemotePlusLibrary.Extension.Gui;
+﻿using RemotePlusLibrary;
 using RemotePlusLibrary.FileTransfer;
 using System;
 using System.Collections.Generic;
@@ -7,16 +7,17 @@ using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace RemotePlusClient
+namespace RemotePlusClient.CommonUI
 {
-    //Credit goes to Microsoft article at https://docs.microsoft.com/en-us/dotnet/framework/winforms/controls/creating-an-explorer-style-interface-with-the-listview-and-treeview
-    public partial class RemoteFileBrowser : ThemedForm
+    public partial class FindRemoteFileDialog : Form
     {
-        public int CountValue
+        public string FilePath { get; private set; }
+        public int Counter
         {
             get
             {
@@ -27,18 +28,42 @@ namespace RemotePlusClient
                 fileBrowser1.CountLabel = value;
             }
         }
-        public RemoteFileBrowser()
+        IRemote remote = null;
+        public FindRemoteFileDialog(IRemote r)
         {
+            remote = r;
             InitializeComponent();
         }
 
-        private void RemoteFileBrowser_Load(object sender, EventArgs e)
+        private void fileBrowser1_FileSelected(object sender, FileSelectedEventArgs e)
         {
-            MainF.ConsoleObj.Logger.AddOutput("Downloading file data from server. This may take a while.", Logging.OutputLevel.Info);
+            textBox1.Text = e.SelectedName;
+        }
+
+        private void btn_OK_Click(object sender, EventArgs e)
+        {
+            DialogResult = DialogResult.OK;
+            FilePath = Path.Combine(fileBrowser1.CurrentPath, textBox1.Text);
+            Close();
+        }
+
+        private void btn_cancel_Click(object sender, EventArgs e)
+        {
+            DialogResult = DialogResult.Cancel;
+            progressWorker.CancelAsync();
+            Close();
+        }
+
+        private void FindRemoteFileDialog_Load(object sender, EventArgs e)
+        {
+            Counter = 0;
             progressWorker.DoWork += ProgressWorker_DoWork;
             progressWorker.RunWorkerAsync();
         }
+        public void Start()
+        {
 
+        }
         private void ProgressWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             this.Invoke((Action)(() => fileBrowser1.StatusMessage = "Downloading file data"));
@@ -48,18 +73,24 @@ namespace RemotePlusClient
                 fileBrowser1.CountLabel = (num++);
             });
         }
-
         void PopulateTreeView(Action callback)
         {
             TreeNode rootNode = null;
-            RemoteDirectory info = MainF.Remote.GetRemoteFiles(false);
-            MainF.ConsoleObj.Logger.AddOutput("Finished populating file browser.", Logging.OutputLevel.Info);
-            this.Invoke((Action)(() => fileBrowser1.StatusMessage = "Populating Tree View"));
-            rootNode = new TreeNode(info.Name);
-            rootNode.Tag = info;
-            GetDirectories(info.GetDirectories(), rootNode, callback);
-            this.Invoke((Action)(() => fileBrowser1.Directories.Add(rootNode)));
-            fileBrowser1.StatusMessage = "Finsished";
+            try
+            {
+                RemoteDirectory info = remote.GetRemoteFiles(true);
+                this.Invoke((Action)(() => fileBrowser1.StatusMessage = "Populating Tree View"));
+                rootNode = new TreeNode(info.Name);
+                rootNode.Tag = info;
+                GetDirectories(info.GetDirectories(), rootNode, callback);
+                this.Invoke((Action)(() => fileBrowser1.Directories.Add(rootNode)));
+                fileBrowser1.StatusMessage = "Finsished";
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Could not download file data: {ex.Message}");
+                this.Invoke((Action)(() => fileBrowser1.StatusMessage = "Donwload failed."));
+            }
         }
 
         private void GetDirectories(RemoteDirectory[] subDirs, TreeNode nodeToAdd, Action callback)
@@ -85,14 +116,9 @@ namespace RemotePlusClient
                 }
                 catch (Exception ex)
                 {
-                    MainF.ConsoleObj.Logger.AddOutput($"Directory population failed to be loaded: {ex.Message}", Logging.OutputLevel.Warning);
+
                 }
             }
-        }
-
-        private void treeView1_Click(object sender, EventArgs e)
-        {
-            
         }
     }
 }

@@ -30,5 +30,7 @@ namespace RemotePlusLibrary
         ReturnData RequestInformation(RequestBuilder builder);
         [OperationContract(IsOneWay = true)]
         void RegistirationComplete();
+        [OperationContract(IsOneWay = true)]
+        void SendSignal(string signal, string value);
     }
 }

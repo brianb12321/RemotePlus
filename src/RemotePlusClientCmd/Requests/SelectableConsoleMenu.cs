@@ -119,5 +119,10 @@ namespace RemotePlusClientCmd.Requests
         {
             throw new NotImplementedException();
         }
+
+        public void Update(string message)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
