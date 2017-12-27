@@ -25,6 +25,7 @@ namespace RemotePlusServer
     [GlobalException(typeof(GlobalErrorHandler))]
     public class RemoteImpl : IRemote
     {
+        const string OPERATION_COMPLETED = "Operation_Completed";
         public RemoteImpl()
         {
 
@@ -61,6 +62,7 @@ namespace RemotePlusServer
                 Console.Beep(Hertz, Duration);
                 Client.ClientCallback.TellMessage($"Console beeped. Hertz: {Hertz}, Duration: {Duration}", OutputLevel.Info);
             }
+            OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
         }
 
         public void PlaySound(string FileName)
@@ -89,6 +91,7 @@ namespace RemotePlusServer
                 System.Media.SoundPlayer sp = new System.Media.SoundPlayer(FileName);
                 sp.PlayLooping();
             }
+            OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
         }
 
         public void PlaySoundSync(string FileName)
@@ -103,6 +106,7 @@ namespace RemotePlusServer
                 System.Media.SoundPlayer sp = new System.Media.SoundPlayer(FileName);
                 sp.PlaySync();
             }
+            OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
         }
 
         public void Register(RegistirationObject Settings)
@@ -127,6 +131,7 @@ namespace RemotePlusServer
                 UserCredentials upp = Client.ClientCallback.RequestAuthentication(new AuthenticationRequest(AutehnticationSeverity.Normal) { Reason = "The server requires credentials to register."});
                 LogIn(upp);
             }
+            OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
         }
         private void RegisterComplete()
         {
@@ -206,6 +211,7 @@ namespace RemotePlusServer
                 ServerManager.Logger.AddOutput("Beginning standord stream reade line.", OutputLevel.Debug);
                 p.BeginOutputReadLine();
             }
+            OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
         }
 
         public void ShowMessageBox(string Message, string Caption, System.Windows.Forms.MessageBoxIcon Icon, System.Windows.Forms.MessageBoxButtons Buttons)
@@ -220,6 +226,7 @@ namespace RemotePlusServer
                 var dr = MessageBox.Show(Message, Caption, Buttons, Icon);
                 Client.ClientCallback.TellMessage(new UILogItem(OutputLevel.Info, $"The user responded to the message box. Response: {dr.ToString()}", "Server Host"));
             }
+            OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
         }
 
         public void Speak(string Message, VoiceGender Gender, VoiceAge Age)
@@ -236,6 +243,7 @@ namespace RemotePlusServer
                 ss.Speak(Message);
                 Client.ClientCallback.TellMessage($"Server spoke. Message: {Message}, gender: {Gender.ToString()}, age: {Age.ToString()}", OutputLevel.Info);
             }
+            OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
         }
 
         public CommandPipeline RunServerCommand(string Command, CommandExecutionMode commandMode)
@@ -265,6 +273,7 @@ namespace RemotePlusServer
                     }
                 }
             }
+            OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
             return pipe;
         }
 
@@ -284,10 +293,12 @@ namespace RemotePlusServer
                 Client.ClientCallback.TellMessage("Settings saved.", OutputLevel.Info);
                 ServerManager.Logger.AddOutput("Settings saved.", OutputLevel.Info);
             }
+            OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
         }
 
         public ServerSettings GetServerSettings()
         {
+            OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
             CheckRegisteration("GetServerSettings");
             if (!LoggedInUser.Role.Privilleges.CanAccessSettings)
             {
@@ -307,12 +318,14 @@ namespace RemotePlusServer
         }
         public UserAccount GetLoggedInUser()
         {
+            OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
             CheckRegisteration("GetLoggedInUser");
             return LoggedInUser;
         }
 
         public ExtensionReturn RunExtension(string ExtensionName, ExtensionExecutionContext Context, string[] args)
         {
+            OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
             CheckRegisteration("RunExtension");
             if (!LoggedInUser.Role.Privilleges.CanRunExtension)
             {
@@ -345,6 +358,7 @@ namespace RemotePlusServer
 
         public List<ExtensionDetails> GetExtensionNames()
         {
+            OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
             CheckRegisteration("GetExtensionNames");
             List<ExtensionDetails> l = new List<ExtensionDetails>();
             foreach (KeyValuePair<string, ServerExtension> s in _allExtensions)
@@ -355,6 +369,7 @@ namespace RemotePlusServer
         }
         public IEnumerable<CommandDescription> GetCommands()
         {
+            OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
             List<CommandDescription> rc = new List<CommandDescription>();
             CheckRegisteration("GetCommands");
             ServerManager.Logger.AddOutput("Requesting commands list.", OutputLevel.Info);
@@ -367,19 +382,22 @@ namespace RemotePlusServer
         }
         public IEnumerable<string> GetCommandsAsStrings()
         {
+            OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
             CheckRegisteration("GetCommandsAsStrings");
-            Client.ClientCallback.SendSignal("operation_completed", "");
+            Client.ClientCallback.SendSignal(new SignalMessage("operation_completed", ""));
             return ServerManager.DefaultService.Commands.Keys;
         }
 
         public ServerExtensionCollectionProgrammer GetCollectionProgrammer()
         {
+            OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
             ServerExtensionCollectionProgrammer cprog = new ServerExtensionCollectionProgrammer();
             return cprog;
         }
 
         public ServerExtensionLibraryProgrammer GetServerLibraryProgrammer(string LibraryName)
         {
+            OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
             ServerExtensionLibrary lib = ServerManager.DefaultCollection.Libraries[LibraryName];
             ServerExtensionLibraryProgrammer slprog = new ServerExtensionLibraryProgrammer(lib.FriendlyName, lib.Name, lib.LibraryType);
             return slprog;
@@ -387,6 +405,7 @@ namespace RemotePlusServer
 
         public ServerExtensionProgrammer GetServerExtensionProgrammer(string ExtensionName)
         {
+            OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
             ServerExtensionProgrammer seprog = new ServerExtensionProgrammer()
             {
                 ExtensionDetails = ServerManager.DefaultCollection.GetAllExtensions()[ExtensionName].GeneralDetails
@@ -396,6 +415,7 @@ namespace RemotePlusServer
 
         public ServerExtensionProgrammer GetServerExtensionProgrammer(string LibraryName, string ExtensionName)
         {
+            OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
             ServerExtensionProgrammer seprog = new ServerExtensionProgrammer()
             {
                 ExtensionDetails = ServerManager.DefaultCollection.Libraries[LibraryName].Extensions[ExtensionName].GeneralDetails
@@ -405,15 +425,17 @@ namespace RemotePlusServer
 
         public void ProgramServerEstensionCollection(ServerExtensionCollectionProgrammer collectProgrammer)
         {
-
+            OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
         }
 
         public void ProgramServerExtesnionLibrary(ServerExtensionLibraryProgrammer libProgrammer)
         {
+            OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
         }
 
         public void ProgramServerExtension(string LibraryName, ServerExtensionProgrammer seProgrammer)
         {
+            OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
             ServerExtensionProgrammerUpdateEvent programmerEvent = new ServerExtensionProgrammerUpdateEvent(seProgrammer);
             ServerManager.DefaultCollection.Libraries[LibraryName].Extensions[seProgrammer.ExtensionDetails.Name].ProgramRequested(programmerEvent);
             if(!programmerEvent.Cancel)
@@ -424,6 +446,7 @@ namespace RemotePlusServer
 
         public void SwitchUser()
         {
+            OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
             LogOff();
             ServerManager.Logger.AddOutput("Logging in.", OutputLevel.Info ,"Server Host");
             Client.ClientCallback.TellMessage(new UILogItem(OutputLevel.Info, "Logging in.", "Server Host"));
@@ -440,6 +463,7 @@ namespace RemotePlusServer
         }
         private void LogIn(UserCredentials cred)
         {
+            OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
             if (cred == null)
             {
                 ServerManager.Logger.AddOutput("The user did not pass in any credentials. Authentication failed.", OutputLevel.Info);
@@ -473,6 +497,7 @@ namespace RemotePlusServer
 
         public void EncryptFile(string fileName, string password)
         {
+            OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
             ServerManager.Logger.AddOutput($"Encrypting file. file name: {fileName}", OutputLevel.Info);
             GameclubCryptoServices.CryptoService.EncryptFile(password, fileName, Path.ChangeExtension(fileName, ".ec"));
             ServerManager.Logger.AddOutput("File encrypted.", OutputLevel.Info);
@@ -481,6 +506,7 @@ namespace RemotePlusServer
 
         public void DecryptFile(string fileName, string password)
         {
+            OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
             ServerManager.Logger.AddOutput($"Decrypting file. file name: {fileName}", OutputLevel.Info);
             GameclubCryptoServices.CryptoService.DecrypttFile(password, fileName, Path.ChangeExtension(fileName, ".uc"));
             ServerManager.Logger.AddOutput("File decrypted.", OutputLevel.Info);
@@ -489,75 +515,36 @@ namespace RemotePlusServer
 
         public string GetCommandHelpPage(string command)
         {
+            OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
             return RemotePlusConsole.ShowHelpPage(ServerManager.DefaultService.Commands, command);
         }
 
         public string GetCommandHelpDescription(string command)
         {
+            OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
             return RemotePlusConsole.ShowCommandHelpDescription(ServerManager.DefaultService.Commands, command);
         }
         int num = 0;
-        public RemoteDirectory GetRemoteFiles(bool usingRequest)
+        public RemoteDirectory GetRemoteFiles(string path, bool usingRequest)
         {
-            DirectoryInfo subDir = new DirectoryInfo($@"c:\users\{Environment.UserName}");
-            string signal = usingRequest ? "r_fileTransfer" : "fileTransfer";
+            OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
+            DirectoryInfo subDir = new DirectoryInfo(path);
             RemoteDirectory r = new RemoteDirectory(subDir.FullName, subDir.LastAccessTime);
-            try
+            //Get files
+            foreach(FileInfo files in subDir.EnumerateFiles())
             {
-                foreach (var file in subDir.GetFiles())
-                {
-                    r.Files.Add(new RemoteFile(file.FullName, file.CreationTime, file.LastAccessTime));
-                }
+                r.Files.Add(new RemoteFile(files.FullName, files.CreationTime, files.LastAccessTime));
             }
-            catch (Exception ex) { }
-            directoryhelper(subDir.GetDirectories(), r, () => Client.ClientCallback.SendSignal(signal, (num++).ToString()));
+            //Get Folders
+            foreach(DirectoryInfo folders in subDir.EnumerateDirectories())
+            {
+                r.Directories.Add(new RemoteDirectory(folders.FullName, folders.LastAccessTime));
+            }
             return r;
         }
-        void directoryhelper(DirectoryInfo[] rootDirs, RemoteDirectory rd, Action callback)
-        {
-            //Loop through all directories in the root directory.
-            foreach (var dir in rootDirs)
-            {
-                try
-                {
-                    callback();
-                    //Get files from each sub directory.
-                    FileInfo[] files = dir.GetFiles();
-                    //Create a RemoteDirectory object that contains the files in the sub directory.
-                    RemoteDirectory nrd = new RemoteDirectory(dir.FullName, dir.LastAccessTime);
-                    //Loop through each file in the sub directory.
-                    foreach (FileInfo f in files)
-                    {
-                        try
-                        {
-                            RemoteFile rf = new RemoteFile(f.FullName, f.CreationTime, f.LastAccessTime);
-                            //Add the files to the directory object.
-                            nrd.Files.Add(rf);
-                        }
-                        catch
-                        {
-
-                        }
-                    }
-                    //Get the next set of directories.
-                    DirectoryInfo[] sb = dir.GetDirectories();
-                    //Check if their is a next set of directores.
-                    if (sb.Length != 0)
-                    {
-                        //Loop through again.
-                        directoryhelper(sb, nrd, callback);
-                    }
-                    rd.Directories.Add(nrd);
-                }
-                catch
-                {
-                    // throw new FaultException($"File def download error: {ex.Message}");
-                }
-            }
-        }
-
         public EmailSettings GetServerEmailSettings()
         {
+            OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
             CheckRegisteration("GetServerEmailSettings");
             if (!LoggedInUser.Role.Privilleges.CanAccessSettings)
             {
@@ -573,6 +560,7 @@ namespace RemotePlusServer
 
         public void UpdateServerEmailSettings(EmailSettings emailSetting)
         {
+            OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
             CheckRegisteration("UpdateServerEmailSettings");
             if (!LoggedInUser.Role.Privilleges.CanAccessSettings)
             {
@@ -591,6 +579,7 @@ namespace RemotePlusServer
 
         public bool SendEmail(string To, string Subject, string Message)
         {
+            OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
             EmailClient client = new EmailClient(ServerManager.DefaultEmailSettings);
             if(client.SendEmail(To, Subject, Message, out Exception err))
             {

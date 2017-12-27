@@ -72,67 +72,58 @@ namespace RemotePlusClient.CommonUI
         [Description("Sets what to filter out of the list.")]
         [Category(FILE_BROWSER_CATEGORY)]
         public FilterMode Filter { get; set; } = FilterMode.Both;
+        public TreeNode SelectedNode
+        {
+            get
+            {
+                return treeView1.SelectedNode;
+            }
+        }
+        public ListView FileList
+        {
+            get
+            {
+                return listView1;
+            }
+        }
         #endregion
         #region Public Events
         public event EventHandler<FileSelectedEventArgs> FileSelected;
+        public event EventHandler<TreeViewCancelEventArgs> NodeAboutToBeExpanded;
+        public event EventHandler<TreeViewEventArgs> TreeVewAfterSelect;
         #endregion
 
         protected virtual void OnFileSelected(FileSelectedEventArgs e)
         {
             FileSelected?.Invoke(this, e);
         }
+        protected virtual void OnNodeAboutToBeExpanded(TreeViewCancelEventArgs e)
+        {
+            NodeAboutToBeExpanded?.Invoke(this, e);
+        }
+        protected virtual void OnTreeVewAfterSelect(TreeViewEventArgs e)
+        {
+            TreeVewAfterSelect?.Invoke(this, e);
+        }
 
         public FileBrowser()
-        {           
+        {
             InitializeComponent();
         }
 
         private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            PopulateFileBrowser(e.Node);
+            OnTreeVewAfterSelect(e);
         }
 
         private void treeView1_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {
-            PopulateFileBrowser(e.Node);
+            OnTreeVewAfterSelect(new TreeViewEventArgs(e.Node));
         }
-        void PopulateFileBrowser(TreeNode node)
+
+        private void treeView1_BeforeExpand(object sender, TreeViewCancelEventArgs e)
         {
-            TreeNode newSelected = node;
-            listView1.Items.Clear();
-            RemoteDirectory nodeDirInfo = (RemoteDirectory)newSelected.Tag;
-            textBox1.Text = nodeDirInfo.FullName;
-            ListViewItem.ListViewSubItem[] subItems;
-            ListViewItem item = null;
-            if (Filter == FilterMode.Both || Filter == FilterMode.Directory)
-            {
-                foreach (RemoteDirectory dir in nodeDirInfo.GetDirectories())
-                {
-                    item = new ListViewItem(dir.Name, 0);
-                    subItems = new ListViewItem.ListViewSubItem[]
-                              { new ListViewItem.ListViewSubItem(item, "Directory"),
-                                new ListViewItem.ListViewSubItem(item,
-                                    dir.LastAccessTime.ToShortDateString())};
-                    item.SubItems.AddRange(subItems);
-                    listView1.Items.Add(item);
-                }
-            }
-            if (Filter == FilterMode.Both || Filter == FilterMode.File)
-            {
-                foreach (RemoteFile file in nodeDirInfo.Files)
-                {
-                    item = new ListViewItem(file.Name, 1);
-                    subItems = new ListViewItem.ListViewSubItem[]
-                              { new ListViewItem.ListViewSubItem(item, "File"),
-                                new ListViewItem.ListViewSubItem(item,
-                                    file.LastAccessed.ToShortDateString())};
-                    item.SubItems.AddRange(subItems);
-                    listView1.Items.Add(item);
-                }
-            }
-
-            listView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
-
+            OnNodeAboutToBeExpanded(e);
         }
 
         private void listView1_SelectedIndexChanged(object sender, EventArgs e)

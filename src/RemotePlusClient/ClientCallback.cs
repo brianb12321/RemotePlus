@@ -152,15 +152,15 @@ namespace RemotePlusClient
         {
         }
 
-        public void SendSignal(string signal, string value)
+        public void SendSignal(SignalMessage message)
         {
-            switch(signal)
+            switch(message.Message)
             {
                 case "fileTransfer":
-                    ((RemoteFileBrowser)((MainF)Form.ActiveForm).TopPages["Remote File Browser"]).CountValue = int.Parse(value);
+                    ((RemoteFileBrowser)((MainF)Form.ActiveForm).TopPages["Remote File Browser"]).CountValue = int.Parse(message.Value);
                     break;
                 case "r_fileTransfer":
-                    RequestStore.GetCurrent().Update(value);
+                    RequestStore.GetCurrent().Update(message.Value);
                     break;
             }
         }

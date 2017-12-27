@@ -56,6 +56,7 @@ namespace RemotePlusServer
                 Console.WriteLine($"Welcome to {a.Name}, version: {a.Version.ToString()}\n\n");
                 Logger.DefaultFrom = "Server Host";
                 Logger.AddOutput("Starting stop watch.", OutputLevel.Debug);
+                Logger.AddOutput(new LogItem(OutputLevel.Info, "NOTE: Tracing may be enabled on the server.", "Server Host") { Color = ConsoleColor.Cyan });
                 sw = new Stopwatch();
                 sw.Start();
                 InitalizeKnownTypes();
@@ -66,9 +67,14 @@ namespace RemotePlusServer
                 InitializeCommands();
                 if (CheckPrerequisites())
                 {
+                    bool autoStart = false;
+                    if(args.Length == 1)
+                    {
+                        autoStart = true;
+                    }
                     Application.EnableVisualStyles();
                     Application.SetCompatibleTextRenderingDefault(false);
-                    Application.Run(new ServerControls());
+                    Application.Run(new ServerControls(autoStart));
                 }
             }
             catch(Exception ex)

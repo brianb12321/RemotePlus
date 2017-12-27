@@ -12,8 +12,10 @@ namespace RemotePlusServer
 {
     public partial class ServerControls : Form
     {
-        public ServerControls()
+        bool startFlag;
+        public ServerControls(bool flag)
         {
+            startFlag = flag;
             InitializeComponent();
         }
 
@@ -38,9 +40,14 @@ namespace RemotePlusServer
 
         private void ServerControls_Load(object sender, EventArgs e)
         {
+            if (startFlag)
+            {
+                button1_Click(this, new EventArgs());
+            }
 #if COGNITO
             this.ShowInTaskbar = false;
 #endif
+
         }
     }
 }

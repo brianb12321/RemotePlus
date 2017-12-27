@@ -31,6 +31,6 @@ namespace RemotePlusLibrary
         [OperationContract(IsOneWay = true)]
         void RegistirationComplete();
         [OperationContract(IsOneWay = true)]
-        void SendSignal(string signal, string value);
+        void SendSignal(SignalMessage signal);
     }
 }

@@ -42,12 +42,18 @@ namespace RemotePlusClient
             // 
             // fileBrowser1
             // 
+            this.fileBrowser1.CountLabel = 0;
             this.fileBrowser1.CurrentPath = "Path";
             this.fileBrowser1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.fileBrowser1.Filter = RemotePlusClient.CommonUI.FilterMode.Both;
             this.fileBrowser1.Location = new System.Drawing.Point(0, 0);
             this.fileBrowser1.Name = "fileBrowser1";
             this.fileBrowser1.Size = new System.Drawing.Size(651, 287);
+            this.fileBrowser1.StatusMessage = "Idle";
             this.fileBrowser1.TabIndex = 0;
+            this.fileBrowser1.FileSelected += new System.EventHandler<RemotePlusClient.CommonUI.FileSelectedEventArgs>(this.fileBrowser1_FileSelected);
+            this.fileBrowser1.NodeAboutToBeExpanded += new System.EventHandler<System.Windows.Forms.TreeViewCancelEventArgs>(this.fileBrowser1_NodeAboutToBeExpanded);
+            this.fileBrowser1.TreeVewAfterSelect += new System.EventHandler<System.Windows.Forms.TreeViewEventArgs>(this.fileBrowser1_TreeVewAfterSelect);
             // 
             // RemoteFileBrowser
             // 

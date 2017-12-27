@@ -50,15 +50,15 @@ namespace RemotePlusClientCmd
             return RequestStore.Show(builder);
         }
 
-        public void SendSignal(string signal, string value)
+        public void SendSignal(SignalMessage message)
         {
             //ClientCmdManager.WaitFlag = true;
-            switch (signal)
+            switch (message.Message)
             {
                 case "r_fileTransfer":
-                    RequestStore.GetCurrent().Update(value);
+                    RequestStore.GetCurrent().Update(message.Value);
                     break;
-                case "operation_completed":
+                case "Operation_Completed":
                     ClientCmdManager.WaitFlag = false;
                     break;
             }

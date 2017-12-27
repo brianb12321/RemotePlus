@@ -107,6 +107,7 @@ namespace RemotePlusClientCmd
                 {
                     Console.Write(">");
                     var c = Console.ReadLine();
+                    WaitFlag = true;
                     if (c.ToCharArray()[0] == '#')
                     {
                         var splittedCommand = c.Split('&');
@@ -118,6 +119,7 @@ namespace RemotePlusClientCmd
                             var response = RunLocalCommand(request, CommandExecutionMode.Client, pipeline);
                             pipeline.Add(position, new CommandRoutine(request, response));
                             position += 1;
+                            WaitFlag = false;
                         }
                     }
                     else
