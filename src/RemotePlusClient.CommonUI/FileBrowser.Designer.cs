@@ -59,6 +59,7 @@
             this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
             this.imageList1.Images.SetKeyName(0, "folder.ico");
             this.imageList1.Images.SetKeyName(1, "file.ico");
+            this.imageList1.Images.SetKeyName(2, "drive.ico");
             // 
             // panel1
             // 

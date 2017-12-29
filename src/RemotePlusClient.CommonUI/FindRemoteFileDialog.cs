@@ -77,19 +77,22 @@ namespace RemotePlusClient.CommonUI
         {
             this.Invoke((Action)(() => fileBrowser1.StatusMessage = "Downloading file data"));
             TreeNode rootNode = null;
-            RemoteDirectory info = remote.GetRemoteFiles($@"c:\users\{Environment.UserName}", true);
-            Invoke((Action)(() => fileBrowser1.StatusMessage = "Populating Tree View"));
-            rootNode = new TreeNode(info.Name);
-            rootNode.Tag = info;
-            //foreach(RemoteDirectory dir in info.Directories)
-            //{
-            //    TreeNode newNode = new TreeNode(dir.Name);
-            //    newNode.Tag = dir;
-            //    rootNode.Nodes.Add(newNode);
-            //}
-            PopulateTree(rootNode);
-            //GetDirectories(info.GetDirectories(), rootNode, callback);
-            this.Invoke((Action)(() => fileBrowser1.Directories.Add(rootNode)));
+            foreach(DriveInfo drive in DriveInfo.GetDrives())
+            {
+                RemoteDrive info = (RemoteDrive)remote.GetRemoteFiles($@"{drive.RootDirectory}", true);
+                Invoke((Action)(() => fileBrowser1.StatusMessage = $"Populating Tree View for {drive.Name}"));
+                rootNode = new TreeNode(drive.Name) { ImageKey = "drive.ico", Tag = info };
+                //foreach(RemoteDirectory dir in info.Directories)
+                //{
+                //    TreeNode newNode = new TreeNode(dir.Name);
+                //    newNode.Tag = dir;
+                //    rootNode.Nodes.Add(newNode);s
+                //}
+                PopulateTree(rootNode);
+                //GetDirectories(info.GetDirectories(), rootNode, callback);
+                this.Invoke((Action)(() => fileBrowser1.Directories.Add(rootNode)));
+            }
+            
             fileBrowser1.StatusMessage = "Finsished";
         }
         void PopulateTree(TreeNode e)
@@ -97,11 +100,26 @@ namespace RemotePlusClient.CommonUI
             try
             {
                 Counter = 0;
-                RemoteDirectory dir = e.Tag as RemoteDirectory;
-                var newDir = remote.GetRemoteFiles(dir.FullName, true);
-                e.Tag = newDir;
-                if (e.Nodes.Count == 0)
+                if (e.Tag is RemoteDrive)
                 {
+                    RemoteDrive drive = e.Tag as RemoteDrive;
+                    RemoteDrive newDrive = (RemoteDrive)remote.GetRemoteFiles(drive.FullName, true);
+                    e.Tag = newDrive;
+                    fileBrowser1.StatusMessage = "Getting data";
+                    foreach (RemoteDirectory dirs in newDrive.GetDirectories())
+                    {
+                        Counter++;
+                        TreeNode node = new TreeNode(dirs.Name);
+                        node.Tag = dirs;
+                        node.ImageKey = "Folder";
+                        e.Nodes.Add(node);
+                    }
+                }
+                else
+                {
+                    RemoteDirectory dir = e.Tag as RemoteDirectory;
+                    RemoteDirectory newDir = (RemoteDirectory)remote.GetRemoteFiles(dir.FullName, true);
+                    e.Tag = newDir;
                     fileBrowser1.StatusMessage = "Getting data";
                     foreach (RemoteDirectory dirs in newDir.GetDirectories())
                     {
@@ -111,8 +129,8 @@ namespace RemotePlusClient.CommonUI
                         node.ImageKey = "Folder";
                         e.Nodes.Add(node);
                     }
-                    fileBrowser1.StatusMessage = "Finsished";
                 }
+                fileBrowser1.StatusMessage = "Finsished";
             }
             catch (FaultException ex)
             {
@@ -121,16 +139,27 @@ namespace RemotePlusClient.CommonUI
         }
         private void fileBrowser1_TreeVewAfterSelect(object sender, TreeViewEventArgs e)
         {
+            IDirectory nodeDirInfo = null;
             textBox1.Text = "";
-            RemoteDirectory nodeDirInfo = (RemoteDirectory)e.Node.Tag;
-            PopulateTree(e.Node);
+            if (e.Node.GetNodeCount(true) == 0 && !(e.Node.Tag is RemoteDrive))
+            {
+                PopulateTree(e.Node);
+            }
+            if (e.Node.Tag is RemoteDrive)
+            {
+                nodeDirInfo = (RemoteDrive)e.Node.Tag;
+            }
+            else
+            {
+                nodeDirInfo = (RemoteDirectory)e.Node.Tag;
+            }
             fileBrowser1.CurrentPath = nodeDirInfo.FullName;
             fileBrowser1.FileList.Items.Clear();
             ListViewItem.ListViewSubItem[] subItems;
             ListViewItem item = null;
             if (fileBrowser1.Filter == FilterMode.Both || fileBrowser1.Filter == FilterMode.Directory)
             {
-                foreach (RemoteDirectory dir in nodeDirInfo.GetDirectories())
+                foreach (RemoteDirectory dir in nodeDirInfo.Directories)
                 {
                     item = new ListViewItem(dir.Name, 0);
                     subItems = new ListViewItem.ListViewSubItem[]
@@ -182,7 +211,6 @@ namespace RemotePlusClient.CommonUI
 
         private void fileBrowser1_NodeAboutToBeExpanded(object sender, TreeViewCancelEventArgs e)
         {
-
         }
     }
 }

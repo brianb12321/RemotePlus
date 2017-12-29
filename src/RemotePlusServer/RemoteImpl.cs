@@ -526,22 +526,41 @@ namespace RemotePlusServer
             return RemotePlusConsole.ShowCommandHelpDescription(ServerManager.DefaultService.Commands, command);
         }
         int num = 0;
-        public RemoteDirectory GetRemoteFiles(string path, bool usingRequest)
+        public IDirectory GetRemoteFiles(string path, bool usingRequest)
         {
             // OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
             DirectoryInfo subDir = new DirectoryInfo(path);
-            RemoteDirectory r = new RemoteDirectory(subDir.FullName, subDir.LastAccessTime);
-            //Get files
-            foreach(FileInfo files in subDir.EnumerateFiles())
+            if (subDir.Parent == null)
             {
-                r.Files.Add(new RemoteFile(files.FullName, files.CreationTime, files.LastAccessTime));
+                DriveInfo driveInfo = new DriveInfo(subDir.FullName);
+                RemoteDrive drive = new RemoteDrive(driveInfo.Name, driveInfo.VolumeLabel);
+                //Get files
+                foreach (FileInfo files in driveInfo.RootDirectory.EnumerateFiles())
+                {
+                    drive.Files.Add(new RemoteFile(files.FullName, files.CreationTime, files.LastAccessTime));
+                }
+                //Get Folders
+                foreach (DirectoryInfo folders in driveInfo.RootDirectory.EnumerateDirectories())
+                {
+                    drive.Directories.Add(new RemoteDirectory(folders.FullName, folders.LastAccessTime));
+                }
+                return drive;
             }
-            //Get Folders
-            foreach(DirectoryInfo folders in subDir.EnumerateDirectories())
+            else
             {
-                r.Directories.Add(new RemoteDirectory(folders.FullName, folders.LastAccessTime));
+                RemoteDirectory r = new RemoteDirectory(subDir.FullName, subDir.LastAccessTime);
+                //Get files
+                foreach (FileInfo files in subDir.EnumerateFiles())
+                {
+                    r.Files.Add(new RemoteFile(files.FullName, files.CreationTime, files.LastAccessTime));
+                }
+                //Get Folders
+                foreach (DirectoryInfo folders in subDir.EnumerateDirectories())
+                {
+                    r.Directories.Add(new RemoteDirectory(folders.FullName, folders.LastAccessTime));
+                }
+                return r;
             }
-            return r;
         }
         public EmailSettings GetServerEmailSettings()
         {

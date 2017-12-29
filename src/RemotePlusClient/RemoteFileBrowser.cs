@@ -51,13 +51,25 @@ namespace RemotePlusClient
         {
             this.Invoke((Action)(() => fileBrowser1.StatusMessage = "Downloading file data"));
             TreeNode rootNode = null;
-            RemoteDirectory info = MainF.Remote.GetRemoteFiles($@"c:\users\{Environment.UserName}", true);
-            Invoke((Action)(() => fileBrowser1.StatusMessage = "Populating Tree View"));
-            rootNode = new TreeNode(info.Name);
-            rootNode.Tag = info;
-            PopulateTree(rootNode);
-            //GetDirectories(info.GetDirectories(), rootNode, callback);
-            this.Invoke((Action)(() => fileBrowser1.Directories.Add(rootNode)));
+            foreach (DriveInfo drive in DriveInfo.GetDrives())
+            {
+                RemoteDrive info = (RemoteDrive)MainF.Remote.GetRemoteFiles($@"{drive.RootDirectory}", true);
+                Invoke((Action)(() => fileBrowser1.StatusMessage = $"Populating Tree View for {drive.Name}"));
+                rootNode = new TreeNode(drive.Name) { ImageKey = "Drive", Tag = drive };
+                var secondaryNode = new TreeNode(info.Name);
+                secondaryNode.Tag = info;
+                //foreach(RemoteDirectory dir in info.Directories)
+                //{
+                //    TreeNode newNode = new TreeNode(dir.Name);
+                //    newNode.Tag = dir;
+                //    rootNode.Nodes.Add(newNode);s
+                //}
+                PopulateTree(secondaryNode);
+                rootNode.Nodes.Add(secondaryNode);
+                //GetDirectories(info.GetDirectories(), rootNode, callback);
+                this.Invoke((Action)(() => fileBrowser1.Directories.Add(rootNode)));
+            }
+
             fileBrowser1.StatusMessage = "Finsished";
         }
         void PopulateTree(TreeNode e)
@@ -66,7 +78,7 @@ namespace RemotePlusClient
             {
                 CountValue = 0;
                 RemoteDirectory dir = e.Tag as RemoteDirectory;
-                var newDir = MainF.Remote.GetRemoteFiles(dir.FullName, true);
+                RemoteDirectory newDir = (RemoteDirectory)MainF.Remote.GetRemoteFiles(dir.FullName, true);
                 e.Tag = newDir;
                 if (e.Nodes.Count == 0)
                 {
@@ -94,7 +106,10 @@ namespace RemotePlusClient
         private void fileBrowser1_TreeVewAfterSelect(object sender, TreeViewEventArgs e)
         {
             RemoteDirectory nodeDirInfo = (RemoteDirectory)e.Node.Tag;
-            PopulateTree(e.Node);
+            if (e.Node.GetNodeCount(true) == 0 && !(e.Node.Tag is DriveInfo))
+            {
+                PopulateTree(e.Node);
+            }
             fileBrowser1.CurrentPath = nodeDirInfo.FullName;
             fileBrowser1.FileList.Items.Clear();
             ListViewItem.ListViewSubItem[] subItems;

@@ -87,7 +87,9 @@ namespace RemotePlusLibrary
         [OperationContract]
         string GetCommandHelpDescription(string command);
         [OperationContract]
-        RemoteDirectory GetRemoteFiles(string path, bool useRequest);
+        [ServiceKnownType(typeof(RemoteDrive))]
+        [ServiceKnownType(typeof(RemoteDirectory))]
+        IDirectory GetRemoteFiles(string path, bool useRequest);
         [OperationContract]
         EmailSettings GetServerEmailSettings();
         [OperationContract]
