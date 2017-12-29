@@ -7,7 +7,7 @@ using System.Windows.Forms;
 
 namespace RemotePlusClientCmd
 {
-    [CallbackBehavior(ConcurrencyMode = ConcurrencyMode.Multiple,
+    [CallbackBehavior(ConcurrencyMode = ConcurrencyMode.Reentrant,
         IncludeExceptionDetailInFaults = true,
         UseSynchronizationContext = false)]
     class ClientCallback : IRemoteClient
@@ -57,9 +57,6 @@ namespace RemotePlusClientCmd
             {
                 case "r_fileTransfer":
                     RequestStore.GetCurrent().Update(message.Value);
-                    break;
-                case "Operation_Completed":
-                    ClientCmdManager.WaitFlag = false;
                     break;
             }
             //ClientCmdManager.WaitFlag = false;

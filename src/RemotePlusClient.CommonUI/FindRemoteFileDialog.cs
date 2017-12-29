@@ -43,9 +43,16 @@ namespace RemotePlusClient.CommonUI
 
         private void btn_OK_Click(object sender, EventArgs e)
         {
-            DialogResult = DialogResult.OK;
-            FilePath = Path.Combine(fileBrowser1.CurrentPath, textBox1.Text);
-            Close();
+            if (string.IsNullOrWhiteSpace(textBox1.Text) && (fileBrowser1.Filter != FilterMode.Directory || fileBrowser1.Filter != FilterMode.Both))
+            {
+                MessageBox.Show("You cannot select a directory in this context. Please refer to the extension documentation of more details.", "RemoteFileBrowser", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            else
+            {
+                FilePath = Path.Combine(fileBrowser1.CurrentPath, textBox1.Text);
+                DialogResult = DialogResult.OK;
+                Close();
+            }
         }
 
         private void btn_cancel_Click(object sender, EventArgs e)
@@ -114,6 +121,7 @@ namespace RemotePlusClient.CommonUI
         }
         private void fileBrowser1_TreeVewAfterSelect(object sender, TreeViewEventArgs e)
         {
+            textBox1.Text = "";
             RemoteDirectory nodeDirInfo = (RemoteDirectory)e.Node.Tag;
             PopulateTree(e.Node);
             fileBrowser1.CurrentPath = nodeDirInfo.FullName;

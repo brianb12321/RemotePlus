@@ -107,7 +107,10 @@ namespace RemotePlusClientCmd
                 {
                     Console.Write(">");
                     var c = Console.ReadLine();
-                    WaitFlag = true;
+                    if(string.IsNullOrEmpty(c))
+                    {
+                        c = " ";
+                    }
                     if (c.ToCharArray()[0] == '#')
                     {
                         var splittedCommand = c.Split('&');
