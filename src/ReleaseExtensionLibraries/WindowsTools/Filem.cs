@@ -13,6 +13,7 @@ using System.Security.Principal;
 using RemotePlusServer;
 using RemotePlusLibrary;
 using System.Windows.Forms;
+using System.Drawing;
 
 namespace WindowsTools
 {
@@ -43,6 +44,8 @@ namespace WindowsTools
             menu.MenuOptions.Add("Open directory");
             menu.MenuOptions.Add("View tree");
             menu.MenuOptions.Add("Exit");
+            menu.SelectForeground = Color.White;
+            menu.SelectBackColor = Color.RoyalBlue;
             while(true)
             {
                 var choice = menu.BuildAndSend();

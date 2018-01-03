@@ -22,7 +22,7 @@ namespace RemotePlusClientCmd
         [CommandHelp("Shows help for local commands.")]
         static CommandResponse Help(CommandRequest args, CommandPipeline pipe)
         {
-            Logger.AddOutput(RemotePlusConsole.ShowHelp(LocalCommands, args.Arguments), OutputLevel.Info);
+            Logger.AddOutput(RemotePlusConsole.ShowHelp(LocalCommands, args.Arguments.Select(f => f.ToString()).ToArray()), OutputLevel.Info);
             return new CommandResponse((int)CommandStatus.Success);
         }
         [CommandHelp("Clears the console screen.")]
@@ -43,7 +43,7 @@ namespace RemotePlusClientCmd
         static CommandResponse title(CommandRequest args, CommandPipeline pipe)
         {
             StringBuilder sb = new StringBuilder();
-            for(int i = 1; i < args.Arguments.Length; i++)
+            for(int i = 1; i < args.Arguments.Count; i++)
             {
                 sb.AppendFormat("{0} ", args.Arguments[i]);
             }
@@ -56,7 +56,7 @@ namespace RemotePlusClientCmd
             try
             {
                 Logger.AddOutput($"Loading command file. {args.Arguments[1]}", OutputLevel.Info);
-                ClientCommandLibraryLoader.LoadCommandLibrary(args.Arguments[1]);
+                ClientCommandLibraryLoader.LoadCommandLibrary(args.Arguments[1].Value);
                 Logger.AddOutput("Finished.", OutputLevel.Info);
                 return new CommandResponse((int)CommandStatus.Success);
             }

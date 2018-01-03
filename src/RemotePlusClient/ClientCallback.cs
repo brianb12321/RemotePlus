@@ -6,6 +6,7 @@ using System;
 using System.Net;
 using System.Drawing;
 using RemotePlusClient.CommonUI;
+using RemotePlusLibrary.Extension.CommandSystem;
 
 namespace RemotePlusClient
 {
@@ -157,12 +158,17 @@ namespace RemotePlusClient
             switch(message.Message)
             {
                 case "fileTransfer":
-                    ((RemoteFileBrowser)((MainF)Form.ActiveForm).TopPages["Remote File Browser"]).CountValue = int.Parse(message.Value);
+                    ((RemoteFileBrowser)((MainF)Form.ActiveForm).TopPages["Remote File Browser"]).Counter = int.Parse(message.Value);
                     break;
                 case "r_fileTransfer":
                     RequestStore.GetCurrent().Update(message.Value);
                     break;
             }
+        }
+
+        public void ChangePrompt(PromptBuilder newPrompt)
+        {
+            //TODO: Implement Prompt
         }
         #endregion
 

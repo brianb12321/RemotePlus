@@ -14,21 +14,34 @@ namespace RemotePlusLibrary.Extension.CommandSystem.CommandClasses
     public class CommandRequest
     {
         [DataMember]
-        public string[] Arguments { get; set; }
-        public CommandRequest(string[] args)
+        public List<CommandToken> Arguments { get; set; }
+        public CommandRequest(CommandToken[] args)
         {
-            Arguments = args;
+            Arguments = new List<CommandToken>();
+            foreach(CommandToken token in args)
+            {
+                Arguments.Add(token);
+            }
         }
         public override string ToString()
         {
-            return Arguments[0];
+            return Arguments[0].Value;
         }
         public string GetFullCommand()
         {
             StringBuilder sb = new StringBuilder();
-            foreach(string a in Arguments)
+            foreach(CommandToken a in Arguments)
             {
-                sb.Append(a);
+                sb.Append(a.Value);
+            }
+            return sb.ToString();
+        }
+        public string GetBody()
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (CommandToken a in Arguments.Skip(1))
+            {
+                sb.Append(a.Value);
             }
             return sb.ToString();
         }

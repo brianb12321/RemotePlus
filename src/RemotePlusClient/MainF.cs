@@ -14,6 +14,7 @@ using Logging;
 using System.Threading;
 using RemotePlusLibrary.Extension.Gui;
 using RemotePlusClient.ExtensionSystem;
+using RemotePlusLibrary.Core;
 
 namespace RemotePlusClient
 {
@@ -174,12 +175,26 @@ namespace RemotePlusClient
         private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
 #if DEBUG
-            ConsoleObj.Logger.AddOutput("Unkown error: " + ((Exception)e.ExceptionObject).ToString(), OutputLevel.Error);
+            if (e.ExceptionObject is FaultException<ServerFault>)
+            {
+                var exception = (FaultException<ServerFault>)e.ExceptionObject;
+                ConsoleObj.Logger.AddOutput("Unkown error: " + exception.ToString() + Environment.NewLine + exception.Detail.ToString(), OutputLevel.Error);
+            }
+            else
+            {
+                ConsoleObj.Logger.AddOutput("Unkown error: " + ((Exception)e.ExceptionObject).ToString(), OutputLevel.Error);
+            }
 #else
-            ConsoleObj.Logger.AddOutput("Unkown error: " + ((Exception)e.ExceptionObject).Message, OutputLevel.Error);
+            if (e.ExceptionObject is FaultException<ServerFault>)
+            {
+                ConsoleObj.Logger.AddOutput("Unkown error: " + exception.Message, OutputLevel.Error);
+            }
+            else
+            {
+                ConsoleObj.Logger.AddOutput("Unkown error: " + ((Exception)e.ExceptionObject).Message, OutputLevel.Error);
+            }
 #endif
         }
-
         private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
         {
 

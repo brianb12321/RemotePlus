@@ -1,4 +1,5 @@
 ﻿
+using RemotePlusLibrary.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,7 +26,11 @@ namespace RemotePlusServer
 
         public void ProvideFault(Exception error, MessageVersion version, ref Message fault)
         {
-            FaultException fexp = new FaultException(error.Message);
+            FaultException<ServerFault> fexp = new FaultException<ServerFault>(new ServerFault()
+            {
+                LoadedServerExtensionLibs = ServerManager.DefaultCollection.Libraries.Select(f => f.Value.FriendlyName).ToList(),
+                StackTrace = error.StackTrace
+            }, error.Message);
             MessageFault m = fexp.CreateMessageFault();
             fault = Message.CreateMessage(version, m, null);
         }

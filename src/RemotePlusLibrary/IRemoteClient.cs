@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.ServiceModel;
 using Logging;
+using RemotePlusLibrary.Extension.CommandSystem;
 
 namespace RemotePlusLibrary
 {
@@ -32,5 +33,7 @@ namespace RemotePlusLibrary
         void RegistirationComplete();
         [OperationContract(IsOneWay = true)]
         void SendSignal(SignalMessage signal);
+        [OperationContract(IsOneWay = true)]
+        void ChangePrompt(PromptBuilder newPrompt);
     }
 }

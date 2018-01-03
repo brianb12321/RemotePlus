@@ -17,7 +17,7 @@ namespace WindowsTools
         {
             try
             {
-                SendKeys.SendWait(args.Arguments[0]);
+                SendKeys.SendWait(args.Arguments[0].Value);
                 ServerManager.DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(Logging.OutputLevel.Info, $"Key {args.Arguments[0]} sent to server."));
                 return new CommandResponse((int)CommandStatus.Success);
             }

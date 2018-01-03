@@ -64,10 +64,10 @@ namespace RemotePlusServer
         }
         private static void CheckLogCount()
         {
-            if(Directory.GetFiles("ServerLogs").Length >= ServerManager.DefaultSettings.LoggingSettings.LogFileCountThreashold)
+            if (Directory.GetFiles("ServerLogs").Length >= ServerManager.DefaultSettings.LoggingSettings.LogFileCountThreashold)
             {
-                ServerManager.Logger.AddOutput(new LogItem(OutputLevel.Info, "IMPORTANT ACTION: The server logs threashold has been reached. The server logs folder will be cleared.", ServerManager.Logger.DefaultFrom ) { Color = ConsoleColor.Magenta });
-                foreach(string fileToBeDeleted in Directory.GetFiles("ServerLogs"))
+                ServerManager.Logger.AddOutput(new LogItem(OutputLevel.Info, "IMPORTANT ACTION: The server logs threashold has been reached. The server logs folder will be cleared.", ServerManager.Logger.DefaultFrom) { Color = ConsoleColor.Magenta });
+                foreach (string fileToBeDeleted in Directory.GetFiles("ServerLogs"))
                 {
                     File.Delete(fileToBeDeleted);
                 }

@@ -188,6 +188,8 @@ namespace RemotePlusServer
             DefaultService.Commands.Add("speak", svm_speak);
             DefaultService.Commands.Add("showMessageBox", svm_showMessageBox);
             DefaultService.Commands.Add("path", path);
+            DefaultService.Commands.Add("cd", cd);
+            DefaultService.Commands.Add("echo", echo);
         }
 
         static bool CheckPrerequisites()
@@ -330,7 +332,7 @@ namespace RemotePlusServer
                 ServerManager.Logger.AddOutput($"Executing server command {c.Arguments[0]}", OutputLevel.Info);
                 try
                 {
-                    var command = DefaultService.Commands[c.Arguments[0]];
+                    var command = DefaultService.Commands[c.Arguments[0].Value];
                     var ba = RemotePlusConsole.GetCommandBehavior(command);
                     if (ba != null)
                     {
@@ -403,6 +405,7 @@ namespace RemotePlusServer
                 }
             }
         }
+
         public static void Close()
         {
             SaveLog();

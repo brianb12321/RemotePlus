@@ -21,20 +21,20 @@ namespace RemotePlusServer
         [HelpPage("ps.txt", Source = HelpSourceType.File)]
         private static CommandResponse ProcessStartCommand(CommandRequest args, CommandPipeline pipe)
         {
-            if (args.Arguments.Length > 1)
+            if (args.Arguments.Count > 2)
             {
                 string a = "";
-                for (int i = 2; i < args.Arguments.Length; i++)
+                for (int i = 2; i < args.Arguments.Count; i++)
                 {
                     a += " " + args.Arguments[i];
                 }
-                DefaultService.Remote.RunProgram(args.Arguments[1], a);
+                DefaultService.Remote.RunProgram(args.Arguments[1].Value, a);
                 DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, "Program start command finished.", "Server Host"));
                 return new CommandResponse((int)CommandStatus.Success);
             }
-            else if (args.Arguments.Length == 1)
+            else if (args.Arguments.Count == 2)
             {
-                DefaultService.Remote.RunProgram((string)args.Arguments[1], "");
+                DefaultService.Remote.RunProgram(args.Arguments[1].Value, "");
                 DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, "Program start command finished.", "Server Host"));
                 return new CommandResponse((int)CommandStatus.Success);
             }
@@ -43,7 +43,7 @@ namespace RemotePlusServer
         [CommandHelp("Displays a list of commands.")]
         private static CommandResponse Help(CommandRequest args, CommandPipeline pipe)
         {
-            var helpString = RemotePlusConsole.ShowHelp(DefaultService.Commands, args.Arguments);
+            var helpString = RemotePlusConsole.ShowHelp(DefaultService.Commands, args.Arguments.Select(f => f.ToString()).ToArray());
             DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, helpString, "Server Host"));
             var response = new CommandResponse((int)CommandStatus.Success);
             response.Metadata.Add("helpText", helpString);
@@ -53,7 +53,7 @@ namespace RemotePlusServer
         [HelpPage("ex.txt", Source = HelpSourceType.File)]
         private static CommandResponse ExCommand(CommandRequest args, CommandPipeline pipe)
         {
-            var statusCode = DefaultService.Remote.RunExtension((string)args.Arguments[1], new ExtensionExecutionContext(CallType.CommandLine), args.Arguments.Skip(1).ToArray()).ReturnCode;
+            var statusCode = DefaultService.Remote.RunExtension((string)args.Arguments[1].Value, new ExtensionExecutionContext(CallType.CommandLine), args.Arguments.Skip(1).Select(f => f.ToString()).ToArray()).ReturnCode;
             if (statusCode != ExtensionStatusCodes.EXTENSION_NOT_FOUND)
             {
                 DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, "Extension executed.", "Server Host"));
@@ -74,18 +74,25 @@ namespace RemotePlusServer
         [HelpPage("vars.txt", Source = HelpSourceType.File)]
         private static CommandResponse vars(CommandRequest args, CommandPipeline pipe)
         {
-            if(args.Arguments.Length >= 2)
+            if(args.Arguments.Count >= 2)
             {
-                if(args.Arguments[1] == "new")
+                if(args.Arguments[1].Value == "new")
                 {
-                    if (args.Arguments.Length >= 4)
+                    if (args.Arguments.Count >= 4)
                     {
                         string t = "";
-                        for(int i = 3; i < args.Arguments.Length; i++)
+                        if (args.Arguments[3].Type == TokenType.QouteBody)
                         {
-                            t += $" {args.Arguments[i]}";
+                            t = args.Arguments[3].Value;
                         }
-                        DefaultService.Variables.Add(args.Arguments[2], t);
+                        else
+                        {
+                            for (int i = 4; i < args.Arguments.Count; i++)
+                            {
+                                t += $"{args.Arguments[i]} ";
+                            }
+                        }
+                        DefaultService.Variables.Add(args.Arguments[2].Value, t);
                         DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, $"Variable {args.Arguments[2]} added."));
                         DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, $"Saving variable file"));
                         DefaultService.Variables.Save();
@@ -98,7 +105,7 @@ namespace RemotePlusServer
                         return new CommandResponse((int)CommandStatus.Fail);
                     }
                 }
-                else if(args.Arguments[1] == "view")
+                else if(args.Arguments[1].Value == "view")
                 {
                     StringBuilder sb = new StringBuilder();
                     sb.AppendLine();
@@ -150,7 +157,7 @@ namespace RemotePlusServer
         {
             try
             {
-                DefaultService.Remote.EncryptFile(args.Arguments[1], args.Arguments[2]);
+                DefaultService.Remote.EncryptFile(args.Arguments[1].Value, args.Arguments[2].Value);
                 return new CommandResponse((int)CommandStatus.Success);
             }
             catch (IndexOutOfRangeException)
@@ -164,7 +171,7 @@ namespace RemotePlusServer
         {
             try
             {
-                DefaultService.Remote.DecryptFile(args.Arguments[1], args.Arguments[2]);
+                DefaultService.Remote.DecryptFile(args.Arguments[1].Value, args.Arguments[2].Value);
                 return new CommandResponse((int)CommandStatus.Success);
             }
             catch (IndexOutOfRangeException)
@@ -177,7 +184,7 @@ namespace RemotePlusServer
         [HelpPage("beep.txt", Source = HelpSourceType.File)]
         private static CommandResponse svm_beep(CommandRequest args, CommandPipeline pipe)
         {
-            DefaultService.Remote.Beep(int.Parse(args.Arguments[1]), int.Parse(args.Arguments[2]));
+            DefaultService.Remote.Beep(int.Parse(args.Arguments[1].Value), int.Parse(args.Arguments[2].Value));
             return new CommandResponse((int)CommandStatus.Success);
         }
         [CommandHelp("Wraps around the speak function.")]
@@ -186,19 +193,19 @@ namespace RemotePlusServer
             VoiceAge age = VoiceAge.Adult;
             VoiceGender gender = VoiceGender.Male;
             string message = "";
-            if(args.Arguments[1] == "vg_male")
+            if(args.Arguments[1].Value == "vg_male")
             {
                 gender = VoiceGender.Male;
             }
-            else if(args.Arguments[1] == "vg_female")
+            else if(args.Arguments[1].Value == "vg_female")
             {
                 gender = VoiceGender.Female;
             }
-            else if(args.Arguments[1] == "vg_neutral")
+            else if(args.Arguments[1].Value == "vg_neutral")
             {
                 gender = VoiceGender.Neutral;
             }
-            else if(args.Arguments[1] == "vg_notSet")
+            else if(args.Arguments[1].Value == "vg_notSet")
             {
                 gender = VoiceGender.NotSet;
             }
@@ -207,23 +214,23 @@ namespace RemotePlusServer
                 DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, "You must provide a valid voice gender.", "Server Host"));
                 return new CommandResponse((int)CommandStatus.Fail);
             }
-            if (args.Arguments[2] == "va_adult")
+            if (args.Arguments[2].Value == "va_adult")
             {
                 age = VoiceAge.Adult;
             }
-            else if (args.Arguments[2] == "va_child")
+            else if (args.Arguments[2].Value == "va_child")
             {
                 age = VoiceAge.Child;
             }
-            else if (args.Arguments[2] == "va_senior")
+            else if (args.Arguments[2].Value == "va_senior")
             {
                 age = VoiceAge.Senior;
             }
-            else if(args.Arguments[2] == "va_teen")
+            else if(args.Arguments[2].Value == "va_teen")
             {
                 age = VoiceAge.Teen;
             }
-            else if (args.Arguments[2] == "va_notSet")
+            else if (args.Arguments[2].Value == "va_notSet")
             {
                 age = VoiceAge.NotSet;
             }
@@ -232,7 +239,7 @@ namespace RemotePlusServer
                 DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, "You must provide a valid voice age..", "Server Host"));
                 return new CommandResponse((int)CommandStatus.Fail);
             }
-            for (int i = 3; i < args.Arguments.Length; i++)
+            for (int i = 3; i < args.Arguments.Count; i++)
             {
                 message += args.Arguments[i] + " ";
             }
@@ -247,27 +254,27 @@ namespace RemotePlusServer
             MessageBoxIcon icon = MessageBoxIcon.None;
             string message = "";
             string caption = "";
-            if (args.Arguments[1] == "b_OK")
+            if (args.Arguments[1].Value == "b_OK")
             {
                 buttons = MessageBoxButtons.OK;
             }
-            else if (args.Arguments[1] == "b_OK_CANCEL")
+            else if (args.Arguments[1].Value == "b_OK_CANCEL")
             {
                 buttons = MessageBoxButtons.OKCancel;
             }
-            else if (args.Arguments[1] == "b_ABORT_RETRY_IGNORE")
+            else if (args.Arguments[1].Value == "b_ABORT_RETRY_IGNORE")
             {
                 buttons = MessageBoxButtons.AbortRetryIgnore;
             }
-            else if (args.Arguments[1] == "b_RETRY_CANCEL")
+            else if (args.Arguments[1].Value == "b_RETRY_CANCEL")
             {
                 buttons = MessageBoxButtons.RetryCancel;
             }
-            else if (args.Arguments[1] == "b_YES_NO")
+            else if (args.Arguments[1].Value == "b_YES_NO")
             {
                 buttons = MessageBoxButtons.YesNo;
             }
-            else if (args.Arguments[1] == "b_YES_NO_CANCEL")
+            else if (args.Arguments[1].Value == "b_YES_NO_CANCEL")
             {
                 buttons = MessageBoxButtons.YesNoCancel;
             }
@@ -276,35 +283,35 @@ namespace RemotePlusServer
                 DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, "Please provide a valid MessageBox button.", "Server Host"));
                 return new CommandResponse((int)CommandStatus.Fail) { CustomStatusMessage = "Invalid messageBox button." };
             }
-            if (args.Arguments[2] == "i_WARNING")
+            if (args.Arguments[2].Value == "i_WARNING")
             {
                 icon = MessageBoxIcon.Warning;
             }
-            else if (args.Arguments[2] == "i_STOP")
+            else if (args.Arguments[2].Value == "i_STOP")
             {
                 icon = MessageBoxIcon.Stop;
             }
-            else if (args.Arguments[2] == "i_ERROR")
+            else if (args.Arguments[2].Value == "i_ERROR")
             {
                 icon = MessageBoxIcon.Error;
             }
-            else if (args.Arguments[2] == "i_HAND")
+            else if (args.Arguments[2].Value == "i_HAND")
             {
                 icon = MessageBoxIcon.Hand;
             }
-            else if (args.Arguments[2] == "i_INFORMATION")
+            else if (args.Arguments[2].Value == "i_INFORMATION")
             {
                 icon = MessageBoxIcon.Information;
             }
-            else if (args.Arguments[2] == "i_QUESTION")
+            else if (args.Arguments[2].Value == "i_QUESTION")
             {
                 icon = MessageBoxIcon.Question;
             }
-            else if (args.Arguments[2] == "i_EXCLAMATION")
+            else if (args.Arguments[2].Value == "i_EXCLAMATION")
             {
                 icon = MessageBoxIcon.Exclamation;
             }
-            else if (args.Arguments[2] == "i_ASTERISK")
+            else if (args.Arguments[2].Value == "i_ASTERISK")
             {
                 icon = MessageBoxIcon.Asterisk;
             }
@@ -314,11 +321,11 @@ namespace RemotePlusServer
                 return new CommandResponse((int)CommandStatus.Fail) { CustomStatusMessage = "Invalid MessageBox icon" };
             }
             int message_start = 0;
-            if (args.Arguments[3] == "caption:")
+            if (args.Arguments[3].Value == "caption:")
             {
-                for (int i = 4; i < args.Arguments.Length; i++)
+                for (int i = 4; i < args.Arguments.Count; i++)
                 {
-                    if (args.Arguments[i] != "message:")
+                    if (args.Arguments[i].Value != "message:")
                     {
                         caption += args.Arguments[i] + " ";
                     }
@@ -335,7 +342,7 @@ namespace RemotePlusServer
             }
             if(message_start != 0)
             {
-                for(int i = message_start + 1; i < args.Arguments.Length; i++)
+                for(int i = message_start + 1; i < args.Arguments.Count; i++)
                 {
                     message += args.Arguments[i] + " ";
                 }
@@ -373,6 +380,43 @@ namespace RemotePlusServer
                 DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, $"Unable to send email. {err.Message}"));
                 return new CommandResponse((int)CommandStatus.Fail);
             }
+        }
+        [CommandHelp("Changes the current working directory.")]
+        private static CommandResponse cd(CommandRequest args, CommandPipeline pipe)
+        {
+            if (args.Arguments.Count < 2)
+            {
+                DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, "You must specify a path to change to.", "cd"));
+                return new CommandResponse((int)CommandStatus.Fail);
+            }
+            else
+            {
+                DefaultService.Remote.CurrentPath = args.Arguments[1].Value;
+                DefaultService.Remote.Client.ClientCallback.ChangePrompt(new RemotePlusLibrary.Extension.CommandSystem.PromptBuilder()
+                {
+                    Path = DefaultService.Remote.CurrentPath,
+                    AdditionalData = "Current Path"
+                });
+                return new CommandResponse((int)CommandStatus.Success);
+            }
+        }
+        [CommandHelp("Prints the message to the screen.")]
+        private static CommandResponse echo(CommandRequest args, CommandPipeline pipe)
+        {
+            string message = "";
+            if (args.Arguments[1].Type == TokenType.QouteBody)
+            {
+                message = args.Arguments[1].Value;
+            }
+            else
+            {
+                message = args.GetBody();
+            }
+            DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(message + Environment.NewLine);
+            return new CommandResponse((int)CommandStatus.Success)
+            {
+                CustomStatusMessage = message
+            };
         }
     }
 }

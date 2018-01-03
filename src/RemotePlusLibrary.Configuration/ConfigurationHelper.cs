@@ -11,6 +11,8 @@ namespace RemotePlusLibrary.Configuration
 {
     public static class ConfigurationHelper
     {
+        public const string SERVER_CONFIGURATION_PATH = "Configurations\\Server";
+        public const string CLIENT_CONFIGURATION_PATH = "Configurations\\Client";
         public static void SaveConfig<T>(T configType, string file, IEnumerable<Type> knownTypes)
         {
             DataContractSerializer xsSubmit = new DataContractSerializer(typeof(T), knownTypes);

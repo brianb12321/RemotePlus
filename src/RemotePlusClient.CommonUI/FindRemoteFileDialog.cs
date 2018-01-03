@@ -29,6 +29,7 @@ namespace RemotePlusClient.CommonUI
                 fileBrowser1.CountLabel = value;
             }
         }
+        public FileAssociationSettings associations = null;
         IRemote remote = null;
         public FindRemoteFileDialog(IRemote r)
         {
@@ -64,6 +65,9 @@ namespace RemotePlusClient.CommonUI
 
         private void FindRemoteFileDialog_Load(object sender, EventArgs e)
         {
+            associations = new FileAssociationSettings();
+            associations.Load();
+            SetupAssociation();
             Counter = 0;
             progressWorker.DoWork += ProgressWorker_DoWork;
             //progressWorker.RunWorkerCompleted += (WSender, WE) => MessageBox.Show($"Error during work: {WE.Error?.Message}");
@@ -141,22 +145,28 @@ namespace RemotePlusClient.CommonUI
         {
             IDirectory nodeDirInfo = null;
             textBox1.Text = "";
+            // Makes sure that we don't get the same data from the server.
             if (e.Node.GetNodeCount(true) == 0 && !(e.Node.Tag is RemoteDrive))
             {
                 PopulateTree(e.Node);
             }
+            // Makes sure that we don't update the image key of a drive to a folder, and grabs the right data from the server.
             if (e.Node.Tag is RemoteDrive)
             {
+                e.Node.SelectedImageKey = "drive.ico";
                 nodeDirInfo = (RemoteDrive)e.Node.Tag;
             }
             else
             {
                 nodeDirInfo = (RemoteDirectory)e.Node.Tag;
             }
+            // Sets the current path to the selected path.
             fileBrowser1.CurrentPath = nodeDirInfo.FullName;
+            // Clears the file list.
             fileBrowser1.FileList.Items.Clear();
             ListViewItem.ListViewSubItem[] subItems;
             ListViewItem item = null;
+            // Determines whether to add directories to the file list.
             if (fileBrowser1.Filter == FilterMode.Both || fileBrowser1.Filter == FilterMode.Directory)
             {
                 foreach (RemoteDirectory dir in nodeDirInfo.Directories)
@@ -174,7 +184,8 @@ namespace RemotePlusClient.CommonUI
             {
                 foreach (RemoteFile file in nodeDirInfo.Files)
                 {
-                    item = new ListViewItem(file.Name, 1);
+                    string key = CheckAssociation(Path.GetExtension(file.FullName));
+                    item = new ListViewItem(file.Name, key);
                     subItems = new ListViewItem.ListViewSubItem[]
                               { new ListViewItem.ListViewSubItem(item, "File"),
                                     new ListViewItem.ListViewSubItem(item,
@@ -186,6 +197,34 @@ namespace RemotePlusClient.CommonUI
 
             fileBrowser1.FileList.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
 
+        }
+
+        private string CheckAssociation(string extension)
+        {
+            if(fileBrowser1.FileList.SmallImageList.Images.ContainsKey(extension))
+            {
+                return extension;
+            }
+            else
+            {
+                return "file.ico";
+            }
+        }
+
+        private void SetupAssociation()
+        {
+            foreach (KeyValuePair<string, string> assoc in associations.Associations)
+            {
+                if (!File.Exists(assoc.Value))
+                {
+                    //Icon file does not exist, so use default icon.
+                }
+                else
+                {
+                    Icon icon = new Icon(assoc.Value);
+                    fileBrowser1.FileList.SmallImageList.Images.Add(assoc.Key, icon);
+                }
+            }
         }
 
         private void GetDirectories(RemoteDirectory[] subDirs, TreeNode nodeToAdd, Action callback)

@@ -67,6 +67,7 @@
     <Compile Include="EmailGui\SendEmailForm.Designer.cs">
       <DependentUpon>SendEmailForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="FileAssociationSettings.cs" />
     <Compile Include="FileBrowser.cs">
       <SubType>UserControl</SubType>
     </Compile>

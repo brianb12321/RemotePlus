@@ -4,6 +4,7 @@ using Logging;
 using System.ServiceModel;
 using RemotePlusClient.CommonUI;
 using System.Windows.Forms;
+using RemotePlusLibrary.Extension.CommandSystem;
 
 namespace RemotePlusClientCmd
 {
@@ -12,6 +13,11 @@ namespace RemotePlusClientCmd
         UseSynchronizationContext = false)]
     class ClientCallback : IRemoteClient
     {
+        public void ChangePrompt(PromptBuilder newPrompt)
+        {
+            ClientCmdManager.prompt = newPrompt;
+        }
+
         public void Disconnect(string Reason)
         {
             //ClientCmdManager.WaitFlag = true;

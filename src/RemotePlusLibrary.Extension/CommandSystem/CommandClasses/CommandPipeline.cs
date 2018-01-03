@@ -12,9 +12,11 @@ namespace RemotePlusLibrary.Extension.CommandSystem.CommandClasses
     public class CommandPipeline : IDictionary<int, CommandRoutine>
     {
         private Dictionary<int, CommandRoutine> _internalDictionary;
+        private Dictionary<int, CommandRoutine> _subRoutines;
         public CommandPipeline()
         {
             _internalDictionary = new Dictionary<int, CommandRoutine>();
+            _subRoutines = new Dictionary<int, CommandRoutine>();
         }
 
         #region IDictionary
@@ -35,7 +37,10 @@ namespace RemotePlusLibrary.Extension.CommandSystem.CommandClasses
         {
             _internalDictionary.Add(commandPosition, routine);
         }
-
+        public void AddSubRoutine(int commandPosition, CommandRoutine sub)
+        {
+            _subRoutines.Add(commandPosition, sub);
+        }
         public void Add(KeyValuePair<int, CommandRoutine> commands)
         {
             _internalDictionary.Add(commands.Key, commands.Value);

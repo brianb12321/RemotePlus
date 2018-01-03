@@ -10,13 +10,15 @@ namespace RemotePlusLibrary.Extension.CommandSystem
     [DataContract]
     public enum CommandStatus : int
     {
-        [DataMember]
+        [EnumMember]
         Success = 0,
-        [DataMember]
+        [EnumMember]
         Fail = -1,
-        [DataMember]
+        [EnumMember]
         AccessDenied = -2,
-        [DataMember]
-        UnsupportedClient = -3
+        [EnumMember]
+        UnsupportedClient = -3,
+        [EnumMember]
+        InvalidTokens = 1
     }
 }

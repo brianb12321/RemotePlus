@@ -12,6 +12,8 @@ namespace RemotePlusLibrary
         [EnumMember]
         Cancel,
         [EnumMember]
-        Exception
+        Exception,
+        [EnumMember]
+        NotFound
     }
 }

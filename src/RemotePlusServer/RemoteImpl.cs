@@ -16,6 +16,7 @@ using RemotePlusLibrary.Core.EmailService;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
 using RemotePlusServer.ExtensionSystem;
 using RemotePlusLibrary.FileTransfer;
+using System.Text.RegularExpressions;
 
 namespace RemotePlusServer
 {
@@ -41,6 +42,7 @@ namespace RemotePlusServer
         public bool Registered { get; private set; }
         public UserAccount LoggedInUser { get; private set; }
         private Dictionary<string, ServerExtension> _allExtensions;
+        public string CurrentPath = Environment.CurrentDirectory;
         void CheckRegisteration(string Action)
         {
             var l = ServerManager.Logger.AddOutput($"Checking registiration for action {Action}.", OutputLevel.Info);
@@ -117,6 +119,11 @@ namespace RemotePlusServer
             ServerManager.Logger.AddOutput("Getting ClientBuilder from client.", OutputLevel.Debug);
             var callback = OperationContext.Current.GetCallbackChannel<IRemoteClient>();
             Client = Client<IRemoteClient>.Build(callback.RegisterClient(), callback);
+            Client.ClientCallback.ChangePrompt(new RemotePlusLibrary.Extension.CommandSystem.PromptBuilder()
+            {
+                Path = CurrentPath,
+                AdditionalData = "Current Path"
+            });
             ServerManager.Logger.AddOutput("Received registiration object from client.", OutputLevel.Info);
             this.Settings = Settings;
             var l = ServerManager.Logger.AddOutput("Processing registiration object.", OutputLevel.Debug);
@@ -259,23 +266,111 @@ namespace RemotePlusServer
             }
             else
             {
-                string[] cs = Command.Split('&');
-                if (cs.Length == 1)
+                CommandParser parser = new CommandParser(Command);
+                var tokens = parser.Parse(true);
+                var newTokens = RunSubRoutines(parser, pipe, pos);
+                foreach(CommandToken token in newTokens)
                 {
-                    var request = new CommandRequest(cs[0].Split(' '));
-                    pipe.Add(0, new CommandRoutine(request, ServerManager.Execute(request, commandMode, pipe)));
-                }
-                else
-                {
-                    foreach(string c in cs)
+                    foreach (List<CommandToken> allTokens in parser.ParsedTokens)
                     {
-                        CommandRequest req = new CommandRequest(c.Split(' '));
-                        pipe.Add(pos++, new CommandRoutine(req, ServerManager.Execute(req, CommandExecutionMode.Client, pipe)));
+                        var index = allTokens.IndexOf(token);
+                        if (index != -1)
+                        {
+                            parser.ParsedTokens[parser.ParsedTokens.IndexOf(allTokens)][index] = token;
+                        }
                     }
+                }
+                var newVariableTokens = RunVariableReplacement(parser, out bool success);
+                if(success != true)
+                {
+                    return pipe;
+                }
+                foreach (CommandToken token in newVariableTokens)
+                {
+                    foreach (List<CommandToken> allTokens in parser.ParsedTokens)
+                    {
+                        var index = allTokens.IndexOf(token);
+                        if (index != -1)
+                        {
+                            parser.ParsedTokens[parser.ParsedTokens.IndexOf(allTokens)][index] = token;
+                        }
+                    }
+                }
+                var newQouteTokens = ParseOutQoutes(parser);
+                foreach(CommandToken token in newQouteTokens)
+                {
+                    foreach (List<CommandToken> allTokens in parser.ParsedTokens)
+                    {
+                        var index = allTokens.IndexOf(token);
+                        if (index != -1)
+                        {
+                            parser.ParsedTokens[parser.ParsedTokens.IndexOf(allTokens)][index] = token;
+                        }
+                    }
+                }
+                //Run the commands
+                foreach(List<CommandToken> commands in parser.ParsedTokens)
+                {
+                    var request = new CommandRequest(commands.ToArray());
+                    var routine = new CommandRoutine(request, ServerManager.Execute(request, CommandExecutionMode.Client, pipe));
+                    pipe.Add(pos++, routine);
                 }
             }
             // OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
             return pipe;
+        }
+
+        private CommandToken[] RunVariableReplacement(CommandParser p, out bool success)
+        {
+            success = true;
+            List<CommandToken> tokenList = new List<CommandToken>();
+            var variableTokens = p.GetVariables();
+            foreach(CommandToken variableToken in variableTokens)
+            {
+                var variablename = variableToken.OriginalValue.Remove(0, 1);
+                if(ServerManager.DefaultService.Variables.ContainsKey(variablename))
+                {
+                    var variableValue = ServerManager.DefaultService.Variables[variablename];
+                    variableToken.Value = variableValue;
+                    success = true;
+                    tokenList.Add(variableToken);
+                }
+                else
+                {
+                    Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, $"Variable {variablename} does not exist", "Server Host"));
+                    success = false;
+                }
+            }
+            return tokenList.ToArray();
+        }
+
+        private IEnumerable<CommandToken> RunSubRoutines(CommandParser p, CommandPipeline pipe, int position)
+        {
+            foreach(CommandToken routineToken in p.GetSubRoutines())
+            {
+                var commandToExecute = Regex.Match(routineToken.OriginalValue, CommandToken.SUBROUTINE_PATTERN).Groups[1].Value;
+                var parsedCommand = p.Parse(commandToExecute, false);
+                foreach (List<CommandToken> allCommands in parsedCommand)
+                {
+                    var request = new CommandRequest(allCommands.ToArray());
+                    var routine = new CommandRoutine(request, ServerManager.Execute(request, CommandExecutionMode.Client, pipe));
+                    routineToken.Value = routine.Output.CustomStatusMessage;
+                    position++;
+                }
+                yield return routineToken;
+            }
+        }
+        private IEnumerable<CommandToken> ParseOutQoutes(CommandParser p)
+        {
+            List<CommandToken> tokenList = new List<CommandToken>();
+            var qouteTokens = p.GetQoutedToken();
+            foreach (CommandToken qouteToken in qouteTokens)
+            {
+                var qouteName = Regex.Match(qouteToken.OriginalValue, CommandToken.QOUTE_PATTERN).Groups[1].Value;
+                qouteToken.Value = qouteName.Replace('^', '&');
+                tokenList.Add(qouteToken);
+            }
+            return tokenList.ToArray();
         }
 
         public void UpdateServerSettings(ServerSettings Settings)

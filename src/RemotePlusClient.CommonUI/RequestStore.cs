@@ -64,19 +64,20 @@ namespace RemotePlusClient.CommonUI
                     }
                     else
                     {
-                        return new ReturnData(null, RequestState.Exception);
+                        return new ReturnData(null, RequestState.NotFound);
                     }
                 }
             }
-            catch
+            catch (Exception e)
             {
                 if (builder.AcqMode == AcquisitionMode.ThrowIfException)
                 {
+                    return new ReturnData(e, RequestState.Exception);
                     throw;
                 }
                 else
                 {
-                    return new ReturnData(null, RequestState.Failed);
+                    return new ReturnData(e, RequestState.Exception);
                 }
             }
         }

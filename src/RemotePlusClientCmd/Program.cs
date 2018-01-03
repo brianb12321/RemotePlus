@@ -13,6 +13,7 @@ using RemotePlusClient.CommonUI;
 using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
 using RemotePlusLibrary.Extension;
+using System.Text.RegularExpressions;
 
 namespace RemotePlusClientCmd
 {
@@ -22,14 +23,34 @@ namespace RemotePlusClientCmd
         public static IRemote Remote = null;
         public static CMDLogging Logger = null;
         public static DuplexChannelFactory<IRemote> channel = null;
+        public static PromptBuilder prompt = new PromptBuilder();
         public static bool WaitFlag = true;
         [STAThread]
         static void Main(string[] args)
         {
+            Console.ResetColor();
+            Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
+            //Application.ThreadException += (Sender, e) => CatchException(e.Exception);
+            AppDomain.CurrentDomain.UnhandledException += (sender, e) =>
+            {
+                if (e.ExceptionObject is FaultException<ServerFault>)
+                {
+                    CatchException((FaultException<ServerFault>)e.ExceptionObject);
+                }
+                else
+                {
+                    CatchException((Exception)e.ExceptionObject);
+                }
+                if(e.IsTerminating)
+                {
+                    Environment.Exit(-1);
+                }
+            };
             ShowBanner();
             InitCommands();
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+            
             Logger = new CMDLogging()
             {
                 DefaultFrom = "CLient CMD",
@@ -45,50 +66,35 @@ namespace RemotePlusClientCmd
             RequestStore.Add("global_selectFile", new Requests.SelectFileRequest());
             if (args.Length == 0)
             {
-                try
+                Console.Write("Enter url: ");
+                string url = Console.ReadLine();
+                Console.Write("Enter Username: ");
+                string username = Console.ReadLine();
+                Console.Write("Enter Password: ");
+                string password = Console.ReadLine();
+                RegistirationObject ro = new RegistirationObject();
                 {
-                    Console.Write("Enter url: ");
-                    string url = Console.ReadLine();
-                    Console.Write("Enter Username: ");
-                    string username = Console.ReadLine();
-                    Console.Write("Enter Password: ");
-                    string password = Console.ReadLine();
-                    RegistirationObject ro = new RegistirationObject();
-                    {
-                        ro.LoginRightAway = true;
-                        ro.Credentials = new UserCredentials(username, password);
-                    };
-                    Connect(url, ro);
-                    AcceptInput();
-                }
-                catch (Exception ex)
-                {
-#if DEBUG
-                    Logger.AddOutput(new LogItem(OutputLevel.Error, "Client error. " + ex.ToString(), "Client") { Color = ConsoleColor.Red });
-#else
-                    Logger.AddOutput(new LogItem(OutputLevel.Error, "Client error. " + ex.Message, "Client") { Color = ConsoleColor.Red });
-#endif
-                }
+                    ro.LoginRightAway = true;
+                    ro.Credentials = new UserCredentials(username, password);
+                };
+                Connect(url, ro);
+                AcceptInput();
             }
             else
             {
-                try
+                var options = new CommandLineOptions();
+                if (CommandLine.Parser.Default.ParseArguments(args, options))
                 {
-                    var options = new CommandLineOptions();
-                    if (CommandLine.Parser.Default.ParseArguments(args, options))
-                    {
-                        Connect(options.Url, new RegistirationObject() { LoginRightAway = true, Credentials = new UserCredentials(options.Username, options.Password), VerboseError = options.Verbose });
-                        AcceptInput();
-                    }
+                    Connect(options.Url, new RegistirationObject() { LoginRightAway = true, Credentials = new UserCredentials(options.Username, options.Password), VerboseError = options.Verbose });
+                    AcceptInput();
                 }
-                catch (Exception ex)
-                {
-#if DEBUG
-                    Logger.AddOutput(new LogItem(OutputLevel.Error, "Client error. " + ex.ToString(), "Client") { Color = ConsoleColor.Red });
-#else
-                    Logger.AddOutput(new LogItem(OutputLevel.Error, "Client error. " + ex.Message, "Client") { Color = ConsoleColor.Red });
-#endif
-                }
+            }
+        }
+        static void CatchException(Exception ex)
+        {
+            using (ErrorDialog d = new ErrorDialog(ex))
+            {
+                d.ShowDialog();
             }
         }
         static void Connect(string url, RegistirationObject ro)
@@ -105,24 +111,55 @@ namespace RemotePlusClientCmd
             {
                 if (!WaitFlag)
                 {
-                    Console.Write(">");
+                    WritePrompt();
+                    Console.ForegroundColor = ConsoleColor.Yellow;
                     var c = Console.ReadLine();
+                    Console.ResetColor();
                     if(string.IsNullOrEmpty(c))
                     {
                         c = " ";
                     }
                     if (c.ToCharArray()[0] == '#')
                     {
-                        var splittedCommand = c.Split('&');
-                        int position = 0;
-                        foreach (string command in splittedCommand)
+                        int pos = 0;
+                        CommandPipeline pipe = new CommandPipeline();
+                        CommandParser parser = new CommandParser(c);
+                        var tokens = parser.Parse(true);
+                        var newTokens = RunSubRoutines(parser, pipe, pos);
+                        foreach (CommandToken token in newTokens)
                         {
-                            CommandPipeline pipeline = new CommandPipeline();
-                            CommandRequest request = new CommandRequest(command.Split(' ').ToArray());
-                            var response = RunLocalCommand(request, CommandExecutionMode.Client, pipeline);
-                            pipeline.Add(position, new CommandRoutine(request, response));
-                            position += 1;
-                            WaitFlag = false;
+                            foreach (List<CommandToken> allTokens in parser.ParsedTokens)
+                            {
+                                var index = allTokens.IndexOf(token);
+                                if (index != -1)
+                                {
+                                    parser.ParsedTokens[parser.ParsedTokens.IndexOf(allTokens)][index] = token;
+                                }
+                            }
+                        }
+                        //var newVariableTokens = RunVariableReplacement(parser, out bool success);
+                        //if (success != true)
+                        //{
+                        //    continue;
+                        //}
+                        //foreach (CommandToken token in newVariableTokens)
+                        //{
+                        //    foreach (List<CommandToken> allTokens in parser.ParsedTokens)
+                        //    {
+                        //        var index = allTokens.IndexOf(token);
+                        //        if (index != -1)
+                        //        {
+                        //            parser.ParsedTokens[parser.ParsedTokens.IndexOf(allTokens)][index] = token;
+                        //        }
+                        //    }
+                        //}
+
+                        //Run the commands
+                        foreach (List<CommandToken> commands in parser.ParsedTokens)
+                        {
+                            var request = new CommandRequest(commands.ToArray());
+                            var routine = new CommandRoutine(request, RunLocalCommand(request, CommandExecutionMode.Client, pipe));
+                            pipe.Add(pos++, routine);
                         }
                     }
                     else
@@ -134,6 +171,61 @@ namespace RemotePlusClientCmd
 #pragma warning disable CS0162 // Unreachable code detected
             channel.Close();
 #pragma warning restore CS0162 // Unreachable code detected
+        }
+
+
+        //private CommandToken[] RunVariableReplacement(CommandParser p, out bool success)
+        //{
+        //    success = true;
+        //    List<CommandToken> tokenList = new List<CommandToken>();
+        //    var variableTokens = p.GetVariables();
+        //    foreach (CommandToken variableToken in variableTokens)
+        //    {
+        //        var variablename = variableToken.OriginalValue.Remove(0, 1);
+        //        if (ServerManager.DefaultService.Variables.ContainsKey(variablename))
+        //        {
+        //            var variableValue = ServerManager.DefaultService.Variables[variablename];
+        //            variableToken.Value = variableValue;
+        //            success = true;
+        //            tokenList.Add(variableToken);
+        //        }
+        //        else
+        //        {
+        //            Logger.AddOutput(new UILogItem(OutputLevel.Error, $"Variable {variablename} does not exist", "Server Host"));
+        //            success = false;
+        //        }
+        //    }
+        //    return tokenList.ToArray();
+        //}
+
+        private static IEnumerable<CommandToken> RunSubRoutines(CommandParser p, CommandPipeline pipe, int position)
+        {
+            foreach (CommandToken routineToken in p.GetSubRoutines())
+            {
+                var commandToExecute = Regex.Match(routineToken.OriginalValue, CommandToken.SUBROUTINE_PATTERN).Groups[1].Value;
+                var parsedCommand = p.Parse(commandToExecute, false);
+                foreach (List<CommandToken> allCommands in parsedCommand)
+                {
+                    var request = new CommandRequest(allCommands.ToArray());
+                    var routine = new CommandRoutine(request, RunLocalCommand(request, CommandExecutionMode.Client, pipe));
+                    routineToken.Value = routine.Output.CustomStatusMessage;
+                    position++;
+                }
+                yield return routineToken;
+            }
+        }
+
+        private static void WritePrompt()
+        {
+            Console.Write(prompt.Path.Insert(0, "$::"));
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.Write(" [");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write(prompt.AdditionalData);
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.Write("]");
+            Console.ResetColor();
+            Console.Write(">");
         }
 
         public static void ShowBanner()
@@ -208,7 +300,7 @@ namespace RemotePlusClientCmd
                 bool FoundCommand = false;
                 foreach (KeyValuePair<string, CommandDelegate> k in LocalCommands)
                 {
-                    if (request.Arguments[0] == k.Key)
+                    if (request.Arguments[0].Value == k.Key)
                     {
                         var ba = RemotePlusConsole.GetCommandBehavior(k.Value);
                         if (ba != null)
