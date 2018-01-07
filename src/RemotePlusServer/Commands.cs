@@ -24,15 +24,22 @@ namespace RemotePlusServer
             if (args.Arguments.Count > 2)
             {
                 string a = "";
-                for (int i = 2; i < args.Arguments.Count; i++)
+                if (args.Arguments[2].Type == TokenType.QouteBody)
                 {
-                    a += " " + args.Arguments[i];
+                    a = args.Arguments[2].Value;
+                }
+                else
+                {
+                    for (int i = 2; i < args.Arguments.Count; i++)
+                    {
+                        a += " " + args.Arguments[i];
+                    }
                 }
                 DefaultService.Remote.RunProgram(args.Arguments[1].Value, a);
                 DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, "Program start command finished.", "Server Host"));
                 return new CommandResponse((int)CommandStatus.Success);
             }
-            else if (args.Arguments.Count == 2)
+            else if (args.Arguments.Count == 2 && args.Arguments[2].Type != TokenType.QouteBody)
             {
                 DefaultService.Remote.RunProgram(args.Arguments[1].Value, "");
                 DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, "Program start command finished.", "Server Host"));
@@ -239,9 +246,16 @@ namespace RemotePlusServer
                 DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, "You must provide a valid voice age..", "Server Host"));
                 return new CommandResponse((int)CommandStatus.Fail);
             }
-            for (int i = 3; i < args.Arguments.Count; i++)
+            if (args.Arguments[3].Type == TokenType.QouteBody)
             {
-                message += args.Arguments[i] + " ";
+                message = args.Arguments[3].Value;
+            }
+            else
+            {
+                for (int i = 3; i < args.Arguments.Count; i++)
+                {
+                    message += args.Arguments[i] + " ";
+                }
             }
             DefaultService.Remote.Speak(message, gender, age);
             return new CommandResponse((int)CommandStatus.Success);
@@ -323,16 +337,23 @@ namespace RemotePlusServer
             int message_start = 0;
             if (args.Arguments[3].Value == "caption:")
             {
-                for (int i = 4; i < args.Arguments.Count; i++)
+                if (args.Arguments[4].Type == TokenType.QouteBody)
                 {
-                    if (args.Arguments[i].Value != "message:")
+                    caption = args.Arguments[4].Value;
+                }
+                else
+                {
+                    for (int i = 4; i < args.Arguments.Count; i++)
                     {
-                        caption += args.Arguments[i] + " ";
-                    }
-                    else
-                    {
-                        message_start = i;
-                        break;
+                        if (args.Arguments[i].Value != "message:")
+                        {
+                            caption += args.Arguments[i] + " ";
+                        }
+                        else
+                        {
+                            message_start = i;
+                            break;
+                        }
                     }
                 }
             }
@@ -342,9 +363,16 @@ namespace RemotePlusServer
             }
             if(message_start != 0)
             {
-                for(int i = message_start + 1; i < args.Arguments.Count; i++)
+                if (args.Arguments[message_start + 1].Type == TokenType.QouteBody)
                 {
-                    message += args.Arguments[i] + " ";
+                    message = args.Arguments[message_start + 1].Value;
+                }
+                else
+                {
+                    for (int i = message_start + 1; i < args.Arguments.Count; i++)
+                    {
+                        message += args.Arguments[i] + " ";
+                    }
                 }
             }
             else

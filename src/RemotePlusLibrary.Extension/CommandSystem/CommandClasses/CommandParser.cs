@@ -76,10 +76,10 @@ namespace RemotePlusLibrary.Extension.CommandSystem.CommandClasses
                 {
                     appendToken = true;
                 }
-                if (token.EndsWith("}"))
+                if (token.EndsWith("}") || token.EndsWith("}}"))
                 {
                     appendToken = false;
-                    tokens.Add(CommandToken.Parse(fullToken));
+                    fullToken += token;
                 }
                 #endregion
 
@@ -88,12 +88,10 @@ namespace RemotePlusLibrary.Extension.CommandSystem.CommandClasses
                 {
                     appendToken = true;
                 }
-                if (token.EndsWith("\""))
+                if (token.EndsWith("\"") || token.EndsWith("\"\""))
                 {
                     appendToken = false;
-                    fullToken += token + " ";
-                    tokens.Add(CommandToken.Parse(fullToken));
-                    continue;
+                    fullToken += token;
                 }
                 #endregion
 
@@ -104,7 +102,14 @@ namespace RemotePlusLibrary.Extension.CommandSystem.CommandClasses
                 }
                 else
                 {
-                    tokens.Add(CommandToken.Parse(token));
+                    if (string.IsNullOrEmpty(fullToken))
+                    {
+                        tokens.Add(CommandToken.Parse(token));
+                    }
+                    else
+                    {
+                        tokens.Add(CommandToken.Parse(fullToken));
+                    }
                 }
                 #endregion
             }
@@ -123,12 +128,30 @@ namespace RemotePlusLibrary.Extension.CommandSystem.CommandClasses
             }
             return allTokens.ToArray();
         }
+        public CommandToken[] GetSubRoutines(List<List<CommandToken>> tokens)
+        {
+            List<CommandToken> allTokens = new List<CommandToken>();
+            foreach (List<CommandToken> newTokens in tokens)
+            {
+                allTokens.AddRange(newTokens.Where(t => t.Type == TokenType.SubRoutine));
+            }
+            return allTokens.ToArray();
+        }
         public CommandToken[] GetVariables()
         {
             List<CommandToken> allTokens = new List<CommandToken>();
             foreach (List<CommandToken> tokens in ParsedTokens)
             {
                 allTokens.AddRange(tokens.Where(t => t.Type == TokenType.Variable));
+            }
+            return allTokens.ToArray();
+        }
+        public CommandToken[] GetVariables(List<List<CommandToken>> tokens)
+        {
+            List<CommandToken> allTokens = new List<CommandToken>();
+            foreach (List<CommandToken> newTokens in tokens)
+            {
+                allTokens.AddRange(newTokens.Where(t => t.Type == TokenType.Variable));
             }
             return allTokens.ToArray();
         }
@@ -139,6 +162,16 @@ namespace RemotePlusLibrary.Extension.CommandSystem.CommandClasses
             foreach (List<CommandToken> tokens in ParsedTokens)
             {
                 allTokens.AddRange(tokens.Where(t => t.Type == TokenType.QouteBody));
+            }
+            return allTokens.ToArray();
+        }
+        public CommandToken[] GetQoutedToken(List<List<CommandToken>> tokens)
+        {
+            CommandToken newToken = null;
+            List<CommandToken> allTokens = new List<CommandToken>();
+            foreach (List<CommandToken> foundTokens in tokens)
+            {
+                allTokens.AddRange(foundTokens.Where(t => t.Type == TokenType.QouteBody));
             }
             return allTokens.ToArray();
         }

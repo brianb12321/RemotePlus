@@ -83,8 +83,7 @@ namespace RemotePlusClient
             try
             {
                 LocalCallback = new ClientCallback();
-                channel = new DuplexChannelFactory<IRemote>(LocalCallback, "DefaultEndpoint");
-                channel.Endpoint.Address = new EndpointAddress(Address);
+                channel = new DuplexChannelFactory<IRemote>(LocalCallback, _ConnectionFactory.BuildBinding(), new EndpointAddress(Address));
                 Remote = channel.CreateChannel();
                 ConsoleObj.Logger.AddOutput("Registering...", Logging.OutputLevel.Info);
                 Remote.Register(Settings);

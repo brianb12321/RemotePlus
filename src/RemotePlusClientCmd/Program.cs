@@ -99,8 +99,7 @@ namespace RemotePlusClientCmd
         }
         static void Connect(string url, RegistirationObject ro)
         {
-            channel = new DuplexChannelFactory<IRemote>(new ClientCallback(), "DefaultEndpoint");
-            channel.Endpoint.Address = new EndpointAddress(url);
+            channel = new DuplexChannelFactory<IRemote>(new ClientCallback(), _ConnectionFactory.BuildBinding(), new EndpointAddress(url));
             Remote = channel.CreateChannel();
             Remote.Register(ro);
         }
@@ -217,6 +216,7 @@ namespace RemotePlusClientCmd
 
         private static void WritePrompt()
         {
+            Console.ResetColor();
             Console.Write(prompt.Path.Insert(0, "$::"));
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.Write(" [");

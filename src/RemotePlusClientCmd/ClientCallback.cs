@@ -89,7 +89,6 @@ namespace RemotePlusClientCmd
                 li.Color = ClientCmdManager.Logger.ConsoleForegroundDebug;
             }
             ClientCmdManager.Logger.AddOutput(li);
-            Console.ResetColor();
             //ClientCmdManager.WaitFlag = false;
         }
 

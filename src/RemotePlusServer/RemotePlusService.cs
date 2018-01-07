@@ -1,10 +1,12 @@
 ﻿using Logging;
 using RemotePlusLibrary;
+using RemotePlusLibrary.Core;
 using RemotePlusLibrary.Extension.CommandSystem;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
+using System.ServiceModel.Description;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -86,11 +88,12 @@ namespace RemotePlusServer
         /// <param name="singleTon">The instance of the service implementation.</param>
         /// <param name="portNumber">The port number to use for listening.</param>
         /// <param name="setupCallback">The function to call when setting up the service implementation.</param>
-        private RemotePlusService(I singleTon, int portNumber, Action<I> setupCallback)
+        private RemotePlusService(I singleTon, NetTcpBinding binding, string address, Action<I> setupCallback)
         {
             Remote = singleTon;
             setupCallback?.Invoke(Remote);
             Host = new ServiceHost(Remote);
+            Host.AddServiceEndpoint(typeof(IRemote), binding, address);
         }
         /// <summary>
         /// Starts the server.
@@ -122,9 +125,15 @@ namespace RemotePlusServer
             callback($"URL built {url}", OutputLevel.Debug);
             callback("Creating server.", OutputLevel.Debug);
             callback("Publishing server events.", OutputLevel.Debug);
-            temp = new RemotePlusService<I>(singleTon, port, setupCallback);
-            callback("Changing url of endpoint 1.", OutputLevel.Debug);
-            temp.Host.Description.Endpoints[0].Address = new EndpointAddress(url);
+            NetTcpBinding binding = _ConnectionFactory.BuildBinding();
+            StringBuilder dataBuilder = new StringBuilder();
+            dataBuilder.AppendLine("Binding configurations:");
+            dataBuilder.AppendLine();
+            dataBuilder.AppendLine($"MaxBufferPoolSize: {binding.MaxBufferPoolSize}");
+            dataBuilder.AppendLine($"MaxBufferSize: {binding.MaxBufferSize}");
+            dataBuilder.AppendLine($"MaxReceivedMessageSize: {binding.MaxReceivedMessageSize}");
+            callback(dataBuilder.ToString(), OutputLevel.Debug);
+            temp = new RemotePlusService<I>(singleTon, binding, url, setupCallback);
             return temp;
         }
     }

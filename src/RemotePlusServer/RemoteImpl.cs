@@ -136,7 +136,7 @@ namespace RemotePlusServer
             {
                 var l3 = ServerManager.Logger.AddOutput("Awaiting credentials from the client.", OutputLevel.Info);
                 Client.ClientCallback.TellMessage(new UILogItem(l3.Level, l3.Message, l3.From));
-                UserCredentials upp = Client.ClientCallback.RequestAuthentication(new AuthenticationRequest(AutehnticationSeverity.Normal) { Reason = "The server requires credentials to register."});
+                UserCredentials upp = Client.ClientCallback.RequestAuthentication(new AuthenticationRequest(AutehnticationSeverity.Normal) { Reason = "The server requires credentials to register." });
                 LogIn(upp);
             }
             // OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
@@ -336,12 +336,36 @@ namespace RemotePlusServer
             success = true;
             List<CommandToken> tokenList = new List<CommandToken>();
             var variableTokens = p.GetVariables();
-            foreach(CommandToken variableToken in variableTokens)
+            foreach (CommandToken variableToken in variableTokens)
             {
                 var variablename = variableToken.OriginalValue.Remove(0, 1);
-                if(ServerManager.DefaultService.Variables.ContainsKey(variablename))
+                if (ServerManager.DefaultService.Variables.ContainsKey(variablename))
                 {
                     var variableValue = ServerManager.DefaultService.Variables[variablename];
+
+                    variableToken.Value = variableValue;
+                    success = true;
+                    tokenList.Add(variableToken);
+                }
+                else
+                {
+                    Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, $"Variable {variablename} does not exist", "Server Host"));
+                    success = false;
+                }
+            }
+            return tokenList.ToArray();
+        }
+        private CommandToken[] RunVariableReplacement(CommandToken[] tokens, out bool success)
+        {
+            success = true;
+            List<CommandToken> tokenList = new List<CommandToken>();
+            foreach (CommandToken variableToken in tokens)
+            {
+                var variablename = variableToken.OriginalValue.Remove(0, 1);
+                if (ServerManager.DefaultService.Variables.ContainsKey(variablename))
+                {
+                    var variableValue = ServerManager.DefaultService.Variables[variablename];
+
                     variableToken.Value = variableValue;
                     success = true;
                     tokenList.Add(variableToken);
@@ -357,10 +381,50 @@ namespace RemotePlusServer
 
         private IEnumerable<CommandToken> RunSubRoutines(CommandParser p, CommandPipeline pipe, int position)
         {
-            foreach(CommandToken routineToken in p.GetSubRoutines())
+            foreach (CommandToken routineToken in p.GetSubRoutines())
             {
                 var commandToExecute = Regex.Match(routineToken.OriginalValue, CommandToken.SUBROUTINE_PATTERN).Groups[1].Value;
                 var parsedCommand = p.Parse(commandToExecute, false);
+                var newTokens = RunSubRoutines(p.GetSubRoutines(parsedCommand), p, pipe, position);
+                foreach (CommandToken token in newTokens)
+                {
+                    foreach (List<CommandToken> allTokens in parsedCommand)
+                    {
+                        var index = allTokens.IndexOf(token);
+                        if (index != -1)
+                        {
+                            parsedCommand[parsedCommand.IndexOf(allTokens)][index] = token;
+                        }
+                    }
+                }
+                var newVariableTokens = RunVariableReplacement(p.GetVariables(parsedCommand), out bool success);
+                if (success != true)
+                {
+                    yield return routineToken;
+                }
+                foreach (CommandToken token in newVariableTokens)
+                {
+                    foreach (List<CommandToken> allTokens in parsedCommand)
+                    {
+                        var index = allTokens.IndexOf(token);
+                        if (index != -1)
+                        {
+                            parsedCommand[parsedCommand.IndexOf(allTokens)][index] = token;
+                        }
+                    }
+                }
+                var newQouteTokens = ParseOutQoutes(p.GetQoutedToken(parsedCommand));
+                foreach (CommandToken token in newQouteTokens)
+                {
+                    foreach (List<CommandToken> allTokens in parsedCommand)
+                    {
+                        var index = allTokens.IndexOf(token);
+                        if (index != -1)
+                        {
+                            parsedCommand[parsedCommand.IndexOf(allTokens)][index] = token;
+                        }
+                    }
+                }
                 foreach (List<CommandToken> allCommands in parsedCommand)
                 {
                     var request = new CommandRequest(allCommands.ToArray());
@@ -370,6 +434,62 @@ namespace RemotePlusServer
                 }
                 yield return routineToken;
             }
+        }
+        private IEnumerable<CommandToken> RunSubRoutines(CommandToken[] tokens, CommandParser p, CommandPipeline pipe, int position)
+        {
+            foreach (CommandToken routineToken in tokens)
+            {
+                var commandToExecute = Regex.Match(routineToken.OriginalValue, CommandToken.SUBROUTINE_PATTERN).Groups[1].Value;
+                var parsedCommand = p.Parse(commandToExecute, false);
+
+                var newVariableTokens = RunVariableReplacement(p.GetVariables(parsedCommand), out bool success);
+                if (success != true)
+                {
+                    yield return routineToken;
+                }
+                foreach (CommandToken token in newVariableTokens)
+                {
+                    foreach (List<CommandToken> allTokens in parsedCommand)
+                    {
+                        var index = allTokens.IndexOf(token);
+                        if (index != -1)
+                        {
+                            parsedCommand[parsedCommand.IndexOf(allTokens)][index] = token;
+                        }
+                    }
+                }
+                var newQouteTokens = ParseOutQoutes(p.GetQoutedToken(parsedCommand));
+                foreach (CommandToken token in newQouteTokens)
+                {
+                    foreach (List<CommandToken> allTokens in parsedCommand)
+                    {
+                        var index = allTokens.IndexOf(token);
+                        if (index != -1)
+                        {
+                            parsedCommand[parsedCommand.IndexOf(allTokens)][index] = token;
+                        }
+                    }
+                }
+                foreach (List<CommandToken> allCommands in parsedCommand)
+                {
+                    var request = new CommandRequest(allCommands.ToArray());
+                    var routine = new CommandRoutine(request, ServerManager.Execute(request, CommandExecutionMode.Client, pipe));
+                    routineToken.Value = routine.Output.CustomStatusMessage;
+                    position++;
+                }
+                yield return routineToken;
+            }
+        }
+        private IEnumerable<CommandToken> ParseOutQoutes(CommandToken[] tokens)
+        {
+            List<CommandToken> tokenList = new List<CommandToken>();
+            foreach (CommandToken qouteToken in tokens)
+            {
+                var qouteName = Regex.Match(qouteToken.OriginalValue, CommandToken.QOUTE_PATTERN).Groups[1].Value;
+                qouteToken.Value = qouteName.Replace('^', '&');
+                tokenList.Add(qouteToken);
+            }
+            return tokenList.ToArray();
         }
         private IEnumerable<CommandToken> ParseOutQoutes(CommandParser p)
         {
