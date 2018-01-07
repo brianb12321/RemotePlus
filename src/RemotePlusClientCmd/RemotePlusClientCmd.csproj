@@ -56,13 +56,13 @@
       <HintPath>..\..\packages\Colorful.Console.1.2.1\lib\net461\Colorful.Console.dll</HintPath>
     </Reference>
     <Reference Include="CommandLine, Version=1.9.71.2, Culture=neutral, PublicKeyToken=de6f01bd326f8c32, processorArchitecture=MSIL">
-      <HintPath>..\packages\CommandLineParser.1.9.71\lib\net45\CommandLine.dll</HintPath>
+      <HintPath>..\..\packages\CommandLineParser.1.9.71\lib\net45\CommandLine.dll</HintPath>
     </Reference>
     <Reference Include="ConsoLovers.ConsoleToolkit, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\ConsoLovers.ConsoleToolkit.3.0.0\lib\net461\ConsoLovers.ConsoleToolkit.dll</HintPath>
     </Reference>
     <Reference Include="Logging">
-      <HintPath>..\Libs\Logging.dll</HintPath>
+      <HintPath>..\..\Libs\Logging.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

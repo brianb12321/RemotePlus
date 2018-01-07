@@ -21,7 +21,7 @@ namespace RemotePlusLibrary.Core
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine(Environment.NewLine + "Fault Stack Trace");
+            sb.AppendLine(Environment.NewLine + "Server Fault Stack Trace");
             sb.AppendLine("=================");
             sb.AppendLine(StackTrace + Environment.NewLine);
             sb.AppendLine("Loaded extension libraries on the server:");

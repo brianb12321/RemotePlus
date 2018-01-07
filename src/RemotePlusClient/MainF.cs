@@ -187,7 +187,8 @@ namespace RemotePlusClient
 #else
             if (e.ExceptionObject is FaultException<ServerFault>)
             {
-                ConsoleObj.Logger.AddOutput("Unkown error: " + exception.Message, OutputLevel.Error);
+                var fault = e.ExceptionObject as FaultException<ServerFault>;
+                ConsoleObj.Logger.AddOutput("Unkown error: " + fault.Message, OutputLevel.Error);
             }
             else
             {

@@ -16,27 +16,28 @@ RemotePlus is a remote control server/client. You run the server on a remote com
 Welcome to RemotePlusServer, version: 1.0.0.0
 
 
-6/21/2017 7:01:35 PM [Server Host][DEBUG]: Starting stop watch.
-6/21/2017 7:01:35 PM [Server Host][INFO]: Adding default known types.
-6/21/2017 7:01:35 PM [Server Host][DEBUG]: Adding UserAccount to known type list.
-6/21/2017 7:01:35 PM [Server Host][INFO]: Loading server settings file.
-6/21/2017 7:01:35 PM [Server Host][ERROR]: Unable to load server settings. There was an error deserializing the object of type RemotePlusLibrary.ServerSettings. The 'Credentials' start tag on line 5 position 8 does not match the end tag of 'Credentdials'. Line 8, position 9.
-6/21/2017 7:01:35 PM [Server Host][INFO]: Initializing watchers.
-6/21/2017 7:01:35 PM [Server Host][DEBUG]: Building endpoint URL.
-6/21/2017 7:01:35 PM [Server Host][DEBUG]: URL built net.tcp://0.0.0.0:9000/Remote
-6/21/2017 7:01:35 PM [Server Host][DEBUG]: Creating server.
-6/21/2017 7:01:35 PM [Server Host][DEBUG]: Publishing server events.
-6/21/2017 7:01:35 PM [Server Host][DEBUG]: Changing url of endpoint 1.
-6/21/2017 7:01:35 PM [Server Host][INFO]: Loading extensions...
-6/21/2017 7:01:35 PM [Server Host][INFO]: The extensions folder does not exist.
-6/21/2017 7:01:35 PM [Server Host][DEBUG]: Added temperary extensions into dictionary.
-6/21/2017 7:01:35 PM [Server Host][DEBUG]: Attaching server events.
-6/21/2017 7:01:35 PM [Server Host][INFO]: Loading variables.
-6/21/2017 7:01:35 PM [Server Host][INFO]: Loading Commands.
-6/21/2017 7:01:35 PM [Server Host][INFO]: Checking prerequisites.
-6/21/2017 7:01:35 PM [Server Host][WARNING]: The current logged in user is not part of the group "Administrator". This may cause certain operations to fail.
-6/21/2017 7:01:35 PM [Server Host][DEBUG]: Stopping stop watch.
-6/21/2017 7:01:35 PM [Server Host][ERROR]: Unable to start server. (1 errors, 1 warnings) Elapsed time: 00:00:00.6899053
+1/6/2018 3:03:57 PM [Server Host][DEBUG]: Starting stop watch.
+1/6/2018 3:03:57 PM [Server Host][INFO]: NOTE: Tracing may be enabled on the server.
+1/6/2018 3:03:57 PM [Server Host][INFO]: Adding default known types.
+1/6/2018 3:03:57 PM [Server Host][DEBUG]: Adding UserAccount to known type list.
+1/6/2018 3:03:57 PM [Server Host][INFO]: Loading server settings file.
+1/6/2018 3:03:57 PM [Server Host][ERROR]: Unable to load server settings. There was an error deserializing the object of type RemotePlusLibrary.ServerSettings. The 'Accoun1ts' start tag on line 3 position 4 does not match the end tag of 'Accounts'. Line 27, position 5.
+1/6/2018 3:03:57 PM [Server Host][INFO]: Loading email settings file.
+1/6/2018 3:03:57 PM [Server Host][DEBUG]: Building endpoint URL.
+1/6/2018 3:03:57 PM [Server Host][DEBUG]: URL built net.tcp://0.0.0.0:9000/Remote
+1/6/2018 3:03:57 PM [Server Host][DEBUG]: Creating server.
+1/6/2018 3:03:57 PM [Server Host][DEBUG]: Publishing server events.
+1/6/2018 3:03:57 PM [Server Host][DEBUG]: Changing url of endpoint 1.
+1/6/2018 3:03:57 PM [Server Host][INFO]: Loading extensions...
+1/6/2018 3:03:57 PM [Server Host][DEBUG]: Added temperary extensions into dictionary.
+1/6/2018 3:03:57 PM [Server Host][DEBUG]: Attaching server events.
+1/6/2018 3:03:57 PM [Server Host][INFO]: Loading variables.
+1/6/2018 3:03:57 PM [Server Host][INFO]: Loading Commands.
+1/6/2018 3:03:57 PM [Server Host][INFO]: Checking prerequisites.
+1/6/2018 3:03:57 PM [Server Host][WARNING]: The current logged in user is not part of the group "Administrator". This may cause certain operations to fail.
+1/6/2018 3:03:57 PM [Server Host][INFO]: NOTE: Logging is enabled for this application.
+1/6/2018 3:03:57 PM [Server Host][DEBUG]: Stopping stop watch.
+1/6/2018 3:03:57 PM [Server Host][ERROR]: Unable to start server. (1 errors, 1 warnings) Elapsed time: 00:00:00.0705552
 ```
 ### Setting up server
 * Make sure that you meet the prerequisites mentioned above.

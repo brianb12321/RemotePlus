@@ -267,53 +267,64 @@ namespace RemotePlusServer
             else
             {
                 CommandParser parser = new CommandParser(Command);
-                var tokens = parser.Parse(true);
-                var newTokens = RunSubRoutines(parser, pipe, pos);
-                foreach(CommandToken token in newTokens)
+                try
                 {
-                    foreach (List<CommandToken> allTokens in parser.ParsedTokens)
+                    var tokens = parser.Parse(true);
+                    var newTokens = RunSubRoutines(parser, pipe, pos);
+                    foreach (CommandToken token in newTokens)
                     {
-                        var index = allTokens.IndexOf(token);
-                        if (index != -1)
+                        foreach (List<CommandToken> allTokens in parser.ParsedTokens)
                         {
-                            parser.ParsedTokens[parser.ParsedTokens.IndexOf(allTokens)][index] = token;
+                            var index = allTokens.IndexOf(token);
+                            if (index != -1)
+                            {
+                                parser.ParsedTokens[parser.ParsedTokens.IndexOf(allTokens)][index] = token;
+                            }
                         }
                     }
+                    var newVariableTokens = RunVariableReplacement(parser, out bool success);
+                    if (success != true)
+                    {
+                        return pipe;
+                    }
+                    foreach (CommandToken token in newVariableTokens)
+                    {
+                        foreach (List<CommandToken> allTokens in parser.ParsedTokens)
+                        {
+                            var index = allTokens.IndexOf(token);
+                            if (index != -1)
+                            {
+                                parser.ParsedTokens[parser.ParsedTokens.IndexOf(allTokens)][index] = token;
+                            }
+                        }
+                    }
+                    var newQouteTokens = ParseOutQoutes(parser);
+                    foreach (CommandToken token in newQouteTokens)
+                    {
+                        foreach (List<CommandToken> allTokens in parser.ParsedTokens)
+                        {
+                            var index = allTokens.IndexOf(token);
+                            if (index != -1)
+                            {
+                                parser.ParsedTokens[parser.ParsedTokens.IndexOf(allTokens)][index] = token;
+                            }
+                        }
+                    }
+                    //Run the commands
+                    foreach (List<CommandToken> commands in parser.ParsedTokens)
+                    {
+                        var request = new CommandRequest(commands.ToArray());
+                        var routine = new CommandRoutine(request, ServerManager.Execute(request, CommandExecutionMode.Client, pipe));
+                        pipe.Add(pos++, routine);
+                    }
                 }
-                var newVariableTokens = RunVariableReplacement(parser, out bool success);
-                if(success != true)
+                catch (ParserException e)
                 {
+                    UILogItem parseMessage = new UILogItem(OutputLevel.Error, $"Unable to parse command: {e.Message}");
+                    parseMessage.From = "Server Host";
+                    ServerManager.Logger.AddOutput(parseMessage.Message, parseMessage.Level, parseMessage.From);
+                    Client.ClientCallback.TellMessageToServerConsole(parseMessage);
                     return pipe;
-                }
-                foreach (CommandToken token in newVariableTokens)
-                {
-                    foreach (List<CommandToken> allTokens in parser.ParsedTokens)
-                    {
-                        var index = allTokens.IndexOf(token);
-                        if (index != -1)
-                        {
-                            parser.ParsedTokens[parser.ParsedTokens.IndexOf(allTokens)][index] = token;
-                        }
-                    }
-                }
-                var newQouteTokens = ParseOutQoutes(parser);
-                foreach(CommandToken token in newQouteTokens)
-                {
-                    foreach (List<CommandToken> allTokens in parser.ParsedTokens)
-                    {
-                        var index = allTokens.IndexOf(token);
-                        if (index != -1)
-                        {
-                            parser.ParsedTokens[parser.ParsedTokens.IndexOf(allTokens)][index] = token;
-                        }
-                    }
-                }
-                //Run the commands
-                foreach(List<CommandToken> commands in parser.ParsedTokens)
-                {
-                    var request = new CommandRequest(commands.ToArray());
-                    var routine = new CommandRoutine(request, ServerManager.Execute(request, CommandExecutionMode.Client, pipe));
-                    pipe.Add(pos++, routine);
                 }
             }
             // OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
