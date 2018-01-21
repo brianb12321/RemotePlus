@@ -18,5 +18,7 @@ namespace RemotePlusLibrary.Extension.CommandSystem
         public string Path { get; set; }
         [DataMember]
         public string AdditionalData { get; set; }
+        [DataMember]
+        public string CurrentUser { get; set; }
     }
 }

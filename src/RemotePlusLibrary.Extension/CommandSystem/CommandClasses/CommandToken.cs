@@ -12,6 +12,7 @@ namespace RemotePlusLibrary.Extension.CommandSystem.CommandClasses
 
         public const string SUBROUTINE_PATTERN = @"\$\{([^}]*)\}";
         public const string QOUTE_PATTERN = "\\\"([^\"]*)\"";
+        public const string VARIABLE_COMMAND_PATTERN = @"\$\(([^)]*)\)";
         /// <summary>
         /// The type of token.
         /// </summary>
@@ -46,6 +47,11 @@ namespace RemotePlusLibrary.Extension.CommandSystem.CommandClasses
             else if(Regex.IsMatch(token, QOUTE_PATTERN))
             {
                 newToken = new CommandToken(token) { Type = TokenType.QouteBody };
+                return newToken;
+            }
+            else if(Regex.IsMatch(token, VARIABLE_COMMAND_PATTERN))
+            {
+                newToken = new CommandToken(token) { Type = TokenType.VariableCommand };
                 return newToken;
             }
             else

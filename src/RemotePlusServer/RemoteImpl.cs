@@ -17,6 +17,7 @@ using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
 using RemotePlusServer.ExtensionSystem;
 using RemotePlusLibrary.FileTransfer;
 using System.Text.RegularExpressions;
+using RemotePlusServer.Internal;
 
 namespace RemotePlusServer
 {
@@ -119,11 +120,6 @@ namespace RemotePlusServer
             ServerManager.Logger.AddOutput("Getting ClientBuilder from client.", OutputLevel.Debug);
             var callback = OperationContext.Current.GetCallbackChannel<IRemoteClient>();
             Client = Client<IRemoteClient>.Build(callback.RegisterClient(), callback);
-            Client.ClientCallback.ChangePrompt(new RemotePlusLibrary.Extension.CommandSystem.PromptBuilder()
-            {
-                Path = CurrentPath,
-                AdditionalData = "Current Path"
-            });
             ServerManager.Logger.AddOutput("Received registiration object from client.", OutputLevel.Info);
             this.Settings = Settings;
             var l = ServerManager.Logger.AddOutput("Processing registiration object.", OutputLevel.Debug);
@@ -139,6 +135,13 @@ namespace RemotePlusServer
                 UserCredentials upp = Client.ClientCallback.RequestAuthentication(new AuthenticationRequest(AutehnticationSeverity.Normal) { Reason = "The server requires credentials to register." });
                 LogIn(upp);
             }
+            _HookManager.RunHooks(LibraryBuilder.LOGIN_HOOK, new RemotePlusLibrary.Extension.HookSystem.HookArguments(LibraryBuilder.LOGIN_HOOK));
+            Client.ClientCallback.ChangePrompt(new RemotePlusLibrary.Extension.CommandSystem.PromptBuilder()
+            {
+                Path = CurrentPath,
+                AdditionalData = "Current Path",
+                CurrentUser = LoggedInUser.Credentials.Username
+            });
             // OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
         }
         private void RegisterComplete()
@@ -751,7 +754,6 @@ namespace RemotePlusServer
             // OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
             return RemotePlusConsole.ShowCommandHelpDescription(ServerManager.DefaultService.Commands, command);
         }
-        int num = 0;
         public IDirectory GetRemoteFiles(string path, bool usingRequest)
         {
             // OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));

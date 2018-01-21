@@ -81,6 +81,7 @@
     <Compile Include="Commands.cs" />
     <Compile Include="ExtensionSystem\ServerExtensionLibrary.cs" />
     <Compile Include="ExtensionSystem\ServerInitEnvironment.cs" />
+    <Compile Include="Internal\_HookManager.cs" />
     <Compile Include="RemotePlusService.cs" />
     <Compile Include="ServerControls.cs">
       <SubType>Form</SubType>

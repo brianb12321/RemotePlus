@@ -4,20 +4,20 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{4A312E8C-FE94-4996-B2B4-55C9854075C8}</ProjectGuid>
+    <ProjectGuid>{AA84438D-E7A1-4805-8862-53FA6D0A2EB6}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ReleaseExtensions</RootNamespace>
-    <AssemblyName>ReleaseExtensions</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <RootNamespace>ServerMath</RootNamespace>
+    <AssemblyName>ServerMath</AssemblyName>
+    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
-    <DebugType>pdbonly</DebugType>
+    <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\RemotePlusServer\bin\Debug\extensions\</OutputPath>
+    <OutputPath>..\src\RemotePlusServer\bin\Debug\extensions\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -32,15 +32,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Logging">
-      <HintPath>..\..\..\Libs\Logging.dll</HintPath>
+      <HintPath>..\Libs\Logging.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Management" />
-    <Reference Include="System.Speech" />
-    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -49,26 +45,37 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="MathCommands.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\RemotePlusLibrary.Core\RemotePlusLibrary.Core.csproj">
+    <ProjectReference Include="..\src\RemotePlusLibrary.Configuration\RemotePlusLibrary.Configuration.csproj">
+      <Project>{8a8a5888-1ce7-46ed-b8de-1ac7671f3426}</Project>
+      <Name>RemotePlusLibrary.Configuration</Name>
+      <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\src\RemotePlusLibrary.Core.EmailService\RemotePlusLibrary.Core.EmailService.csproj">
+      <Project>{166c0846-95a7-4134-9a6c-bb2e5c9c4594}</Project>
+      <Name>RemotePlusLibrary.Core.EmailService</Name>
+      <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\src\RemotePlusLibrary.Core\RemotePlusLibrary.Core.csproj">
       <Project>{0334629b-6302-42a8-b159-f8646b4d8650}</Project>
       <Name>RemotePlusLibrary.Core</Name>
       <Private>False</Private>
     </ProjectReference>
-    <ProjectReference Include="..\..\RemotePlusLibrary.Extension\RemotePlusLibrary.Extension.csproj">
+    <ProjectReference Include="..\src\RemotePlusLibrary.Extension\RemotePlusLibrary.Extension.csproj">
       <Project>{2aa5e768-7e0a-4b0c-a0d1-f79153902df9}</Project>
       <Name>RemotePlusLibrary.Extension</Name>
       <Private>False</Private>
     </ProjectReference>
-    <ProjectReference Include="..\..\RemotePlusLibrary\RemotePlusLibrary.csproj">
+    <ProjectReference Include="..\src\RemotePlusLibrary\RemotePlusLibrary.csproj">
       <Project>{00c22a1f-d3df-4193-aaa8-9907d08e2511}</Project>
       <Name>RemotePlusLibrary</Name>
       <Private>False</Private>
     </ProjectReference>
-    <ProjectReference Include="..\..\RemotePlusServer\RemotePlusServer.csproj">
+    <ProjectReference Include="..\src\RemotePlusServer\RemotePlusServer.csproj">
       <Project>{4e41f31e-dce5-4b9c-a2d6-20bf6acd9c84}</Project>
       <Name>RemotePlusServer</Name>
       <Private>False</Private>

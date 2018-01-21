@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using RemotePlusServer;
 using System.IO;
 using RemotePlusLibrary.Extension;
+using RemotePlusLibrary.Extension.HookSystem;
+using RemotePlusLibrary;
 
 namespace CommonWebCommands
 {
@@ -13,6 +15,7 @@ namespace CommonWebCommands
     {
         public void Init(ILibraryBuilder builder, IInitEnvironment env)
         {
+            builder.RegisterHook(LibraryBuilder.LOGIN_HOOK, checkIfUserAcceptsDisclamer);
             ServerManager.Logger.AddOutput($"Current position {env.InitPosition}", Logging.OutputLevel.Debug, "WebCommands");
             ServerManager.Logger.AddOutput("Welcome to WebCommands.", Logging.OutputLevel.Info, "WebCommands");
             ServerManager.Logger.AddOutput("Adding Chrome", Logging.OutputLevel.Info, "WebCommands");
@@ -27,6 +30,10 @@ namespace CommonWebCommands
             ServerManager.Logger.AddOutput("Adding Firefox", Logging.OutputLevel.Info, "WebCommands");
             CHeckFirefox();
             ServerManager.DefaultService.Commands.Add("firefox", WebCommands.firefox);
+        }
+        void checkIfUserAcceptsDisclamer(HookArguments args)
+        {
+            ServerManager.DefaultService.Remote.Client.ClientCallback.RequestInformation(RequestBuilder.RequestMessageBox("Do not use CommonWebCommands to cause harm!", "Warning", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Warning));
         }
         void CheckIE()
         {

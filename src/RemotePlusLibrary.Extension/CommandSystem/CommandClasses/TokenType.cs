@@ -12,6 +12,8 @@ namespace RemotePlusLibrary.Extension.CommandSystem.CommandClasses
         [EnumMember]
         QouteBody,
         [EnumMember]
-        SubRoutine
+        SubRoutine,
+        [EnumMember]
+        VariableCommand
     }
 }

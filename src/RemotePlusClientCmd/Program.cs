@@ -217,6 +217,7 @@ namespace RemotePlusClientCmd
         private static void WritePrompt()
         {
             Console.ResetColor();
+            Console.Write(prompt.CurrentUser);
             Console.Write(prompt.Path.Insert(0, "$::"));
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.Write(" [");

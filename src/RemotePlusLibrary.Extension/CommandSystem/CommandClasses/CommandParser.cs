@@ -63,9 +63,9 @@ namespace RemotePlusLibrary.Extension.CommandSystem.CommandClasses
         }
         CommandToken[] splitCommandBySpace(string command)
         {
-            bool appendToken = false; ;
+            bool appendToken = false;
             List<CommandToken> tokens = new List<CommandToken>();
-            //There is only one command to run.
+            // There is only one command to run.
             // Separate command by space.
             string[] spacedString = command.Split(' ');
             string fullToken = "";
@@ -76,7 +76,7 @@ namespace RemotePlusLibrary.Extension.CommandSystem.CommandClasses
                 {
                     appendToken = true;
                 }
-                if (token.EndsWith("}") || token.EndsWith("}}"))
+                if (token.EndsWith("}"))
                 {
                     appendToken = false;
                     fullToken += token;
@@ -157,7 +157,7 @@ namespace RemotePlusLibrary.Extension.CommandSystem.CommandClasses
         }
         public CommandToken[] GetQoutedToken()
         {
-            CommandToken newToken = null;
+            //CommandToken newToken = null;
             List<CommandToken> allTokens = new List<CommandToken>();
             foreach (List<CommandToken> tokens in ParsedTokens)
             {
@@ -167,7 +167,7 @@ namespace RemotePlusLibrary.Extension.CommandSystem.CommandClasses
         }
         public CommandToken[] GetQoutedToken(List<List<CommandToken>> tokens)
         {
-            CommandToken newToken = null;
+            //CommandToken newToken = null;
             List<CommandToken> allTokens = new List<CommandToken>();
             foreach (List<CommandToken> foundTokens in tokens)
             {

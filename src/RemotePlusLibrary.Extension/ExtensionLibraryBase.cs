@@ -21,6 +21,7 @@ namespace RemotePlusLibrary.Extension
         public ExtensionLibraryType LibraryType { get; private set; }
         public Guid Guid { get; private set; }
         public Version Version { get; private set; }
+        public Dictionary<string, List<ServerHook>> Hooks { get; set; }
         protected ExtensionLibraryBase(string friendlyName, string name, ExtensionLibraryType type, Guid g, RequiresDependencyAttribute[] deps, Version v)
         {
             FriendlyName = friendlyName;
@@ -30,6 +31,7 @@ namespace RemotePlusLibrary.Extension
             Version = v;
             Extensions = new Dictionary<string, T>();
             Dependencies = deps.ToList();
+            Hooks = new Dictionary<string, List<ServerHook>>();
         }
 
         public static Guid ParseGuid(string guid)

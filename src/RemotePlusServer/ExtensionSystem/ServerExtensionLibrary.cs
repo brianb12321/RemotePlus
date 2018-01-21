@@ -45,9 +45,12 @@ namespace RemotePlusServer.ExtensionSystem
                     {
                         var st = (ILibraryStartup)Activator.CreateInstance(ea.Startup);
                         callback("Beginning initialization.", Logging.OutputLevel.Info);
-                        st.Init(new LibraryBuilder(ea.Name, ea.FriendlyName, ea.Version, ea.LibraryType), env);
+                        LibraryBuilder builder = new LibraryBuilder(ea.Name, ea.FriendlyName, ea.Version, ea.LibraryType);
+                        st.Init(builder, env);
                         callback("finished initalization.", Logging.OutputLevel.Info);
                         lib = new ServerExtensionLibrary(ea.FriendlyName, ea.Name, ea.LibraryType, guid, deps, version);
+                        callback("Registiring server hooks.", OutputLevel.Info);
+                        lib.Hooks = builder.Hooks;
                         foreach (Type t in a.GetTypes())
                         {
                             if (t.IsClass == true && (t.IsSubclassOf(typeof(ServerExtension))))
