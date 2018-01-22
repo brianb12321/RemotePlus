@@ -190,6 +190,7 @@ namespace RemotePlusServer
             DefaultService.Commands.Add("path", path);
             DefaultService.Commands.Add("cd", cd);
             DefaultService.Commands.Add("echo", echo);
+            DefaultService.Commands.Add("load-extensionLibrary", loadExtensionLibrary);
         }
 
         static bool CheckPrerequisites()

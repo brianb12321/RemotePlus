@@ -35,7 +35,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Client Tools", "Client Tool
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemotePlusClientCmd.RequestHelpers", "src\Client Tools\RemotePlusClientCmd.RequestHelpers\RemotePlusClientCmd.RequestHelpers.csproj", "{4F29FED8-1EDF-44F6-93CB-9000415802B1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerMath", "ServerMath\ServerMath.csproj", "{AA84438D-E7A1-4805-8862-53FA6D0A2EB6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerMath", "src\ReleaseExtensionLibraries\ServerMath\ServerMath.csproj", "{AA84438D-E7A1-4805-8862-53FA6D0A2EB6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

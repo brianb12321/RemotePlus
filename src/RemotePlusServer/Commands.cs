@@ -12,6 +12,7 @@ using System.Speech.Synthesis;
 using System.Windows.Forms;
 using RemotePlusLibrary.Core.EmailService;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
+using RemotePlusServer.ExtensionSystem;
 
 namespace RemotePlusServer
 {
@@ -445,6 +446,35 @@ namespace RemotePlusServer
             {
                 CustomStatusMessage = message
             };
+        }
+        [CommandHelp("Loads an extension library dll into the system.")]
+        private static CommandResponse loadExtensionLibrary(CommandRequest args, CommandPipeline pipe)
+        {
+            try
+            {
+                string path = string.Empty;
+                if (Path.IsPathRooted(args.Arguments[1].Value))
+                {
+                    path = args.Arguments[1].Value;
+                }
+                else
+                {
+                    path = Path.Combine(DefaultService.Remote.CurrentPath, args.Arguments[1].Value);
+                }
+                var lib = ServerExtensionLibrary.LoadServerLibrary(path, (m, o) =>
+                {
+                    Logger.AddOutput(m, o);
+                    DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(o, m));
+                }, new ServerInitEnvironment(false));
+                DefaultCollection.Libraries.Add(lib.Name, lib);
+                return new CommandResponse((int)CommandStatus.Success);
+            }
+            catch (Exception ex)
+            {
+                Logger.AddOutput($"Unable to load extension library: {ex.Message}", OutputLevel.Exception);
+                DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, $"Unable to load extension library: {ex.Message}"));
+                return new CommandResponse((int)CommandStatus.Fail);
+            }
         }
     }
 }
