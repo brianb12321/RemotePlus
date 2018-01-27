@@ -15,7 +15,7 @@ namespace CommonWebCommands
     {
         public void Init(ILibraryBuilder builder, IInitEnvironment env)
         {
-            builder.RegisterHook(LibraryBuilder.LOGIN_HOOK, checkIfUserAcceptsDisclamer);
+            //builder.RegisterHook(LibraryBuilder.LOGIN_HOOK, checkIfUserAcceptsDisclamer);
             ServerManager.Logger.AddOutput($"Current position {env.InitPosition}", Logging.OutputLevel.Debug, "WebCommands");
             ServerManager.Logger.AddOutput("Welcome to WebCommands.", Logging.OutputLevel.Info, "WebCommands");
             ServerManager.Logger.AddOutput("Adding Chrome", Logging.OutputLevel.Info, "WebCommands");

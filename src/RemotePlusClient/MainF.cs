@@ -23,12 +23,11 @@ namespace RemotePlusClient
         public Dictionary<string, ThemedForm> BottumPages;
         public Dictionary<string, ThemedForm> TopPages;
         public static ServerConsole ServerConsoleObj = null;
-        public static IRemote Remote = null;
+        public static ServiceClient Remote = null;
         public static ConsoleDialog ConsoleObj = null;
         public static ClientCallback LocalCallback = null;
         public static ClientLibraryCollection DefaultCollection { get; private set; }
         string Address { get; set; }
-        static DuplexChannelFactory<IRemote> channel = null;
         public MainF()
         {
             DefaultCollection = new ClientLibraryCollection();
@@ -40,10 +39,10 @@ namespace RemotePlusClient
         }
         public static void Disconnect()
         {
-            if(channel != null)
+            if(Remote != null)
             {
                 Remote.Disconnect();
-                channel.Close();
+                Remote.Close();
                 ConsoleObj.Logger.DefaultFrom = "Client";
                 ConsoleObj.Logger.AddOutput("Closed", Logging.OutputLevel.Info);
             }
@@ -83,8 +82,8 @@ namespace RemotePlusClient
             try
             {
                 LocalCallback = new ClientCallback();
-                channel = new DuplexChannelFactory<IRemote>(LocalCallback, _ConnectionFactory.BuildBinding(), new EndpointAddress(Address));
-                Remote = channel.CreateChannel();
+                Remote = new ServiceClient(LocalCallback, _ConnectionFactory.BuildBinding(), new EndpointAddress(Address));
+                Remote.Open();
                 ConsoleObj.Logger.AddOutput("Registering...", Logging.OutputLevel.Info);
                 Remote.Register(Settings);
                 EnableMenuItems();
@@ -145,7 +144,7 @@ namespace RemotePlusClient
 
         private void consoleToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (channel.State == CommunicationState.Opened)
+            if (Remote.State == CommunicationState.Opened)
             {
                 if (ServerConsoleObj == null)
                 {
@@ -320,7 +319,7 @@ namespace RemotePlusClient
 
         private void menuItem3_Click(object sender, EventArgs e)
         {
-            if (channel.State == CommunicationState.Opened)
+            if (Remote.State == CommunicationState.Opened)
             {
                 OpenFileDialog ofd = new OpenFileDialog()
                 {

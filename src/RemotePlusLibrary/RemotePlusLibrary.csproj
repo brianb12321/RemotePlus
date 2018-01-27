@@ -89,6 +89,7 @@
     <Compile Include="ExtensionRulesStringCollectionEditorForm.Designer.cs">
       <DependentUpon>ExtensionRulesStringCollectionEditorForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="ServiceClient.cs" />
     <Compile Include="SignalMessage.cs" />
     <Compile Include="UserAccount.cs" />
     <Compile Include="Converters\UserAccountCollectionDescriptor.cs" />

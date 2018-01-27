@@ -130,5 +130,8 @@ namespace RemotePlusLibrary
         [OperationContract]
         [FaultContract(typeof(ServerFault))]
         bool SendEmail(string To, string Subject, string Message);
+        [OperationContract]
+        [FaultContract(typeof(ServerFault))]
+        bool ExecuteScript(string script);
     }
 }

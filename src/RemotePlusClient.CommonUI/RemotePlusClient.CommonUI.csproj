@@ -39,6 +39,7 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Speech" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -98,6 +99,7 @@
     <Compile Include="RequestStringDialogBox.Designer.cs">
       <DependentUpon>RequestStringDialogBox.cs</DependentUpon>
     </Compile>
+    <Compile Include="SpeechRequest.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="EmailGui\ConfigureEmailDialogBox.resx">

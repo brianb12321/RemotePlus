@@ -35,7 +35,7 @@ namespace RemotePlusClientCmd
         static CommandResponse close(CommandRequest args, CommandPipeline pipe)
         {
             Remote.Disconnect();
-            channel.Close();
+            Remote.Close();
             Environment.Exit(0);
             return new CommandResponse((int)CommandStatus.Success);
         }
@@ -65,6 +65,12 @@ namespace RemotePlusClientCmd
                 Logger.AddOutput($"Unable to load command file: {ex.Message}", OutputLevel.Error);
                 return new CommandResponse((int)CommandStatus.Success);
             }
+        }
+        [CommandHelp("loads a specified script file.")]
+        public static CommandResponse loadScriptFIle(CommandRequest args, CommandPipeline pipe)
+        {
+            bool success = ClientCmdManager.Remote.ExecuteScript(File.ReadAllText(args.Arguments[1].Value));
+            return (success == true ? new CommandResponse((int)CommandStatus.Success) : new CommandResponse((int)CommandStatus.Fail));
         }
     }
 }

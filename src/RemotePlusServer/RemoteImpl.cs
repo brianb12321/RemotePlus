@@ -18,6 +18,9 @@ using RemotePlusServer.ExtensionSystem;
 using RemotePlusLibrary.FileTransfer;
 using System.Text.RegularExpressions;
 using RemotePlusServer.Internal;
+using MoonSharp.Interpreter;
+using RemotePlusServer.ScriptingEngine.Proxies;
+using RemotePlusServer.ScriptingEngine;
 
 namespace RemotePlusServer
 {
@@ -837,6 +840,32 @@ namespace RemotePlusServer
             else
             {
                 Client.ClientCallback.TellMessage(new UILogItem(OutputLevel.Error, $"Email message failed: {err.ToString()}", "Server Host"));
+                return false;
+            }
+        }
+
+        public bool ExecuteScript(string script)
+        {
+            try
+            {
+                ServerManager.Logger.AddOutput("Running script file.", OutputLevel.Info, "Server Host");
+                Script luaScript = new Script(CoreModules.Basic | CoreModules.Math | CoreModules.OS_Time | CoreModules.ErrorHandling | CoreModules.LoadMethods | CoreModules.String);
+                ScriptBuilder.ConfigureScript(luaScript);
+                ScriptBuilder.RegisterUserData();
+                ScriptBuilder.InitializeScripts(luaScript);
+                DynValue value = luaScript.DoString(script);
+                if (value.Type == DataType.Boolean)
+                {
+                    return value.Boolean;
+                }
+                else
+                {
+                    throw new Exception("Script function must return bool");
+                }
+            }
+            catch (InterpreterException ex)
+            {
+                Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, $"Could not execute script file: {ex.Message}", ScriptBuilder.SCRIPT_LOG_CONSTANT));
                 return false;
             }
         }

@@ -21,7 +21,7 @@ namespace RemotePlusClientCmd
         public void Disconnect(string Reason)
         {
             //ClientCmdManager.WaitFlag = true;
-            ClientCmdManager.channel.Close();
+            ClientCmdManager.Remote.Close();
             ClientCmdManager.Logger.AddOutput(new LogItem(OutputLevel.Error, "Server disconnected. " + Reason, "CLient") { Color = ConsoleColor.Red });
             //ClientCmdManager.WaitFlag = false;
         }

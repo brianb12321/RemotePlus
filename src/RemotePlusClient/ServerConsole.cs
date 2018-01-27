@@ -65,30 +65,22 @@ namespace RemotePlusClient
             }
         }
 
-        public async void RunScriptFile()
+        public void RunScriptFile()
         {
             try
             {
-                StreamReader sr = new StreamReader(scriptFile);
-                while (!sr.EndOfStream)
-                {
-                    MainF.Remote.RunServerCommand(await sr.ReadLineAsync(), CommandExecutionMode.Script);
-                }
+                MainF.Remote.ExecuteScript(File.ReadAllText(scriptFile));
             }
             catch (FileNotFoundException)
             {
                 MessageBox.Show("The file does not exist.");
             }
         }
-        public async void RunScriptFile(string f)
+        public void RunScriptFile(string f)
         {
             try
             {
-                StreamReader sr = new StreamReader(f);
-                while (!sr.EndOfStream)
-                {
-                    MainF.Remote.RunServerCommand(await sr.ReadLineAsync(), CommandExecutionMode.Script);
-                }
+                MainF.Remote.ExecuteScript(File.ReadAllText(f));
             }
             catch (FileNotFoundException)
             {

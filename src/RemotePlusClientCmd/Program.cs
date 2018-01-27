@@ -20,9 +20,8 @@ namespace RemotePlusClientCmd
     public partial class ClientCmdManager
     {
         public static Dictionary<string, CommandDelegate> LocalCommands = new Dictionary<string, CommandDelegate>();
-        public static IRemote Remote = null;
+        public static ServiceClient Remote = null;
         public static CMDLogging Logger = null;
-        public static DuplexChannelFactory<IRemote> channel = null;
         public static PromptBuilder prompt = new PromptBuilder();
         public static bool WaitFlag = true;
         [STAThread]
@@ -99,8 +98,7 @@ namespace RemotePlusClientCmd
         }
         static void Connect(string url, RegistirationObject ro)
         {
-            channel = new DuplexChannelFactory<IRemote>(new ClientCallback(), _ConnectionFactory.BuildBinding(), new EndpointAddress(url));
-            Remote = channel.CreateChannel();
+            Remote = new ServiceClient(new ClientCallback(), _ConnectionFactory.BuildBinding(), new EndpointAddress(url));
             Remote.Register(ro);
         }
         static void AcceptInput()
@@ -168,7 +166,7 @@ namespace RemotePlusClientCmd
                 }
             }
 #pragma warning disable CS0162 // Unreachable code detected
-            channel.Close();
+            Remote.Close();
 #pragma warning restore CS0162 // Unreachable code detected
         }
 
@@ -290,6 +288,7 @@ namespace RemotePlusClientCmd
             LocalCommands.Add("#close", close);
             LocalCommands.Add("#title", title);
             LocalCommands.Add("#load-commandFile", load_CommandFile);
+            LocalCommands.Add("#execute-script", loadScriptFIle);
         }
 
         static CommandResponse RunLocalCommand(CommandRequest request, CommandExecutionMode commandMode, CommandPipeline pipe)
