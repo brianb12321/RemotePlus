@@ -43,7 +43,7 @@ namespace RemotePlusLibrary
         void Beep(int Hertz, int Duration);
         [OperationContract()]
         [FaultContract(typeof(ServerFault))]
-        void ShowMessageBox(string Message, string Caption, MessageBoxIcon Icon, MessageBoxButtons Buttons);
+        DialogResult ShowMessageBox(string Message, string Caption, MessageBoxIcon Icon, MessageBoxButtons Buttons);
         [OperationContract()]
         [FaultContract(typeof(ServerFault))]
         void Speak(string Message, VoiceGender Gender, VoiceAge Age);

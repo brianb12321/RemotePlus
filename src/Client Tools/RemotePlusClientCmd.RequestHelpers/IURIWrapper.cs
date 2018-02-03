@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace RemotePlusClientCmd.RequestHelpers
 {
-    public interface IURIWrappercs<S>
+    public interface IURIWrapper<S>
     {
         RequestBuilder Build();
         S BuildAndSend();

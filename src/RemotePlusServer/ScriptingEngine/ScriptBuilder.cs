@@ -14,7 +14,7 @@ namespace RemotePlusServer.ScriptingEngine
     {
         private static Dictionary<string, object> globals = new Dictionary<string, object>();
         public const string SCRIPT_LOG_CONSTANT = "Script Engine";
-        public static void InitializeGlobals()
+        internal static void InitializeGlobals()
         {
             try
             {
@@ -23,6 +23,7 @@ namespace RemotePlusServer.ScriptingEngine
                 globals.Add("speak", new Action<string, int, int>(StaticRemoteFunctions.speak));
                 globals.Add("beep", new Action<int, int>(StaticRemoteFunctions.beep));
                 globals.Add("functionExists", new Func<string, bool>((name) => FunctionExists(name)));
+                globals.Add("createRequestBuilder", new Func<string, string, Dictionary<string, string>, RequestBuilder>(ClientInstance.createRequestBuilder));
             }
             catch (ArgumentException)
             {
@@ -37,7 +38,7 @@ namespace RemotePlusServer.ScriptingEngine
                 luaScript.Globals[global.Key] = global.Value;
             }
         }
-        public static void RegisterUserData()
+        internal static void RegisterUserData()
         {
             UserData.RegisterType<LuaServerInstance>();
             UserData.RegisterType<ClientInstance>();
@@ -45,6 +46,8 @@ namespace RemotePlusServer.ScriptingEngine
             UserData.RegisterType<CommandPipeline>();
             UserData.RegisterType<CommandRequest>();
             UserData.RegisterType<CommandRoutine>();
+            UserData.RegisterType<RequestBuilder>();
+            UserData.RegisterType<ReturnData>();
         }
         public static void ConfigureScript(Script luaScript)
         {

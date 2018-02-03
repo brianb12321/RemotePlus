@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace RemotePlusClient
+namespace RemotePlusClient.CommonUI
 {
     public partial class AuthenticationDialog : Form
     {

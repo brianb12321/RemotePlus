@@ -11,6 +11,7 @@ namespace RemotePlusServer.ScriptingEngine.Proxies
 {
     internal class ClientInstance
     {
+        public string ClientType => ServerManager.DefaultService.Remote.Client.ClientType.ToString();
         public string requestString(string prompt)
         {
             return ServerManager.DefaultService.Remote.Client.ClientCallback.RequestInformation(RequestBuilder.RequestString(prompt)).Data.ToString();
@@ -60,6 +61,18 @@ namespace RemotePlusServer.ScriptingEngine.Proxies
                 {"vg", vg.ToString()},
                 {"va", va.ToString()}
             } });
+        }
+        public ReturnData sendRequest(RequestBuilder builder)
+        {
+            return ServerManager.DefaultService.Remote.Client.ClientCallback.RequestInformation(builder);
+        }
+        public static RequestBuilder createRequestBuilder(string URI, string message, Dictionary<string, string> args)
+        {
+            return new RequestBuilder(URI, message, args);
+        }
+        public void postMessage(string message)
+        {
+            ServerManager.DefaultService.Remote.Client.ClientCallback.SendSignal(new SignalMessage("recon_post", message));
         }
     }
 }

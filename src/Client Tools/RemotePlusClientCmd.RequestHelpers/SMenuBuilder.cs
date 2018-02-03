@@ -12,7 +12,7 @@ namespace RemotePlusClientCmd.RequestHelpers
     /// <summary>
     /// Provides a wrapper for the rcmd_smenu URI.
     /// </summary>
-    public class SMenuBuilder : IURIWrappercs<int>
+    public class SMenuBuilder : IURIWrapper<int>
     {
         /// <summary>
         /// The message that will be displayed on the menu.

@@ -49,6 +49,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AuthenticationDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AuthenticationDialog.Designer.cs">
+      <DependentUpon>AuthenticationDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="ColorRequest.cs" />
     <Compile Include="EmailGui\ConfigureEmailDialogBox.cs">
       <SubType>Form</SubType>
@@ -102,6 +108,9 @@
     <Compile Include="SpeechRequest.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="AuthenticationDialog.resx">
+      <DependentUpon>AuthenticationDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="EmailGui\ConfigureEmailDialogBox.resx">
       <DependentUpon>ConfigureEmailDialogBox.cs</DependentUpon>
     </EmbeddedResource>

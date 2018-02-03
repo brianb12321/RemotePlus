@@ -1,4 +1,4 @@
-﻿namespace RemotePlusClient
+﻿namespace RemotePlusClient.CommonUI
 {
     partial class AuthenticationDialog
     {

@@ -22,6 +22,11 @@ namespace RemotePlusLibrary
         /// The client is a GUI client.
         /// </summary>
         [EnumMember]
-        GUI
+        GUI,
+        /// <summary>
+        /// The client does not have an interface.
+        /// </summary>
+        [EnumMember]
+        Headless
     }
 }

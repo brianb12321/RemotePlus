@@ -43,7 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CmdTextBox.cs" />
-    <Compile Include="IURIWrappercs.cs" />
+    <Compile Include="IURIWrapper.cs" />
     <Compile Include="SMenuBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

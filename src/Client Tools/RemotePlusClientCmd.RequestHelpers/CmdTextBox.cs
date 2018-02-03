@@ -11,7 +11,7 @@ namespace RemotePlusClientCmd.RequestHelpers
     /// <summary>
     /// Provides a wrapper for the rcmd_textBox URI.
     /// </summary>
-    public class CmdTextBox : IURIWrappercs<string>
+    public class CmdTextBox : IURIWrapper<string>
     {
         /// <summary>
         /// The question that will be asked to the user.

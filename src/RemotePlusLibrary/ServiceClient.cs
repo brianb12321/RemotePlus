@@ -216,9 +216,9 @@ namespace RemotePlusLibrary
             return Channel.SendEmail(To, Subject, Message);
         }
 
-        public void ShowMessageBox(string Message, string Caption, MessageBoxIcon Icon, MessageBoxButtons Buttons)
+        public DialogResult ShowMessageBox(string Message, string Caption, MessageBoxIcon Icon, MessageBoxButtons Buttons)
         {
-            Channel.ShowMessageBox(Message, Caption, Icon, Buttons);
+            return Channel.ShowMessageBox(Message, Caption, Icon, Buttons);
         }
 
         public void Speak(string Message, VoiceGender Gender, VoiceAge Age)

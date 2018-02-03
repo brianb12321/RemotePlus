@@ -380,12 +380,13 @@ namespace RemotePlusServer
             {
                 message = "";
             }
-            DefaultService.Remote.ShowMessageBox(message, caption, icon, buttons);
+            var dr = DefaultService.Remote.ShowMessageBox(message, caption, icon, buttons);
             CommandResponse response = new CommandResponse((int)CommandStatus.Success);
             response.Metadata.Add("Buttons", buttons.ToString());
             response.Metadata.Add("Icon", icon.ToString());
             response.Metadata.Add("Caption", caption);
             response.Metadata.Add("Message", message);
+            response.Metadata.Add("Response", dr.ToString());
             return response;
         }
         [CommandHelp("Displays the path of the current server folder.")]

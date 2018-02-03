@@ -24,7 +24,7 @@ using RemotePlusServer.ScriptingEngine;
 
 namespace RemotePlusServer
 {
-    [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Reentrant,
+    [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Multiple,
         InstanceContextMode = InstanceContextMode.Single,
         IncludeExceptionDetailInFaults = true,
         UseSynchronizationContext = false)]
@@ -228,17 +228,19 @@ namespace RemotePlusServer
             // OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
         }
 
-        public void ShowMessageBox(string Message, string Caption, System.Windows.Forms.MessageBoxIcon Icon, System.Windows.Forms.MessageBoxButtons Buttons)
+        public DialogResult ShowMessageBox(string Message, string Caption, System.Windows.Forms.MessageBoxIcon Icon, System.Windows.Forms.MessageBoxButtons Buttons)
         {
             CheckRegisteration("ShowMessageBox");
             if (!LoggedInUser.Role.Privilleges.CanShowMessageBox)
             {
                 Client.ClientCallback.TellMessage("You do not have promission to use the CanShowMessageBox function.", OutputLevel.Info);
+                return DialogResult.Abort;
             }
             else
             {
                 var dr = MessageBox.Show(Message, Caption, Buttons, Icon);
                 Client.ClientCallback.TellMessage(new UILogItem(OutputLevel.Info, $"The user responded to the message box. Response: {dr.ToString()}", "Server Host"));
+                return dr;
             }
             // OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
         }
