@@ -21,6 +21,8 @@ namespace WindowsTools
             ServerManager.DefaultService.Commands.Add("dskClean", dskClean.dskCleanCommand);
             ServerManager.Logger.AddOutput("Adding filem command", Logging.OutputLevel.Info, "WindowsTools");
             ServerManager.DefaultService.Commands.Add("fileM", Filem.filem_command);
+            ServerManager.DefaultService.Commands.Add("openDiskDrive", OSCommands.openDiskDrive);
+            ServerManager.DefaultService.Commands.Add("drives", OSCommands.drives);
             //RemotePlusServer.ScriptingEngine.ScriptBuilder.AddFunction<Action>("runFileM", () => ServerManager.DefaultService.Remote.RunServerCommand("fileM", CommandExecutionMode.Script));
         }
     }
