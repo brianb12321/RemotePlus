@@ -46,5 +46,17 @@ namespace WindowsTools
             }
             return new CommandResponse((int)CommandStatus.Success);
         }
+        [CommandHelp("Changes the mouse position to the specified coordinates")]
+        public static CommandResponse setMousePos(CommandRequest args, CommandPipeline pipe)
+        {
+            Cursor.Position = new System.Drawing.Point(int.Parse(args.Arguments[1].Value), int.Parse(args.Arguments[2].Value));
+            return new CommandResponse((int)CommandStatus.Success);
+        }
+        [CommandHelp("Blocks input for a certain amount of time.")]
+        public static CommandResponse blockInputI(CommandRequest args, CommandPipeline pipe)
+        {
+            Win32Wrapper.BlockInputForInterval(int.Parse(args.Arguments[1].Value));
+            return new CommandResponse((int)CommandStatus.Success);
+        }
     }
 }

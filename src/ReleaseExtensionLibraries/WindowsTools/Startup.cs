@@ -23,6 +23,8 @@ namespace WindowsTools
             ServerManager.DefaultService.Commands.Add("fileM", Filem.filem_command);
             ServerManager.DefaultService.Commands.Add("openDiskDrive", OSCommands.openDiskDrive);
             ServerManager.DefaultService.Commands.Add("drives", OSCommands.drives);
+            ServerManager.DefaultService.Commands.Add("setMousePos", OSCommands.setMousePos);
+            ServerManager.DefaultService.Commands.Add("blockInputI", OSCommands.blockInputI);
             //RemotePlusServer.ScriptingEngine.ScriptBuilder.AddFunction<Action>("runFileM", () => ServerManager.DefaultService.Remote.RunServerCommand("fileM", CommandExecutionMode.Script));
         }
     }

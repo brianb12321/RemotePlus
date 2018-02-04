@@ -149,7 +149,14 @@ namespace RemotePlusServer
             sb.AppendLine();
             foreach(var p in Process.GetProcesses())
             {
-                sb.AppendLine($"Name: {p.ProcessName}, ID: {p.Id}, Start Time: {p.StartTime.ToString()}");
+                try
+                {
+                    sb.AppendLine($"Name: {p.ProcessName}, ID: {p.Id}, Start Time: {p.StartTime.ToString()}");
+                }
+                catch (Exception ex)
+                {
+                    sb.AppendLine($"This process can be accessed: {ex.Message}");
+                }
             }
             DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, sb.ToString()));
             return new CommandResponse((int)CommandStatus.Success);
