@@ -34,7 +34,7 @@ namespace RemotePlusClient
             this.label1 = new System.Windows.Forms.Label();
             this.propertyGrid2 = new System.Windows.Forms.PropertyGrid();
             this.button1 = new System.Windows.Forms.Button();
-            this.ro = new RegistirationObject();
+            this.ro = new RegisterationObject();
             this.SuspendLayout();
             // 
             // label1
@@ -89,6 +89,6 @@ namespace RemotePlusClient
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.PropertyGrid propertyGrid2;
         private System.Windows.Forms.Button button1;
-        private RegistirationObject ro;
+        private RegisterationObject ro;
     }
 }

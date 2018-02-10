@@ -71,7 +71,7 @@ namespace RemotePlusClientCmd
                 string username = Console.ReadLine();
                 Console.Write("Enter Password: ");
                 string password = Console.ReadLine();
-                RegistirationObject ro = new RegistirationObject();
+                RegisterationObject ro = new RegisterationObject();
                 {
                     ro.LoginRightAway = true;
                     ro.Credentials = new UserCredentials(username, password);
@@ -84,7 +84,7 @@ namespace RemotePlusClientCmd
                 var options = new CommandLineOptions();
                 if (CommandLine.Parser.Default.ParseArguments(args, options))
                 {
-                    Connect(options.Url, new RegistirationObject() { LoginRightAway = true, Credentials = new UserCredentials(options.Username, options.Password), VerboseError = options.Verbose });
+                    Connect(options.Url, new RegisterationObject() { LoginRightAway = true, Credentials = new UserCredentials(options.Username, options.Password), VerboseError = options.Verbose });
                     AcceptInput();
                 }
             }
@@ -96,7 +96,7 @@ namespace RemotePlusClientCmd
                 d.ShowDialog();
             }
         }
-        static void Connect(string url, RegistirationObject ro)
+        static void Connect(string url, RegisterationObject ro)
         {
             Remote = new ServiceClient(new ClientCallback(), _ConnectionFactory.BuildBinding(), new EndpointAddress(url));
             Remote.Register(ro);

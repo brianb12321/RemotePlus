@@ -77,7 +77,7 @@ namespace RemotePlusClient
             switchUserMenuItem.Enabled = false;
             browseFile_MenuItem.Enabled = false;
         }
-        private void Connect(RegistirationObject Settings)
+        private void Connect(RegisterationObject Settings)
         {
             try
             {

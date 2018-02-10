@@ -186,7 +186,7 @@ namespace RemotePlusLibrary
             Channel.ProgramServerExtesnionLibrary(libProgrammer);
         }
 
-        public void Register(RegistirationObject Settings)
+        public void Register(RegisterationObject Settings)
         {
             Channel.Register(Settings);
         }

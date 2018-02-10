@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 namespace RemotePlusLibrary
 {
     [DataContract]
-    public class RegistirationObject
+    public class RegisterationObject
     {
-        public RegistirationObject()
+        public RegisterationObject()
         {
             Credentials = new UserCredentials("username", "password");
         }

@@ -49,7 +49,7 @@ namespace RemotePlusLibrary
         void Speak(string Message, VoiceGender Gender, VoiceAge Age);
         [OperationContract()]
         [FaultContract(typeof(ServerFault))]
-        void Register(RegistirationObject Settings);
+        void Register(RegisterationObject Settings);
         [OperationContract]
         [FaultContract(typeof(ServerFault))]
         CommandPipeline RunServerCommand(string Command, CommandExecutionMode commandMode);

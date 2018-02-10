@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.ServiceModel;
 using RemotePlusLibrary;
 using System.Windows.Forms;
@@ -19,7 +18,6 @@ using RemotePlusLibrary.FileTransfer;
 using System.Text.RegularExpressions;
 using RemotePlusServer.Internal;
 using MoonSharp.Interpreter;
-using RemotePlusServer.ScriptingEngine.Proxies;
 using RemotePlusServer.ScriptingEngine;
 
 namespace RemotePlusServer
@@ -41,7 +39,7 @@ namespace RemotePlusServer
             ServerManager.Logger.AddOutput("Added temperary extensions into dictionary.", OutputLevel.Debug);
             _allExtensions = ServerManager.DefaultCollection.GetAllExtensions();
         }
-        public RegistirationObject Settings { get; private set; }
+        public RegisterationObject Settings { get; private set; }
         public Client<IRemoteClient> Client { get; set; }
         public bool Registered { get; private set; }
         public UserAccount LoggedInUser { get; private set; }
@@ -116,7 +114,7 @@ namespace RemotePlusServer
             // OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
         }
 
-        public void Register(RegistirationObject Settings)
+        public void Register(RegisterationObject Settings)
         {
             ServerManager.Logger.AddOutput("A new client is awaiting registiration.", OutputLevel.Info);
             ServerManager.Logger.AddOutput("Instanitiating callback object.", OutputLevel.Debug);

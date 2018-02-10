@@ -13,7 +13,7 @@ namespace RemotePlusClient
 {
     public partial class ConnectAdvancedDialogBox : Form
     {
-        public RegistirationObject RegObject { get; private set; }
+        public RegisterationObject RegObject { get; private set; }
         public ConnectAdvancedDialogBox()
         {
             InitializeComponent();

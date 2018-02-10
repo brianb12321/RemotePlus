@@ -56,6 +56,19 @@
       <DependentUpon>AuthenticationDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="ColorRequest.cs" />
+    <Compile Include="Connection\ConnectionConfiguration.cs" />
+    <Compile Include="Connection\NewConnectionDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Connection\NewConnectionDialog.Designer.cs">
+      <DependentUpon>NewConnectionDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Connection\SelectConfigurationDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Connection\SelectConfigurationDialog.Designer.cs">
+      <DependentUpon>SelectConfigurationDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="EmailGui\ConfigureEmailDialogBox.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -110,6 +123,12 @@
   <ItemGroup>
     <EmbeddedResource Include="AuthenticationDialog.resx">
       <DependentUpon>AuthenticationDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Connection\NewConnectionDialog.resx">
+      <DependentUpon>NewConnectionDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Connection\SelectConfigurationDialog.resx">
+      <DependentUpon>SelectConfigurationDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="EmailGui\ConfigureEmailDialogBox.resx">
       <DependentUpon>ConfigureEmailDialogBox.cs</DependentUpon>

@@ -1,4 +1,5 @@
-﻿using RemotePlusLibrary;
+﻿using RemotePlusClient.CommonUI.Connection;
+using RemotePlusLibrary;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -15,11 +16,11 @@ namespace RemotePlusClient
     {
         ConnectAdvancedDialogBox cadb = new ConnectAdvancedDialogBox();
         public string Address { get; private set; }
-        public RegistirationObject RegObject { get; private set; }
+        public RegisterationObject RegObject { get; private set; }
         public ConnectDialog()
         {
             InitializeComponent();
-            RegObject = new RegistirationObject();
+            RegObject = new RegisterationObject();
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -44,6 +45,20 @@ namespace RemotePlusClient
                 if(cb.ShowDialog() == DialogResult.OK)
                 {
                     textBox1.Text = cb.NewUrl;
+                }
+            }
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            using (SelectConfigurationDialog configDialog = new SelectConfigurationDialog())
+            {
+                if(configDialog.ShowDialog() == DialogResult.OK)
+                {
+                    Address = configDialog.SelectedConnection.ServerAddress;
+                    RegObject = configDialog.SelectedConnection.RegisterationDetails;
+                    DialogResult = DialogResult.OK;
+                    Close();
                 }
             }
         }

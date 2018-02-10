@@ -123,7 +123,7 @@ namespace Recon
             try
             {
                 Client = new ServiceClient(new ClientCallback(), _ConnectionFactory.BuildBinding(), new EndpointAddress("net.tcp://localhost:9000/Remote"));
-                Client.Register(new RegistirationObject());
+                Client.Register(new RegisterationObject());
             }
             catch (Exception ex)
             {
