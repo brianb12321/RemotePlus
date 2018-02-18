@@ -14,10 +14,10 @@ namespace RemotePlusLibrary.Extension.CommandSystem.CommandClasses
     public class CommandRequest
     {
         [DataMember]
-        public List<CommandToken> Arguments { get; set; }
+        public TokenSet Arguments { get; set; }
         public CommandRequest(CommandToken[] args)
         {
-            Arguments = new List<CommandToken>();
+            Arguments = new TokenSet();
             foreach(CommandToken token in args)
             {
                 Arguments.Add(token);

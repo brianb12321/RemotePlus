@@ -24,9 +24,19 @@ namespace RemotePlusClient
             DisableCommandDownloadForConsole = c.DisableCommandDownloadForConsole;
         }
 
+        public void Load(string fileName)
+        {
+            throw new NotImplementedException();
+        }
+
         public void Save()
         {
             ConfigurationHelper.SaveConfig(this, CLIENT_SETTING_PATH, RemotePlusLibrary.Core.DefaultKnownTypeManager.GetKnownTypes(null));
+        }
+
+        public void Save(string fileName)
+        {
+            throw new NotImplementedException();
         }
     }
 }

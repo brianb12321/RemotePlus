@@ -61,5 +61,15 @@ namespace RemotePlusLibrary.Core.EmailService
         {
             ConfigurationHelper.SaveConfig(this, EMAIL_CONFIG_FILE, null);
         }
+
+        public void Save(string fileName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Load(string fileName)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

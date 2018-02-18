@@ -13,6 +13,7 @@ using System.Windows.Forms;
 using RemotePlusLibrary.Core.EmailService;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
 using RemotePlusServer.ExtensionSystem;
+using RemotePlusLibrary;
 
 namespace RemotePlusServer
 {
@@ -482,6 +483,52 @@ namespace RemotePlusServer
                 Logger.AddOutput($"Unable to load extension library: {ex.Message}", OutputLevel.Exception);
                 DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, $"Unable to load extension library: {ex.Message}"));
                 return new CommandResponse((int)CommandStatus.Fail);
+            }
+        }
+        [CommandHelp("Copies a specified file to a new file.")]
+        public static CommandResponse cp(CommandRequest args, CommandPipeline pipe)
+        {
+            try
+            {
+                File.Copy(args.Arguments[1].Value, args.Arguments[2].Value);
+                return new CommandResponse((int)CommandStatus.Success);
+            }
+            catch
+            {
+                return new CommandResponse((int)CommandStatus.Fail);
+                throw;
+            }
+        }
+        [CommandHelp("Deletes the specified file. This cannot be reverted.")]
+        public static CommandResponse deleteFile(CommandRequest args, CommandPipeline pipe)
+        {
+            bool autoAccept = args.Arguments.HasFlag("--acceptDisclamer");
+            if(File.Exists(args.Arguments[1].Value))
+            {
+                if(!autoAccept)
+                {
+                    DialogResult result = (DialogResult)Enum.Parse(typeof(DialogResult), (string)DefaultService.Remote.Client.ClientCallback.RequestInformation(RequestBuilder.RequestMessageBox("You are about to delete a file. THIS OPERATION IS PERMANENT!!", "WARNING", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)).Data);
+                    if(result == DialogResult.Yes)
+                    {
+                        File.Delete(args.Arguments[1].Value);
+                        return new CommandResponse((int)CommandStatus.Success);
+                    }
+                    else
+                    {
+                        DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, "Operation canceled."));
+                        return new CommandResponse((int)CommandStatus.Fail);
+                    }
+                }
+                else
+                {
+                    File.Delete(args.Arguments[1].Value);
+                    return new CommandResponse((int)CommandStatus.Success);
+                }
+            }
+            else
+            {
+                DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, "File does not exist."));
+                return new CommandResponse((int)CommandStatus.Success);
             }
         }
     }

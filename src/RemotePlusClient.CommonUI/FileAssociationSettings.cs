@@ -44,5 +44,15 @@ namespace RemotePlusClient.CommonUI
             Associations.Add(".doc", $"{ICON_PATH}\\doc.ico");
             Associations.Add(".docx", $"{ICON_PATH}\\doc.ico");
         }
+
+        public void Save(string fileName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Load(string fileName)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

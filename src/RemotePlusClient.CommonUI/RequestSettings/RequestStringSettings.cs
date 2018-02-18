@@ -25,9 +25,19 @@ namespace RemotePlusClient.CommonUI.RequestSettings
             this.Prefix = ss.Prefix;
         }
 
+        public void Load(string fileName)
+        {
+            throw new NotImplementedException();
+        }
+
         public void Save()
         {
             ConfigurationHelper.SaveConfig(this, CONFIG_FILE_PATH, RemotePlusLibrary.Core.DefaultKnownTypeManager.GetKnownTypes(null));
+        }
+
+        public void Save(string fileName)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -119,6 +119,16 @@ namespace RemotePlusLibrary
             this.PortNumber = ss.PortNumber;
             this.LoggingSettings = ss.LoggingSettings;
         }
+
+        public void Save(string fileName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Load(string fileName)
+        {
+            throw new NotImplementedException();
+        }
         #endregion
         #region Optimization Settings
 

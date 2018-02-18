@@ -33,9 +33,19 @@ namespace RemotePlusClient
             DefaultBackColor = settings.DefaultBackColor;
         }
 
+        public void Load(string fileName)
+        {
+            throw new NotImplementedException();
+        }
+
         public void Save()
         {
             ConfigurationHelper.SaveConfig(this, CONSOLE_SETTINGS_PATH, null);
+        }
+
+        public void Save(string fileName)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -9,6 +9,8 @@ namespace RemotePlusLibrary.Configuration
     public interface IFileConfig
     {
         void Save();
+        void Save(string fileName);
         void Load();
+        void Load(string fileName);
     }
 }

@@ -56,6 +56,7 @@
     <Compile Include="CommandSystem\CommandClasses\CommandRoutine.cs" />
     <Compile Include="CommandSystem\CommandClasses\CommandToken.cs" />
     <Compile Include="CommandSystem\CommandClasses\ParserException.cs" />
+    <Compile Include="CommandSystem\CommandClasses\TokenSet.cs" />
     <Compile Include="CommandSystem\CommandClasses\TokenType.cs" />
     <Compile Include="CommandSystem\CommandDescription.cs" />
     <Compile Include="CommandSystem\PromptBuilder.cs" />

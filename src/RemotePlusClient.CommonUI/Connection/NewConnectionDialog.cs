@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -42,7 +43,7 @@ namespace RemotePlusClient.CommonUI.Connection
 
         private void button1_Click(object sender, EventArgs e)
         {
-            config.ConfigurationFileName = textBox2.Text;
+            config.ConfigurationFileName = textBox2.Text + ".ccf";
             config.ServerAddress = textBox1.Text;
             config.RegisterationDetails = (RegisterationObject)propertyGrid1.SelectedObject;
             config.Save();

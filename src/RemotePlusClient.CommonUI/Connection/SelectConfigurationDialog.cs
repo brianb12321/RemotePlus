@@ -34,6 +34,7 @@ namespace RemotePlusClient.CommonUI.Connection
                 ListViewItem item = new ListViewItem(new string[] { connection.ConfigurationFileName, connection.ServerAddress });
                 item.Tag = connection;
                 item.Name = connection.ConfigurationFileName;
+                listView1.Items.Add(item);
             }
         }
 
@@ -43,8 +44,8 @@ namespace RemotePlusClient.CommonUI.Connection
             {
                 foreach(string file in Directory.GetFiles(ConnectionConfiguration.CONFIGURATION_NAME, "*.ccf", SearchOption.AllDirectories))
                 {
-                    ConnectionConfiguration cc = new ConnectionConfiguration(file);
-                    cc.Load();
+                    ConnectionConfiguration cc = new ConnectionConfiguration("");
+                    cc.Load(file);
                     _connections.Add(cc);
                 }
             }

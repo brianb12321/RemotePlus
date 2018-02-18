@@ -13,6 +13,7 @@ namespace RemotePlusClient.CommonUI.Connection
     /// <summary>
     /// Provides the stored connection settings that will be used to connect to the server.
     /// </summary>
+    [DataContract]
     public class ConnectionConfiguration : IFileConfig
     {
         public const string CONFIGURATION_NAME = ConfigurationHelper.CLIENT_CONFIGURATION_PATH + "\\Connections";
@@ -20,6 +21,7 @@ namespace RemotePlusClient.CommonUI.Connection
         public string ServerAddress { get; set; }
         [DataMember]
         public RegisterationObject RegisterationDetails { get; set; }
+        [DataMember]
         public string ConfigurationFileName { get; set; }
         public ConnectionConfiguration(string configurationName)
         {
@@ -28,7 +30,7 @@ namespace RemotePlusClient.CommonUI.Connection
         }
         public void Load()
         {
-            var loadedData = ConfigurationHelper.LoadConfig<ConnectionConfiguration>(Path.Combine(ConnectionConfiguration.CONFIGURATION_NAME, ConfigurationFileName), null);
+            var loadedData = ConfigurationHelper.LoadConfig<ConnectionConfiguration>(Path.Combine(CONFIGURATION_NAME, ConfigurationFileName), null);
             ServerAddress = loadedData.ServerAddress;
             RegisterationDetails = loadedData.RegisterationDetails;
         }
@@ -36,6 +38,16 @@ namespace RemotePlusClient.CommonUI.Connection
         public void Save()
         {
             ConfigurationHelper.SaveConfig(this, Path.Combine(ConnectionConfiguration.CONFIGURATION_NAME, ConfigurationFileName), null);
+        }
+
+        public void Save(string fileName)
+        {
+            ConfigurationHelper.SaveConfig(this, Path.IsPathRooted(fileName) ? fileName : Path.Combine(CONFIGURATION_NAME, ConfigurationFileName), null);
+        }
+
+        public void Load(string fileName)
+        {
+            ConfigurationHelper.SaveConfig(this, Path.IsPathRooted(fileName) ? fileName : Path.Combine(CONFIGURATION_NAME, ConfigurationFileName), null);
         }
     }
 }
