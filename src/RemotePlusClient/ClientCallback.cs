@@ -170,6 +170,11 @@ namespace RemotePlusClient
         {
             //TODO: Implement Prompt
         }
+
+        public PromptBuilder GetCurrentPrompt()
+        {
+            return null;
+        }
         #endregion
 
     }

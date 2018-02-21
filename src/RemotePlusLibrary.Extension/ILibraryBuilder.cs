@@ -10,7 +10,6 @@ namespace RemotePlusLibrary.Extension
     public delegate void ServerHook(HookArguments args);
     public interface ILibraryBuilder
     {
-        Dictionary<string, List<ServerHook>> Hooks { get; }
         string FriendlyName { get; }
         string Name { get; }
         string Version { get; }

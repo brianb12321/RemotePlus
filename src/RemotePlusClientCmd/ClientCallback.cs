@@ -26,6 +26,11 @@ namespace RemotePlusClientCmd
             //ClientCmdManager.WaitFlag = false;
         }
 
+        public PromptBuilder GetCurrentPrompt()
+        {
+            return ClientCmdManager.prompt;
+        }
+
         public ClientBuilder RegisterClient()
         {
             ClientBuilder cb = new ClientBuilder(ClientType.CommandLine);

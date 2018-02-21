@@ -193,6 +193,8 @@ namespace RemotePlusServer
             DefaultService.Commands.Add("load-extensionLibrary", loadExtensionLibrary);
             DefaultService.Commands.Add("cp", cp);
             DefaultService.Commands.Add("deleteFile", deleteFile);
+            DefaultService.Commands.Add("echoFile", echoFile);
+            DefaultService.Commands.Add("ls", ls);
         }
 
         static bool CheckPrerequisites()

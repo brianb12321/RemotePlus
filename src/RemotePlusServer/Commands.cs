@@ -531,5 +531,34 @@ namespace RemotePlusServer
                 return new CommandResponse((int)CommandStatus.Success);
             }
         }
+        [CommandHelp("Reads the specified file and prints the contents to the screen.")]
+        public static CommandResponse echoFile(CommandRequest args, CommandPipeline pipe)
+        {
+            if(File.Exists(args.Arguments[1].Value))
+            {
+                DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(File.ReadAllText(args.Arguments[1].Value));
+                return new CommandResponse((int)CommandStatus.Success);
+            }
+            else
+            {
+                DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, "The file does not exist."));
+                return new CommandResponse((int)CommandStatus.Fail);
+            }
+        }
+        [CommandHelp("Lists all the files and directories in the current directory.")]
+        public static CommandResponse ls(CommandRequest args, CommandPipeline pipe)
+        {
+            StringBuilder builder = new StringBuilder();
+            foreach(string file in Directory.GetFiles(DefaultService.Remote.CurrentPath))
+            {
+                builder.Append(Path.GetFileName(file) + " ");
+            }
+            foreach (string directory in Directory.GetDirectories(DefaultService.Remote.CurrentPath))
+            {
+                builder.Append(Path.GetDirectoryName(directory) + " ");
+            }
+            DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(builder.ToString());
+            return new CommandResponse((int)CommandStatus.Success);
+        }
     }
 }

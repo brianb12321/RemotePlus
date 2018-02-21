@@ -13,9 +13,9 @@ namespace RemotePlusLibrary
     {
         [OperationContract(IsOneWay = true)]
         void TellMessage(string Message, Logging.OutputLevel o);
-        [OperationContract(Name = "TellMessageToServerConsole", IsOneWay = true)]
+        [OperationContract(Name = "TellMessageToServerConsole")]
         void TellMessageToServerConsole(UILogItem li);
-        [OperationContract(Name = "TellMessageToServerConsoleUsingString", IsOneWay = true)]
+        [OperationContract(Name = "TellMessageToServerConsoleUsingString")]
         void TellMessageToServerConsole(string Message);
         [OperationContract]
         ClientBuilder RegisterClient();
@@ -35,5 +35,7 @@ namespace RemotePlusLibrary
         void SendSignal(SignalMessage signal);
         [OperationContract(IsOneWay = true)]
         void ChangePrompt(PromptBuilder newPrompt);
+        [OperationContract]
+        PromptBuilder GetCurrentPrompt();
     }
 }

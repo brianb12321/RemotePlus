@@ -27,6 +27,11 @@ namespace Recon
             ReconManager.Client.Close();
         }
 
+        public PromptBuilder GetCurrentPrompt()
+        {
+            return null;
+        }
+
         public ClientBuilder RegisterClient()
         {
             ClientBuilder cb = new ClientBuilder(ClientType.Headless);
