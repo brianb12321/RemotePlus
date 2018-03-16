@@ -12,7 +12,9 @@ using RemotePlusLibrary.Extension.CommandSystem;
 
 namespace Recon
 {
-    [CallbackBehavior(IncludeExceptionDetailInFaults = true, ConcurrencyMode = ConcurrencyMode.Multiple, UseSynchronizationContext = false)]
+    [CallbackBehavior(IncludeExceptionDetailInFaults = true,
+        ConcurrencyMode = ConcurrencyMode.Multiple,
+        UseSynchronizationContext = false)]
     public class ClientCallback : IRemoteClient
     {
         public void ChangePrompt(PromptBuilder newPrompt)
@@ -101,6 +103,13 @@ namespace Recon
         public void TellMessageToServerConsole(string Message)
         {
             Console.WriteLine(Message);
+        }
+
+        public void TellMessageToServerConsole(ConsoleText text)
+        {
+            Colorful.Console.ForegroundColor = text.TextColor;
+            Colorful.Console.Write(text.Text);
+            Colorful.Console.ResetColor();
         }
     }
 }

@@ -95,7 +95,7 @@ namespace RemotePlusClient
             }
         }
 
-        void AddTabToConsoleTabControl(string Name, ThemedForm c)
+        public void AddTabToConsoleTabControl(string Name, ThemedForm c)
         {
             string Id = $"{Name}";
             c.Name = Id;
@@ -112,7 +112,7 @@ namespace RemotePlusClient
             tabControl1.TabPages.Add(t);
             c.ShowAndInitializeTheme(ClientApp.ClientSettings.DefaultTheme);
         }
-        void AddTabToMainTabControl(string Name, ThemedForm c)
+        public void AddTabToMainTabControl(string Name, ThemedForm c)
         {
             string Id = $"{Name}";
             c.Name = Id;
@@ -127,6 +127,23 @@ namespace RemotePlusClient
             TopPages.Add(Id, c);
             t.Controls.Add(c);
             tabControl2.TabPages.Add(t);
+            c.ShowAndInitializeTheme(ClientApp.ClientSettings.DefaultTheme);
+        }
+        public void AddTabToSideControl(string Name, ThemedForm c)
+        {
+            string Id = $"{Name}";
+            c.Name = Id;
+            c.WindowState = FormWindowState.Maximized;
+            c.FormBorderStyle = FormBorderStyle.None;
+            c.TopLevel = false;
+            c.Dock = DockStyle.Fill;
+            TabPage t = new TabPage(Name)
+            {
+                Name = Id
+            };
+            TopPages.Add(Id, c);
+            t.Controls.Add(c);
+            emi_Left.TabPages.Add(t);
             c.ShowAndInitializeTheme(ClientApp.ClientSettings.DefaultTheme);
         }
         void MoveFormDown(string name)
@@ -144,12 +161,23 @@ namespace RemotePlusClient
 
         private void consoleToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            OpenConsole(FormPosition.Top, true);
+        }
+        public void OpenConsole(FormPosition position, bool enableInput)
+        {
             if (Remote.State == CommunicationState.Opened)
             {
                 if (ServerConsoleObj == null)
                 {
-                    ServerConsoleObj = new ServerConsole();
-                    AddTabToMainTabControl("Server Console", ServerConsoleObj);
+                    ServerConsoleObj = new ServerConsole(enableInput);
+                    if (position == FormPosition.Top)
+                    {
+                        AddTabToMainTabControl("Server Console", ServerConsoleObj);
+                    }
+                    else if(position == FormPosition.Bottum)
+                    {
+                        AddTabToConsoleTabControl("Server Console", ServerConsoleObj);
+                    }
                 }
                 else
                 {
@@ -159,6 +187,14 @@ namespace RemotePlusClient
             else
             {
                 MessageBox.Show("Please connect to a server to open console.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+        public void CloseBottumConsole()
+        {
+            if (!tabControl1.TabPages.ContainsKey("ServerConsole"))
+            {
+                RemoveBottumExtension(tabControl1.TabPages["ServerConsole"]);
+                ServerConsoleObj = null;
             }
         }
         private void MainF_Load(object sender, EventArgs e)
@@ -287,7 +323,7 @@ namespace RemotePlusClient
         {
             if (tabControl2.TabPages.Count > 0)
             {
-                if(tabControl2.SelectedTab.Name.Contains("ServerConsole"))
+                if(tabControl2.SelectedTab.Name == "Server Console")
                 {
                     RemoveTopExtension(tabControl2.SelectedTab);
                     ServerConsoleObj = null;
@@ -413,13 +449,20 @@ namespace RemotePlusClient
         {
             if (tabControl1.TabPages.Count > 0)
             {
-                if (tabControl1.SelectedTab.Name.Contains("Console"))
+                if (tabControl1.SelectedTab.Name == "Console")
                 {
                     MessageBox.Show("Cannot remove console.", "RemotePlusClient", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 else
                 {
-                    RemoveBottumExtension(tabControl1.SelectedTab);
+                    if (tabControl1.SelectedTab.Name == "Server Console")
+                    {
+                        CloseBottumConsole();
+                    }
+                    else
+                    {
+                        RemoveBottumExtension(tabControl1.SelectedTab);
+                    }
                 }
             }
             else // Never should happen
@@ -436,6 +479,16 @@ namespace RemotePlusClient
 #pragma warning restore CS1522 // Empty switch block
                               //TODO: Add functionality.
             }
+        }
+
+        private void mi_openScriptingEnvironment_Click(object sender, EventArgs e)
+        {
+            AddTabToMainTabControl(ScriptingEditor.NAME, new ScriptingEditor());
+        }
+
+        private void splitContainer1_Panel1_Paint(object sender, PaintEventArgs e)
+        {
+
         }
     }
 }

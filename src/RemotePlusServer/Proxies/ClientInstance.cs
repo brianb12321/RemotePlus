@@ -6,16 +6,20 @@ using System.Text;
 using System.Threading.Tasks;
 using MoonSharp.Interpreter;
 using RemotePlusLibrary;
+using RemotePlusLibrary.Scripting;
 
-namespace RemotePlusServer.ScriptingEngine.Proxies
+namespace RemotePlusServer.Proxies
 {
     internal class ClientInstance
     {
+        [IndexScriptObject]
         public string ClientType => ServerManager.DefaultService.Remote.Client.ClientType.ToString();
+        [IndexScriptObject]
         public string requestString(string prompt)
         {
             return ServerManager.DefaultService.Remote.Client.ClientCallback.RequestInformation(RequestBuilder.RequestString(prompt)).Data.ToString();
         }
+        [IndexScriptObject]
         public void speak(string message, int voiceGender, int voiceAge)
         {
             VoiceAge va = VoiceAge.Adult;
@@ -62,14 +66,17 @@ namespace RemotePlusServer.ScriptingEngine.Proxies
                 {"va", va.ToString()}
             } });
         }
+        [IndexScriptObject]
         public ReturnData sendRequest(RequestBuilder builder)
         {
             return ServerManager.DefaultService.Remote.Client.ClientCallback.RequestInformation(builder);
         }
+        [IndexScriptObject]
         public static RequestBuilder createRequestBuilder(string URI, string message, Dictionary<string, string> args)
         {
             return new RequestBuilder(URI, message, args);
         }
+        [IndexScriptObject]
         public void postMessage(string message)
         {
             ServerManager.DefaultService.Remote.Client.ClientCallback.SendSignal(new SignalMessage("recon_post", message));

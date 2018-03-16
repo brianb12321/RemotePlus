@@ -84,5 +84,16 @@ namespace RemotePlusClient
             MessageBox.Show("Saved", "RemotePlusClient");
             MainF.ConsoleObj.Logger.AddOutput("Saved console config file.", Logging.OutputLevel.Info);
         }
+
+        private void btn_selectFont_Click(object sender, EventArgs e)
+        {
+            using (FontDialog fd = new FontDialog())
+            {
+                if(fd.ShowDialog() == DialogResult.OK)
+                {
+                    settings.DefaultFont = TypeDescriptor.GetConverter(typeof(Font)).ConvertToString(fd.Font);
+                }
+            }
+        }
     }
 }

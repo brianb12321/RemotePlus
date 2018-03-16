@@ -13,6 +13,8 @@ using System.Windows.Forms;
 using RemotePlusLibrary.Core.EmailService;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
 using RemotePlusServer.ExtensionSystem;
+using RemotePlusLibrary.Scripting;
+using RemotePlusServer.Proxies;
 
 namespace RemotePlusServer
 {
@@ -42,6 +44,7 @@ namespace RemotePlusServer
         /// </summary>
         public static ServerExtensionLibraryCollection DefaultCollection { get; } = new ServerExtensionLibraryCollection();
         private static Stopwatch sw;
+        public static ScriptBuilder ScriptBuilder { get; } = new ScriptBuilder();
         [STAThread]
         static void Main(string[] args)
         {
@@ -90,7 +93,37 @@ namespace RemotePlusServer
 
             }
         }
+        internal static void InitializeGlobals()
+        {
+            try
+            {
+                ScriptBuilder.AddScriptObject("serverInstance", new LuaServerInstance(), "Provides access to the global server instance.", ScriptGlobalType.Table);
+                ScriptBuilder.AddScriptObject("executeServerCommand", new Func<string, CommandPipeline>((command => ServerManager.DefaultService.Remote.RunServerCommand(command, RemotePlusLibrary.Extension.CommandSystem.CommandExecutionMode.Script))), "Executes a command to the server.", ScriptGlobalType.Function);
+                ScriptBuilder.AddScriptObject("speak", new Action<string, int, int>(StaticRemoteFunctions.speak), "Makes the server speak.", ScriptGlobalType.Function);
+                ScriptBuilder.AddScriptObject("beep", new Action<int, int>(StaticRemoteFunctions.beep), "Makes the server beep.", ScriptGlobalType.Function);
+                ScriptBuilder.AddScriptObject("functionExists", new Func<string, bool>((name) => ScriptBuilder.FunctionExists(name)), "Returns true if the function exists in the server.", ScriptGlobalType.Function);
+                ScriptBuilder.AddScriptObject("createRequestBuilder", new Func<string, string, Dictionary<string, string>, RequestBuilder>(ClientInstance.createRequestBuilder), "Generates a request builder to be used to generate a request.", ScriptGlobalType.Function);
+            }
+            catch (ArgumentException)
+            {
 
+            }
+        }
+        internal static void RegisterUserData()
+        {
+            try
+            {
+                ScriptBuilder.AddUserData<LuaServerInstance>();
+                ScriptBuilder.AddUserData<ClientInstance>();
+                ScriptBuilder.AddUserData<CommandResponse>();
+                ScriptBuilder.AddUserData<CommandPipeline>();
+                ScriptBuilder.AddUserData<CommandRequest>();
+                ScriptBuilder.AddUserData<CommandRoutine>();
+                ScriptBuilder.AddUserData<RequestBuilder>();
+                ScriptBuilder.AddUserData<ReturnData>();
+            }
+            catch (ArgumentException) { }
+        }
         private static void ScanForEmailSettingsFile()
         {
             if (!File.Exists(EmailSettings.EMAIL_CONFIG_FILE))

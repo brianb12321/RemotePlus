@@ -14,6 +14,7 @@ using RemotePlusLibrary.Core.EmailService;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
 using RemotePlusServer.ExtensionSystem;
 using RemotePlusLibrary;
+using System.Drawing;
 
 namespace RemotePlusServer
 {
@@ -551,13 +552,13 @@ namespace RemotePlusServer
             StringBuilder builder = new StringBuilder();
             foreach(string file in Directory.GetFiles(DefaultService.Remote.CurrentPath))
             {
-                builder.Append(Path.GetFileName(file) + " ");
+                DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText(Path.GetFileName(file) + "\t") { TextColor = Color.LightGray });
             }
             foreach (string directory in Directory.GetDirectories(DefaultService.Remote.CurrentPath))
             {
-                builder.Append(Path.GetDirectoryName(directory) + " ");
+                DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText(directory + "\t") { TextColor = Color.Purple });
             }
-            DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(builder.ToString());
+            DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole("\n");
             return new CommandResponse((int)CommandStatus.Success);
         }
     }

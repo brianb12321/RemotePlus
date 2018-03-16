@@ -5,11 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using MoonSharp.Interpreter;
 using System.Speech.Synthesis;
+using RemotePlusLibrary.Scripting;
 
-namespace RemotePlusServer.ScriptingEngine.Proxies
+namespace RemotePlusServer.Proxies
 {
     internal class StaticRemoteFunctions
     {
+        [IndexScriptObject]
         public static void speak(string message, int voiceGender, int voiceAge)
         {
             VoiceAge va = VoiceAge.Adult;
@@ -53,6 +55,7 @@ namespace RemotePlusServer.ScriptingEngine.Proxies
             }
             ServerManager.DefaultService.Remote.Speak(message, vg, va);
         }
+        [IndexScriptObject]
         public static void beep(int freq, int duration)
         {
             ServerManager.DefaultService.Remote.Beep(freq, duration);

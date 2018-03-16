@@ -17,6 +17,8 @@ namespace RemotePlusLibrary
         void TellMessageToServerConsole(UILogItem li);
         [OperationContract(Name = "TellMessageToServerConsoleUsingString")]
         void TellMessageToServerConsole(string Message);
+        [OperationContract(Name = "TellMessageToServerConsoleConsoleText")]
+        void TellMessageToServerConsole(ConsoleText text);
         [OperationContract]
         ClientBuilder RegisterClient();
         [OperationContract(Name = "TellMessageWithLogItem", IsOneWay = true)]

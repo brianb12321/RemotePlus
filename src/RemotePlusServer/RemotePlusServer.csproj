@@ -86,11 +86,10 @@
     <Compile Include="ExtensionSystem\ServerInitEnvironment.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Internal\_HookManager.cs" />
+    <Compile Include="Proxies\ClientInstance.cs" />
+    <Compile Include="Proxies\LuaServerInstance.cs" />
+    <Compile Include="Proxies\StaticRemoteFunctions.cs" />
     <Compile Include="RemotePlusService.cs" />
-    <Compile Include="ScriptingEngine\Proxies\ClientInstance.cs" />
-    <Compile Include="ScriptingEngine\Proxies\LuaServerInstance.cs" />
-    <Compile Include="ScriptingEngine\Proxies\StaticRemoteFunctions.cs" />
-    <Compile Include="ScriptingEngine\ScriptBuilder.cs" />
     <Compile Include="ServerControls.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -105,6 +104,10 @@
     <Compile Include="ServerPrerequisites.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\RemotePlusLibrary.Scripting\RemotePlusLibrary.Scripting.csproj">
+      <Project>{5c399f78-c133-4f9b-9758-c36a4b7fae98}</Project>
+      <Name>RemotePlusLibrary.Scripting</Name>
+    </ProjectReference>
     <ProjectReference Include="..\RemotePlusLibrary.Core.EmailService\RemotePlusLibrary.Core.EmailService.csproj">
       <Project>{166C0846-95A7-4134-9A6C-BB2E5C9C4594}</Project>
       <Name>RemotePlusLibrary.Core.EmailService</Name>
@@ -164,9 +167,6 @@
     <EmbeddedResource Include="ServerControls.resx">
       <DependentUpon>ServerControls.cs</DependentUpon>
     </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

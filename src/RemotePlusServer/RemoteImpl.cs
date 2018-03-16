@@ -18,7 +18,8 @@ using RemotePlusLibrary.FileTransfer;
 using System.Text.RegularExpressions;
 using RemotePlusServer.Internal;
 using MoonSharp.Interpreter;
-using RemotePlusServer.ScriptingEngine;
+using System.Linq;
+using RemotePlusLibrary.Scripting;
 
 namespace RemotePlusServer
 {
@@ -850,9 +851,10 @@ namespace RemotePlusServer
             {
                 ServerManager.Logger.AddOutput("Running script file.", OutputLevel.Info, "Server Host");
                 Script luaScript = new Script(CoreModules.Basic | CoreModules.Math | CoreModules.OS_Time | CoreModules.ErrorHandling | CoreModules.LoadMethods | CoreModules.String);
-                ScriptBuilder.ConfigureScript(luaScript);
-                ScriptBuilder.RegisterUserData();
-                ScriptBuilder.InitializeScripts(luaScript);
+                luaScript.Options.DebugPrint = new Action<string>((message) => Client.ClientCallback.TellMessageToServerConsole(message));
+                ServerManager.InitializeGlobals();
+                ServerManager.RegisterUserData();
+                ServerManager.ScriptBuilder.InitializeScripts(luaScript);
                 DynValue value = luaScript.DoString(script);
                 if (value.Type == DataType.Boolean)
                 {
@@ -868,6 +870,12 @@ namespace RemotePlusServer
                 Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, $"Could not execute script file: {ex.Message}", ScriptBuilder.SCRIPT_LOG_CONSTANT));
                 return false;
             }
+        }
+
+        public ScriptGlobalInformation[] GetScriptGlobals()
+        {
+            var list = ServerManager.ScriptBuilder.GetGlobals();
+            return list.Select(l => l.Information).ToArray();
         }
     }
 }
