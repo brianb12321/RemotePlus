@@ -11,7 +11,7 @@ namespace RemotePlusLibrary.Scripting
     public enum ScriptGlobalType
     {
         [EnumMember]
-        Table,
+        Variable,
         [EnumMember]
         Function
     }

@@ -17,7 +17,7 @@ using RemotePlusServer.ExtensionSystem;
 using RemotePlusLibrary.FileTransfer;
 using System.Text.RegularExpressions;
 using RemotePlusServer.Internal;
-using MoonSharp.Interpreter;
+using IronPython.Hosting;
 using System.Linq;
 using RemotePlusLibrary.Scripting;
 
@@ -850,22 +850,12 @@ namespace RemotePlusServer
             try
             {
                 ServerManager.Logger.AddOutput("Running script file.", OutputLevel.Info, "Server Host");
-                Script luaScript = new Script(CoreModules.Basic | CoreModules.Math | CoreModules.OS_Time | CoreModules.ErrorHandling | CoreModules.LoadMethods | CoreModules.String);
-                luaScript.Options.DebugPrint = new Action<string>((message) => Client.ClientCallback.TellMessageToServerConsole(message));
+                ServerManager.ScriptBuilder.InitializeEngine();
                 ServerManager.InitializeGlobals();
-                ServerManager.RegisterUserData();
-                ServerManager.ScriptBuilder.InitializeScripts(luaScript);
-                DynValue value = luaScript.DoString(script);
-                if (value.Type == DataType.Boolean)
-                {
-                    return value.Boolean;
-                }
-                else
-                {
-                    throw new Exception("Script function must return bool");
-                }
+                bool success = ServerManager.ScriptBuilder.ExecuteString(script);
+                return success;
             }
-            catch (InterpreterException ex)
+            catch (Exception ex)
             {
                 Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, $"Could not execute script file: {ex.Message}", ScriptBuilder.SCRIPT_LOG_CONSTANT));
                 return false;

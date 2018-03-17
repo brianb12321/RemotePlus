@@ -1,4 +1,5 @@
-﻿using MoonSharp.Interpreter;
+﻿using IronPython.Hosting;
+using Microsoft.Scripting.Hosting;
 using RemotePlusLibrary;
 using System;
 using System.Collections.Generic;
@@ -13,17 +14,15 @@ namespace RemotePlusLibrary.Scripting
     {
         private  Dictionary<string, ScriptGlobal> globals = new Dictionary<string, ScriptGlobal>();
         public const string SCRIPT_LOG_CONSTANT = "Script Engine";
-        
-        public void InitializeScripts(Script luaScript)
+        public ScriptEngine ScriptingEngine { get; private set; }
+        ScriptScope InitializeScript()
         {
-            foreach(KeyValuePair<string, ScriptGlobal> global in globals)
+            var scope = ScriptingEngine.CreateScope();
+            foreach (KeyValuePair<string, ScriptGlobal> global in globals)
             {
-                luaScript.Globals[global.Key] = global.Value.Global;
+                scope.SetVariable(global.Key, global.Value.Global);
             }
-        }
-        public void AddUserData<T>()
-        {
-            UserData.RegisterType<T>();
+            return scope;
         }
         public void AddScriptObject<T>(string objectName, T scriptObject, string description, ScriptGlobalType objectType) where T : class
         {
@@ -50,7 +49,7 @@ namespace RemotePlusLibrary.Scripting
             {
                 ScriptGlobalInformation info = new ScriptGlobalInformation();
                 info.Name = property.Name;
-                info.Type = ScriptGlobalType.Table;
+                info.Type = ScriptGlobalType.Variable;
                 FillDataProperty(property.PropertyType, info);
                 i.Members.Add(info);
             }
@@ -61,7 +60,7 @@ namespace RemotePlusLibrary.Scripting
             foreach (var property in t.GetProperties().Where(type => type.GetCustomAttribute<IndexScriptObjectAttribute>() != null))
             {
                 info.Name = property.Name;
-                info.Type = ScriptGlobalType.Table;
+                info.Type = ScriptGlobalType.Variable;
                 i.Members.Add(info);
                 FillDataProperty(property.PropertyType, info);
             }
@@ -73,6 +72,16 @@ namespace RemotePlusLibrary.Scripting
         public List<ScriptGlobal> GetGlobals()
         {
             return globals.Values.ToList();
+        }
+
+        public void InitializeEngine()
+        {
+            ScriptingEngine = Python.CreateEngine();
+        }
+        public bool ExecuteString(string script)
+        {
+            var source = ScriptingEngine.CreateScriptSourceFromString(script);
+            return source.Execute(InitializeScript());
         }
     }
 }

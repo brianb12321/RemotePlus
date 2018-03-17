@@ -27,7 +27,7 @@ namespace RemotePlusClient
                 case ScriptGlobalType.Function:
                     ImageIndex = 0;
                     break;
-                case ScriptGlobalType.Table:
+                case ScriptGlobalType.Variable:
                     ImageIndex = 1;
                     break;
             }

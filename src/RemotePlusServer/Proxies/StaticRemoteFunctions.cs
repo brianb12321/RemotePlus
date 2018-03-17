@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MoonSharp.Interpreter;
 using System.Speech.Synthesis;
 using RemotePlusLibrary.Scripting;
 
@@ -31,7 +30,7 @@ namespace RemotePlusServer.Proxies
                     vg = VoiceGender.NotSet;
                     break;
                 default:
-                    throw new ScriptRuntimeException("Invalid voice gender option.");
+                    throw new Exception("Invalid voice gender option.");
             }
             switch(voiceAge)
             {
@@ -51,7 +50,7 @@ namespace RemotePlusServer.Proxies
                     va = VoiceAge.NotSet;
                     break;
                 default:
-                    throw new ScriptRuntimeException("Invalid voice age option.");
+                    throw new Exception("Invalid voice age option.");
             }
             ServerManager.DefaultService.Remote.Speak(message, vg, va);
         }

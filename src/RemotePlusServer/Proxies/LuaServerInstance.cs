@@ -5,7 +5,6 @@ using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
 using Logging;
-using MoonSharp.Interpreter;
 using RemotePlusLibrary.Scripting;
 
 namespace RemotePlusServer.Proxies
@@ -13,8 +12,7 @@ namespace RemotePlusServer.Proxies
     /// <summary>
     /// Provides functions that allows a script to close the server and get global information about the server.
     /// </summary>
-    [MoonSharpUserData]
-    internal class LuaServerInstance
+    public class LuaServerInstance
     {
         [IndexScriptObject]
         public string CurrentPath
@@ -58,7 +56,7 @@ namespace RemotePlusServer.Proxies
                     level = Logging.OutputLevel.Debug;
                     break;
                 default:
-                    throw new ScriptRuntimeException("Invalid OutputLevel. Please select a level in the range of 0 through 3");
+                    throw new Exception("Invalid OutputLevel. Please select a level in the range of 0 through 3");
             }
             ServerManager.Logger.AddOutput(message, level, ScriptBuilder.SCRIPT_LOG_CONSTANT);
         }
