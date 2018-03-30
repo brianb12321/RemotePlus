@@ -194,5 +194,12 @@ namespace RemotePlusClientCmd
             Console.Write(Message);
             //ClientCmdManager.WaitFlag = false;
         }
+
+        public void TellMessageToServerConsole(ConsoleText text)
+        {
+            Colorful.Console.ForegroundColor = text.TextColor;
+            Colorful.Console.Write(text.Text);
+            Colorful.Console.ResetColor();
+        }
     }
 }

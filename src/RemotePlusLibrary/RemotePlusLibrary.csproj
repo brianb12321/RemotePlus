@@ -12,7 +12,7 @@
     <AssemblyName>RemotePlusLibrary</AssemblyName>
     <ProjectTypeGuids>{3D9AD99F-2412-4246-B90B-4EAA41C64699};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <StartArguments>/client:"WcfTestClient.exe"</StartArguments>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <WcfConfigValidationEnabled>True</WcfConfigValidationEnabled>
     <XsdCodeGenEnabled>True</XsdCodeGenEnabled>
     <TargetFrameworkProfile />
@@ -67,6 +67,7 @@
     <Compile Include="FileTransfer\RemoteDirectory.cs" />
     <Compile Include="FileTransfer\RemoteDrive.cs" />
     <Compile Include="FileTransfer\RemoteFiles.cs" />
+    <Compile Include="FileTransfer\Service\IFileTransferContract.cs" />
     <Compile Include="IClient.cs" />
     <Compile Include="IDataRequest.cs" />
     <Compile Include="IRemote.cs" />
@@ -102,6 +103,10 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\RemotePlusLibrary.Scripting\RemotePlusLibrary.Scripting.csproj">
+      <Project>{5c399f78-c133-4f9b-9758-c36a4b7fae98}</Project>
+      <Name>RemotePlusLibrary.Scripting</Name>
+    </ProjectReference>
     <ProjectReference Include="..\RemotePlusLibrary.Configuration\RemotePlusLibrary.Configuration.csproj">
       <Project>{8a8a5888-1ce7-46ed-b8de-1ac7671f3426}</Project>
       <Name>RemotePlusLibrary.Configuration</Name>

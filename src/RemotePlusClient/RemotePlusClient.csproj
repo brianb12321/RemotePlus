@@ -8,7 +8,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>RemotePlusClient</RootNamespace>
     <AssemblyName>RemotePlusClient</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFrameworkProfile />
@@ -33,6 +33,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AutocompleteMenu">
+      <HintPath>..\..\Libs\AutocompleteMenu.dll</HintPath>
+    </Reference>
+    <Reference Include="ICSharpCode.TextEditor, Version=3.2.1.6466, Culture=neutral, PublicKeyToken=4d61825e8dd49f1a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\ICSharpCode.TextEditor.3.2.1.6466\lib\Net20\ICSharpCode.TextEditor.dll</HintPath>
+    </Reference>
     <Reference Include="Logging">
       <HintPath>..\..\Libs\Logging.dll</HintPath>
     </Reference>
@@ -125,6 +131,24 @@
     <Compile Include="RemoteFileBrowser.Designer.cs">
       <DependentUpon>RemoteFileBrowser.cs</DependentUpon>
     </Compile>
+    <Compile Include="ScriptAutoCompleteItem.cs" />
+    <Compile Include="ScriptIcons.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ScriptIcons.resx</DependentUpon>
+    </Compile>
+    <Compile Include="ScriptingEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ScriptingEditor.Designer.cs">
+      <DependentUpon>ScriptingEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ScriptObjectViewer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ScriptObjectViewer.Designer.cs">
+      <DependentUpon>ScriptObjectViewer.cs</DependentUpon>
+    </Compile>
     <Compile Include="SelectFileRequest.cs" />
     <Compile Include="ServerConsole.cs">
       <SubType>Form</SubType>
@@ -180,6 +204,16 @@
     <EmbeddedResource Include="RemoteFileBrowser.resx">
       <DependentUpon>RemoteFileBrowser.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="ScriptIcons.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ScriptIcons.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ScriptingEditor.resx">
+      <DependentUpon>ScriptingEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ScriptObjectViewer.resx">
+      <DependentUpon>ScriptObjectViewer.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ServerConsole.resx">
       <DependentUpon>ServerConsole.cs</DependentUpon>
     </EmbeddedResource>
@@ -191,6 +225,10 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\RemotePlusLibrary.Scripting\RemotePlusLibrary.Scripting.csproj">
+      <Project>{5c399f78-c133-4f9b-9758-c36a4b7fae98}</Project>
+      <Name>RemotePlusLibrary.Scripting</Name>
+    </ProjectReference>
     <ProjectReference Include="..\RemotePlusClient.CommonUI\RemotePlusClient.CommonUI.csproj">
       <Project>{9ef00d4b-27f4-4c2a-bda7-fc47246b2064}</Project>
       <Name>RemotePlusClient.CommonUI</Name>
@@ -215,6 +253,19 @@
       <Project>{00c22a1f-d3df-4193-aaa8-9907d08e2511}</Project>
       <Name>RemotePlusLibrary</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="python-syntax.xshd">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="packages.config" />
+    <None Include="Resources\function_kCl_icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\table_JoW_icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\runScript.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

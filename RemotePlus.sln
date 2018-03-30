@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27130.2024
+VisualStudioVersion = 15.0.27130.2027
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemotePlusServer", "src\RemotePlusServer\RemotePlusServer.csproj", "{4E41F31E-DCE5-4B9C-A2D6-20BF6ACD9C84}"
 EndProject
@@ -38,6 +38,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerMath", "src\ReleaseExtensionLibraries\ServerMath\ServerMath.csproj", "{AA84438D-E7A1-4805-8862-53FA6D0A2EB6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Recon", "src\Recon\Recon.csproj", "{0E62814F-F665-44D3-B97E-62DC75809741}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemotePlusLibrary.Scripting", "RemotePlusLibrary.Scripting\RemotePlusLibrary.Scripting.csproj", "{5C399F78-C133-4F9B-9758-C36A4B7FAE98}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -109,6 +111,10 @@ Global
 		{0E62814F-F665-44D3-B97E-62DC75809741}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0E62814F-F665-44D3-B97E-62DC75809741}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0E62814F-F665-44D3-B97E-62DC75809741}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5C399F78-C133-4F9B-9758-C36A4B7FAE98}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C399F78-C133-4F9B-9758-C36A4B7FAE98}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5C399F78-C133-4F9B-9758-C36A4B7FAE98}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5C399F78-C133-4F9B-9758-C36A4B7FAE98}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

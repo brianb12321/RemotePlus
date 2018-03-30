@@ -59,8 +59,11 @@
     <Compile Include="CommandSystem\CommandClasses\TokenSet.cs" />
     <Compile Include="CommandSystem\CommandClasses\TokenType.cs" />
     <Compile Include="CommandSystem\CommandDescription.cs" />
+    <Compile Include="CommandSystem\ConsoleText.cs" />
+    <Compile Include="CommandSystem\ConsoleTextExtensions.cs" />
     <Compile Include="CommandSystem\PromptBuilder.cs" />
     <Compile Include="CommandSystem\StatusCodeDeliveryMethod.cs" />
+    <Compile Include="CommandSystem\TableParser.cs" />
     <Compile Include="DependencyException.cs" />
     <Compile Include="DependencyType.cs" />
     <Compile Include="ExtensionDevelopmentState.cs" />

@@ -11,6 +11,7 @@ using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
 using RemotePlusLibrary.Extension.Programmer;
 using RemotePlusLibrary.FileTransfer;
+using RemotePlusLibrary.Scripting;
 using System.Speech.Synthesis;
 using System.Windows.Forms;
 using System.ServiceModel.Channels;
@@ -248,6 +249,11 @@ namespace RemotePlusLibrary
         public bool ExecuteScript(string script)
         {
             return Channel.ExecuteScript(script);
+        }
+
+        public ScriptGlobalInformation[] GetScriptGlobals()
+        {
+            return Channel.GetScriptGlobals();
         }
     }
 }

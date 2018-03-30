@@ -95,6 +95,11 @@ namespace RemotePlusServer
             Host = new ServiceHost(Remote);
             Host.AddServiceEndpoint(typeof(IRemote), binding, address);
         }
+        public void AddEndpoint<TEndpoint>(TEndpoint endpoint, NetTcpBinding binding, string endpointName, Action<TEndpoint> setupCallback)
+        {
+            setupCallback?.Invoke(endpoint);
+            Host.AddServiceEndpoint(typeof(TEndpoint), binding, endpointName);
+        }
         /// <summary>
         /// Starts the server.
         /// </summary>

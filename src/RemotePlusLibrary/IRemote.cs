@@ -15,6 +15,7 @@ using System.IO;
 using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusLibrary.Core.EmailService;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
+using RemotePlusLibrary.Scripting;
 
 namespace RemotePlusLibrary
 {
@@ -133,5 +134,8 @@ namespace RemotePlusLibrary
         [OperationContract]
         [FaultContract(typeof(ServerFault))]
         bool ExecuteScript(string script);
+        [OperationContract]
+        [FaultContract(typeof(ServerFault))]
+        ScriptGlobalInformation[] GetScriptGlobals();
     }
 }

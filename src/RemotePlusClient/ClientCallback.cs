@@ -175,6 +175,14 @@ namespace RemotePlusClient
         {
             return null;
         }
+
+        public void TellMessageToServerConsole(ConsoleText text)
+        {
+            Color originalColor = MainF.ConsoleObj.ForeColor;
+            MainF.ConsoleObj.ForeColor = text.TextColor;
+            MainF.ConsoleObj.AppendText(text.Text);
+            MainF.ConsoleObj.ForeColor = originalColor;
+        }
         #endregion
 
     }

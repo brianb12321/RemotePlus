@@ -11,6 +11,7 @@ using System.Reflection;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
 using System.Drawing;
 using System.Threading;
+using System.Windows.Forms;
 
 namespace ReleaseExtensions
 {
@@ -25,8 +26,13 @@ namespace ReleaseExtensions
             ServerManager.DefaultService.Commands.Add("menuTest", menuTest);
             //Test Code
             ServerManager.DefaultService.Commands.Add("textBoxTest", cmdTextBox);
+            ServerManager.ScriptBuilder.AddScriptObject("showMessageBox", new Func<string, string, MessageBoxButtons, MessageBoxIcon, DialogResult>(showMessageBoxScriptMethod), "Displays a message box on the client's screen.", RemotePlusLibrary.Scripting.ScriptGlobalType.Function);
         }
-
+        [RemotePlusLibrary.Scripting.IndexScriptObject]
+        DialogResult showMessageBoxScriptMethod(string message, string caption, MessageBoxButtons buttons, MessageBoxIcon icon)
+        {
+            return (DialogResult)Enum.Parse(typeof(DialogResult), ServerManager.DefaultService.Remote.Client.ClientCallback.RequestInformation(RemotePlusLibrary.RequestBuilder.RequestMessageBox(message, caption, buttons, icon)).Data.ToString());
+        }
         [CommandHelp("Describes about the ReleaseExtensionsLibrary.")]
         CommandResponse releaseExtensionAbout(CommandRequest args, CommandPipeline pipe)
         {

@@ -19,6 +19,8 @@ namespace RemotePlusClient
     {
         public RichTextBoxLoggingMethod Logger { get; set; }
         public ConsoleSettings settings = null;
+        public bool InputEnabled { get; set; } = true;
+        public void ClearConsole() => richTextBox1.Clear();
         string scriptFile;
         public ServerConsole()
         {
@@ -29,7 +31,15 @@ namespace RemotePlusClient
             scriptFile = file;
             InitializeComponent();
         }
-
+        public ServerConsole(bool enableInput)
+        {
+            InputEnabled = enableInput;
+            InitializeComponent();
+            if (!InputEnabled)
+            {
+                HideInput();
+            }
+        }
         private void ServerConsole_Load(object sender, EventArgs e)
         {
             settings = new ConsoleSettings();
@@ -54,6 +64,7 @@ namespace RemotePlusClient
             Logger.DefaultErrorColor = settings.DefaultErrorColor;
             Logger.DefaultWarningColor = settings.DefaultWarningColor;
             Logger.DefaultDebugColor = settings.DefaultDebugColor;
+            richTextBox1.Font = (Font)TypeDescriptor.GetConverter(typeof(Font)).ConvertFromString(settings.DefaultFont);
             textBox1.AutoCompleteSource = AutoCompleteSource.CustomSource;
             textBox1.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
             AutoCompleteStringCollection acsc = new AutoCompleteStringCollection();
@@ -62,6 +73,14 @@ namespace RemotePlusClient
             if (!string.IsNullOrEmpty(scriptFile))
             {
                 RunScriptFile();
+            }
+        }
+
+        private void HideInput()
+        {
+            if(!InputEnabled)
+            {
+                textBox1.Visible = false;
             }
         }
 
@@ -124,6 +143,11 @@ namespace RemotePlusClient
             {
                 csd.ShowDialog();
             }
+        }
+
+        private void clearToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            richTextBox1.Clear();
         }
     }
 }
