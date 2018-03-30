@@ -43,6 +43,9 @@ namespace RemotePlusServer
         /// The global container that all house the libraries that are loaded into the system.
         /// </summary>
         public static ServerExtensionLibraryCollection DefaultCollection { get; } = new ServerExtensionLibraryCollection();
+        /// <summary>
+        /// The remote implementation of the file service.
+        /// </summary>
         private static Stopwatch sw;
         public static ScriptBuilder ScriptBuilder { get; } = new ScriptBuilder();
         [STAThread]
@@ -68,6 +71,8 @@ namespace RemotePlusServer
                 CreateServer();
                 InitializeVariables();
                 InitializeCommands();
+                InitializeGlobals();
+                ScriptBuilder.InitializeEngine();
                 if (CheckPrerequisites())
                 {
                     bool autoStart = false;
@@ -214,6 +219,8 @@ namespace RemotePlusServer
             DefaultService.Commands.Add("deleteFile", deleteFile);
             DefaultService.Commands.Add("echoFile", echoFile);
             DefaultService.Commands.Add("ls", ls);
+            DefaultService.Commands.Add("genMan", genMan);
+            DefaultService.Commands.Add("scp", scp);
         }
 
         static bool CheckPrerequisites()

@@ -850,8 +850,6 @@ namespace RemotePlusServer
             try
             {
                 ServerManager.Logger.AddOutput("Running script file.", OutputLevel.Info, "Server Host");
-                ServerManager.ScriptBuilder.InitializeEngine();
-                ServerManager.InitializeGlobals();
                 bool success = ServerManager.ScriptBuilder.ExecuteString(script);
                 return success;
             }

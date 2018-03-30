@@ -15,6 +15,7 @@ using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
 using RemotePlusServer.ExtensionSystem;
 using RemotePlusLibrary;
 using System.Drawing;
+using RemotePlusLibrary.Scripting.ScriptPackageEngine;
 
 namespace RemotePlusServer
 {
@@ -560,6 +561,34 @@ namespace RemotePlusServer
             }
             DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole("\n");
             return new CommandResponse((int)CommandStatus.Success);
+        }
+        [CommandHelp("Generates a sample package manifest file")]
+        public static CommandResponse genMan(CommandRequest args, CommandPipeline pipe)
+        {
+            ScriptPackageManifest m = new ScriptPackageManifest();
+            m.PackageName = "TestPackage";
+            m.ScriptEntryPoint = "main.py";
+            m.GenerateManifestToFile(args.Arguments[1].Value);
+            return new CommandResponse((int)CommandStatus.Success);
+        }
+        [CommandHelp("Opens a script package and executes the entry-point script.")]
+        public static CommandResponse scp(CommandRequest args, CommandPipeline pipe)
+        {
+            ScriptPackage package = ScriptPackage.Open(args.Arguments[1].Value);
+            try
+            {
+                package.ExecuteScript();
+                package.PackageContents.Dispose();
+                package = null;
+                return new CommandResponse((int)CommandStatus.Success);
+            }
+            catch (Exception ex)
+            {
+                DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, $"Unable to execute script package: {ex.Message}", RemotePlusLibrary.Scripting.ScriptBuilder.SCRIPT_LOG_CONSTANT));
+                package.PackageContents.Dispose();
+                package = null;
+                return new CommandResponse((int)CommandStatus.Fail);
+            }
         }
     }
 }

@@ -24,7 +24,7 @@ namespace RemotePlusClient
         {
             FileSyntaxModeProvider fm = new FileSyntaxModeProvider(Application.StartupPath);
             HighlightingManager.Manager.AddSyntaxModeFileProvider(fm);
-            editor.SetHighlighting("Lua");
+            editor.SetHighlighting("Python");
             editor.LineViewerStyle = LineViewerStyle.FullRow;
             //editor.ShowInvalidLines = true;
             editor.TextEditorProperties.EnableFolding = true;

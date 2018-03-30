@@ -1,8 +1,10 @@
 ﻿using IronPython.Hosting;
+using Microsoft.Scripting;
 using Microsoft.Scripting.Hosting;
 using RemotePlusLibrary;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -15,14 +17,12 @@ namespace RemotePlusLibrary.Scripting
         private  Dictionary<string, ScriptGlobal> globals = new Dictionary<string, ScriptGlobal>();
         public const string SCRIPT_LOG_CONSTANT = "Script Engine";
         public ScriptEngine ScriptingEngine { get; private set; }
-        ScriptScope InitializeScript()
+        void InitializeGlobals()
         {
-            var scope = ScriptingEngine.CreateScope();
             foreach (KeyValuePair<string, ScriptGlobal> global in globals)
             {
-                scope.SetVariable(global.Key, global.Value.Global);
+                ScriptingEngine.GetBuiltinModule().SetVariable(global.Key, global.Value.Global);
             }
-            return scope;
         }
         public void AddScriptObject<T>(string objectName, T scriptObject, string description, ScriptGlobalType objectType) where T : class
         {
@@ -77,11 +77,12 @@ namespace RemotePlusLibrary.Scripting
         public void InitializeEngine()
         {
             ScriptingEngine = Python.CreateEngine();
+            InitializeGlobals();
         }
         public bool ExecuteString(string script)
         {
             var source = ScriptingEngine.CreateScriptSourceFromString(script);
-            return source.Execute(InitializeScript());
+            return source.Execute();
         }
     }
 }

@@ -8,7 +8,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>RemotePlusClient</RootNamespace>
     <AssemblyName>RemotePlusClient</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFrameworkProfile />
@@ -255,7 +255,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="lua-syntax.xshd">
+    <None Include="python-syntax.xshd">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
