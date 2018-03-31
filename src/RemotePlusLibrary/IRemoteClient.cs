@@ -9,7 +9,7 @@ using RemotePlusLibrary.Extension.CommandSystem;
 
 namespace RemotePlusLibrary
 {
-    public interface IRemoteClient : IClient
+    public interface IRemoteClient : IClient, IBidirectionalContract
     {
         [OperationContract(IsOneWay = true)]
         void TellMessage(string Message, Logging.OutputLevel o);

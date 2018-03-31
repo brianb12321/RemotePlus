@@ -25,29 +25,8 @@ namespace RemotePlusLibrary
     /// </summary>
     [ServiceContract(CallbackContract = typeof(IRemoteClient))]
     [ServiceKnownType("GetKnownTypes", typeof(DefaultKnownTypeManager))]
-    public interface IRemote
+    public interface IRemote : IBidirectionalContract
     {
-        [OperationContract]
-        [FaultContract(typeof(ServerFault))]
-        void PlaySound(string FileName);
-        [OperationContract()]
-        [FaultContract(typeof(ServerFault))]
-        void PlaySoundLoop(string FileName);
-        [OperationContract()]
-        [FaultContract(typeof(ServerFault))]
-        void PlaySoundSync(string FileName);
-        [OperationContract()]
-        [FaultContract(typeof(ServerFault))]
-        void RunProgram(string Program, string Argument);
-        [FaultContract(typeof(ServerFault))]
-        [OperationContract()]
-        void Beep(int Hertz, int Duration);
-        [OperationContract()]
-        [FaultContract(typeof(ServerFault))]
-        DialogResult ShowMessageBox(string Message, string Caption, MessageBoxIcon Icon, MessageBoxButtons Buttons);
-        [OperationContract()]
-        [FaultContract(typeof(ServerFault))]
-        void Speak(string Message, VoiceGender Gender, VoiceAge Age);
         [OperationContract()]
         [FaultContract(typeof(ServerFault))]
         void Register(RegisterationObject Settings);
@@ -133,9 +112,9 @@ namespace RemotePlusLibrary
         bool SendEmail(string To, string Subject, string Message);
         [OperationContract]
         [FaultContract(typeof(ServerFault))]
-        bool ExecuteScript(string script);
+        ScriptGlobalInformation[] GetScriptGlobals();
         [OperationContract]
         [FaultContract(typeof(ServerFault))]
-        ScriptGlobalInformation[] GetScriptGlobals();
+        bool ExecuteScript(string script);
     }
 }

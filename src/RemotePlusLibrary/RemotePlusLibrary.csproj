@@ -68,6 +68,7 @@
     <Compile Include="FileTransfer\RemoteDrive.cs" />
     <Compile Include="FileTransfer\RemoteFiles.cs" />
     <Compile Include="FileTransfer\Service\IFileTransferContract.cs" />
+    <Compile Include="IBidirectionalContract.cs" />
     <Compile Include="IClient.cs" />
     <Compile Include="IDataRequest.cs" />
     <Compile Include="IRemote.cs" />

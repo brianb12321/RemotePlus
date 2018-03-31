@@ -4,12 +4,13 @@ using System.Linq;
 using System.Speech.Synthesis;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using RemotePlusLibrary;
 using RemotePlusLibrary.Scripting;
 
 namespace RemotePlusServer.Proxies
 {
-    public class ClientInstance
+    public class ClientInstance : IBidirectionalContract
     {
         [IndexScriptObject]
         public string ClientType => ServerManager.DefaultService.Remote.Client.ClientType.ToString();
@@ -79,6 +80,41 @@ namespace RemotePlusServer.Proxies
         public void postMessage(string message)
         {
             ServerManager.DefaultService.Remote.Client.ClientCallback.SendSignal(new SignalMessage("recon_post", message));
+        }
+        [IndexScriptObject]
+        public void PlaySound(string FileName)
+        {
+            ServerManager.DefaultService.Remote.Client.ClientCallback.PlaySound(FileName);
+        }
+        [IndexScriptObject]
+        public void PlaySoundLoop(string FileName)
+        {
+            ServerManager.DefaultService.Remote.Client.ClientCallback.PlaySoundLoop(FileName);
+        }
+        [IndexScriptObject]
+        public void PlaySoundSync(string FileName)
+        {
+            ServerManager.DefaultService.Remote.Client.ClientCallback.PlaySoundSync(FileName);
+        }
+        [IndexScriptObject]
+        public void RunProgram(string Program, string Argument)
+        {
+            ServerManager.DefaultService.Remote.Client.ClientCallback.RunProgram(Program, Argument);
+        }
+        [IndexScriptObject]
+        public void Beep(int Hertz, int Duration)
+        {
+            ServerManager.DefaultService.Remote.Client.ClientCallback.Beep(Hertz, Duration);
+        }
+        [IndexScriptObject]
+        public DialogResult ShowMessageBox(string Message, string Caption, MessageBoxIcon Icon, MessageBoxButtons Buttons)
+        {
+            return ServerManager.DefaultService.Remote.Client.ClientCallback.ShowMessageBox(Message, Caption, Icon, Buttons);
+        }
+        [IndexScriptObject]
+        public void Speak(string Message, VoiceGender Gender, VoiceAge Age)
+        {
+            ServerManager.DefaultService.Remote.Client.ClientCallback.Speak(Message, Gender, Age);
         }
     }
 }
