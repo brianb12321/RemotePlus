@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Media;
 using System.ServiceModel;
+using System.Speech.Synthesis;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -17,7 +20,43 @@ namespace Recon
         UseSynchronizationContext = false)]
     public class ClientCallback : IRemoteClient
     {
-        public void ChangePrompt(PromptBuilder newPrompt)
+        public void Beep(int Hertz, int Duration)
+        {
+            Console.Beep(Hertz, Duration);
+        }
+        public void PlaySound(string FileName)
+        {
+            SoundPlayer player = new SoundPlayer(FileName);
+            player.Play();
+        }
+
+        public void PlaySoundLoop(string FileName)
+        {
+            SoundPlayer player = new SoundPlayer(FileName);
+            player.PlaySync();
+        }
+
+        public void PlaySoundSync(string FileName)
+        {
+            SoundPlayer player = new SoundPlayer(FileName);
+            player.PlayLooping();
+        }
+        public void RunProgram(string Program, string Argument)
+        {
+            Process.Start(Program, Argument);
+        }
+        public DialogResult ShowMessageBox(string Message, string Caption, MessageBoxIcon Icon, MessageBoxButtons Buttons)
+        {
+            return MessageBox.Show(Message, Caption, Buttons, Icon);
+        }
+
+        public void Speak(string Message, VoiceGender Gender, VoiceAge Age)
+        {
+            SpeechSynthesizer ss = new SpeechSynthesizer();
+            ss.SelectVoiceByHints(Gender, Age);
+            ss.Speak(Message);
+        }
+        public void ChangePrompt(RemotePlusLibrary.Extension.CommandSystem.PromptBuilder newPrompt)
         {
             
         }
@@ -29,7 +68,7 @@ namespace Recon
             ReconManager.Client.Close();
         }
 
-        public PromptBuilder GetCurrentPrompt()
+        public RemotePlusLibrary.Extension.CommandSystem.PromptBuilder GetCurrentPrompt()
         {
             return null;
         }

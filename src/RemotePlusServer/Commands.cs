@@ -574,7 +574,7 @@ namespace RemotePlusServer
         [CommandHelp("Opens a script package and executes the entry-point script.")]
         public static CommandResponse scp(CommandRequest args, CommandPipeline pipe)
         {
-            ScriptPackage package = ScriptPackage.Open(args.Arguments[1].Value);
+            ScriptPackage package = ScriptPackage.Open(args.Arguments[1].Value); 
             try
             {
                 package.ExecuteScript();

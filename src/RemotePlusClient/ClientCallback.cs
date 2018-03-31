@@ -7,6 +7,9 @@ using System.Net;
 using System.Drawing;
 using RemotePlusClient.CommonUI;
 using RemotePlusLibrary.Extension.CommandSystem;
+using System.Media;
+using System.Diagnostics;
+using System.Speech.Synthesis;
 
 namespace RemotePlusClient
 {
@@ -37,6 +40,43 @@ namespace RemotePlusClient
         }
 
         #region Callback Methods
+        public void Beep(int Hertz, int Duration)
+        {
+            Console.Beep(Hertz, Duration);
+        }
+
+        public void PlaySound(string FileName)
+        {
+            SoundPlayer player = new SoundPlayer(FileName);
+            player.Play();
+        }
+
+        public void PlaySoundLoop(string FileName)
+        {
+            SoundPlayer player = new SoundPlayer(FileName);
+            player.PlaySync();
+        }
+
+        public void PlaySoundSync(string FileName)
+        {
+            SoundPlayer player = new SoundPlayer(FileName);
+            player.PlayLooping();
+        }
+        public void RunProgram(string Program, string Argument)
+        {
+            Process.Start(Program, Argument);
+        }
+        public DialogResult ShowMessageBox(string Message, string Caption, MessageBoxIcon Icon, MessageBoxButtons Buttons)
+        {
+            return MessageBox.Show(Message, Caption, Buttons, Icon);
+        }
+
+        public void Speak(string Message, VoiceGender Gender, VoiceAge Age)
+        {
+            SpeechSynthesizer ss = new SpeechSynthesizer();
+            ss.SelectVoiceByHints(Gender, Age);
+            ss.Speak(Message);
+        }
         public void Disconnect(string Reason)
         {
             LogItem l = new LogItem(Logging.OutputLevel.Error, "The server disconnected from the client. Reason: " + Reason, "Server Host");
@@ -166,12 +206,12 @@ namespace RemotePlusClient
             }
         }
 
-        public void ChangePrompt(PromptBuilder newPrompt)
+        public void ChangePrompt(RemotePlusLibrary.Extension.CommandSystem.PromptBuilder newPrompt)
         {
             //TODO: Implement Prompt
         }
 
-        public PromptBuilder GetCurrentPrompt()
+        public RemotePlusLibrary.Extension.CommandSystem.PromptBuilder GetCurrentPrompt()
         {
             return null;
         }

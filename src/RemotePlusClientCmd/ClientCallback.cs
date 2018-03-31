@@ -5,6 +5,9 @@ using System.ServiceModel;
 using RemotePlusClient.CommonUI;
 using System.Windows.Forms;
 using RemotePlusLibrary.Extension.CommandSystem;
+using System.Speech.Synthesis;
+using System.Media;
+using System.Diagnostics;
 
 namespace RemotePlusClientCmd
 {
@@ -13,7 +16,12 @@ namespace RemotePlusClientCmd
         UseSynchronizationContext = false)]
     class ClientCallback : IRemoteClient
     {
-        public void ChangePrompt(PromptBuilder newPrompt)
+        public void Beep(int Hertz, int Duration)
+        {
+            Console.Beep(Hertz, Duration);
+        }
+
+        public void ChangePrompt(RemotePlusLibrary.Extension.CommandSystem.PromptBuilder newPrompt)
         {
             ClientCmdManager.prompt = newPrompt;
         }
@@ -26,9 +34,27 @@ namespace RemotePlusClientCmd
             //ClientCmdManager.WaitFlag = false;
         }
 
-        public PromptBuilder GetCurrentPrompt()
+        public RemotePlusLibrary.Extension.CommandSystem.PromptBuilder GetCurrentPrompt()
         {
             return ClientCmdManager.prompt;
+        }
+
+        public void PlaySound(string FileName)
+        {
+            SoundPlayer player = new SoundPlayer(FileName);
+            player.Play();
+        }
+
+        public void PlaySoundLoop(string FileName)
+        {
+            SoundPlayer player = new SoundPlayer(FileName);
+            player.PlaySync();
+        }
+
+        public void PlaySoundSync(string FileName)
+        {
+            SoundPlayer player = new SoundPlayer(FileName);
+            player.PlayLooping();
         }
 
         public ClientBuilder RegisterClient()
@@ -61,6 +87,11 @@ namespace RemotePlusClientCmd
             return RequestStore.Show(builder);
         }
 
+        public void RunProgram(string Program, string Argument)
+        {
+            Process.Start(Program, Argument);
+        }
+
         public void SendSignal(SignalMessage message)
         {
             //ClientCmdManager.WaitFlag = true;
@@ -71,6 +102,18 @@ namespace RemotePlusClientCmd
                     break;
             }
             //ClientCmdManager.WaitFlag = false;
+        }
+
+        public DialogResult ShowMessageBox(string Message, string Caption, MessageBoxIcon Icon, MessageBoxButtons Buttons)
+        {
+            return MessageBox.Show(Message, Caption, Buttons, Icon);
+        }
+
+        public void Speak(string Message, VoiceGender Gender, VoiceAge Age)
+        {
+            SpeechSynthesizer ss = new SpeechSynthesizer();
+            ss.SelectVoiceByHints(Gender, Age);
+            ss.Speak(Message);
         }
 
         public void TellMessage(string Message, OutputLevel o)
