@@ -18,6 +18,8 @@ namespace RemotePlusClient.CommonUI
     public partial class FindRemoteFileDialog : Form
     {
         public string FilePath { get; private set; }
+        string _base = "";
+        int port = 0;
         public int Counter
         {
             get
@@ -31,9 +33,11 @@ namespace RemotePlusClient.CommonUI
         }
         public FileAssociationSettings associations = null;
         IRemote remote = null;
-        public FindRemoteFileDialog(IRemote r)
+        public FindRemoteFileDialog(IRemote r, string baseURL, int p)
         {
             remote = r;
+            port = p;
+            _base = baseURL;
             InitializeComponent();
         }
 
@@ -150,6 +154,10 @@ namespace RemotePlusClient.CommonUI
             {
                 PopulateTree(e.Node);
             }
+            else
+            {
+                return;
+            }
             // Makes sure that we don't update the image key of a drive to a folder, and grabs the right data from the server.
             if (e.Node.Tag is RemoteDrive)
             {
@@ -198,7 +206,19 @@ namespace RemotePlusClient.CommonUI
             fileBrowser1.FileList.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
 
         }
-
+        public void AddFile(RemoteFile file)
+        {
+            ListViewItem item = new ListViewItem();
+            ListViewItem.ListViewSubItem[] subItems;
+            string key = CheckAssociation(Path.GetExtension(file.FullName));
+            item = new ListViewItem(file.Name, key);
+            subItems = new ListViewItem.ListViewSubItem[]
+                      { new ListViewItem.ListViewSubItem(item, "File"),
+                                    new ListViewItem.ListViewSubItem(item,
+                                        file.LastAccessed.ToShortDateString())};
+            item.SubItems.AddRange(subItems);
+            fileBrowser1.FileList.Items.Add(item);
+        }
         private string CheckAssociation(string extension)
         {
             if(fileBrowser1.FileList.SmallImageList.Images.ContainsKey(extension))
@@ -250,6 +270,14 @@ namespace RemotePlusClient.CommonUI
 
         private void fileBrowser1_NodeAboutToBeExpanded(object sender, TreeViewCancelEventArgs e)
         {
+        }
+
+        private void fileBrowser1_EntryUpdated(object sender, EntryOperationEventArgs e)
+        {
+            if(e.Operation == FileOperation.Add)
+            {
+                
+            }
         }
     }
 }

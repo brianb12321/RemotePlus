@@ -50,6 +50,10 @@ namespace RemotePlusLibrary
         [DataMember]
         [Category(SERVER_SETTINGS_CATEGORY_SERVER)]
         public int PortNumber { get; set; }
+        [DataMember]
+        [Category(SERVER_SETTINGS_CATEGORY_SERVER)]
+        [Description("Determines whether to open an endpoint for service reference generation.")]
+        public bool EnableMetadataExchange { get; set; }
         #endregion
         #region Extension
 
@@ -118,6 +122,7 @@ namespace RemotePlusLibrary
             this.BannedIPs = ss.BannedIPs;
             this.PortNumber = ss.PortNumber;
             this.LoggingSettings = ss.LoggingSettings;
+            this.EnableMetadataExchange = ss.EnableMetadataExchange;
         }
 
         public void Save(string fileName)

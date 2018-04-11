@@ -26,6 +26,8 @@ namespace RemotePlusClient
         public static ServiceClient Remote = null;
         public static ConsoleDialog ConsoleObj = null;
         public static ClientCallback LocalCallback = null;
+        public static string BaseAddress { get; private set; }
+        public static int Port { get; set; }
         public static ClientLibraryCollection DefaultCollection { get; private set; }
         string Address { get; set; }
         public MainF()
@@ -52,7 +54,9 @@ namespace RemotePlusClient
             ConnectDialog d = new ConnectDialog();
             if (d.ShowDialog() == DialogResult.OK)
             {
-                Address = d.Address;
+                Address = d.Address.ToString();
+                BaseAddress = d.Address.Uri.Host;
+                Port = d.Address.Uri.Port;
                 Connect(d.RegObject);
             }
         }

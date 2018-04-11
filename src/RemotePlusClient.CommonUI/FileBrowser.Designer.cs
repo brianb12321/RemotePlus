@@ -32,6 +32,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FileBrowser));
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.panel1 = new System.Windows.Forms.Panel();
+            this.button1 = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
@@ -44,13 +45,18 @@
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.cm_fileOptions = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.downloadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.progressWorker = new System.ComponentModel.BackgroundWorker();
+            this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
+            this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panel1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
+            this.cm_fileOptions.SuspendLayout();
             this.SuspendLayout();
             // 
             // imageList1
@@ -63,13 +69,24 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.button1);
             this.panel1.Controls.Add(this.textBox1);
             this.panel1.Controls.Add(this.label1);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(446, 29);
+            this.panel1.Size = new System.Drawing.Size(446, 63);
             this.panel1.TabIndex = 1;
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(3, 34);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 2;
+            this.button1.Text = "Upload";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // textBox1
             // 
@@ -124,7 +141,7 @@
             // splitContainer1
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer1.Location = new System.Drawing.Point(0, 29);
+            this.splitContainer1.Location = new System.Drawing.Point(0, 63);
             this.splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel1
@@ -134,7 +151,7 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.listView1);
-            this.splitContainer1.Size = new System.Drawing.Size(446, 186);
+            this.splitContainer1.Size = new System.Drawing.Size(446, 152);
             this.splitContainer1.SplitterDistance = 148;
             this.splitContainer1.TabIndex = 4;
             // 
@@ -146,7 +163,7 @@
             this.treeView1.Location = new System.Drawing.Point(0, 0);
             this.treeView1.Name = "treeView1";
             this.treeView1.SelectedImageIndex = 0;
-            this.treeView1.Size = new System.Drawing.Size(148, 186);
+            this.treeView1.Size = new System.Drawing.Size(148, 152);
             this.treeView1.TabIndex = 1;
             this.treeView1.BeforeExpand += new System.Windows.Forms.TreeViewCancelEventHandler(this.treeView1_BeforeExpand);
             this.treeView1.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterSelect);
@@ -158,12 +175,13 @@
             this.columnHeader1,
             this.columnHeader2,
             this.columnHeader3});
+            this.listView1.ContextMenuStrip = this.cm_fileOptions;
             this.listView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.listView1.LargeImageList = this.imageList1;
             this.listView1.Location = new System.Drawing.Point(0, 0);
             this.listView1.MultiSelect = false;
             this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(294, 186);
+            this.listView1.Size = new System.Drawing.Size(294, 152);
             this.listView1.SmallImageList = this.imageList1;
             this.listView1.TabIndex = 2;
             this.listView1.UseCompatibleStateImageBehavior = false;
@@ -182,6 +200,28 @@
             // 
             this.columnHeader3.Text = "Last Modified";
             // 
+            // cm_fileOptions
+            // 
+            this.cm_fileOptions.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.downloadToolStripMenuItem,
+            this.deleteToolStripMenuItem});
+            this.cm_fileOptions.Name = "cm_download";
+            this.cm_fileOptions.Size = new System.Drawing.Size(181, 70);
+            // 
+            // downloadToolStripMenuItem
+            // 
+            this.downloadToolStripMenuItem.Name = "downloadToolStripMenuItem";
+            this.downloadToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.downloadToolStripMenuItem.Text = "Download";
+            this.downloadToolStripMenuItem.Click += new System.EventHandler(this.cm_download_Click);
+            // 
+            // deleteToolStripMenuItem
+            // 
+            this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
+            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.deleteToolStripMenuItem.Text = "Delete";
+            this.deleteToolStripMenuItem.Click += new System.EventHandler(this.deleteToolStripMenuItem_Click);
+            // 
             // FileBrowser
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -199,6 +239,7 @@
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
+            this.cm_fileOptions.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -221,5 +262,10 @@
         private System.ComponentModel.BackgroundWorker progressWorker;
         private System.Windows.Forms.ToolStripStatusLabel labelStatus;
         internal System.Windows.Forms.ToolStripStatusLabel labelMin;
+        private System.Windows.Forms.ContextMenuStrip cm_fileOptions;
+        private System.Windows.Forms.ToolStripMenuItem downloadToolStripMenuItem;
+        private System.ComponentModel.BackgroundWorker backgroundWorker1;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
     }
 }

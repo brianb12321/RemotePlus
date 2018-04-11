@@ -112,6 +112,7 @@
     <Compile Include="Commands.cs" />
     <Compile Include="ExtensionSystem\ServerExtensionLibrary.cs" />
     <Compile Include="ExtensionSystem\ServerInitEnvironment.cs" />
+    <Compile Include="FileTransferService.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Internal\_HookManager.cs" />
     <Compile Include="Proxies\ClientInstance.cs" />

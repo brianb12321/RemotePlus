@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using RemotePlusLibrary.FileTransfer;
+using System.IO;
 
 namespace RemotePlusClient.CommonUI
 {
@@ -91,8 +92,10 @@ namespace RemotePlusClient.CommonUI
         public event EventHandler<FileSelectedEventArgs> FileSelected;
         public event EventHandler<TreeViewCancelEventArgs> NodeAboutToBeExpanded;
         public event EventHandler<TreeViewEventArgs> TreeVewAfterSelect;
+        public event EventHandler<EntryOperationEventArgs> EntryUpdated;
         #endregion
-
+        string _baseURL = "";
+        int port = 0;
         protected virtual void OnFileSelected(FileSelectedEventArgs e)
         {
             FileSelected?.Invoke(this, e);
@@ -106,8 +109,10 @@ namespace RemotePlusClient.CommonUI
             TreeVewAfterSelect?.Invoke(this, e);
         }
 
-        public FileBrowser()
+        public FileBrowser(string baseURL, int p)
         {
+            _baseURL = baseURL;
+            port = p;
             InitializeComponent();
         }
 
@@ -136,6 +141,49 @@ namespace RemotePlusClient.CommonUI
             {
                 var selectedItem = listView1.SelectedItems[0];
                 OnFileSelected(new FileSelectedEventArgs(selectedItem.SubItems[0].Text, selectedItem.Text));
+            }
+        }
+        private void cm_download_Click(object sender, EventArgs e)
+        {
+            using (SaveFileDialog saveDialog = new SaveFileDialog())
+            {
+                saveDialog.Title = "Enter file name to save";
+                if (saveDialog.ShowDialog() == DialogResult.OK)
+                {
+                    new FileTransfer(_baseURL, port).DownloadFile(((RemoteFile)FileList.SelectedItems[0].Tag).FullName, saveDialog.FileName);
+                }
+            }
+        }
+
+        private void uploadToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            using (OpenFileDialog ofd = new OpenFileDialog())
+            {
+                ofd.Title = "Select file to upload.";
+                if (ofd.ShowDialog() == DialogResult.OK)
+                {
+                    new FileTransfer(_baseURL, port).UploadFile(ofd.FileName, CurrentPath);
+                    EntryUpdated?.Invoke(this, new EntryOperationEventArgs(null, FileOperation.Add) {IsDirectory = false, Path = Path.Combine(CurrentPath, ofd.FileName) });
+                }
+            }
+        }
+        public void UpdateData()
+        {
+
+        }
+
+        private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if(MessageBox.Show("WARNING: If you delete this entry, it will permanently delete the file. Do you want to continue?", "WARNING!", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
+            {
+                new FileTransfer(_baseURL, port).DeleteFile(((RemoteFile)FileList.SelectedItems[0].Tag).FullName);
+                EntryUpdated?.Invoke(this, new EntryOperationEventArgs(FileList.SelectedItems[0], FileOperation.Add));
+                FileList.Items.Remove(FileList.SelectedItems[0]);
             }
         }
     }

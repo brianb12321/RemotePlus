@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
+using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.Text;
 using System.Threading.Tasks;
@@ -88,14 +89,19 @@ namespace RemotePlusServer
         /// <param name="singleTon">The instance of the service implementation.</param>
         /// <param name="portNumber">The port number to use for listening.</param>
         /// <param name="setupCallback">The function to call when setting up the service implementation.</param>
-        private RemotePlusService(I singleTon, NetTcpBinding binding, string address, Action<I> setupCallback)
+        private RemotePlusService(Type contractType, I singleTon, Binding binding, string address, Action<I> setupCallback)
         {
             Remote = singleTon;
             setupCallback?.Invoke(Remote);
             Host = new ServiceHost(Remote);
-            Host.AddServiceEndpoint(typeof(IRemote), binding, address);
+            Host.AddServiceEndpoint(contractType, binding, address);
         }
-        public void AddEndpoint<TEndpoint>(TEndpoint endpoint, NetTcpBinding binding, string endpointName, Action<TEndpoint> setupCallback)
+        private RemotePlusService(Type contractType, Binding binding, string address)
+        {
+            Host = new ServiceHost(typeof(I));
+            Host.AddServiceEndpoint(contractType, binding, address);
+        }
+        public void AddEndpoint<TEndpoint>(TEndpoint endpoint, Binding binding, string endpointName, Action<TEndpoint> setupCallback)
         {
             setupCallback?.Invoke(endpoint);
             Host.AddServiceEndpoint(typeof(TEndpoint), binding, endpointName);
@@ -122,14 +128,14 @@ namespace RemotePlusServer
         /// <param name="callback">The callback to use when an event occures for logging.</param>
         /// <param name="setupCallback">The callback to use when setting up the service implementation.</param>
         /// <returns></returns>
-        public static RemotePlusService<I> Create(I singleTon, int port, Action<string, OutputLevel> callback, Action<I> setupCallback)
+        public static RemotePlusService<I> Create(Type contractType, I singleTon, int port, string defaultEndpoint, Action<string, OutputLevel> callback, Action<I> setupCallback)
         {
             RemotePlusService<I> temp;
-            callback("Building endpoint URL.", OutputLevel.Debug);
-            string url = $"net.tcp://0.0.0.0:{port}/Remote";
-            callback($"URL built {url}", OutputLevel.Debug);
-            callback("Creating server.", OutputLevel.Debug);
-            callback("Publishing server events.", OutputLevel.Debug);
+            callback?.Invoke("Building endpoint URL.", OutputLevel.Debug);
+            string url = $"net.tcp://0.0.0.0:{port}/{defaultEndpoint}";
+            callback?.Invoke($"URL built {url}", OutputLevel.Debug);
+            callback?.Invoke("Creating server.", OutputLevel.Debug);
+            callback?.Invoke("Publishing server events.", OutputLevel.Debug);
             NetTcpBinding binding = _ConnectionFactory.BuildBinding();
             StringBuilder dataBuilder = new StringBuilder();
             dataBuilder.AppendLine("Binding configurations:");
@@ -137,8 +143,42 @@ namespace RemotePlusServer
             dataBuilder.AppendLine($"MaxBufferPoolSize: {binding.MaxBufferPoolSize}");
             dataBuilder.AppendLine($"MaxBufferSize: {binding.MaxBufferSize}");
             dataBuilder.AppendLine($"MaxReceivedMessageSize: {binding.MaxReceivedMessageSize}");
-            callback(dataBuilder.ToString(), OutputLevel.Debug);
-            temp = new RemotePlusService<I>(singleTon, binding, url, setupCallback);
+            callback?.Invoke(dataBuilder.ToString(), OutputLevel.Debug);
+            temp = new RemotePlusService<I>(contractType, singleTon, binding, url, setupCallback);
+            return temp;
+        }
+        public static RemotePlusService<I> CreateNotSingle(Type contractType, int port, string defaultEndpoint, Action<string, OutputLevel> callback)
+        {
+            RemotePlusService<I> temp;
+            callback?.Invoke("Building endpoint URL.", OutputLevel.Debug);
+            string url = $"net.tcp://0.0.0.0:{port}/{defaultEndpoint}";
+            callback?.Invoke($"URL built {url}", OutputLevel.Debug);
+            callback?.Invoke("Creating server.", OutputLevel.Debug);
+            callback?.Invoke("Publishing server events.", OutputLevel.Debug);
+            NetTcpBinding binding = _ConnectionFactory.BuildBinding();
+            StringBuilder dataBuilder = new StringBuilder();
+            dataBuilder.AppendLine("Binding configurations:");
+            dataBuilder.AppendLine();
+            dataBuilder.AppendLine($"MaxBufferPoolSize: {binding.MaxBufferPoolSize}");
+            dataBuilder.AppendLine($"MaxBufferSize: {binding.MaxBufferSize}");
+            dataBuilder.AppendLine($"MaxReceivedMessageSize: {binding.MaxReceivedMessageSize}");
+            callback?.Invoke(dataBuilder.ToString(), OutputLevel.Debug);
+            temp = new RemotePlusService<I>(contractType, binding, url);
+            return temp;
+        }
+        public static RemotePlusService<I> CreateNotSingle(Type contractType, int port, Binding binding, string defaultEndpoint, Action<string, OutputLevel> callback)
+        {
+            RemotePlusService<I> temp;
+            callback?.Invoke("Building endpoint URL.", OutputLevel.Debug);
+            string url = $"{binding.Scheme}://0.0.0.0:{port}/{defaultEndpoint}";
+            callback?.Invoke($"URL built {url}", OutputLevel.Debug);
+            callback?.Invoke("Creating server.", OutputLevel.Debug);
+            callback?.Invoke("Publishing server events.", OutputLevel.Debug);
+            StringBuilder dataBuilder = new StringBuilder();
+            dataBuilder.AppendLine("Binding configurations:");
+            dataBuilder.AppendLine();
+            callback?.Invoke(dataBuilder.ToString(), OutputLevel.Debug);
+            temp = new RemotePlusService<I>(contractType, binding, url);
             return temp;
         }
     }

@@ -94,7 +94,9 @@
     <Compile Include="FileBrowser.Designer.cs">
       <DependentUpon>FileBrowser.cs</DependentUpon>
     </Compile>
+    <Compile Include="FileOperationEventArgs.cs" />
     <Compile Include="FileSelectedEventArgs.cs" />
+    <Compile Include="FileTransfer.cs" />
     <Compile Include="FilterMode.cs" />
     <Compile Include="FindRemoteFileDialog.cs">
       <SubType>Form</SubType>

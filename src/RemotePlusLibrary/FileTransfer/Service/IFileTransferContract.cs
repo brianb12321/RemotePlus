@@ -10,5 +10,11 @@ namespace RemotePlusLibrary.FileTransfer.Service
     [ServiceContract]
     public interface IFileTransferContract
     {
+        [OperationContract]
+        RemoteFileInfo DownloadFile(DownloadRequest request);
+        [OperationContract]
+        void UploadFile(RemoteFileInfo request);
+        [OperationContract]
+        void DeleteFile(string remoteFile);
     }
 }

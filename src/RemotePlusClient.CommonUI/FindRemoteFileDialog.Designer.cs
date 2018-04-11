@@ -28,9 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
+            _base = "";
+            port = 9000;
             this.progressWorker = new System.ComponentModel.BackgroundWorker();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.fileBrowser1 = new RemotePlusClient.CommonUI.FileBrowser();
+            this.fileBrowser1 = new RemotePlusClient.CommonUI.FileBrowser(_base, port);
             this.btn_Cancel = new System.Windows.Forms.Button();
             this.btn_OK = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
