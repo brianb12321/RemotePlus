@@ -81,7 +81,7 @@ namespace RemotePlusLibrary
         [OperationContract()]
         [FaultContract(typeof(ServerFault))]
         void SwitchUser();
-        [OperationContract()]
+        [OperationContract(Name = "ServerDisconnect")]
         [FaultContract(typeof(ServerFault))]
         void Disconnect();
         [OperationContract()]

@@ -19,6 +19,7 @@ namespace RemotePlusClient
     public partial class RemoteFileBrowser : ThemedForm
     {
         private FileAssociationSettings associations;
+        FileTransfer ft = new FileTransfer(MainF.BaseAddress, MainF.Port);
 
         public int Counter
         {
@@ -180,6 +181,7 @@ namespace RemotePlusClient
                                     new ListViewItem.ListViewSubItem(item,
                                         dir.LastAccessTime.ToShortDateString())};
                 item.SubItems.AddRange(subItems);
+                item.Tag = dir;
                 fileBrowser1.FileList.Items.Add(item);
             }
             foreach (RemoteFile file in nodeDirInfo.Files)
@@ -190,12 +192,12 @@ namespace RemotePlusClient
                           { new ListViewItem.ListViewSubItem(item, "File"),
                                     new ListViewItem.ListViewSubItem(item,
                                         file.LastAccessed.ToShortDateString())};
+                item.Tag = file;
                 item.SubItems.AddRange(subItems);
                 fileBrowser1.FileList.Items.Add(item);
             }
 
             fileBrowser1.FileList.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
         }
-
     }
 }

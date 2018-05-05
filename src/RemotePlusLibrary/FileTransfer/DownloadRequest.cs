@@ -11,6 +11,6 @@ namespace RemotePlusLibrary.FileTransfer
     public class DownloadRequest
     {
         [MessageBodyMember]
-        public string DownloadFileName;
+        public string DownloadFileName { get; set; }
     }
 }

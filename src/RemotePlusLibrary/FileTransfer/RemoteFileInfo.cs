@@ -12,11 +12,13 @@ namespace RemotePlusLibrary.FileTransfer
     public sealed class RemoteFileInfo : IDisposable
     {
         [MessageHeader(MustUnderstand = true)]
-        public string FileName;
+        public string FileName { get; set; }
         [MessageHeader(MustUnderstand = true)]
-        public long Length;
+        public string RemoteFilePath { get; set; }
+        [MessageHeader(MustUnderstand = true)]
+        public long Length { get; set; }
         [MessageBodyMember(Order = 1)]
-        public Stream FileByteStream;
+        public Stream FileByteStream { get; set; }
 
         public void Dispose()
         {

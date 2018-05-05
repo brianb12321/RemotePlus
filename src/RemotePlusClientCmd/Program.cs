@@ -23,6 +23,8 @@ namespace RemotePlusClientCmd
         public static ServiceClient Remote = null;
         public static CMDLogging Logger = null;
         public static PromptBuilder prompt = new PromptBuilder();
+        public static string BaseURL;
+        public static int Port;
         public static bool WaitFlag = true;
         [STAThread]
         static void Main(string[] args)
@@ -98,7 +100,10 @@ namespace RemotePlusClientCmd
         }
         static void Connect(string url, RegisterationObject ro)
         {
-            Remote = new ServiceClient(new ClientCallback(), _ConnectionFactory.BuildBinding(), new EndpointAddress(url));
+            var ea = new EndpointAddress(url);
+            BaseURL = ea.Uri.Host;
+            Port = ea.Uri.Port;
+            Remote = new ServiceClient(new ClientCallback(), _ConnectionFactory.BuildBinding(), ea);
             Remote.Register(ro);
         }
         static void AcceptInput()

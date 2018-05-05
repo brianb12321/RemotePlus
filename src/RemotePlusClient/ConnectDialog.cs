@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -15,7 +16,7 @@ namespace RemotePlusClient
     public partial class ConnectDialog : Form
     {
         ConnectAdvancedDialogBox cadb = new ConnectAdvancedDialogBox();
-        public string Address { get; private set; }
+        public EndpointAddress Address { get; private set; }
         public RegisterationObject RegObject { get; private set; }
         public ConnectDialog()
         {
@@ -26,7 +27,7 @@ namespace RemotePlusClient
         private void button1_Click(object sender, EventArgs e)
         {
             DialogResult = DialogResult.OK;
-            Address = textBox1.Text;
+            Address = new EndpointAddress(textBox1.Text);
             Close();
         }
 
@@ -55,7 +56,7 @@ namespace RemotePlusClient
             {
                 if(configDialog.ShowDialog() == DialogResult.OK)
                 {
-                    Address = configDialog.SelectedConnection.ServerAddress;
+                    Address = new EndpointAddress(configDialog.SelectedConnection.ServerAddress);
                     RegObject = configDialog.SelectedConnection.RegisterationDetails;
                     DialogResult = DialogResult.OK;
                     Close();

@@ -23,5 +23,15 @@ namespace RemotePlusLibrary.Core
             binding.MaxConnections = 1;
             return binding;
         }
+        public static NetHttpBinding BuildHttpBinding()
+        {
+            NetHttpBinding binding = new NetHttpBinding();
+            binding.MaxBufferPoolSize = long.MaxValue;
+            binding.MaxBufferSize = int.MaxValue;
+            binding.MaxReceivedMessageSize = int.MaxValue;
+            binding.ReceiveTimeout = TimeSpan.MaxValue;
+            binding.SendTimeout = TimeSpan.MaxValue;
+            return binding;
+        }
     }
 }

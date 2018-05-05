@@ -15,6 +15,8 @@ using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
 using RemotePlusServer.ExtensionSystem;
 using RemotePlusLibrary.Scripting;
 using RemotePlusServer.Proxies;
+using RemotePlusLibrary.FileTransfer.Service;
+using System.ServiceModel.Description;
 
 namespace RemotePlusServer
 {
@@ -48,6 +50,7 @@ namespace RemotePlusServer
         /// </summary>
         private static Stopwatch sw;
         public static ScriptBuilder ScriptBuilder { get; } = new ScriptBuilder();
+        public static RemotePlusService<FileTransferService> FileTransferService { get; private set; }
         [STAThread]
         static void Main(string[] args)
         {
@@ -87,9 +90,14 @@ namespace RemotePlusServer
             }
             catch(Exception ex)
             {
+                if(Debugger.IsAttached)
+                {
+                    throw;
+                }
 #if !COGNITO
                 Logger.AddOutput("Internal server error: " + ex.Message, OutputLevel.Error);
                 Console.Write("Press any key to exit.");
+                Console.ReadKey();
                 SaveLog();
 #else
                 MessageBox.Show("Internal server error: " + ex.Message);
@@ -142,8 +150,10 @@ namespace RemotePlusServer
 
         private static void CreateServer()
         {
-            DefaultService = RemotePlusService<RemoteImpl>.Create(new RemoteImpl(), DefaultSettings.PortNumber, (m, o) => Logger.AddOutput(m, o), null);
+            DefaultService = RemotePlusService<RemoteImpl>.Create(typeof(IRemote), new RemoteImpl(), DefaultSettings.PortNumber,"Remote", (m, o) => Logger.AddOutput(m, o), null);
+            SetupFileTransferService();
             LoadExtensionLibraries();
+            OpenMex();
             DefaultService.Remote.Setup();
             Logger.AddOutput("Attaching server events.", OutputLevel.Debug);
             DefaultService.HostClosed += Host_Closed;
@@ -152,6 +162,39 @@ namespace RemotePlusServer
             DefaultService.HostOpened += Host_Opened;
             DefaultService.HostOpening += Host_Opening;
             DefaultService.HostUnknownMessageReceived += Host_UnknownMessageReceived;
+        }
+
+        private static void OpenMex()
+        {
+            if(DefaultSettings.EnableMetadataExchange)
+            {
+                Logger.AddOutput(new LogItem(OutputLevel.Info, "NOTE: Metadata exchange is enabled on the server.", "Server Host" ) { Color = ConsoleColor.Cyan });
+                System.ServiceModel.Channels.Binding mexBinding = MetadataExchangeBindings.CreateMexHttpBinding();
+                ServiceMetadataBehavior smb = new ServiceMetadataBehavior();
+                smb.HttpGetEnabled = true;
+                smb.HttpGetUrl = new Uri("http://0.0.0.0:9001/Mex");
+                ServiceMetadataBehavior smb2 = new ServiceMetadataBehavior();
+                smb.HttpGetEnabled = true;
+                smb.HttpGetUrl = new Uri("http://0.0.0.0:9001/Mex2");
+                DefaultService.Host.Description.Behaviors.Add(smb);
+                FileTransferService.Host.Description.Behaviors.Add(smb2);
+                DefaultService.Host.AddServiceEndpoint(typeof(IMetadataExchange), mexBinding, "http://0.0.0.0:9001/Mex");
+                FileTransferService.Host.AddServiceEndpoint(typeof(IMetadataExchange), mexBinding, "http://0.0.0.0:9001/Mex2");
+            }
+        }
+
+        private static void SetupFileTransferService()
+        {
+            Logger.AddOutput("Adding file transfer service.", OutputLevel.Info);
+            var binding = _ConnectionFactory.BuildBinding();
+            binding.TransferMode = TransferMode.Streamed;
+            FileTransferService = RemotePlusService<FileTransferService>.CreateNotSingle(typeof(IFileTransferContract), DefaultSettings.PortNumber, binding, "FileTransfer", null);
+            FileTransferService.HostClosed += Host_Closed;
+            FileTransferService.HostClosing += Host_Closing;
+            FileTransferService.HostFaulted += Host_Faulted;
+            FileTransferService.HostOpened += Host_Opened;
+            FileTransferService.HostOpening += Host_Opening;
+            FileTransferService.HostUnknownMessageReceived += Host_UnknownMessageReceived;
         }
 
         private static void SaveLog()
@@ -298,6 +341,7 @@ namespace RemotePlusServer
         public static void RunInServerMode()
         {
             DefaultService.Start();
+            FileTransferService.Start();
         }
 
         private static void Host_UnknownMessageReceived(object sender, UnknownMessageReceivedEventArgs e)
@@ -441,6 +485,7 @@ namespace RemotePlusServer
         {
             SaveLog();
             DefaultService.Close();
+            FileTransferService.Close();
             Environment.Exit(0);
         }
     }
