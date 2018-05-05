@@ -39,7 +39,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerMath", "src\ReleaseEx
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Recon", "src\Recon\Recon.csproj", "{0E62814F-F665-44D3-B97E-62DC75809741}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemotePlusLibrary.Scripting", "RemotePlusLibrary.Scripting\RemotePlusLibrary.Scripting.csproj", "{5C399F78-C133-4F9B-9758-C36A4B7FAE98}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemotePlusLibrary.Scripting", "src\RemotePlusLibrary.Scripting\RemotePlusLibrary.Scripting.csproj", "{5C399F78-C133-4F9B-9758-C36A4B7FAE98}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
