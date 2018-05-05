@@ -865,5 +865,10 @@ namespace RemotePlusServer
             var list = ServerManager.ScriptBuilder.GetGlobals();
             return list.Select(l => l.Information).ToArray();
         }
+
+        public string ReadFileAsString(string fileName)
+        {
+            return File.ReadAllText(fileName);
+        }
     }
 }

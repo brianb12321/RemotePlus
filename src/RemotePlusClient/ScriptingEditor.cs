@@ -1,4 +1,5 @@
 ﻿using ICSharpCode.TextEditor.Document;
+using RemotePlusClient.CommonUI;
 using RemotePlusLibrary.Extension.Gui;
 using System;
 using System.Collections.Generic;
@@ -78,6 +79,15 @@ namespace RemotePlusClient
         private void openScriptObjectToolStripButton_Click(object sender, EventArgs e)
         {
             ClientApp.MainWindow.AddTabToSideControl("Script Object Viewer", new ScriptObjectViewer(MainF.Remote.GetScriptGlobals()));
+        }
+
+        private void toolStripButton1_Click(object sender, EventArgs e)
+        {
+            FindRemoteFileDialog dialog = new FindRemoteFileDialog(FilterMode.File, MainF.Remote, MainF.BaseAddress, MainF.Port);
+            if(dialog.ShowDialog() == DialogResult.OK)
+            {
+                editor.Text = MainF.Remote.ReadFileAsString(dialog.FilePath);
+            }
         }
     }
 }

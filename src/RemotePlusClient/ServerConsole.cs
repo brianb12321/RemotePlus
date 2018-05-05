@@ -88,7 +88,7 @@ namespace RemotePlusClient
         {
             try
             {
-                MainF.Remote.ExecuteScript(File.ReadAllText(scriptFile));
+                Task.Run(() => MainF.Remote.ExecuteScript(File.ReadAllText(scriptFile)));
             }
             catch (FileNotFoundException)
             {
@@ -99,7 +99,7 @@ namespace RemotePlusClient
         {
             try
             {
-                MainF.Remote.ExecuteScript(File.ReadAllText(f));
+                Task.Run(() => MainF.Remote.ExecuteScript(File.ReadAllText(f)));
             }
             catch (FileNotFoundException)
             {
@@ -113,8 +113,11 @@ namespace RemotePlusClient
             {
                 string command = textBox1.Text;
                 textBox1.Clear();
-                var result = MainF.Remote.RunServerCommand(command, CommandExecutionMode.Client);
-                PostResult(result);
+                textBox1.Enabled = false;
+                var result = Task.Run(() => MainF.Remote.RunServerCommand(command, CommandExecutionMode.Client));
+                result.Wait();
+                textBox1.Enabled = true;
+                PostResult(result.Result);
             }
         }
 

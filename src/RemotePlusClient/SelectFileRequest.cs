@@ -19,7 +19,8 @@ namespace RemotePlusClient
 
         public RawDataRequest RequestData(RequestBuilder builder)
         {
-            FindRemoteFileDialog fd = new FindRemoteFileDialog(MainF.Remote, MainF.BaseAddress, MainF.Port);
+            FindRemoteFileDialog fd = new FindRemoteFileDialog(FilterMode.File, MainF.Remote, MainF.BaseAddress, MainF.Port);
+            
             if (fd.ShowDialog() == DialogResult.OK)
             {
                 return RawDataRequest.Success(fd.FilePath);

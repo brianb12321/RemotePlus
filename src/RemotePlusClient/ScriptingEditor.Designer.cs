@@ -32,11 +32,12 @@
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.run = new System.Windows.Forms.ToolStripButton();
             this.openFileToolStripButton = new System.Windows.Forms.ToolStripButton();
+            this.openScriptObjectToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
             this.consoleModeToolStripComboBox = new System.Windows.Forms.ToolStripComboBox();
             this.autocompleteMenu1 = new AutocompleteMenuNS.AutocompleteMenu();
             this.editor = new ICSharpCode.TextEditor.TextEditorControl();
-            this.openScriptObjectToolStripButton = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -45,6 +46,7 @@
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.run,
             this.openFileToolStripButton,
+            this.toolStripButton1,
             this.openScriptObjectToolStripButton,
             this.toolStripLabel1,
             this.consoleModeToolStripComboBox});
@@ -73,6 +75,16 @@
             this.openFileToolStripButton.Size = new System.Drawing.Size(23, 22);
             this.openFileToolStripButton.Text = "Open File";
             this.openFileToolStripButton.Click += new System.EventHandler(this.openFileToolStripButton_Click);
+            // 
+            // openScriptObjectToolStripButton
+            // 
+            this.openScriptObjectToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.openScriptObjectToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("openScriptObjectToolStripButton.Image")));
+            this.openScriptObjectToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.openScriptObjectToolStripButton.Name = "openScriptObjectToolStripButton";
+            this.openScriptObjectToolStripButton.Size = new System.Drawing.Size(23, 22);
+            this.openScriptObjectToolStripButton.Text = "Open Script Object Viewer";
+            this.openScriptObjectToolStripButton.Click += new System.EventHandler(this.openScriptObjectToolStripButton_Click);
             // 
             // toolStripLabel1
             // 
@@ -105,15 +117,15 @@
             this.editor.Size = new System.Drawing.Size(443, 296);
             this.editor.TabIndex = 2;
             // 
-            // openScriptObjectToolStripButton
+            // toolStripButton1
             // 
-            this.openScriptObjectToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.openScriptObjectToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("openScriptObjectToolStripButton.Image")));
-            this.openScriptObjectToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.openScriptObjectToolStripButton.Name = "openScriptObjectToolStripButton";
-            this.openScriptObjectToolStripButton.Size = new System.Drawing.Size(23, 22);
-            this.openScriptObjectToolStripButton.Text = "Open Script Object Viewer";
-            this.openScriptObjectToolStripButton.Click += new System.EventHandler(this.openScriptObjectToolStripButton_Click);
+            this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
+            this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton1.Name = "toolStripButton1";
+            this.toolStripButton1.Size = new System.Drawing.Size(23, 22);
+            this.toolStripButton1.Text = "Open Remote Script File";
+            this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
             // 
             // ScriptingEditor
             // 
@@ -142,5 +154,6 @@
         private System.Windows.Forms.ToolStripComboBox consoleModeToolStripComboBox;
         private System.Windows.Forms.ToolStripButton openFileToolStripButton;
         private System.Windows.Forms.ToolStripButton openScriptObjectToolStripButton;
+        private System.Windows.Forms.ToolStripButton toolStripButton1;
     }
 }

@@ -53,7 +53,7 @@
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\RemotePlusLibrary.Scripting\RemotePlusLibrary.Scripting.csproj">
+    <ProjectReference Include="..\..\RemotePlusLibrary.Scripting\RemotePlusLibrary.Scripting.csproj">
       <Project>{5C399F78-C133-4F9B-9758-C36A4B7FAE98}</Project>
       <Name>RemotePlusLibrary.Scripting</Name>
     </ProjectReference>

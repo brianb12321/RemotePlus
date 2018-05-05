@@ -101,6 +101,9 @@ namespace RemotePlusLibrary
         [ServiceKnownType(typeof(RemoteDrive))]
         [ServiceKnownType(typeof(RemoteDirectory))]
         IDirectory GetRemoteFiles(string path, bool useRequest);
+        [OperationContract]
+        [FaultContract(typeof(ServerFault))]
+        string ReadFileAsString(string fileName);
         [FaultContract(typeof(ServerFault))]
         [OperationContract]
         EmailSettings GetServerEmailSettings();

@@ -43,11 +43,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CmdTextBox.cs" />
+    <Compile Include="FileRequest.cs" />
     <Compile Include="IURIWrapper.cs" />
     <Compile Include="SMenuBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\RemotePlusClient.CommonUI\RemotePlusClient.CommonUI.csproj">
+      <Project>{9ef00d4b-27f4-4c2a-bda7-fc47246b2064}</Project>
+      <Name>RemotePlusClient.CommonUI</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\RemotePlusLibrary\RemotePlusLibrary.csproj">
       <Project>{00c22a1f-d3df-4193-aaa8-9907d08e2511}</Project>
       <Name>RemotePlusLibrary</Name>

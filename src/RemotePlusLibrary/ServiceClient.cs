@@ -255,5 +255,10 @@ namespace RemotePlusLibrary
         {
             return Channel.GetScriptGlobals();
         }
+
+        public string ReadFileAsString(string fileName)
+        {
+            return Channel.ReadFileAsString(fileName);
+        }
     }
 }

@@ -18,6 +18,7 @@ namespace RemotePlusClient.CommonUI
     public partial class FindRemoteFileDialog : Form
     {
         public string FilePath { get; private set; }
+        public FilterMode Filter { get; private set; }
         string _base = "";
         int port = 0;
         public int Counter
@@ -33,12 +34,14 @@ namespace RemotePlusClient.CommonUI
         }
         public FileAssociationSettings associations = null;
         IRemote remote = null;
-        public FindRemoteFileDialog(IRemote r, string baseURL, int p)
+        public FindRemoteFileDialog(FilterMode f, IRemote r, string baseURL, int p)
         {
+            InitializeComponent();
+            Filter = f;
+            fileBrowser1.Filter = f;
             remote = r;
             port = p;
             _base = baseURL;
-            InitializeComponent();
         }
 
         private void fileBrowser1_FileSelected(object sender, FileSelectedEventArgs e)
@@ -153,10 +156,6 @@ namespace RemotePlusClient.CommonUI
             if (e.Node.GetNodeCount(true) == 0 && !(e.Node.Tag is RemoteDrive))
             {
                 PopulateTree(e.Node);
-            }
-            else
-            {
-                return;
             }
             // Makes sure that we don't update the image key of a drive to a folder, and grabs the right data from the server.
             if (e.Node.Tag is RemoteDrive)

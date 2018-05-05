@@ -20,7 +20,7 @@ namespace RemotePlusClientCmd.Requests
 
         public RawDataRequest RequestData(RequestBuilder builder)
         {
-            fd = new FindRemoteFileDialog(ClientCmdManager.Remote, ClientCmdManager.BaseURL, ClientCmdManager.Port);
+            fd = new FindRemoteFileDialog(FilterMode.File, ClientCmdManager.Remote, ClientCmdManager.BaseURL, ClientCmdManager.Port);
             if (fd.ShowDialog() == DialogResult.OK)
             {
                 return RawDataRequest.Success(fd.FilePath);
