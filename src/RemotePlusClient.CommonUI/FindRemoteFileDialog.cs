@@ -19,8 +19,6 @@ namespace RemotePlusClient.CommonUI
     {
         public string FilePath { get; private set; }
         public FilterMode Filter { get; private set; }
-        string _base = "";
-        int port = 0;
         public int Counter
         {
             get

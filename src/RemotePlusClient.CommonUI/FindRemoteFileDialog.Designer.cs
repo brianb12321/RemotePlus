@@ -2,6 +2,8 @@
 {
     partial class FindRemoteFileDialog
     {
+        string _base = "";
+        int port = 0;
         /// <summary>
         /// Required designer variable.
         /// </summary>
@@ -28,8 +30,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            _base = "";
-            port = 9000;
             this.progressWorker = new System.ComponentModel.BackgroundWorker();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.fileBrowser1 = new RemotePlusClient.CommonUI.FileBrowser(_base, port);
