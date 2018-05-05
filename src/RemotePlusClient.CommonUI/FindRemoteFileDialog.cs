@@ -36,12 +36,12 @@ namespace RemotePlusClient.CommonUI
         IRemote remote = null;
         public FindRemoteFileDialog(FilterMode f, IRemote r, string baseURL, int p)
         {
-            InitializeComponent();
-            Filter = f;
-            fileBrowser1.Filter = f;
             remote = r;
             port = p;
             _base = baseURL;
+            InitializeComponent();
+            Filter = f;
+            fileBrowser1.Filter = f;
         }
 
         private void fileBrowser1_FileSelected(object sender, FileSelectedEventArgs e)
