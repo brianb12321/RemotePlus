@@ -16,6 +16,7 @@ using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusLibrary.Core.EmailService;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
 using RemotePlusLibrary.Scripting;
+using RemotePlusLibrary.AccountSystem;
 
 namespace RemotePlusLibrary
 {

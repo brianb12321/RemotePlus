@@ -16,6 +16,7 @@ using System.Speech.Synthesis;
 using System.Windows.Forms;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
+using RemotePlusLibrary.AccountSystem;
 
 namespace RemotePlusLibrary
 {

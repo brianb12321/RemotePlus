@@ -61,7 +61,6 @@
     <ProjectReference Include="..\..\RemotePlusServer\RemotePlusServer.csproj">
       <Project>{4e41f31e-dce5-4b9c-a2d6-20bf6acd9c84}</Project>
       <Name>RemotePlusServer</Name>
-      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

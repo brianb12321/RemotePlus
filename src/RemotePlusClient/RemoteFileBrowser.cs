@@ -165,10 +165,6 @@ namespace RemotePlusClient
             {
                 nodeDirInfo = (RemoteDirectory)e.Node.Tag;
             }
-            if (e.Node.GetNodeCount(true) == 0 && !(e.Node.Tag is DriveInfo))
-            {
-                PopulateTree(e.Node);
-            }
             fileBrowser1.CurrentPath = nodeDirInfo.FullName;
             fileBrowser1.FileList.Items.Clear();
             ListViewItem.ListViewSubItem[] subItems;

@@ -1,11 +1,11 @@
-﻿using ICSharpCode.TextEditor.Document;
-using RemotePlusClient.CommonUI;
+﻿using RemotePlusClient.CommonUI;
 using RemotePlusLibrary.Extension.Gui;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,26 +23,21 @@ namespace RemotePlusClient
 
         private void ScriptingEditor_Load(object sender, EventArgs e)
         {
-            FileSyntaxModeProvider fm = new FileSyntaxModeProvider(Application.StartupPath);
-            HighlightingManager.Manager.AddSyntaxModeFileProvider(fm);
-            editor.SetHighlighting("Python");
-            editor.LineViewerStyle = LineViewerStyle.FullRow;
+            
             //editor.ShowInvalidLines = true;
-            editor.TextEditorProperties.EnableFolding = true;
-            editor.TextEditorProperties.AutoInsertCurlyBracket = true;
             if (MainF.ServerConsoleObj == null)
             {
-                ClientApp.MainWindow.OpenConsole(ExtensionSystem.FormPosition.Bottum, false);
+                ClientApp.MainWindow.OpenConsole(ExtensionSystem.FormPosition.Bottum, true);
             }
-            //autocompleteMenu1.AutoPopup = true;
-            //autocompleteMenu1.ImageList = new ImageList();
-            //autocompleteMenu1.ImageList.Images.Add(ScriptIcons.function_kCl_icon);
-            //autocompleteMenu1.ImageList.Images.Add(ScriptIcons.table_JoW_icon);
-            //var items = MainF.Remote.GetScriptGlobals();
-            //foreach(var item in items)
-            //{
-            //    autocompleteMenu1.AddItem(new ScriptAutoCompleteItem(item));
-            //}
+            autocompleteMenu1.AutoPopup = true;
+            autocompleteMenu1.ImageList = new ImageList();
+            autocompleteMenu1.ImageList.Images.Add(ScriptIcons.function_kCl_icon);
+            autocompleteMenu1.ImageList.Images.Add(ScriptIcons.table_JoW_icon);
+            var items = MainF.Remote.GetScriptGlobals();
+            foreach (var item in items)
+            {
+                autocompleteMenu1.AddItem(new ScriptAutoCompleteItem(item));
+            }
         }
 
         private void ScriptingEditor_FormClosing(object sender, FormClosingEventArgs e)
@@ -71,7 +66,7 @@ namespace RemotePlusClient
                 ofd.Title = "Open a server-side script file.";
                 if(ofd.ShowDialog() == DialogResult.OK)
                 {
-                    editor.LoadFile(ofd.FileName);
+                    editor.Text = File.ReadAllText(ofd.FileName);
                 }
             }
         }

@@ -28,17 +28,19 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ScriptingEditor));
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.run = new System.Windows.Forms.ToolStripButton();
             this.openFileToolStripButton = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.openScriptObjectToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
             this.consoleModeToolStripComboBox = new System.Windows.Forms.ToolStripComboBox();
             this.autocompleteMenu1 = new AutocompleteMenuNS.AutocompleteMenu();
-            this.editor = new ICSharpCode.TextEditor.TextEditorControl();
-            this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
+            this.editor = new FastColoredTextBoxNS.FastColoredTextBox();
             this.toolStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.editor)).BeginInit();
             this.SuspendLayout();
             // 
             // toolStrip1
@@ -76,6 +78,16 @@
             this.openFileToolStripButton.Text = "Open File";
             this.openFileToolStripButton.Click += new System.EventHandler(this.openFileToolStripButton_Click);
             // 
+            // toolStripButton1
+            // 
+            this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
+            this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton1.Name = "toolStripButton1";
+            this.toolStripButton1.Size = new System.Drawing.Size(23, 22);
+            this.toolStripButton1.Text = "Open Remote Script File";
+            this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
+            // 
             // openScriptObjectToolStripButton
             // 
             this.openScriptObjectToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -110,22 +122,37 @@
             // 
             // editor
             // 
+            this.editor.AutoCompleteBrackets = true;
+            this.editor.AutoCompleteBracketsList = new char[] {
+        '(',
+        ')',
+        '{',
+        '}',
+        '[',
+        ']',
+        '\"',
+        '\"',
+        '\'',
+        '\''};
+            this.autocompleteMenu1.SetAutocompleteMenu(this.editor, this.autocompleteMenu1);
+            this.editor.AutoScrollMinSize = new System.Drawing.Size(27, 14);
+            this.editor.BackBrush = null;
+            this.editor.CharHeight = 14;
+            this.editor.CharWidth = 8;
+            this.editor.CurrentLineColor = System.Drawing.Color.NavajoWhite;
+            this.editor.Cursor = System.Windows.Forms.Cursors.IBeam;
+            this.editor.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
             this.editor.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.editor.IsReadOnly = false;
+            this.editor.Font = new System.Drawing.Font("Courier New", 9.75F);
+            this.editor.IsReplaceMode = false;
             this.editor.Location = new System.Drawing.Point(0, 25);
             this.editor.Name = "editor";
+            this.editor.Paddings = new System.Windows.Forms.Padding(0);
+            this.editor.SelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.editor.ServiceColors = ((FastColoredTextBoxNS.ServiceColors)(resources.GetObject("editor.ServiceColors")));
             this.editor.Size = new System.Drawing.Size(443, 296);
             this.editor.TabIndex = 2;
-            // 
-            // toolStripButton1
-            // 
-            this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
-            this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton1.Name = "toolStripButton1";
-            this.toolStripButton1.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButton1.Text = "Open Remote Script File";
-            this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
+            this.editor.Zoom = 100;
             // 
             // ScriptingEditor
             // 
@@ -140,6 +167,7 @@
             this.Load += new System.EventHandler(this.ScriptingEditor_Load);
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.editor)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -149,11 +177,11 @@
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripButton run;
         private AutocompleteMenuNS.AutocompleteMenu autocompleteMenu1;
-        private ICSharpCode.TextEditor.TextEditorControl editor;
         private System.Windows.Forms.ToolStripLabel toolStripLabel1;
         private System.Windows.Forms.ToolStripComboBox consoleModeToolStripComboBox;
         private System.Windows.Forms.ToolStripButton openFileToolStripButton;
         private System.Windows.Forms.ToolStripButton openScriptObjectToolStripButton;
         private System.Windows.Forms.ToolStripButton toolStripButton1;
+        private FastColoredTextBoxNS.FastColoredTextBox editor;
     }
 }

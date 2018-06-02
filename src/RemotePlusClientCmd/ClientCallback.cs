@@ -8,12 +8,15 @@ using RemotePlusLibrary.Extension.CommandSystem;
 using System.Speech.Synthesis;
 using System.Media;
 using System.Diagnostics;
+using RemotePlusLibrary.AccountSystem;
+using System.Threading;
 
 namespace RemotePlusClientCmd
 {
-    [CallbackBehavior(ConcurrencyMode = ConcurrencyMode.Reentrant,
+    [CallbackBehavior(ConcurrencyMode = ConcurrencyMode.Multiple,
         IncludeExceptionDetailInFaults = true,
         UseSynchronizationContext = false)]
+    [RemotePlusLibrary.Core.STAOperationBehavior]
     class ClientCallback : IRemoteClient
     {
         public void Beep(int Hertz, int Duration)
@@ -84,7 +87,12 @@ namespace RemotePlusClientCmd
 
         public ReturnData RequestInformation(RequestBuilder builder)
         {
-            return RequestStore.Show(builder);
+            ReturnData data = null;
+            Thread t = new Thread((p) => data = RequestStore.Show((RequestBuilder)p));
+            t.SetApartmentState(ApartmentState.STA);
+            t.Start(builder);
+            t.Join();
+            return data;
         }
 
         public void RunProgram(string Program, string Argument)

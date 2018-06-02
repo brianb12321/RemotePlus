@@ -6,7 +6,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RemotePlusLibrary
+namespace RemotePlusLibrary.AccountSystem
 {
     [Serializable]
     [DataContract]
@@ -26,10 +26,17 @@ namespace RemotePlusLibrary
             Credentials = _cred;
             Role = _role;
         }
+        public void JoinRole(string roleName)
+        {
+            var r = Role.GetRole(roleName);
+            r.Members.Add(this);
+            this.Role = r;
+        }
         public UserAccount()
         {
-            Credentials = new UserCredentials("NewUser", "");
-            Role = new Role("newRole", new SecurityAccessRules());
+            Role = Role.Empty;
+            Credentials = new UserCredentials("admin", "password");
+            this.JoinRole("Administrators");
         }
         public bool Verify(UserCredentials TestCred)
         {

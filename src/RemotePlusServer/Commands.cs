@@ -590,5 +590,18 @@ namespace RemotePlusServer
                 return new CommandResponse((int)CommandStatus.Fail);
             }
         }
+        [CommandHelp("Clears all variables and functions from the interactive scripts.")]
+        public static CommandResponse resetStaticScript(CommandRequest reqest, CommandPipeline pipe)
+        {
+            ScriptBuilder.ClearStaticScope();
+            return new CommandResponse((int)CommandStatus.Success);
+        }
+        //Test command only
+        [CommandBehavior(IndexCommandInHelp = false)]
+        public static CommandResponse requestFile(CommandRequest req, CommandPipeline pipe)
+        {
+            ServerManager.DefaultService.Remote.Client.ClientCallback.RequestInformation(RequestBuilder.RequestFile());
+            return new CommandResponse((int)CommandStatus.Success);
+        }
     }
 }

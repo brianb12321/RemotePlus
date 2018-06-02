@@ -51,6 +51,8 @@
     <Compile Include="LoggingSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServerFault.cs" />
+    <Compile Include="STAOperationBehaviorAttribute.cs" />
+    <Compile Include="STAOperationInvoker.cs" />
     <Compile Include="_ConnectionFactory.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

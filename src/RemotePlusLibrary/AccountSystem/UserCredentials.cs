@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace RemotePlusLibrary
+namespace RemotePlusLibrary.AccountSystem
 {
     [Serializable]
     [DataContract]

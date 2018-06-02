@@ -30,7 +30,10 @@ namespace RemotePlusLibrary.Scripting
             FillMembersRecurs(newGlobal);
             globals.Add(objectName, newGlobal);
         }
-
+        public void ImportModule(string module)
+        {
+            ScriptingEngine.ImportModule(module);
+        }
         private void FillMembersRecurs(ScriptGlobal newGlobal)
         {
             FillData(newGlobal.Global.GetType(), newGlobal.Information);
@@ -77,12 +80,31 @@ namespace RemotePlusLibrary.Scripting
         public void InitializeEngine()
         {
             ScriptingEngine = Python.CreateEngine();
+            var paths = ScriptingEngine.GetSearchPaths();
+            paths.Add($"{Environment.CurrentDirectory}\\extensions");
+            ScriptingEngine.SetSearchPaths(paths);
             InitializeGlobals();
         }
         public bool ExecuteString(string script)
         {
             var source = ScriptingEngine.CreateScriptSourceFromString(script);
-            return source.Execute();
+            source.Execute();
+            return true;
+        }
+        ScriptScope staticScope = null;
+        public bool ExecuteStringUsingSameScriptScope(string script)
+        {
+            var source = ScriptingEngine.CreateScriptSourceFromString(script);
+            if (staticScope ==  null)
+            {
+                staticScope = ScriptingEngine.CreateScope();
+            }
+            source.Execute(staticScope);
+            return true;
+        }
+        public void ClearStaticScope()
+        {
+            staticScope = null;
         }
     }
 }

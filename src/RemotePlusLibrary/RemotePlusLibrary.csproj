@@ -54,6 +54,12 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AccountSystem\DefaultPolicy.cs" />
+    <Compile Include="AccountSystem\Policies\OperationPolicies.cs" />
+    <Compile Include="AccountSystem\RoleException.cs" />
+    <Compile Include="AccountSystem\RolePool.cs" />
+    <Compile Include="AccountSystem\SecurityPolicy.cs" />
+    <Compile Include="AccountSystem\SecurityPolicyFolder.cs" />
     <Compile Include="AcquisitionMode.cs" />
     <Compile Include="AutehnticationSeverity.cs" />
     <Compile Include="AuthenticationRequest.cs" />
@@ -82,8 +88,7 @@
     <Compile Include="RequestException.cs" />
     <Compile Include="RequestState.cs" />
     <Compile Include="ReturnData.cs" />
-    <Compile Include="Role.cs" />
-    <Compile Include="SecurityAccessRules.cs" />
+    <Compile Include="AccountSystem\Role.cs" />
     <Compile Include="ServerSettings.cs" />
     <Compile Include="ExtensionRulesStringCollectionEditorForm.cs">
       <SubType>Form</SubType>
@@ -93,11 +98,11 @@
     </Compile>
     <Compile Include="ServiceClient.cs" />
     <Compile Include="SignalMessage.cs" />
-    <Compile Include="UserAccount.cs" />
+    <Compile Include="AccountSystem\UserAccount.cs" />
     <Compile Include="Converters\UserAccountCollectionDescriptor.cs" />
     <Compile Include="Editors\UserAccountEditor.cs" />
-    <Compile Include="UserCollection.cs" />
-    <Compile Include="UserCredentials.cs" />
+    <Compile Include="AccountSystem\UserCollection.cs" />
+    <Compile Include="AccountSystem\UserCredentials.cs" />
     <Compile Include="VariableManager.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -14,6 +14,7 @@ using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
 using RemotePlusLibrary.Extension;
 using System.Text.RegularExpressions;
+using RemotePlusLibrary.AccountSystem;
 
 namespace RemotePlusClientCmd
 {
@@ -51,7 +52,6 @@ namespace RemotePlusClientCmd
             InitCommands();
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            
             Logger = new CMDLogging()
             {
                 DefaultFrom = "CLient CMD",

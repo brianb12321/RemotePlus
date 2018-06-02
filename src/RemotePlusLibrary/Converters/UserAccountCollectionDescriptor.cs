@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Runtime.Serialization;
+using RemotePlusLibrary.AccountSystem;
 
 namespace RemotePlusLibrary.Converters
 {

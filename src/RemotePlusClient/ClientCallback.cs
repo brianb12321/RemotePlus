@@ -10,10 +10,12 @@ using RemotePlusLibrary.Extension.CommandSystem;
 using System.Media;
 using System.Diagnostics;
 using System.Speech.Synthesis;
+using RemotePlusLibrary.AccountSystem;
+using System.Threading;
 
 namespace RemotePlusClient
 {
-    [CallbackBehavior(ConcurrencyMode = ConcurrencyMode.Reentrant,
+    [CallbackBehavior(ConcurrencyMode = ConcurrencyMode.Multiple,
         IncludeExceptionDetailInFaults = true,
         UseSynchronizationContext = false)]
     public class ClientCallback : IRemoteClient
@@ -186,7 +188,12 @@ namespace RemotePlusClient
 
         public ReturnData RequestInformation(RequestBuilder builder)
         {
-            return RequestStore.Show(builder);
+            ReturnData data = null;
+            Thread t = new Thread((p) => data = RequestStore.Show((RequestBuilder)p));
+            t.SetApartmentState(ApartmentState.STA);
+            t.Start(builder);
+            t.Join();
+            return data;
         }
 
         public void RegistirationComplete()

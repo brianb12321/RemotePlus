@@ -1,0 +1,26 @@
+﻿
+Displays a message box to the user.
+
+Format: <button> <icon> caption: <caption> message: <message>
+
+button: Configures which button to use for the nessage.
+	Options:
+		b_OK
+		| b_YES_NO
+		| b_OK_CANCEL
+		| b_ABORT_RETRY_IGNORE
+		| b_RETRY_CANCEL
+		| b_YES_NO
+		| b_YES_NO_CANCEL
+icon: Configures which icon to use.
+	Options:
+		i_WARNING
+		| i_STOP
+		| i_ERROR
+		| i_HAND
+		| i_INFORMATION
+		| i_QUESTION
+		| i_EXCLAMATION
+		| i_ASTERISK
+caption: The title of the message box.
+message: The body of the message box.

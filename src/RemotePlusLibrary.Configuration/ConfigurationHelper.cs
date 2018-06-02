@@ -19,7 +19,8 @@ namespace RemotePlusLibrary.Configuration
             var subReq = configType;
             XmlWriterSettings settings = new XmlWriterSettings()
             {
-                Indent = true
+                Indent = true,
+                NamespaceHandling = NamespaceHandling.OmitDuplicates
             };
             using (var sww = new StringWriter())
             using (XmlWriter writer = XmlWriter.Create(file, settings))

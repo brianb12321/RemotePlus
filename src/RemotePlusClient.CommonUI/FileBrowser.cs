@@ -96,6 +96,8 @@ namespace RemotePlusClient.CommonUI
         #endregion
         string _baseURL = "";
         int port = 0;
+        public string BaseURL { get => _baseURL; set => _baseURL = value; }
+        public int Port { get => port; set => port = value; }
         protected virtual void OnFileSelected(FileSelectedEventArgs e)
         {
             FileSelected?.Invoke(this, e);
@@ -162,13 +164,31 @@ namespace RemotePlusClient.CommonUI
 
         private void button1_Click(object sender, EventArgs e)
         {
-            using (OpenFileDialog ofd = new OpenFileDialog())
+            if (this.InvokeRequired)
             {
-                ofd.Title = "Select file to upload.";
-                if (ofd.ShowDialog() == DialogResult.OK)
+                Invoke(new MethodInvoker(() =>
                 {
-                    new FileTransfer(_baseURL, port).UploadFile(ofd.FileName, CurrentPath);
-                    EntryUpdated?.Invoke(this, new EntryOperationEventArgs(null, FileOperation.Add) {IsDirectory = false, Path = Path.Combine(CurrentPath, ofd.FileName) });
+                    using (OpenFileDialog ofd = new OpenFileDialog())
+                    {
+                        ofd.Title = "Select file to upload.";
+                        if (ofd.ShowDialog(this) == DialogResult.OK)
+                        {
+                            new FileTransfer(_baseURL, port).UploadFile(ofd.FileName, CurrentPath);
+                            EntryUpdated?.Invoke(this, new EntryOperationEventArgs(null, FileOperation.Add) { IsDirectory = false, Path = Path.Combine(CurrentPath, ofd.FileName) });
+                        }
+                    }
+                }));
+            }
+            else
+            {
+                using (OpenFileDialog ofd = new OpenFileDialog())
+                {
+                    ofd.Title = "Select file to upload.";
+                    if (ofd.ShowDialog(this) == DialogResult.OK)
+                    {
+                        new FileTransfer(_baseURL, port).UploadFile(ofd.FileName, CurrentPath);
+                        EntryUpdated?.Invoke(this, new EntryOperationEventArgs(null, FileOperation.Add) { IsDirectory = false, Path = Path.Combine(CurrentPath, ofd.FileName) });
+                    }
                 }
             }
         }

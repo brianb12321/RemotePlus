@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.ServiceModel;
 using Logging;
 using RemotePlusLibrary.Extension.CommandSystem;
+using RemotePlusLibrary.AccountSystem;
 
 namespace RemotePlusLibrary
 {

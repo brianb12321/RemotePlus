@@ -15,6 +15,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
+using RemotePlusLibrary.AccountSystem;
 
 namespace RemotePlusLibrary
 {
@@ -143,7 +144,14 @@ namespace RemotePlusLibrary
             PortNumber = 9000;
             LoggingSettings = new LoggingSettings();
             Accounts = new UserCollection();
-            Accounts.Add(new UserAccount(new UserCredentials("admin", "password"), new Role("Admin", new SecurityAccessRules())));
+            try
+            {
+                Accounts.Add(new UserAccount(new UserCredentials("admin", "password"), Role.GetRole("Administrators")));
+            }
+            catch (RoleException)
+            {
+                //Should not happen
+            }
         }
     }
 }

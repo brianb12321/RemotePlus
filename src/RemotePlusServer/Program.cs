@@ -17,6 +17,10 @@ using RemotePlusLibrary.Scripting;
 using RemotePlusServer.Proxies;
 using RemotePlusLibrary.FileTransfer.Service;
 using System.ServiceModel.Description;
+using System.Text;
+using RemotePlusLibrary.AccountSystem;
+using System.Linq;
+using RemotePlusLibrary.AccountSystem.Policies;
 
 namespace RemotePlusServer
 {
@@ -36,7 +40,7 @@ namespace RemotePlusServer
         /// <summary>
         /// The main server configuration. Provides settings for the main server.
         /// </summary>
-        public static ServerSettings DefaultSettings { get; set; } = new ServerSettings();
+        public static ServerSettings DefaultSettings { get; set; }
         /// <summary>
         /// The main email configuration. Provides settings for the default SMTP settings and sets the behavior of the SMTP client.
         /// </summary>
@@ -54,8 +58,8 @@ namespace RemotePlusServer
         [STAThread]
         static void Main(string[] args)
         {
-            try
-            {
+//            try
+//            {
 //#if !DEBUG
 //                AppDomain.CurrentDomain.FirstChanceException += (sender, e) => Logger.AddOutput($"Error occured during server execution: {e.Exception.Message}", OutputLevel.Error);
 //#else
@@ -71,11 +75,10 @@ namespace RemotePlusServer
                 InitalizeKnownTypes();
                 ScanForServerSettingsFile();
                 ScanForEmailSettingsFile();
+                InitializeScriptingEngine();
                 CreateServer();
                 InitializeVariables();
                 InitializeCommands();
-                InitializeGlobals();
-                ScriptBuilder.InitializeEngine();
                 if (CheckPrerequisites())
                 {
                     bool autoStart = false;
@@ -87,25 +90,39 @@ namespace RemotePlusServer
                     Application.SetCompatibleTextRenderingDefault(false);
                     Application.Run(new ServerControls(autoStart));
                 }
-            }
-            catch(Exception ex)
-            {
-                if(Debugger.IsAttached)
-                {
-                    throw;
-                }
-#if !COGNITO
-                Logger.AddOutput("Internal server error: " + ex.Message, OutputLevel.Error);
-                Console.Write("Press any key to exit.");
-                Console.ReadKey();
-                SaveLog();
-#else
-                MessageBox.Show("Internal server error: " + ex.Message);
-                SaveLog();
-#endif
+            //}
+//            catch (Exception ex)
+//            {
+//                if (Debugger.IsAttached)
+//                {
+//                    throw;
+//                }
+//#if !COGNITO
+//                Logger.AddOutput("Internal server error: " + ex.Message, OutputLevel.Error);
+//                Console.Write("Press any key to exit.");
+//                Console.ReadKey();
+//                SaveLog();
+//#else
+//                MessageBox.Show("Internal server error: " + ex.Message);
+//                SaveLog();
+//#endif
 
-            }
+            //}
         }
+
+        private static void InitializeScriptingEngine()
+        {
+            Logger.AddOutput("Starting scripting engine.", OutputLevel.Info);
+            Logger.AddOutput("Initializing functions and variables.", OutputLevel.Info, "Scripting Engine");
+            InitializeGlobals();
+            ScriptBuilder.InitializeEngine();
+            Logger.AddOutput($"Engine started. IronPython version {ScriptBuilder.ScriptingEngine.LanguageVersion.ToString()}", OutputLevel.Info, "Scripting Engine");
+            Logger.AddOutput("Redirecting STDOUT to duplex channel.", OutputLevel.Debug, "Scripting Engine");
+            ScriptBuilder.ScriptingEngine.Runtime.IO.SetOutput(new MemoryStream(), new Internal._ClientTextWriter());
+            //ScriptBuilder.ScriptingEngine.Runtime.IO.SetInput(new MemoryStream(), new Internal._ClientTextReader(), Encoding.ASCII);
+            Logger.AddOutput("Finished starting scripting engine.", OutputLevel.Info);
+        }
+
         internal static void InitializeGlobals()
         {
             try
@@ -264,6 +281,8 @@ namespace RemotePlusServer
             DefaultService.Commands.Add("ls", ls);
             DefaultService.Commands.Add("genMan", genMan);
             DefaultService.Commands.Add("scp", scp);
+            DefaultService.Commands.Add("resetStaticScript", resetStaticScript);
+            DefaultService.Commands.Add("requestFile", requestFile);
         }
 
         static bool CheckPrerequisites()
@@ -332,6 +351,7 @@ namespace RemotePlusServer
                         env.InitPosition++;
                     }
                 }
+                Logger.AddOutput($"{DefaultCollection.Libraries.Count} extension libraries loaded.", OutputLevel.Info);
             }
             else
             {
@@ -376,6 +396,38 @@ namespace RemotePlusServer
 
         static void ScanForServerSettingsFile()
         {
+            if (!File.Exists("Configurations\\Server\\Roles.config"))
+            {
+                Role.InitializeRolePool();
+                Logger.AddOutput("The server roles file does not exist. Creating server roles settings file.", OutputLevel.Warning);
+                var r = Role.CreateRole("Administrators");
+                var policies = new OperationPolicies();
+                policies.EnableConsole = true;
+                r.Privilleges.Folders.Add(policies);
+                Role.GlobalPool.Roles.Add(r);
+                DefaultKnownTypeManager.AddType(typeof(OperationPolicies));
+                DefaultKnownTypeManager.AddType(typeof(DefaultPolicy));
+                Role.GlobalPool.Save();
+            }
+            else
+            {
+                Logger.AddOutput("Loading server roles file.", OutputLevel.Info);
+                try
+                {
+                    DefaultKnownTypeManager.AddType(typeof(OperationPolicies));
+                    DefaultKnownTypeManager.AddType(typeof(DefaultPolicy));
+                    Role.GlobalPool.Load();
+                }
+                catch (Exception ex)
+                {
+#if DEBUG
+                    Logger.AddOutput("Unable to load server settings. " + ex.ToString(), OutputLevel.Error);
+#else
+                    Logger.AddOutput("Unable to load server settings. " + ex.Message, OutputLevel.Error);
+#endif
+                }
+            }
+            DefaultSettings = new ServerSettings();
             if (!File.Exists("Configurations\\Server\\GlobalServerSettings.config"))
             {
                 Logger.AddOutput("The server settings file does not exist. Creating server settings file.", OutputLevel.Warning);

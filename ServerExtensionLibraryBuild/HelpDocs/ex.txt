@@ -1,0 +1,9 @@
+﻿
+Runs an extension loaded on the server.
+Format: ex <name> [args]>
+
+name: The name of the extension to run.
+args: The arguments passed to the extension. All text will now be part of args after the name parameter.
+
+Remark:
+- The {CallType} will be in CommandLine mode.

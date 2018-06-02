@@ -34,10 +34,12 @@ namespace RemotePlusClient.CommonUI
         IRemote remote = null;
         public FindRemoteFileDialog(FilterMode f, IRemote r, string baseURL, int p)
         {
+            InitializeComponent();
             remote = r;
             port = p;
             _base = baseURL;
-            InitializeComponent();
+            fileBrowser1.BaseURL = _base;
+            fileBrowser1.Port = port;
             Filter = f;
             fileBrowser1.Filter = f;
         }
@@ -77,10 +79,6 @@ namespace RemotePlusClient.CommonUI
             progressWorker.DoWork += ProgressWorker_DoWork;
             //progressWorker.RunWorkerCompleted += (WSender, WE) => MessageBox.Show($"Error during work: {WE.Error?.Message}");
             progressWorker.RunWorkerAsync();
-        }
-        public void Start()
-        {
-
         }
         private void ProgressWorker_DoWork(object sender, DoWorkEventArgs e)
         {
@@ -182,6 +180,7 @@ namespace RemotePlusClient.CommonUI
                                     new ListViewItem.ListViewSubItem(item,
                                         dir.LastAccessTime.ToShortDateString())};
                     item.SubItems.AddRange(subItems);
+                    item.Tag = dir;
                     fileBrowser1.FileList.Items.Add(item);
                 }
             }
@@ -195,6 +194,7 @@ namespace RemotePlusClient.CommonUI
                               { new ListViewItem.ListViewSubItem(item, "File"),
                                     new ListViewItem.ListViewSubItem(item,
                                         file.LastAccessed.ToShortDateString())};
+                    item.Tag = file;
                     item.SubItems.AddRange(subItems);
                     fileBrowser1.FileList.Items.Add(item);
                 }

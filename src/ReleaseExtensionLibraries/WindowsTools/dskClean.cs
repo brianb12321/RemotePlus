@@ -11,10 +11,11 @@ using System.Threading.Tasks;
 using System.Security.AccessControl;
 using System.Security.Principal;
 using System.Windows.Forms;
+using RemotePlusLibrary.Scripting;
 
 namespace WindowsTools
 {
-    public static class dskClean
+    internal static class dskClean
     {
         [CommandHelp("Cleans your disk of temperary files.")]
         public static CommandResponse dskCleanCommand(CommandRequest args, CommandPipeline pipe)
@@ -81,7 +82,7 @@ namespace WindowsTools
             }
             return new CommandResponse((int)CommandStatus.Success);
         }
-        static void cleanWindowsTempFolder()
+        public static void cleanWindowsTempFolder()
         {
             ServerManager.DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(Logging.OutputLevel.Info, "Cleaning Windows Temp Folder.", "dskClean"));
             foreach (string file in Directory.GetFiles(@"C:\Windows\Temp", "*", SearchOption.AllDirectories))
@@ -97,7 +98,7 @@ namespace WindowsTools
                 }
             }
         }
-        static void cleanAppDataTempFolder()
+        public static void cleanAppDataTempFolder()
         {
             ServerManager.DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(Logging.OutputLevel.Info, "Cleaning AppData Temp Folder.", "dskClean"));
             foreach (string profile in Directory.GetDirectories(@"C:\Users"))
@@ -123,7 +124,7 @@ namespace WindowsTools
                 }
             }
         }
-        static void cleanInternetExplorerCache()
+        public static void cleanInternetExplorerCache()
         {
             ServerManager.DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(Logging.OutputLevel.Info, "Cleaning Internet Explorer Cache.", "dskClean"));
             foreach (string profile in Directory.GetDirectories(@"C:\Users"))
@@ -149,7 +150,8 @@ namespace WindowsTools
                 }
             }
         }
-        static void cleanRecycleBin()
+        [IronPython.Runtime.PythonHidden]
+        public static void cleanRecycleBin()
         {
             try
             {
@@ -172,7 +174,8 @@ namespace WindowsTools
                 ServerManager.DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(Logging.OutputLevel.Warning, $"Could not find Recycle Bin. Skipping clean.", "dskClean"));
             }
         }
-        static void ownAppDataTempFolder()
+        [IronPython.Runtime.PythonHidden]
+        public static void ownAppDataTempFolder()
         {
             var result = (DialogResult)Enum.Parse(typeof(DialogResult), ((string)ServerManager.DefaultService.Remote.Client.ClientCallback.RequestInformation(RequestBuilder.RequestMessageBox($"WARNING: Continuing will override ownership of each user's AppData\\Temp Folder. All AppData\\Temp files will be owned by {Environment.UserName}. Do you want to proceed?", "File Ownership warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)).Data));
             if(result != DialogResult.Yes)
@@ -206,7 +209,8 @@ namespace WindowsTools
                 }
             }
         }
-        static void ownIECacheFolder()
+        [IronPython.Runtime.PythonHidden]
+        public static void ownIECacheFolder()
         {
             var result = (DialogResult)Enum.Parse(typeof(DialogResult), ((string)ServerManager.DefaultService.Remote.Client.ClientCallback.RequestInformation(RequestBuilder.RequestMessageBox($"WARNING: Continuing will override ownership of each user's IE Cache Folder. All IE Cache files will be owned by {Environment.UserName}. Do you want to proceed?", "File Ownership warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)).Data));
             if (result != DialogResult.Yes)
@@ -240,7 +244,8 @@ namespace WindowsTools
                 }
             }
         }
-        static void ownWindowsTempFolder()
+        [IronPython.Runtime.PythonHidden]
+        public static void ownWindowsTempFolder()
         {
             ServerManager.DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(Logging.OutputLevel.Info, "Owning Windows Temp Folder.", "dskClean"));
             foreach (string file in Directory.GetFiles(@"C:\Windows\Temp", "*", SearchOption.AllDirectories))
@@ -257,6 +262,61 @@ namespace WindowsTools
                     ServerManager.DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(Logging.OutputLevel.Warning, $"Could not own file {Path.GetFileName(file)}: {ex.Message}", "dskClean"));
                 }
             }
+        }
+    }
+    //Provides functions for the dskClean command
+    /// <summary>
+    /// Provides script functions for the dskClean command
+    /// </summary>
+    public class dskCleanScripting
+    {
+        /// <summary>
+        /// Removes files from the Windows temp Folder.
+        /// </summary>
+        [IndexScriptObject]
+        public void cleanWindowsTempFolder()
+        {
+            dskClean.cleanWindowsTempFolder();
+        }
+        /// <summary>
+        /// Removes files from the AppData temp folder.
+        /// </summary>
+        [IndexScriptObject]
+        public void cleanAppDataTempFolder()
+        {
+            dskClean.cleanAppDataTempFolder();
+        }
+        /// <summary>
+        /// Removes files from the IE cache folder.
+        /// </summary>
+        [IndexScriptObject]
+        public void cleanIECache()
+        {
+            dskClean.cleanInternetExplorerCache();
+        }
+        /// <summary>
+        /// Takes ownership of all the files from the Windows temp folder to the current user.
+        /// </summary>
+        [IndexScriptObject]
+        public void ownWindowsTempFolder()
+        {
+            dskClean.ownWindowsTempFolder();
+        }
+        /// <summary>
+        /// Takes ownership of all the files from the AppData temp folder to the current user.
+        /// </summary>
+        [IndexScriptObject]
+        public void ownAppDataTempFolder()
+        {
+            dskClean.ownAppDataTempFolder();
+        }
+        /// <summary>
+        /// Takes ownership of all the files from the IE cache folder to the current user.
+        /// </summary>
+        [IndexScriptObject]
+        public void ownIECache()
+        {
+            dskClean.ownIECacheFolder();
         }
     }
 }

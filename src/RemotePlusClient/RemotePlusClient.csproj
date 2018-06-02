@@ -36,8 +36,8 @@
     <Reference Include="AutocompleteMenu">
       <HintPath>..\..\Libs\AutocompleteMenu.dll</HintPath>
     </Reference>
-    <Reference Include="ICSharpCode.TextEditor, Version=3.2.1.6466, Culture=neutral, PublicKeyToken=4d61825e8dd49f1a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\ICSharpCode.TextEditor.3.2.1.6466\lib\Net20\ICSharpCode.TextEditor.dll</HintPath>
+    <Reference Include="FastColoredTextBox, Version=2.16.21.0, Culture=neutral, PublicKeyToken=fb8aa12b994ef61b, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\FCTB.2.16.21.0\lib\FastColoredTextBox.dll</HintPath>
     </Reference>
     <Reference Include="Logging">
       <HintPath>..\..\Libs\Logging.dll</HintPath>
@@ -180,9 +180,6 @@
     <EmbeddedResource Include="CommandPipelineViewer.resx">
       <DependentUpon>CommandPipelineViewer.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ConnectAdvancedDialogBox.resx">
-      <DependentUpon>ConnectAdvancedDialogBox.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="ConnectDialog.resx">
       <DependentUpon>ConnectDialog.cs</DependentUpon>
     </EmbeddedResource>
@@ -255,10 +252,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config" />
     <None Include="python-syntax.xshd">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="packages.config" />
     <None Include="Resources\function_kCl_icon.ico" />
   </ItemGroup>
   <ItemGroup>
