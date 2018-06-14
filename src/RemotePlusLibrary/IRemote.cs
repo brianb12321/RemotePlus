@@ -48,6 +48,9 @@ namespace RemotePlusLibrary
         UserAccount GetLoggedInUser();
         [OperationContract]
         [FaultContract(typeof(ServerFault))]
+        RolePool GetServerRolePool();
+        [OperationContract]
+        [FaultContract(typeof(ServerFault))]
         ExtensionReturn RunExtension(string ExtensionName, ExtensionExecutionContext Context, string[] args);
         [FaultContract(typeof(ServerFault))]
         [OperationContract]

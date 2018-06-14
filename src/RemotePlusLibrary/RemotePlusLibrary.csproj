@@ -67,7 +67,30 @@
     <Compile Include="ClientBuilder.cs" />
     <Compile Include="ClientType.cs" />
     <Compile Include="Converters\ServerSettingsTypeConverter.cs" />
+    <Compile Include="Editors\PolicyEditor.cs" />
+    <Compile Include="Editors\PolicyManager.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Editors\PolicyManager.Designer.cs">
+      <DependentUpon>PolicyManager.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Editors\PolicyManagerClasses\EditPolicyDialogBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Editors\PolicyManagerClasses\EditPolicyDialogBox.Designer.cs">
+      <DependentUpon>EditPolicyDialogBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Editors\PolicyManagerClasses\IPolicyEditor.cs" />
+    <Compile Include="Editors\PolicyManagerClasses\PolicyEditors.cs" />
+    <Compile Include="Editors\PolicyManagerClasses\PolicyView.cs" />
+    <Compile Include="Editors\SelectRoleDialogBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Editors\SelectRoleDialogBox.Designer.cs">
+      <DependentUpon>SelectRoleDialogBox.cs</DependentUpon>
+    </Compile>
     <Compile Include="Editors\StringCollectionEditor.cs" />
+    <Compile Include="Editors\UserAccountEditor.cs" />
     <Compile Include="FileTransfer\DownloadRequest.cs" />
     <Compile Include="FileTransfer\IDirectory.cs" />
     <Compile Include="FileTransfer\RemoteDirectory.cs" />
@@ -100,7 +123,6 @@
     <Compile Include="SignalMessage.cs" />
     <Compile Include="AccountSystem\UserAccount.cs" />
     <Compile Include="Converters\UserAccountCollectionDescriptor.cs" />
-    <Compile Include="Editors\UserAccountEditor.cs" />
     <Compile Include="AccountSystem\UserCollection.cs" />
     <Compile Include="AccountSystem\UserCredentials.cs" />
     <Compile Include="VariableManager.cs" />
@@ -131,6 +153,15 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Editors\PolicyManager.resx">
+      <DependentUpon>PolicyManager.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Editors\PolicyManagerClasses\EditPolicyDialogBox.resx">
+      <DependentUpon>EditPolicyDialogBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Editors\SelectRoleDialogBox.resx">
+      <DependentUpon>SelectRoleDialogBox.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ExtensionRulesStringCollectionEditorForm.resx">
       <DependentUpon>ExtensionRulesStringCollectionEditorForm.cs</DependentUpon>
     </EmbeddedResource>

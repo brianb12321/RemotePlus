@@ -11,6 +11,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using RemotePlusLibrary.AccountSystem;
+using RemotePlusLibrary.AccountSystem.Policies;
+using System.Diagnostics;
 
 namespace RemotePlusClient
 {
@@ -22,6 +24,12 @@ namespace RemotePlusClient
         [STAThread]
         static void Main(string[] args)
         {
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            if (Debugger.IsAttached)
+            {
+                Control.CheckForIllegalCrossThreadCalls = false;
+            }
             Logger = new CMDLogging()
             {
                 DefaultFrom = "Client",
@@ -40,18 +48,25 @@ namespace RemotePlusClient
                 ClientSettings.Save();
             }
             InitializeDefaultKnownTypes();
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
+            InitializePolicyEditors();
             RequestStore.Init();
             RequestStore.Add("global_selectFile", new SelectFileRequest());
             MainWindow = new MainF();
             Application.Run(MainWindow);
         }
+
+        private static void InitializePolicyEditors()
+        {
+            RemotePlusLibrary.Editors.PolicyManagerClasses.PolicyEditors.Add("Default", new RemotePlusLibrary.Editors.PolicyManagerClasses.EditPolicyDialogBox());
+        }
+
         static void InitializeDefaultKnownTypes()
         {
             Logger.AddOutput("Initializing default known types.", OutputLevel.Info);
             DefaultKnownTypeManager.LoadDefaultTypes();
             DefaultKnownTypeManager.AddType(typeof(UserAccount));
+            DefaultKnownTypeManager.AddType(typeof(OperationPolicies));
+            DefaultKnownTypeManager.AddType(typeof(DefaultPolicy));
         }
     }
 }

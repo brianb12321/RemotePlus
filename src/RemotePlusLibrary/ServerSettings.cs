@@ -1,7 +1,6 @@
 ﻿using RemotePlusLibrary.Configuration;
 using RemotePlusLibrary.Converters;
 using RemotePlusLibrary.Core;
-using RemotePlusLibrary.Editors;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -16,6 +15,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
 using RemotePlusLibrary.AccountSystem;
+using RemotePlusLibrary.Editors;
 
 namespace RemotePlusLibrary
 {

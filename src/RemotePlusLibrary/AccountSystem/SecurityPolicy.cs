@@ -7,6 +7,8 @@ namespace RemotePlusLibrary.AccountSystem
     [DataContract]
     public abstract class SecurityPolicy
     {
+        [DataMember]
+        public string PolicyEditorType { get; set; } = "Default";
         [DataMember(IsRequired = true)]
         public string ShortName { get; set; }
         [DataMember(IsRequired = true)]

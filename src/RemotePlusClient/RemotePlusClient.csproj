@@ -118,6 +118,7 @@
     <Compile Include="ExtensionSystem\FormPosition.cs" />
     <Compile Include="ExtensionSystem\IClientExtension.cs" />
     <Compile Include="ExtensionSystem\IClientLibraryStartup.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="MainF.cs">
       <SubType>Form</SubType>
     </Compile>

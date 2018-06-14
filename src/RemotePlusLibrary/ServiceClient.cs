@@ -261,5 +261,10 @@ namespace RemotePlusLibrary
         {
             return Channel.ReadFileAsString(fileName);
         }
+
+        public RolePool GetServerRolePool()
+        {
+            return Channel.GetServerRolePool();
+        }
     }
 }

@@ -6,14 +6,14 @@ using RemotePlusClient.CommonUI;
 using System.Windows.Forms;
 using RemotePlusLibrary.Extension.CommandSystem;
 using System.Speech.Synthesis;
-using System.Media;
+using System.Media;                             
 using System.Diagnostics;
 using RemotePlusLibrary.AccountSystem;
 using System.Threading;
 
 namespace RemotePlusClientCmd
 {
-    [CallbackBehavior(ConcurrencyMode = ConcurrencyMode.Multiple,
+    [CallbackBehavior(ConcurrencyMode = ConcurrencyMode.Reentrant,
         IncludeExceptionDetailInFaults = true,
         UseSynchronizationContext = false)]
     [RemotePlusLibrary.Core.STAOperationBehavior]

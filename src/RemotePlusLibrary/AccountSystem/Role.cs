@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing.Design;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
@@ -12,8 +13,9 @@ namespace RemotePlusLibrary.AccountSystem
     public class Role
     {
         public static Role Empty = new Role();
+        [Browsable(false)]
         public List<UserAccount> Members { get; private set; } = new List<UserAccount>();
-        public static RolePool GlobalPool { get; private set; } = new RolePool();
+        public static RolePool GlobalPool { get; set; } = new RolePool();
         private Role()
         {
             RoleName = "NewRole";
@@ -41,14 +43,14 @@ namespace RemotePlusLibrary.AccountSystem
         }
         public static Role CreateRole(string roleName)
         {
-            return new Role(roleName, new SecurityPolicyFolder());
+            return new Role(roleName, new SecurityPolicyFolder() {Name = "Root" });
         }
         [DataMember]
         public string RoleName { get; set; }
         [DataMember]
         [Category("Security")]
         [Browsable(true)]
-        [TypeConverter(typeof(ExpandableObjectConverter))]
+        [Editor(typeof(Editors.PolicyEditor), typeof(UITypeEditor))]
         public SecurityPolicyFolder Privilleges { get; set; }
         public override string ToString()
         {

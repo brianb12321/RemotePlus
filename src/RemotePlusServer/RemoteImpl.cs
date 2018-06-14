@@ -908,5 +908,10 @@ namespace RemotePlusServer
         {
             return File.ReadAllText(fileName);
         }
+
+        public RolePool GetServerRolePool()
+        {
+            return Role.GlobalPool;
+        }
     }
 }

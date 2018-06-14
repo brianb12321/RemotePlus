@@ -198,6 +198,7 @@ namespace RemotePlusClient
 
         public void RegistirationComplete()
         {
+            Role.GlobalPool = MainF.Remote.GetServerRolePool();
         }
 
         public void SendSignal(SignalMessage message)
