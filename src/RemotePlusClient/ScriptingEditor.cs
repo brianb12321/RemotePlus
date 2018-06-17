@@ -1,4 +1,5 @@
 ﻿using RemotePlusClient.CommonUI;
+using RemotePlusLibrary;
 using RemotePlusLibrary.Extension.Gui;
 using System;
 using System.Collections.Generic;
@@ -16,8 +17,10 @@ namespace RemotePlusClient
     public partial class ScriptingEditor : ThemedForm
     {
         public const string NAME = "ScriptingEditor";
-        public ScriptingEditor()
+        ServiceClient currentClient = null;
+        public ScriptingEditor(ServiceClient c)
         {
+            currentClient = c;
             InitializeComponent();
         }
 
@@ -27,13 +30,13 @@ namespace RemotePlusClient
             //editor.ShowInvalidLines = true;
             if (MainF.ServerConsoleObj == null)
             {
-                ClientApp.MainWindow.OpenConsole(ExtensionSystem.FormPosition.Bottum, true);
+                ClientApp.MainWindow.OpenConsole(currentClient, ExtensionSystem.FormPosition.Bottum, true);
             }
             autocompleteMenu1.AutoPopup = true;
             autocompleteMenu1.ImageList = new ImageList();
             autocompleteMenu1.ImageList.Images.Add(ScriptIcons.function_kCl_icon);
             autocompleteMenu1.ImageList.Images.Add(ScriptIcons.table_JoW_icon);
-            var items = MainF.Remote.GetScriptGlobals();
+            var items = currentClient.GetScriptGlobals();
             foreach (var item in items)
             {
                 autocompleteMenu1.AddItem(new ScriptAutoCompleteItem(item));
@@ -54,7 +57,7 @@ namespace RemotePlusClient
                     MainF.ServerConsoleObj.ClearConsole();
                     break;
             }
-            await Task.Run(() => MainF.Remote.ExecuteScript(editor.Text)).ContinueWith((b) => run.Enabled = true);
+            await Task.Run(() => currentClient.ExecuteScript(editor.Text)).ContinueWith((b) => run.Enabled = true);
             
         }
 
@@ -81,7 +84,7 @@ namespace RemotePlusClient
             FindRemoteFileDialog dialog = new FindRemoteFileDialog(FilterMode.File, MainF.Remote, MainF.BaseAddress, MainF.Port);
             if(dialog.ShowDialog() == DialogResult.OK)
             {
-                editor.Text = MainF.Remote.ReadFileAsString(dialog.FilePath);
+                editor.Text = currentClient.ReadFileAsString(dialog.FilePath);
             }
         }
     }

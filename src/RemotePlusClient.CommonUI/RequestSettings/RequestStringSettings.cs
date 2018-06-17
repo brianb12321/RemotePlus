@@ -20,7 +20,7 @@ namespace RemotePlusClient.CommonUI.RequestSettings
 
         public void Load()
         {
-            var ss = ConfigurationHelper.LoadConfig<RequestStringSettings>(CONFIG_FILE_PATH, RemotePlusLibrary.Core.DefaultKnownTypeManager.GetKnownTypes(null));
+            var ss = ConfigurationHelper<RequestStringSettings>.LoadConfig(CONFIG_FILE_PATH, RemotePlusLibrary.Core.DefaultKnownTypeManager.GetKnownTypes(null));
             this.BackgroundColor = ss.BackgroundColor;
             this.Prefix = ss.Prefix;
         }
@@ -32,7 +32,7 @@ namespace RemotePlusClient.CommonUI.RequestSettings
 
         public void Save()
         {
-            ConfigurationHelper.SaveConfig(this, CONFIG_FILE_PATH, RemotePlusLibrary.Core.DefaultKnownTypeManager.GetKnownTypes(null));
+            ConfigurationHelper<RequestStringSettings>.SaveConfig(this, CONFIG_FILE_PATH, RemotePlusLibrary.Core.DefaultKnownTypeManager.GetKnownTypes(null));
         }
 
         public void Save(string fileName)

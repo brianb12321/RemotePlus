@@ -19,7 +19,7 @@ namespace RemotePlusClient
         public bool DisableCommandDownloadForConsole { get; set; } = false;
         public void Load()
         {
-            var c = ConfigurationHelper.LoadConfig<ClientSettings>(CLIENT_SETTING_PATH, RemotePlusLibrary.Core.DefaultKnownTypeManager.GetKnownTypes(null));
+            var c = ConfigurationHelper<ClientSettings>.LoadConfig(CLIENT_SETTING_PATH, RemotePlusLibrary.Core.DefaultKnownTypeManager.GetKnownTypes(null));
             DefaultTheme = c.DefaultTheme;
             DisableCommandDownloadForConsole = c.DisableCommandDownloadForConsole;
         }
@@ -31,7 +31,7 @@ namespace RemotePlusClient
 
         public void Save()
         {
-            ConfigurationHelper.SaveConfig(this, CLIENT_SETTING_PATH, RemotePlusLibrary.Core.DefaultKnownTypeManager.GetKnownTypes(null));
+            ConfigurationHelper<ClientSettings>.SaveConfig(this, CLIENT_SETTING_PATH, RemotePlusLibrary.Core.DefaultKnownTypeManager.GetKnownTypes(null));
         }
 
         public void Save(string fileName)

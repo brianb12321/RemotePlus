@@ -71,5 +71,10 @@ namespace RemotePlusClient.CommonUI
             ChannelFactory<IFileTransferContract> channel = new ChannelFactory<IFileTransferContract>(binding, new EndpointAddress($"net.tcp://{_baseAddress}:{port}/FileTransfer"));
             return channel.CreateChannel();
         }
+        public string[] GetPolicyObjectNames()
+        {
+            var connection = EstablishConnection();
+            return connection.GetPolicyObjectNames();
+        }
     }
 }

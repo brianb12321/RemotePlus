@@ -14,7 +14,7 @@ using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
 using RemotePlusLibrary.Extension;
 using System.Text.RegularExpressions;
-using RemotePlusLibrary.AccountSystem;
+using RemotePlusLibrary.Security.AccountSystem;
 
 namespace RemotePlusClientCmd
 {

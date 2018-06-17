@@ -45,7 +45,7 @@ namespace RemotePlusLibrary.Core.EmailService
 
         public void Load()
         {
-            var s = ConfigurationHelper.LoadConfig<EmailSettings>(EMAIL_CONFIG_FILE, null);
+            var s = ConfigurationHelper<EmailSettings>.LoadConfig(EMAIL_CONFIG_FILE, null);
             SMTPHost = s.SMTPHost;
             Port = s.Port;
             DefaultTo = s.DefaultTo;
@@ -59,7 +59,7 @@ namespace RemotePlusLibrary.Core.EmailService
 
         public void Save()
         {
-            ConfigurationHelper.SaveConfig(this, EMAIL_CONFIG_FILE, null);
+            ConfigurationHelper<EmailSettings>.SaveConfig(this, EMAIL_CONFIG_FILE, null);
         }
 
         public void Save(string fileName)

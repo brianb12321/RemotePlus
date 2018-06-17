@@ -28,7 +28,7 @@ namespace RemotePlusClient
         public string DefaultFont { get; set; }
         public void Load()
         {
-            var settings = ConfigurationHelper.LoadConfig<ConsoleSettings>(CONSOLE_SETTINGS_PATH, null);
+            var settings = ConfigurationHelper<ConsoleSettings>.LoadConfig(CONSOLE_SETTINGS_PATH, null);
             if(string.IsNullOrEmpty(settings.DefaultFont))
             {
                 Font f = new Font("Arial", 13);
@@ -55,7 +55,7 @@ namespace RemotePlusClient
 
         public void Save()
         {
-            ConfigurationHelper.SaveConfig(this, CONSOLE_SETTINGS_PATH, null);
+            ConfigurationHelper<ConsoleSettings>.SaveConfig(this, CONSOLE_SETTINGS_PATH, null);
         }
 
         public void Save(string fileName)

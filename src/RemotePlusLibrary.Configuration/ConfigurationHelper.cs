@@ -9,11 +9,11 @@ using System.Xml;
 
 namespace RemotePlusLibrary.Configuration
 {
-    public static class ConfigurationHelper
+    public static class ConfigurationHelper<T>
     {
         public const string SERVER_CONFIGURATION_PATH = "Configurations\\Server";
         public const string CLIENT_CONFIGURATION_PATH = "Configurations\\Client";
-        public static void SaveConfig<T>(T configType, string file, IEnumerable<Type> knownTypes)
+        public static void SaveConfig(T configType, string file, IEnumerable<Type> knownTypes)
         {
             DataContractSerializer xsSubmit = new DataContractSerializer(typeof(T), knownTypes);
             var subReq = configType;
@@ -28,11 +28,11 @@ namespace RemotePlusLibrary.Configuration
                 xsSubmit.WriteObject(writer, subReq);
             }
         }
-        public static S LoadConfig<S>(string file, IEnumerable<Type> knownTypes)
+        public static T LoadConfig(string file, IEnumerable<Type> knownTypes)
         {
-            DataContractSerializer ser = new DataContractSerializer(typeof(S), knownTypes);
+            DataContractSerializer ser = new DataContractSerializer(typeof(T), knownTypes);
             XmlReader reader = XmlReader.Create(file);
-            var ss = (S)ser.ReadObject(reader);
+            var ss = (T)ser.ReadObject(reader);
             reader.Close();
             return ss;
         }

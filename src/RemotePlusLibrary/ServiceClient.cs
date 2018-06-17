@@ -16,7 +16,7 @@ using System.Speech.Synthesis;
 using System.Windows.Forms;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
-using RemotePlusLibrary.AccountSystem;
+using RemotePlusLibrary.Security.AccountSystem;
 
 namespace RemotePlusLibrary
 {
@@ -25,6 +25,7 @@ namespace RemotePlusLibrary
     /// </summary>
     public class ServiceClient : DuplexClientBase<IRemote>, IRemote
     {
+        public int ServerPosition { get; set; } = 0;
         public ServiceClient(object callbackInstance) : base(callbackInstance)
         {
         }
@@ -262,9 +263,13 @@ namespace RemotePlusLibrary
             return Channel.ReadFileAsString(fileName);
         }
 
-        public RolePool GetServerRolePool()
+        public List<string> GetServerRoleNames()
         {
-            return Channel.GetServerRolePool();
+            return Channel.GetServerRoleNames();
+        }
+        public override string ToString()
+        {
+            return ServerPosition.ToString();
         }
     }
 }

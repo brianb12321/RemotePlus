@@ -10,8 +10,8 @@ using RemotePlusLibrary.Extension.CommandSystem;
 using System.Media;
 using System.Diagnostics;
 using System.Speech.Synthesis;
-using RemotePlusLibrary.AccountSystem;
 using System.Threading;
+using RemotePlusLibrary.Security.AccountSystem;
 
 namespace RemotePlusClient
 {
@@ -20,6 +20,7 @@ namespace RemotePlusClient
         UseSynchronizationContext = false)]
     public class ClientCallback : IRemoteClient
     {
+        public int ServerPosition { get; private set; }
         public bool SwapFlag { get; private set; }
         public bool ConsoleStreamEnabled { get; private set; } = true;
         Logger consoleStream = null;
@@ -42,6 +43,10 @@ namespace RemotePlusClient
         }
 
         #region Callback Methods
+        public ClientCallback(int serverPos)
+        {
+            ServerPosition = serverPos;
+        }
         public void Beep(int Hertz, int Duration)
         {
             Console.Beep(Hertz, Duration);
@@ -81,7 +86,7 @@ namespace RemotePlusClient
         }
         public void Disconnect(string Reason)
         {
-            LogItem l = new LogItem(Logging.OutputLevel.Error, "The server disconnected from the client. Reason: " + Reason, "Server Host");
+            LogItem l = new LogItem(Logging.OutputLevel.Error, $"The server {ServerPosition} disconnected from the client. Reason: " + Reason, "Server Host");
             MainF.ConsoleObj.Logger.AddOutput(l);
             MainF.Disconnect();
         }
@@ -105,13 +110,13 @@ namespace RemotePlusClient
             {
                 if (!SwapFlag)
                 {
-                    ClientApp.Logger.AddOutput(Message, o, "Server Host");
+                    ClientApp.Logger.AddOutput(Message, o, $"Server Host ({ServerPosition}");
                 }
                 else
                 {
-                    consoleStream.AddOutput(Message, o, "Server Host");
+                    consoleStream.AddOutput(Message, o, $"Server Host ({ServerPosition}");
                 }
-                MainF.ConsoleObj.Logger.AddOutput(Message, o, "Server Host");
+                MainF.ConsoleObj.Logger.AddOutput(Message, o, $"Server Host ({ServerPosition}");
             }
         }
 
@@ -154,7 +159,7 @@ namespace RemotePlusClient
         {
             if (MainF.ServerConsoleObj == null)
             {
-                li.From = "Server Console";
+                li.From = $"Server Console ({ServerPosition}";
                 MainF.ConsoleObj.Logger.AddOutput(li);
             }
             else
@@ -198,7 +203,7 @@ namespace RemotePlusClient
 
         public void RegistirationComplete()
         {
-            Role.GlobalPool = MainF.Remote.GetServerRolePool();
+            //Role.RoleNames = MainF.Remote.GetServerRoleNames().ToArray();
         }
 
         public void SendSignal(SignalMessage message)

@@ -16,5 +16,7 @@ namespace RemotePlusLibrary.FileTransfer.Service
         void UploadFile(RemoteFileInfo request);
         [OperationContract]
         void DeleteFile(string remoteFile);
+        [OperationContract]
+        string[] GetPolicyObjectNames();
     }
 }

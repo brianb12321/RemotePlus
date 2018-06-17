@@ -15,13 +15,13 @@ namespace RemotePlusClient.CommonUI
         [DataMember]
         public Dictionary<string, string> Associations { get; set; } = new Dictionary<string, string>();
         [IgnoreDataMember]
-        const string FILE_PATH = ConfigurationHelper.CLIENT_CONFIGURATION_PATH + "\\FileAssociations.xml";
-        const string ICON_PATH = ConfigurationHelper.CLIENT_CONFIGURATION_PATH + "\\icons";
+        const string FILE_PATH = ConfigurationHelper<FileAssociationSettings>.CLIENT_CONFIGURATION_PATH + "\\FileAssociations.xml";
+        const string ICON_PATH = ConfigurationHelper<FileAssociationSettings>.CLIENT_CONFIGURATION_PATH + "\\icons";
         public void Load()
         {
             try
             {
-                FileAssociationSettings loadedSettings = ConfigurationHelper.LoadConfig<FileAssociationSettings>(FILE_PATH, null);
+                FileAssociationSettings loadedSettings = ConfigurationHelper<FileAssociationSettings>.LoadConfig(FILE_PATH, null);
                 this.Associations = loadedSettings.Associations;
             }
             catch (FileNotFoundException)
@@ -33,7 +33,7 @@ namespace RemotePlusClient.CommonUI
 
         public void Save()
         {
-            ConfigurationHelper.SaveConfig(this, FILE_PATH, null);
+            ConfigurationHelper<FileAssociationSettings>.SaveConfig(this, FILE_PATH, null);
         }
         void PreloadIcons()
         {

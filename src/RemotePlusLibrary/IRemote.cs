@@ -16,7 +16,7 @@ using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusLibrary.Core.EmailService;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
 using RemotePlusLibrary.Scripting;
-using RemotePlusLibrary.AccountSystem;
+using RemotePlusLibrary.Security.AccountSystem;
 
 namespace RemotePlusLibrary
 {
@@ -48,7 +48,7 @@ namespace RemotePlusLibrary
         UserAccount GetLoggedInUser();
         [OperationContract]
         [FaultContract(typeof(ServerFault))]
-        RolePool GetServerRolePool();
+        List<string> GetServerRoleNames();
         [OperationContract]
         [FaultContract(typeof(ServerFault))]
         ExtensionReturn RunExtension(string ExtensionName, ExtensionExecutionContext Context, string[] args);

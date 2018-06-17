@@ -8,7 +8,7 @@ using RemotePlusLibrary.Extension.CommandSystem;
 using System.Speech.Synthesis;
 using System.Media;                             
 using System.Diagnostics;
-using RemotePlusLibrary.AccountSystem;
+using RemotePlusLibrary.Security.AccountSystem;
 using System.Threading;
 
 namespace RemotePlusClientCmd

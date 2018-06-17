@@ -86,6 +86,7 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.IdentityModel" />
     <Reference Include="System.IO.Compression.FileSystem">
       <Private>True</Private>
     </Reference>
@@ -93,6 +94,7 @@
     <Reference Include="System.Management.Instrumentation" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceModel.Discovery" />
     <Reference Include="System.Speech" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
@@ -104,6 +106,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands.cs" />
+    <Compile Include="Discovery\DiscoveryProxyService.cs" />
+    <Compile Include="Discovery\OnOnlineAnnouncementAsyncResult.cs" />
     <Compile Include="ExtensionSystem\ServerExtensionLibrary.cs" />
     <Compile Include="ExtensionSystem\ServerInitEnvironment.cs" />
     <Compile Include="FileTransferService.cs" />
@@ -114,7 +118,6 @@
     <Compile Include="Proxies\ClientInstance.cs" />
     <Compile Include="Proxies\LuaServerInstance.cs" />
     <Compile Include="Proxies\StaticRemoteFunctions.cs" />
-    <Compile Include="RemotePlusService.cs" />
     <Compile Include="ScriptPackageExtensions.cs" />
     <Compile Include="ServerControls.cs">
       <SubType>Form</SubType>
@@ -146,6 +149,10 @@
     <ProjectReference Include="..\RemotePlusLibrary.Scripting\RemotePlusLibrary.Scripting.csproj">
       <Project>{5c399f78-c133-4f9b-9758-c36a4b7fae98}</Project>
       <Name>RemotePlusLibrary.Scripting</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RemotePlusLibrary.Security\RemotePlusLibrary.Security.csproj">
+      <Project>{e4e0bb7e-b995-4ebe-8efb-3c09bf64a3a2}</Project>
+      <Name>RemotePlusLibrary.Security</Name>
     </ProjectReference>
     <ProjectReference Include="..\RemotePlusLibrary\RemotePlusLibrary.csproj">
       <Project>{00c22a1f-d3df-4193-aaa8-9907d08e2511}</Project>

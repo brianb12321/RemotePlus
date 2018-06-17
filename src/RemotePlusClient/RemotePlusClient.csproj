@@ -49,6 +49,7 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceModel.Discovery" />
     <Reference Include="System.Speech" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
@@ -157,6 +158,12 @@
     <Compile Include="ServerConsole.Designer.cs">
       <DependentUpon>ServerConsole.cs</DependentUpon>
     </Compile>
+    <Compile Include="ServerExplorer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ServerExplorer.Designer.cs">
+      <DependentUpon>ServerExplorer.cs</DependentUpon>
+    </Compile>
     <Compile Include="ServerSettingsDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -215,6 +222,9 @@
     <EmbeddedResource Include="ServerConsole.resx">
       <DependentUpon>ServerConsole.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="ServerExplorer.resx">
+      <DependentUpon>ServerExplorer.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ServerSettingsDialog.resx">
       <DependentUpon>ServerSettingsDialog.cs</DependentUpon>
     </EmbeddedResource>
@@ -246,6 +256,10 @@
     <ProjectReference Include="..\RemotePlusLibrary.Scripting\RemotePlusLibrary.Scripting.csproj">
       <Project>{5c399f78-c133-4f9b-9758-c36a4b7fae98}</Project>
       <Name>RemotePlusLibrary.Scripting</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RemotePlusLibrary.Security\RemotePlusLibrary.Security.csproj">
+      <Project>{E4E0BB7E-B995-4EBE-8EFB-3C09BF64A3A2}</Project>
+      <Name>RemotePlusLibrary.Security</Name>
     </ProjectReference>
     <ProjectReference Include="..\RemotePlusLibrary\RemotePlusLibrary.csproj">
       <Project>{00c22a1f-d3df-4193-aaa8-9907d08e2511}</Project>

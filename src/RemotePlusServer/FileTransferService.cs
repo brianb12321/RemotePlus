@@ -45,6 +45,16 @@ namespace RemotePlusServer
             return result;
         }
 
+        public string[] GetPolicyObjectNames()
+        {
+            List<string> l = new List<string>();
+            foreach(string f in Directory.GetFiles("policyObjects", "*.pobj", SearchOption.TopDirectoryOnly))
+            {
+                l.Add(f);
+            }
+            return l.ToArray();
+        }
+
         public void UploadFile(RemoteFileInfo request)
         {
             FileStream targetStream = null;

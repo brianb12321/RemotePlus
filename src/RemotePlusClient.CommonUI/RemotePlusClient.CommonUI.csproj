@@ -70,6 +70,13 @@
     <Compile Include="Connection\SelectConfigurationDialog.Designer.cs">
       <DependentUpon>SelectConfigurationDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="Design\Editors\GUI\SelectRoleDialogBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Design\Editors\GUI\SelectRoleDialogBox.Designer.cs">
+      <DependentUpon>SelectRoleDialogBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Design\Editors\UserAccountEditor.cs" />
     <Compile Include="EmailGui\ConfigureEmailDialogBox.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -173,10 +180,15 @@
       <Project>{2aa5e768-7e0a-4b0c-a0d1-f79153902df9}</Project>
       <Name>RemotePlusLibrary.Extension</Name>
     </ProjectReference>
+    <ProjectReference Include="..\RemotePlusLibrary.Security\RemotePlusLibrary.Security.csproj">
+      <Project>{e4e0bb7e-b995-4ebe-8efb-3c09bf64a3a2}</Project>
+      <Name>RemotePlusLibrary.Security</Name>
+    </ProjectReference>
     <ProjectReference Include="..\RemotePlusLibrary\RemotePlusLibrary.csproj">
       <Project>{00c22a1f-d3df-4193-aaa8-9907d08e2511}</Project>
       <Name>RemotePlusLibrary</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

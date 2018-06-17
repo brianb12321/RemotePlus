@@ -15,6 +15,7 @@ namespace RemotePlusClient
 {
     public partial class ConnectDialog : Form
     {
+        public bool UseProxy { get; private set; }
         ConnectAdvancedDialogBox cadb = new ConnectAdvancedDialogBox();
         public EndpointAddress Address { get; private set; }
         public RegisterationObject RegObject { get; private set; }
@@ -62,6 +63,14 @@ namespace RemotePlusClient
                     Close();
                 }
             }
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            DialogResult = DialogResult.OK;
+            Address = new EndpointAddress(textBox1.Text);
+            UseProxy = true;
+            Close();
         }
     }
 }

@@ -12,7 +12,7 @@ using Logging;
 using RemotePlusClient.CommonUI;
 using RemotePlusLibrary;
 using RemotePlusLibrary.Extension.CommandSystem;
-using RemotePlusLibrary.AccountSystem;
+using RemotePlusLibrary.Security.AccountSystem;
 
 namespace Recon
 {

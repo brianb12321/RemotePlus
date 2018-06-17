@@ -48,49 +48,24 @@
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
     <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceModel.Discovery" />
     <Reference Include="System.Speech" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AccountSystem\DefaultPolicy.cs" />
-    <Compile Include="AccountSystem\Policies\OperationPolicies.cs" />
-    <Compile Include="AccountSystem\RoleException.cs" />
-    <Compile Include="AccountSystem\RolePool.cs" />
-    <Compile Include="AccountSystem\SecurityPolicy.cs" />
-    <Compile Include="AccountSystem\SecurityPolicyFolder.cs" />
     <Compile Include="AcquisitionMode.cs" />
     <Compile Include="AutehnticationSeverity.cs" />
     <Compile Include="AuthenticationRequest.cs" />
     <Compile Include="Client.cs" />
     <Compile Include="ClientBuilder.cs" />
     <Compile Include="ClientType.cs" />
-    <Compile Include="Converters\ServerSettingsTypeConverter.cs" />
-    <Compile Include="Editors\PolicyEditor.cs" />
-    <Compile Include="Editors\PolicyManager.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Editors\PolicyManager.Designer.cs">
-      <DependentUpon>PolicyManager.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Editors\PolicyManagerClasses\EditPolicyDialogBox.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Editors\PolicyManagerClasses\EditPolicyDialogBox.Designer.cs">
-      <DependentUpon>EditPolicyDialogBox.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Editors\PolicyManagerClasses\IPolicyEditor.cs" />
-    <Compile Include="Editors\PolicyManagerClasses\PolicyEditors.cs" />
-    <Compile Include="Editors\PolicyManagerClasses\PolicyView.cs" />
-    <Compile Include="Editors\SelectRoleDialogBox.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Editors\SelectRoleDialogBox.Designer.cs">
-      <DependentUpon>SelectRoleDialogBox.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Editors\StringCollectionEditor.cs" />
-    <Compile Include="Editors\UserAccountEditor.cs" />
+    <Compile Include="Discovery\DiscoverySettings.cs" />
+    <Compile Include="Discovery\ProbeService.cs" />
+    <Compile Include="Discovery\ProxyConnection.cs" />
+    <Compile Include="Discovery\ProxyConnectionMode.cs" />
+    <Compile Include="Discovery\ProxyServerSetupSettings.cs" />
     <Compile Include="FileTransfer\DownloadRequest.cs" />
     <Compile Include="FileTransfer\IDirectory.cs" />
     <Compile Include="FileTransfer\RemoteDirectory.cs" />
@@ -107,11 +82,11 @@
     <Compile Include="RawDataRequest.cs" />
     <Compile Include="RegistirationObject.cs" />
     <Compile Include="FileTransfer\RemoteFileInfo.cs" />
+    <Compile Include="RemotePlusService.cs" />
     <Compile Include="RequestBuilder.cs" />
     <Compile Include="RequestException.cs" />
     <Compile Include="RequestState.cs" />
     <Compile Include="ReturnData.cs" />
-    <Compile Include="AccountSystem\Role.cs" />
     <Compile Include="ServerSettings.cs" />
     <Compile Include="ExtensionRulesStringCollectionEditorForm.cs">
       <SubType>Form</SubType>
@@ -121,10 +96,6 @@
     </Compile>
     <Compile Include="ServiceClient.cs" />
     <Compile Include="SignalMessage.cs" />
-    <Compile Include="AccountSystem\UserAccount.cs" />
-    <Compile Include="Converters\UserAccountCollectionDescriptor.cs" />
-    <Compile Include="AccountSystem\UserCollection.cs" />
-    <Compile Include="AccountSystem\UserCredentials.cs" />
     <Compile Include="VariableManager.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -151,17 +122,12 @@
       <Project>{5c399f78-c133-4f9b-9758-c36a4b7fae98}</Project>
       <Name>RemotePlusLibrary.Scripting</Name>
     </ProjectReference>
+    <ProjectReference Include="..\RemotePlusLibrary.Security\RemotePlusLibrary.Security.csproj">
+      <Project>{E4E0BB7E-B995-4EBE-8EFB-3C09BF64A3A2}</Project>
+      <Name>RemotePlusLibrary.Security</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Editors\PolicyManager.resx">
-      <DependentUpon>PolicyManager.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Editors\PolicyManagerClasses\EditPolicyDialogBox.resx">
-      <DependentUpon>EditPolicyDialogBox.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Editors\SelectRoleDialogBox.resx">
-      <DependentUpon>SelectRoleDialogBox.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="ExtensionRulesStringCollectionEditorForm.resx">
       <DependentUpon>ExtensionRulesStringCollectionEditorForm.cs</DependentUpon>
     </EmbeddedResource>

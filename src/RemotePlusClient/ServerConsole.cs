@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
+using RemotePlusLibrary;
 
 namespace RemotePlusClient
 {
@@ -19,20 +20,24 @@ namespace RemotePlusClient
     {
         public RichTextBoxLoggingMethod Logger { get; set; }
         public ConsoleSettings settings = null;
+        ServiceClient currentClient = null;
         public bool InputEnabled { get; set; } = true;
         public void ClearConsole() => richTextBox1.Clear();
         string scriptFile;
-        public ServerConsole()
+        public ServerConsole(ServiceClient c)
         {
+            currentClient = c;
             InitializeComponent();
         }
-        public ServerConsole(string file)
+        public ServerConsole(ServiceClient c, string file)
         {
+            currentClient = c;
             scriptFile = file;
             InitializeComponent();
         }
-        public ServerConsole(bool enableInput)
+        public ServerConsole(ServiceClient c, bool enableInput)
         {
+            currentClient = c;
             InputEnabled = enableInput;
             InitializeComponent();
             if (!InputEnabled)
@@ -68,7 +73,7 @@ namespace RemotePlusClient
             textBox1.AutoCompleteSource = AutoCompleteSource.CustomSource;
             textBox1.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
             AutoCompleteStringCollection acsc = new AutoCompleteStringCollection();
-            acsc.AddRange(MainF.Remote.GetCommandsAsStrings().ToArray());
+            acsc.AddRange(currentClient.GetCommandsAsStrings().ToArray());
             textBox1.AutoCompleteCustomSource = acsc;
             if (!string.IsNullOrEmpty(scriptFile))
             {
@@ -88,7 +93,7 @@ namespace RemotePlusClient
         {
             try
             {
-                Task.Run(() => MainF.Remote.ExecuteScript(File.ReadAllText(scriptFile)));
+                Task.Run(() => currentClient.ExecuteScript(File.ReadAllText(scriptFile)));
             }
             catch (FileNotFoundException)
             {
@@ -99,7 +104,7 @@ namespace RemotePlusClient
         {
             try
             {
-                Task.Run(() => MainF.Remote.ExecuteScript(File.ReadAllText(f)));
+                Task.Run(() => currentClient.ExecuteScript(File.ReadAllText(f)));
             }
             catch (FileNotFoundException)
             {
@@ -114,7 +119,7 @@ namespace RemotePlusClient
                 string command = textBox1.Text;
                 textBox1.Clear();
                 textBox1.Enabled = false;
-                var result = Task.Run(() => MainF.Remote.RunServerCommand(command, CommandExecutionMode.Client));
+                var result = Task.Run(() => currentClient.RunServerCommand(command, CommandExecutionMode.Client));
                 result.Wait();
                 textBox1.Enabled = true;
                 PostResult(result.Result);

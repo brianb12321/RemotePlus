@@ -17,17 +17,17 @@ using RemotePlusServer.ExtensionSystem;
 using RemotePlusLibrary.FileTransfer;
 using System.Text.RegularExpressions;
 using RemotePlusServer.Internal;
-using IronPython.Hosting;
 using System.Linq;
 using RemotePlusLibrary.Scripting;
-using RemotePlusLibrary.AccountSystem;
+using RemotePlusLibrary.Security.AccountSystem;
 
 namespace RemotePlusServer
 {
     [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Multiple,
         InstanceContextMode = InstanceContextMode.Single,
         IncludeExceptionDetailInFaults = true,
-        UseSynchronizationContext = false)]
+        UseSynchronizationContext = false,
+        MaxItemsInObjectGraph = int.MaxValue)]
     [GlobalException(typeof(GlobalErrorHandler))]
     public class RemoteImpl : IRemote
     {
@@ -60,7 +60,7 @@ namespace RemotePlusServer
         public void Beep(int Hertz, int Duration)
         {
             CheckRegisteration("beep");
-            if (LoggedInUser.Role.Privilleges.FindSubFolder("Operations").Policies.First(p => p.ShortName == "EnableConsole").Values["Value"] != "True")
+            if (LoggedInUser.Role.AttachedPolicyObject.Policies.FindSubFolder("Operations").Policies.First(p => p.ShortName == "EnableConsole").Values["Value"] != "True")
             {
                 Client.ClientCallback.TellMessage("You do not have promission to use the beep function.", OutputLevel.Info);
             }
@@ -75,7 +75,7 @@ namespace RemotePlusServer
         public void PlaySound(string FileName)
         {
             CheckRegisteration("PlaySound");
-            if (LoggedInUser.Role.Privilleges.FindSubFolder("Operations").Policies.First(p => p.ShortName == "EnableConsole").Values["Value"] != "True")
+            if (LoggedInUser.Role.AttachedPolicyObject.Policies.FindSubFolder("Operations").Policies.First(p => p.ShortName == "EnableConsole").Values["Value"] != "True")
             {
                 Client.ClientCallback.TellMessage("You do not have promission to use the PlaySound function.", OutputLevel.Info);
             }
@@ -89,7 +89,7 @@ namespace RemotePlusServer
         public void PlaySoundLoop(string FileName)
         {
             CheckRegisteration("PlaySoundLoop");
-            if (LoggedInUser.Role.Privilleges.FindSubFolder("Operations").Policies.First(p => p.ShortName == "EnableConsole").Values["Value"] != "True")
+            if (LoggedInUser.Role.AttachedPolicyObject.Policies.FindSubFolder("Operations").Policies.First(p => p.ShortName == "EnableConsole").Values["Value"] != "True")
             {
                 Client.ClientCallback.TellMessage("You do not have promission to use the CanPlaySoundLoop function.", OutputLevel.Info);
             }
@@ -104,7 +104,7 @@ namespace RemotePlusServer
         public void PlaySoundSync(string FileName)
         {
             CheckRegisteration("PlaySoundSync");
-            if (LoggedInUser.Role.Privilleges.FindSubFolder("Operations").Policies.First(p => p.ShortName == "EnableConsole").Values["Value"] != "True")
+            if (LoggedInUser.Role.AttachedPolicyObject.Policies.FindSubFolder("Operations").Policies.First(p => p.ShortName == "EnableConsole").Values["Value"] != "True")
             {
                 Client.ClientCallback.TellMessage("You do not have promission to use the CanPlaySoundSync function.", OutputLevel.Info);
             }
@@ -139,6 +139,7 @@ namespace RemotePlusServer
                 else
                 {
                     LoggedInUser = account;
+                    UpdateAccountPolicy();
                     RegisterComplete();
                 }
             }
@@ -156,6 +157,7 @@ namespace RemotePlusServer
                 else
                 {
                     LoggedInUser = account;
+                    UpdateAccountPolicy();
                     RegisterComplete();
                 }
             }
@@ -168,6 +170,12 @@ namespace RemotePlusServer
             });
             // OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
         }
+
+        private void UpdateAccountPolicy()
+        {
+            LoggedInUser.Role.BuildPolicyObject();
+        }
+
         private void RegisterComplete()
         {
             ServerManager.Logger.AddOutput($"Client \"{Client.FriendlyName}\" [{Client.UniqueID}] Type: {Client.ClientType} registired.", Logging.OutputLevel.Info);
@@ -179,7 +187,7 @@ namespace RemotePlusServer
         public void RunProgram(string Program, string Argument)
         {
             CheckRegisteration("RunProgram");
-            if (LoggedInUser.Role.Privilleges.FindSubFolder("Operations").Policies.First(p => p.ShortName == "EnableConsole").Values["Value"] != "True")
+            if (LoggedInUser.Role.AttachedPolicyObject.Policies.FindSubFolder("Operations").Policies.First(p => p.ShortName == "EnableConsole").Values["Value"] != "True")
             {
                 Client.ClientCallback.TellMessage("You do not have promission to use the CanRunProgram function.", OutputLevel.Info);
             }
@@ -252,7 +260,7 @@ namespace RemotePlusServer
         public DialogResult ShowMessageBox(string Message, string Caption, System.Windows.Forms.MessageBoxIcon Icon, System.Windows.Forms.MessageBoxButtons Buttons)
         {
             CheckRegisteration("ShowMessageBox");
-            if (LoggedInUser.Role.Privilleges.FindSubFolder("Operations").Policies.First(p => p.ShortName == "EnableConsole").Values["Value"] != "True")
+            if (LoggedInUser.Role.AttachedPolicyObject.Policies.FindSubFolder("Operations").Policies.First(p => p.ShortName == "EnableConsole").Values["Value"] != "True")
             {
                 Client.ClientCallback.TellMessage("You do not have promission to use the CanShowMessageBox function.", OutputLevel.Info);
                 return DialogResult.Abort;
@@ -269,7 +277,7 @@ namespace RemotePlusServer
         public void Speak(string Message, VoiceGender Gender, VoiceAge Age)
         {
             CheckRegisteration("Speak");
-            if (LoggedInUser.Role.Privilleges.FindSubFolder("Operations").Policies.First(p => p.ShortName == "EnableConsole").Values["Value"] != "True")
+            if (LoggedInUser.Role.AttachedPolicyObject.Policies.FindSubFolder("Operations").Policies.First(p => p.ShortName == "EnableConsole").Values["Value"] != "True")
             {
                 Client.ClientCallback.TellMessage("You do not have promission to use the Speak function.", OutputLevel.Info);
             }
@@ -288,7 +296,7 @@ namespace RemotePlusServer
             CommandPipeline pipe = new CommandPipeline();
             int pos = 0;
             CheckRegisteration("RunServerCommand");
-            if (LoggedInUser.Role.Privilleges.FindSubFolder("Operations").Policies.First(p => p.ShortName == "EnableConsole").Values["Value"] != "True")
+            if (LoggedInUser.Role.AttachedPolicyObject.Policies.FindSubFolder("Operations").Policies.First(p => p.ShortName == "EnableConsole").Values["Value"] != "True")
             {
                 Client.ClientCallback.TellMessage("You do not have promission to use the Console function.", OutputLevel.Info);
                 return null;
@@ -551,7 +559,7 @@ namespace RemotePlusServer
         public void UpdateServerSettings(ServerSettings Settings)
         {
             CheckRegisteration("UpdateServerSettings");
-            if (LoggedInUser.Role.Privilleges.FindSubFolder("Operations").Policies.First(p => p.ShortName == "EnableConsole").Values["Value"] != "True")
+            if (LoggedInUser.Role.AttachedPolicyObject.Policies.FindSubFolder("Operations").Policies.First(p => p.ShortName == "EnableConsole").Values["Value"] != "True")
             {
                 Client.ClientCallback.TellMessage(new UILogItem(OutputLevel.Error, "You do not have permission to change server settings.", "Server Host"));
             }
@@ -571,7 +579,7 @@ namespace RemotePlusServer
         {
             // OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
             CheckRegisteration("GetServerSettings");
-            if (LoggedInUser.Role.Privilleges.FindSubFolder("Operations").Policies.First(p => p.ShortName == "GetServerSettings").Values["Value"] != "True")
+            if (LoggedInUser.Role.AttachedPolicyObject.Policies.FindSubFolder("Operations").Policies.First(p => p.ShortName == "GetServerSettings").Values["Value"] != "True")
             {
                 Client.ClientCallback.TellMessage(new UILogItem(OutputLevel.Error, "You do not have permission to change server settings.", "Server Host"));
                 return null;
@@ -598,7 +606,7 @@ namespace RemotePlusServer
         {
             // OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
             CheckRegisteration("RunExtension");
-            if (LoggedInUser.Role.Privilleges.FindSubFolder("Operations").Policies.First(p => p.ShortName == "EnableConsole").Values["Value"] != "True")
+            if (LoggedInUser.Role.AttachedPolicyObject.Policies.FindSubFolder("Operations").Policies.First(p => p.ShortName == "EnableConsole").Values["Value"] != "True")
             {
                 Client.ClientCallback.TellMessage(new UILogItem(OutputLevel.Error, "You do not have permission to run an extension.", "Server Host"));
                 return new ExtensionReturn(ExtensionStatusCodes.ACCESS_DENIED);
@@ -746,19 +754,16 @@ namespace RemotePlusServer
             {
                 var l4 = ServerManager.Logger.AddOutput("Authenticating your user credentials.", OutputLevel.Info);
                 Client.ClientCallback.TellMessage(new UILogItem(l4.Level, l4.Message, l4.From));
-                foreach (UserAccount Account in ServerManager.DefaultSettings.Accounts)
+                var tryUser = AccountManager.AttemptLogin(cred);
+                if (tryUser != null)
                 {
-                    if (Account.Verify(cred))
-                    {
-                        return Account;
-                    }
-                    else
-                    {
-                        Client.ClientCallback.TellMessage("Registiration failed. Authentication failed.", OutputLevel.Info);
-                        return null;
-                    }
+                    return tryUser;
                 }
-                return null;
+                else
+                {
+                    Client.ClientCallback.TellMessage("Registiration failed. Authentication failed.", OutputLevel.Info);
+                    return null;
+                }
             }
         }
 
@@ -836,7 +841,7 @@ namespace RemotePlusServer
         {
             // OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
             CheckRegisteration("GetServerEmailSettings");
-            if (LoggedInUser.Role.Privilleges.FindSubFolder("Operations").Policies.First(p => p.ShortName == "EnableConsole").Values["Value"] != "True")
+            if (LoggedInUser.Role.AttachedPolicyObject.Policies.FindSubFolder("Operations").Policies.First(p => p.ShortName == "EnableConsole").Values["Value"] != "True")
             {
                 Client.ClientCallback.TellMessage(new UILogItem(OutputLevel.Error, "You do not have permission to change email server settings.", "Server Host"));
                 return null;
@@ -852,7 +857,7 @@ namespace RemotePlusServer
         {
             // OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
             CheckRegisteration("UpdateServerEmailSettings");
-            if (LoggedInUser.Role.Privilleges.FindSubFolder("Operations").Policies.First(p => p.ShortName == "EnableConsole").Values["Value"] != "True")
+            if (LoggedInUser.Role.AttachedPolicyObject.Policies.FindSubFolder("Operations").Policies.First(p => p.ShortName == "EnableConsole").Values["Value"] != "True")
             {
                 Client.ClientCallback.TellMessage(new UILogItem(OutputLevel.Error, "You do not have permission to change server email settings.", "Server Host"));
             }
@@ -909,9 +914,14 @@ namespace RemotePlusServer
             return File.ReadAllText(fileName);
         }
 
-        public RolePool GetServerRolePool()
+        public List<string> GetServerRoleNames()
         {
-            return Role.GlobalPool;
+            List<string> l = new List<string>();
+            foreach(Role r in Role.GlobalPool.Roles)
+            {
+                l.Add(r.RoleName);
+            }
+            return l;
         }
     }
 }

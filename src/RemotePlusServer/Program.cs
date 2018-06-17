@@ -17,10 +17,10 @@ using RemotePlusLibrary.Scripting;
 using RemotePlusServer.Proxies;
 using RemotePlusLibrary.FileTransfer.Service;
 using System.ServiceModel.Description;
-using System.Text;
-using RemotePlusLibrary.AccountSystem;
-using System.Linq;
-using RemotePlusLibrary.AccountSystem.Policies;
+using RemotePlusLibrary.Security.AccountSystem;
+using RemotePlusLibrary.Security.AccountSystem.Policies;
+using RemotePlusLibrary.Discovery;
+using System.ServiceModel.Discovery;
 
 namespace RemotePlusServer
 {
@@ -37,6 +37,10 @@ namespace RemotePlusServer
         /// The global service that is running on the server. Use this property to access server specific functions.
         /// </summary>
         public static RemotePlusService<RemoteImpl> DefaultService { get; private set; }
+        /// <summary>
+        /// When the built-in proxy service is enabled, contains the proxy server.
+        /// </summary>
+        public static ProbeService<Discovery.DiscoveryProxyService> ProxyService { get; private set; }
         /// <summary>
         /// The main server configuration. Provides settings for the main server.
         /// </summary>
@@ -91,12 +95,12 @@ namespace RemotePlusServer
                     Application.Run(new ServerControls(autoStart));
                 }
             //}
-//            catch (Exception ex)
-//            {
-//                if (Debugger.IsAttached)
-//                {
-//                    throw;
-//                }
+            //catch (Exception ex)
+            //{
+                //if (Debugger.IsAttached)
+                //{
+                //    //throw;
+                //}
 //#if !COGNITO
 //                Logger.AddOutput("Internal server error: " + ex.Message, OutputLevel.Error);
 //                Console.Write("Press any key to exit.");
@@ -167,9 +171,18 @@ namespace RemotePlusServer
 
         private static void CreateServer()
         {
-            DefaultService = RemotePlusService<RemoteImpl>.Create(typeof(IRemote), new RemoteImpl(), DefaultSettings.PortNumber,"Remote", (m, o) => Logger.AddOutput(m, o), null);
+            var endpointAddress = "Remote";
+            if(DefaultSettings.DiscoverySettings.DiscoveryBehavior == ProxyConnectionMode.Connect)
+            {
+                endpointAddress += $"/{Guid.NewGuid()}";
+            }
+            DefaultService = RemotePlusService<RemoteImpl>.Create(typeof(IRemote), new RemoteImpl(), DefaultSettings.PortNumber,endpointAddress, (m, o) => Logger.AddOutput(m, o), null);
+            ServiceThrottlingBehavior throt = new System.ServiceModel.Description.ServiceThrottlingBehavior();
+            throt.MaxConcurrentCalls = int.MaxValue;
+            DefaultService.Host.Description.Behaviors.Add(throt);
             SetupFileTransferService();
             LoadExtensionLibraries();
+            OpenBuiltInProxyServer();
             OpenMex();
             DefaultService.Remote.Setup();
             Logger.AddOutput("Attaching server events.", OutputLevel.Debug);
@@ -179,6 +192,46 @@ namespace RemotePlusServer
             DefaultService.HostOpened += Host_Opened;
             DefaultService.HostOpening += Host_Opening;
             DefaultService.HostUnknownMessageReceived += Host_UnknownMessageReceived;
+            if(DefaultSettings.DiscoverySettings.DiscoveryBehavior == ProxyConnectionMode.Connect)
+            {
+                Logger.AddOutput("The server will be part of a proxy cluster. Please use the proxy server to connect to this server.", OutputLevel.Info);
+                {
+                    AnnouncementEndpoint ae = new AnnouncementEndpoint(_ConnectionFactory.BuildBinding(), new EndpointAddress(DefaultSettings.DiscoverySettings.Connection.AnnouncementURL));
+                    ServiceDiscoveryBehavior serviceDiscoveryBehavior = new ServiceDiscoveryBehavior();
+                    serviceDiscoveryBehavior.AnnouncementEndpoints.Add(ae);
+                    DefaultService.Host.Description.Behaviors.Add(serviceDiscoveryBehavior);
+                }
+            }
+        }
+        private static void OpenBuiltInProxyServer()
+        {
+            if(DefaultSettings.DiscoverySettings.DiscoveryBehavior == ProxyConnectionMode.BuiltIn)
+            {
+                Logger.AddOutput("Opening proxy server.", OutputLevel.Info);
+                ProxyService = ProbeService<Discovery.DiscoveryProxyService>.CreateProbeService(new Discovery.DiscoveryProxyService(),
+                    DefaultSettings.DiscoverySettings.Setup.DiscoveryPort,
+                    DefaultSettings.DiscoverySettings.Setup.ProbeName,
+                    DefaultSettings.DiscoverySettings.Setup.AnnouncementName,
+                    (m, o) => Logger.AddOutput(m, o), null);
+                ProxyService.HostOpened += ProxyService_HostOpened;
+                ProxyService.HostClosed += ProxyService_HostClosed;
+                ProxyService.HostFaulted += ProxyService_HostFaulted;
+            }
+        }
+
+        private static void ProxyService_HostFaulted(object sender, EventArgs e)
+        {
+            Logger.AddOutput("The proxy server state has been transferred to the faulted state.", OutputLevel.Error);
+        }
+
+        private static void ProxyService_HostClosed(object sender, EventArgs e)
+        {
+            Logger.AddOutput("Proxy server closed.", OutputLevel.Info);
+        }
+
+        private static void ProxyService_HostOpened(object sender, EventArgs e)
+        {
+            Logger.AddOutput($"Proxy server opened on port {DefaultSettings.DiscoverySettings.Setup.DiscoveryPort}", OutputLevel.Info);
         }
 
         private static void OpenMex()
@@ -362,6 +415,10 @@ namespace RemotePlusServer
         {
             DefaultService.Start();
             FileTransferService.Start();
+            if (DefaultSettings.DiscoverySettings.DiscoveryBehavior == ProxyConnectionMode.BuiltIn)
+            {
+                ProxyService.Start();
+            }
         }
 
         private static void Host_UnknownMessageReceived(object sender, UnknownMessageReceivedEventArgs e)
@@ -376,7 +433,14 @@ namespace RemotePlusServer
 
         private static void Host_Opened(object sender, EventArgs e)
         {
-            Logger.AddOutput($"Host ready. Server is listening on port {DefaultSettings.PortNumber}. Connect to configure server.", Logging.OutputLevel.Info);
+            if (DefaultSettings.DiscoverySettings.DiscoveryBehavior == ProxyConnectionMode.Connect)
+            {
+                Logger.AddOutput($"Host ready. Server is now part of the proxy cluster. Connect to proxy server to configure this server.", OutputLevel.Info);
+            }
+            else
+            {
+                Logger.AddOutput($"Host ready. Server is listening on port {DefaultSettings.PortNumber}. Connect to configure server.", Logging.OutputLevel.Info);
+            }
         }
 
         private static void Host_Faulted(object sender, EventArgs e)
@@ -398,12 +462,10 @@ namespace RemotePlusServer
         {
             if (!File.Exists("Configurations\\Server\\Roles.config"))
             {
+                buildAdminPolicyObject();
                 Role.InitializeRolePool();
                 Logger.AddOutput("The server roles file does not exist. Creating server roles settings file.", OutputLevel.Warning);
                 var r = Role.CreateRole("Administrators");
-                var policies = new OperationPolicies();
-                policies.EnableConsole = true;
-                r.Privilleges.Folders.Add(policies);
                 Role.GlobalPool.Roles.Add(r);
                 DefaultKnownTypeManager.AddType(typeof(OperationPolicies));
                 DefaultKnownTypeManager.AddType(typeof(DefaultPolicy));
@@ -426,6 +488,16 @@ namespace RemotePlusServer
                     Logger.AddOutput("Unable to load server settings. " + ex.Message, OutputLevel.Error);
 #endif
                 }
+            }
+            if(!Directory.Exists("Users"))
+            {
+                Logger.AddOutput("The Users folder does not exist. Creating folder.", OutputLevel.Warning);
+                Directory.CreateDirectory("Users");
+                AccountManager.CreateAccount(new UserCredentials("admin", "password"), "Administrators");
+            }
+            else
+            {
+                AccountManager.RefreshAccountList();
             }
             DefaultSettings = new ServerSettings();
             if (!File.Exists("Configurations\\Server\\GlobalServerSettings.config"))
@@ -450,6 +522,16 @@ namespace RemotePlusServer
                 }
             }
         }
+
+        private static void buildAdminPolicyObject()
+        {
+            var policies = new OperationPolicies();
+            policies.EnableConsole = true;
+            PolicyObject adminObject = new PolicyObject("Admin");
+            adminObject.Policies.Folders.Add(policies);
+            adminObject.Save();
+        }
+
         public static CommandResponse Execute(CommandRequest c, CommandExecutionMode commandMode, CommandPipeline pipe)
         {
             bool throwFlag = false;
@@ -538,6 +620,10 @@ namespace RemotePlusServer
             SaveLog();
             DefaultService.Close();
             FileTransferService.Close();
+            if(DefaultSettings.DiscoverySettings.DiscoveryBehavior == ProxyConnectionMode.BuiltIn)
+            {
+                ProxyService.Close();
+            }
             Environment.Exit(0);
         }
     }

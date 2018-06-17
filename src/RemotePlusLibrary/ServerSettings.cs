@@ -1,5 +1,4 @@
 ﻿using RemotePlusLibrary.Configuration;
-using RemotePlusLibrary.Converters;
 using RemotePlusLibrary.Core;
 using System;
 using System.Collections.Generic;
@@ -14,8 +13,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
-using RemotePlusLibrary.AccountSystem;
-using RemotePlusLibrary.Editors;
 
 namespace RemotePlusLibrary
 {
@@ -55,18 +52,15 @@ namespace RemotePlusLibrary
         [Category(SERVER_SETTINGS_CATEGORY_SERVER)]
         [Description("Determines whether to open an endpoint for service reference generation.")]
         public bool EnableMetadataExchange { get; set; }
+        [DataMember]
+        [Category(SERVER_SETTINGS_CATEGORY_SERVER)]
+        [TypeConverter(typeof(ExpandableObjectConverter))]
+        public Discovery.DiscoverySettings DiscoverySettings { get; set; } = new Discovery.DiscoverySettings();
         #endregion
         #region Extension
 
         #endregion
         #region Security
-        /// <summary>
-        /// Encapsulates all the user accounts that are on the server.
-        /// </summary>
-        [DataMember]
-        [Category(SERVER_SETTINGS_CATEGORY_SECURITY)]
-        [Editor(typeof(UserAccountEditor), typeof(UITypeEditor))]
-        public UserCollection Accounts { get; set; }
         [DataMember]
         [Browsable(false)]
         [Category(SERVER_SETTINGS_CATEGORY_SECURITY)]
@@ -114,16 +108,16 @@ namespace RemotePlusLibrary
         #region Methods
         public void Save()
         {
-            ConfigurationHelper.SaveConfig(this, SERVER_SETTINGS_FILE_PATH, Core.DefaultKnownTypeManager.GetKnownTypes(null));
+            ConfigurationHelper<ServerSettings>.SaveConfig(this, SERVER_SETTINGS_FILE_PATH, Core.DefaultKnownTypeManager.GetKnownTypes(null));
         }
         public void Load()
         {
-            var ss = ConfigurationHelper.LoadConfig<ServerSettings>(SERVER_SETTINGS_FILE_PATH, Core.DefaultKnownTypeManager.GetKnownTypes(null));
-            this.Accounts = ss.Accounts;
+            var ss = ConfigurationHelper<ServerSettings>.LoadConfig(SERVER_SETTINGS_FILE_PATH, Core.DefaultKnownTypeManager.GetKnownTypes(null));
             this.BannedIPs = ss.BannedIPs;
             this.PortNumber = ss.PortNumber;
             this.LoggingSettings = ss.LoggingSettings;
             this.EnableMetadataExchange = ss.EnableMetadataExchange;
+            this.DiscoverySettings = ss.DiscoverySettings;
         }
 
         public void Save(string fileName)
@@ -143,15 +137,6 @@ namespace RemotePlusLibrary
         {
             PortNumber = 9000;
             LoggingSettings = new LoggingSettings();
-            Accounts = new UserCollection();
-            try
-            {
-                Accounts.Add(new UserAccount(new UserCredentials("admin", "password"), Role.GetRole("Administrators")));
-            }
-            catch (RoleException)
-            {
-                //Should not happen
-            }
         }
     }
 }

@@ -15,6 +15,7 @@ using System.Threading;
 using RemotePlusLibrary.Extension.Gui;
 using RemotePlusClient.ExtensionSystem;
 using RemotePlusLibrary.Core;
+using System.ServiceModel.Discovery;
 
 namespace RemotePlusClient
 {
@@ -26,6 +27,7 @@ namespace RemotePlusClient
         public static ServiceClient Remote = null;
         public static ConsoleDialog ConsoleObj = null;
         public static ClientCallback LocalCallback = null;
+        public static List<ServiceClient> FoundServers = new List<ServiceClient>();
         public static string BaseAddress { get; private set; }
         public static int Port { get; set; }
         public static ClientLibraryCollection DefaultCollection { get; private set; }
@@ -48,6 +50,13 @@ namespace RemotePlusClient
                 ConsoleObj.Logger.DefaultFrom = "Client";
                 ConsoleObj.Logger.AddOutput("Closed", Logging.OutputLevel.Info);
             }
+            else if(FoundServers.Count > 0)
+            {
+                foreach (ServiceClient c in FoundServers)
+                {
+                    c.Disconnect();
+                }
+            }
         }
         private void connectToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -57,7 +66,14 @@ namespace RemotePlusClient
                 Address = d.Address.ToString();
                 BaseAddress = d.Address.Uri.Host;
                 Port = d.Address.Uri.Port;
-                Connect(d.RegObject);
+                if (d.UseProxy)
+                {
+                    ConnectToProxyServer();
+                }
+                else
+                {
+                    Connect(d.RegObject);
+                }
             }
         }
         private void OpenConsole()
@@ -85,7 +101,7 @@ namespace RemotePlusClient
         {
             try
             {
-                LocalCallback = new ClientCallback();
+                LocalCallback = new ClientCallback(0);
                 Remote = new ServiceClient(LocalCallback, _ConnectionFactory.BuildBinding(), new EndpointAddress(Address));
                 Remote.Open();
                 ConsoleObj.Logger.AddOutput("Registering...", Logging.OutputLevel.Info);
@@ -98,7 +114,20 @@ namespace RemotePlusClient
                 MessageBox.Show("Error connecting to server. " + ex.Message, "Connection error.", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
+        private void ConnectToProxyServer()
+        {
+            Uri probeEndpointAddress = new Uri(Address);
+            DiscoveryEndpoint de = new DiscoveryEndpoint(_ConnectionFactory.BuildBinding(), new EndpointAddress(probeEndpointAddress));
+            DiscoveryClient dc = new DiscoveryClient(de);
+            var fs = dc.Find(new FindCriteria(typeof(IRemote)));
+            for(int i = 0; i < fs.Endpoints.Count; i++)
+            {
+                FoundServers.Add(new ServiceClient(new ClientCallback(i), _ConnectionFactory.BuildBinding(), fs.Endpoints[i].Address) { ServerPosition = i });
+            }
+            ConsoleObj.Logger.AddOutput($"Found {FoundServers.Count} servers joined to the proxy server.", OutputLevel.Info);
+            AddTabToSideControl("Server Explorer", new ServerExplorer());
+            connectMenuItem.Enabled = false;
+        }
         public void AddTabToConsoleTabControl(string Name, ThemedForm c)
         {
             string Id = $"{Name}";
@@ -165,22 +194,22 @@ namespace RemotePlusClient
 
         private void consoleToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            OpenConsole(FormPosition.Top, true);
+            OpenConsole(Remote, FormPosition.Top, true);
         }
-        public void OpenConsole(FormPosition position, bool enableInput)
+        public void OpenConsole(ServiceClient client, FormPosition position, bool enableInput)
         {
-            if (Remote.State == CommunicationState.Opened)
+            if (Remote == null && FoundServers.Count > 0)
             {
                 if (ServerConsoleObj == null)
                 {
-                    ServerConsoleObj = new ServerConsole(enableInput);
+                    ServerConsoleObj = new ServerConsole(client, enableInput);
                     if (position == FormPosition.Top)
                     {
-                        AddTabToMainTabControl("Server Console", ServerConsoleObj);
+                        AddTabToMainTabControl($"Server Console ({client.ServerPosition})", ServerConsoleObj);
                     }
-                    else if(position == FormPosition.Bottum)
+                    else if (position == FormPosition.Bottum)
                     {
-                        AddTabToConsoleTabControl("Server Console", ServerConsoleObj);
+                        AddTabToConsoleTabControl($"Server Console ({client.ServerPosition})", ServerConsoleObj);
                     }
                 }
                 else
@@ -190,7 +219,29 @@ namespace RemotePlusClient
             }
             else
             {
-                MessageBox.Show("Please connect to a server to open console.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                if (Remote.State == CommunicationState.Opened)
+                {
+                    if (ServerConsoleObj == null)
+                    {
+                        ServerConsoleObj = new ServerConsole(client, enableInput);
+                        if (position == FormPosition.Top)
+                        {
+                            AddTabToMainTabControl("Server Console", ServerConsoleObj);
+                        }
+                        else if (position == FormPosition.Bottum)
+                        {
+                            AddTabToConsoleTabControl("Server Console", ServerConsoleObj);
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("You can't have another console seassion.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Please connect to a server to open console.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
         }
         public void CloseBottumConsole()
@@ -369,7 +420,7 @@ namespace RemotePlusClient
                 {
                     if (ServerConsoleObj == null)
                     {
-                        ServerConsoleObj = new ServerConsole(ofd.FileName);
+                        ServerConsoleObj = new ServerConsole(Remote, ofd.FileName);
                         AddTabToMainTabControl("Server Console", ServerConsoleObj);
                     }
                     else
@@ -487,7 +538,7 @@ namespace RemotePlusClient
 
         private void mi_openScriptingEnvironment_Click(object sender, EventArgs e)
         {
-            AddTabToMainTabControl(ScriptingEditor.NAME, new ScriptingEditor());
+            AddTabToMainTabControl(ScriptingEditor.NAME, new ScriptingEditor(Remote));
         }
 
         private void splitContainer1_Panel1_Paint(object sender, PaintEventArgs e)
