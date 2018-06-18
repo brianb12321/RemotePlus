@@ -27,6 +27,11 @@ namespace RemotePlusLibrary
         /// The client does not have an interface.
         /// </summary>
         [EnumMember]
-        Headless
+        Headless,
+        /// <summary>
+        /// The client is a server in a proxy environment.
+        /// </summary>
+        [EnumMember]
+        Server
     }
 }

@@ -61,11 +61,6 @@
     <Compile Include="Client.cs" />
     <Compile Include="ClientBuilder.cs" />
     <Compile Include="ClientType.cs" />
-    <Compile Include="Discovery\DiscoverySettings.cs" />
-    <Compile Include="Discovery\ProbeService.cs" />
-    <Compile Include="Discovery\ProxyConnection.cs" />
-    <Compile Include="Discovery\ProxyConnectionMode.cs" />
-    <Compile Include="Discovery\ProxyServerSetupSettings.cs" />
     <Compile Include="FileTransfer\DownloadRequest.cs" />
     <Compile Include="FileTransfer\IDirectory.cs" />
     <Compile Include="FileTransfer\RemoteDirectory.cs" />

@@ -24,13 +24,14 @@ namespace RemotePlusClient
             ConnectAdvancedDialogBox cadb = new ConnectAdvancedDialogBox();
             if (cadb.ShowDialog() == DialogResult.OK)
             {
-                ((ServiceClient)listBox1.SelectedItem).Register(cadb.RegObject);
+                MainF.FoundServers.SelectServer((Guid)listBox1.SelectedItem);
+                MainF.FoundServers.Register(cadb.RegObject);
             }
         }
 
         private void ServerExplorer_Load(object sender, EventArgs e)
         {
-            foreach (ServiceClient client in MainF.FoundServers)
+            foreach (Guid client in MainF.FoundServers.GetServers())
             {
                 listBox1.Items.Add(client);
             }
@@ -38,7 +39,8 @@ namespace RemotePlusClient
 
         private void toolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            ClientApp.MainWindow.OpenConsole((ServiceClient)listBox1.SelectedItem, ExtensionSystem.FormPosition.Top, true);
+            MainF.FoundServers.SelectServer((Guid)listBox1.SelectedItem);
+            ClientApp.MainWindow.OpenConsole(MainF.FoundServers, ExtensionSystem.FormPosition.Top, true);
         }
     }
 }

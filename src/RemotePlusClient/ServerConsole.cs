@@ -20,22 +20,22 @@ namespace RemotePlusClient
     {
         public RichTextBoxLoggingMethod Logger { get; set; }
         public ConsoleSettings settings = null;
-        ServiceClient currentClient = null;
+        IRemote currentClient = null;
         public bool InputEnabled { get; set; } = true;
         public void ClearConsole() => richTextBox1.Clear();
         string scriptFile;
-        public ServerConsole(ServiceClient c)
+        public ServerConsole(IRemote c)
         {
             currentClient = c;
             InitializeComponent();
         }
-        public ServerConsole(ServiceClient c, string file)
+        public ServerConsole(IRemote c, string file)
         {
             currentClient = c;
             scriptFile = file;
             InitializeComponent();
         }
-        public ServerConsole(ServiceClient c, bool enableInput)
+        public ServerConsole(IRemote c, bool enableInput)
         {
             currentClient = c;
             InputEnabled = enableInput;

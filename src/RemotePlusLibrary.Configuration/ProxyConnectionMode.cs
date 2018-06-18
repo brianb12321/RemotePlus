@@ -1,4 +1,4 @@
-﻿namespace RemotePlusLibrary.Discovery
+﻿namespace RemotePlusLibrary.Configuration
 {
     public enum ProxyConnectionMode
     {

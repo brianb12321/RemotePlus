@@ -114,6 +114,7 @@
     </Compile>
     <Compile Include="MessageBoxRequest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ProxyClient.cs" />
     <Compile Include="RequestProperties\RequestStringProperties.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -176,9 +177,17 @@
       <Project>{0334629b-6302-42a8-b159-f8646b4d8650}</Project>
       <Name>RemotePlusLibrary.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\RemotePlusLibrary.Discovery\RemotePlusLibrary.Discovery.csproj">
+      <Project>{FC3EB84C-D1B0-4B5C-9406-DFFA9BC5A5FC}</Project>
+      <Name>RemotePlusLibrary.Discovery</Name>
+    </ProjectReference>
     <ProjectReference Include="..\RemotePlusLibrary.Extension\RemotePlusLibrary.Extension.csproj">
       <Project>{2aa5e768-7e0a-4b0c-a0d1-f79153902df9}</Project>
       <Name>RemotePlusLibrary.Extension</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RemotePlusLibrary.Scripting\RemotePlusLibrary.Scripting.csproj">
+      <Project>{5C399F78-C133-4F9B-9758-C36A4B7FAE98}</Project>
+      <Name>RemotePlusLibrary.Scripting</Name>
     </ProjectReference>
     <ProjectReference Include="..\RemotePlusLibrary.Security\RemotePlusLibrary.Security.csproj">
       <Project>{e4e0bb7e-b995-4ebe-8efb-3c09bf64a3a2}</Project>

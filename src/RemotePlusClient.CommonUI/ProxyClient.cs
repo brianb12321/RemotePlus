@@ -1,76 +1,72 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.ServiceModel;
+using System.ServiceModel.Channels;
+using System.ServiceModel.Description;
+using System.Speech.Synthesis;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using RemotePlusLibrary;
-using System.ServiceModel;
 using RemotePlusLibrary.Core.EmailService;
+using RemotePlusLibrary.Discovery;
 using RemotePlusLibrary.Extension;
 using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
-using RemotePlusLibrary.Extension.Programmer;
 using RemotePlusLibrary.FileTransfer;
 using RemotePlusLibrary.Scripting;
-using System.Speech.Synthesis;
-using System.Windows.Forms;
-using System.ServiceModel.Channels;
-using System.ServiceModel.Description;
 using RemotePlusLibrary.Security.AccountSystem;
 
-namespace RemotePlusLibrary
+namespace RemotePlusClient.CommonUI
 {
-    /// <summary>
-    /// Provides a wrapper of a WCF channel factory;
-    /// </summary>
-    public class ServiceClient : DuplexClientBase<IRemote>, IRemote
+    public class ProxyClient : DuplexClientBase<IProxyRemote>, IProxyRemote
     {
-        public int ServerPosition { get; set; } = 0;
-        public ServiceClient(object callbackInstance) : base(callbackInstance)
+        public ProxyClient(object callbackInstance) : base(callbackInstance)
         {
         }
 
-        public ServiceClient(InstanceContext callbackInstance) : base(callbackInstance)
+        public ProxyClient(InstanceContext callbackInstance) : base(callbackInstance)
         {
         }
 
-        public ServiceClient(object callbackInstance, string endpointConfigurationName) : base(callbackInstance, endpointConfigurationName)
+        public ProxyClient(object callbackInstance, string endpointConfigurationName) : base(callbackInstance, endpointConfigurationName)
         {
         }
 
-        public ServiceClient(object callbackInstance, ServiceEndpoint endpoint) : base(callbackInstance, endpoint)
+        public ProxyClient(object callbackInstance, ServiceEndpoint endpoint) : base(callbackInstance, endpoint)
         {
         }
 
-        public ServiceClient(InstanceContext callbackInstance, string endpointConfigurationName) : base(callbackInstance, endpointConfigurationName)
+        public ProxyClient(InstanceContext callbackInstance, string endpointConfigurationName) : base(callbackInstance, endpointConfigurationName)
         {
         }
 
-        public ServiceClient(InstanceContext callbackInstance, ServiceEndpoint endpoint) : base(callbackInstance, endpoint)
+        public ProxyClient(InstanceContext callbackInstance, ServiceEndpoint endpoint) : base(callbackInstance, endpoint)
         {
         }
 
-        public ServiceClient(object callbackInstance, string endpointConfigurationName, string remoteAddress) : base(callbackInstance, endpointConfigurationName, remoteAddress)
+        public ProxyClient(object callbackInstance, string endpointConfigurationName, string remoteAddress) : base(callbackInstance, endpointConfigurationName, remoteAddress)
         {
         }
 
-        public ServiceClient(object callbackInstance, string endpointConfigurationName, EndpointAddress remoteAddress) : base(callbackInstance, endpointConfigurationName, remoteAddress)
+        public ProxyClient(object callbackInstance, string endpointConfigurationName, EndpointAddress remoteAddress) : base(callbackInstance, endpointConfigurationName, remoteAddress)
         {
         }
 
-        public ServiceClient(object callbackInstance, System.ServiceModel.Channels.Binding binding, EndpointAddress remoteAddress) : base(callbackInstance, binding, remoteAddress)
+        public ProxyClient(object callbackInstance, System.ServiceModel.Channels.Binding binding, EndpointAddress remoteAddress) : base(callbackInstance, binding, remoteAddress)
         {
         }
 
-        public ServiceClient(InstanceContext callbackInstance, string endpointConfigurationName, string remoteAddress) : base(callbackInstance, endpointConfigurationName, remoteAddress)
+        public ProxyClient(InstanceContext callbackInstance, string endpointConfigurationName, string remoteAddress) : base(callbackInstance, endpointConfigurationName, remoteAddress)
         {
         }
 
-        public ServiceClient(InstanceContext callbackInstance, string endpointConfigurationName, EndpointAddress remoteAddress) : base(callbackInstance, endpointConfigurationName, remoteAddress)
+        public ProxyClient(InstanceContext callbackInstance, string endpointConfigurationName, EndpointAddress remoteAddress) : base(callbackInstance, endpointConfigurationName, remoteAddress)
         {
         }
 
-        public ServiceClient(InstanceContext callbackInstance, System.ServiceModel.Channels.Binding binding, EndpointAddress remoteAddress) : base(callbackInstance, binding, remoteAddress)
+        public ProxyClient(InstanceContext callbackInstance, System.ServiceModel.Channels.Binding binding, EndpointAddress remoteAddress) : base(callbackInstance, binding, remoteAddress)
         {
         }
 
@@ -234,7 +230,37 @@ namespace RemotePlusLibrary
         }
         public override string ToString()
         {
-            return ServerPosition.ToString();
+            return base.ToString();
+        }
+
+        public Guid[] GetServers()
+        {
+            return Channel.GetServers();
+        }
+
+        public void ProxyRegister()
+        {
+            Channel.ProxyRegister();
+        }
+
+        public void SelectServer(int serverPosition)
+        {
+            Channel.SelectServer(serverPosition);
+        }
+
+        public void ProxyDisconnect()
+        {
+            Channel.ProxyDisconnect();
+        }
+
+        public void SelectServer(Guid guid)
+        {
+            Channel.SelectServer(guid);
+        }
+
+        public Guid GetSelectedServerGuid()
+        {
+            return Channel.GetSelectedServerGuid();
         }
     }
 }

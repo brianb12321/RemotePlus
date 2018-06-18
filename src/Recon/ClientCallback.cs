@@ -57,12 +57,12 @@ namespace Recon
             ss.SelectVoiceByHints(Gender, Age);
             ss.Speak(Message);
         }
-        public void ChangePrompt(RemotePlusLibrary.Extension.CommandSystem.PromptBuilder newPrompt)
+        public void ChangePrompt(Guid guid, RemotePlusLibrary.Extension.CommandSystem.PromptBuilder newPrompt)
         {
             
         }
 
-        public void Disconnect(string Reason)
+        public void Disconnect(Guid guid, string Reason)
         {
             ReconManager.Icon.ShowBalloonTip(5000, "Disconnected", $"You have been disconnected by the server: {Reason}", ToolTipIcon.Error);
             ReconManager.Logger.AddOutput($"Disconnected: {Reason}", OutputLevel.Info);
@@ -81,14 +81,14 @@ namespace Recon
             return cb;
         }
 
-        public void RegistirationComplete()
+        public void RegistirationComplete(Guid guid)
         {
             ReconManager.Icon.ShowBalloonTip(5000, "You are now connected!", "You are now connected to the server.", ToolTipIcon.Info);
             ReconManager.Menu.Invoke((MethodInvoker)(() => ReconManager.Menu.Items["Connect"].Enabled = false));
             ReconManager.Menu.Invoke((MethodInvoker)(() => ReconManager.Menu.Items["ExecuteScript"].Enabled = true));
         }
 
-        public UserCredentials RequestAuthentication(AuthenticationRequest Request)
+        public UserCredentials RequestAuthentication(Guid guid, AuthenticationRequest Request)
         {
             AuthenticationDialog ad = new AuthenticationDialog(Request);
             if (ad.ShowDialog() == DialogResult.OK)
@@ -101,12 +101,12 @@ namespace Recon
             }
         }
 
-        public ReturnData RequestInformation(RequestBuilder builder)
+        public ReturnData RequestInformation(Guid guid, RequestBuilder builder)
         {
             return RequestStore.Show(builder);
         }
 
-        public void SendSignal(SignalMessage signal)
+        public void SendSignal(Guid guid, SignalMessage signal)
         {
             switch(signal.Message)
             {
@@ -116,17 +116,17 @@ namespace Recon
             }
         }
 
-        public void TellMessage(string Message, OutputLevel o)
+        public void TellMessage(Guid guid, string Message, OutputLevel o)
         {
             ReconManager.Logger.AddOutput(Message, o);
         }
 
-        public void TellMessage(UILogItem li)
+        public void TellMessage(Guid guid, UILogItem li)
         {
             ReconManager.Logger.AddOutput(li);
         }
 
-        public void TellMessage(UILogItem[] Logs)
+        public void TellMessage(Guid guid, UILogItem[] Logs)
         {
             foreach (LogItem li in Logs)
             {
@@ -134,18 +134,18 @@ namespace Recon
             }
         }
 
-        public void TellMessageToServerConsole(UILogItem li)
+        public void TellMessageToServerConsole(Guid guid, UILogItem li)
         {
             li.From = "Server Console " + li.From;
             ReconManager.Logger.AddOutput(li);
         }
 
-        public void TellMessageToServerConsole(string Message)
+        public void TellMessageToServerConsole(Guid guid, string Message)
         {
             Console.WriteLine(Message);
         }
 
-        public void TellMessageToServerConsole(ConsoleText text)
+        public void TellMessageToServerConsole(Guid guid, ConsoleText text)
         {
             Colorful.Console.ForegroundColor = text.TextColor;
             Colorful.Console.Write(text.Text);

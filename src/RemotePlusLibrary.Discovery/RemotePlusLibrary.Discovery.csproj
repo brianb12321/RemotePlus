@@ -4,16 +4,16 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{8A8A5888-1CE7-46ED-B8DE-1AC7671F3426}</ProjectGuid>
+    <ProjectGuid>{FC3EB84C-D1B0-4B5C-9406-DFFA9BC5A5FC}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>RemotePlusLibrary.Configuration</RootNamespace>
-    <AssemblyName>RemotePlusLibrary.Configuration</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>RemotePlusLibrary.Discovery</RootNamespace>
+    <AssemblyName>RemotePlusLibrary.Discovery</AssemblyName>
+    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -23,7 +23,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -31,13 +30,14 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject />
-  </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Logging">
+      <HintPath>..\..\Libs\Logging.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -46,17 +46,28 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BinarySerializationHelper.cs" />
-    <Compile Include="ConfigurationHelper.cs" />
-    <Compile Include="DiscoverySettings.cs" />
-    <Compile Include="IFileConfig.cs" />
+    <Compile Include="IProxyRemote.cs" />
+    <Compile Include="IProxyServerRemote.cs" />
+    <Compile Include="ProbeService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ProxyConnection.cs" />
-    <Compile Include="ProxyConnectionMode.cs" />
-    <Compile Include="ProxyServerSetupSettings.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <ProjectReference Include="..\RemotePlusLibrary.Core\RemotePlusLibrary.Core.csproj">
+      <Project>{0334629B-6302-42A8-B159-F8646B4D8650}</Project>
+      <Name>RemotePlusLibrary.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RemotePlusLibrary.Extension\RemotePlusLibrary.Extension.csproj">
+      <Project>{2AA5E768-7E0A-4B0C-A0D1-F79153902DF9}</Project>
+      <Name>RemotePlusLibrary.Extension</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RemotePlusLibrary.Security\RemotePlusLibrary.Security.csproj">
+      <Project>{E4E0BB7E-B995-4EBE-8EFB-3C09BF64A3A2}</Project>
+      <Name>RemotePlusLibrary.Security</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RemotePlusLibrary\RemotePlusLibrary.csproj">
+      <Project>{00c22a1f-d3df-4193-aaa8-9907d08e2511}</Project>
+      <Name>RemotePlusLibrary</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

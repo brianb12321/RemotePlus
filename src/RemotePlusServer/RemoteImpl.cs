@@ -20,6 +20,7 @@ using RemotePlusServer.Internal;
 using System.Linq;
 using RemotePlusLibrary.Scripting;
 using RemotePlusLibrary.Security.AccountSystem;
+using RemotePlusLibrary.Discovery;
 
 namespace RemotePlusServer
 {
@@ -28,6 +29,9 @@ namespace RemotePlusServer
         IncludeExceptionDetailInFaults = true,
         UseSynchronizationContext = false,
         MaxItemsInObjectGraph = int.MaxValue)]
+    [CallbackBehavior(IncludeExceptionDetailInFaults = true,
+        ConcurrencyMode = ConcurrencyMode.Multiple,
+        UseSynchronizationContext = false)]
     [GlobalException(typeof(GlobalErrorHandler))]
     public class RemoteImpl : IRemote
     {
@@ -42,7 +46,7 @@ namespace RemotePlusServer
             _allExtensions = ServerManager.DefaultCollection.GetAllExtensions();
         }
         public RegisterationObject Settings { get; private set; }
-        public Client<IRemoteClient> Client { get; set; }
+        public Client<RemoteClient> Client { get; set; }
         public bool Registered { get; private set; }
         public UserAccount LoggedInUser { get; private set; }
         private Dictionary<string, ServerExtension> _allExtensions;
@@ -54,7 +58,7 @@ namespace RemotePlusServer
             if (!Registered)
             {
                 ServerManager.Logger.AddOutput("The client is not registired to the server.", OutputLevel.Error);
-                OperationContext.Current.GetCallbackChannel<IRemoteClient>().Disconnect("you must be registered.");
+                OperationContext.Current.GetCallbackChannel<IRemoteClient>().Disconnect(Guid.NewGuid(), "you must be registered.");
             }
         }
         public void Beep(int Hertz, int Duration)
@@ -122,8 +126,16 @@ namespace RemotePlusServer
             ServerManager.Logger.AddOutput("A new client is awaiting registiration.", OutputLevel.Info);
             ServerManager.Logger.AddOutput("Instanitiating callback object.", OutputLevel.Debug);
             ServerManager.Logger.AddOutput("Getting ClientBuilder from client.", OutputLevel.Debug);
-            var callback = OperationContext.Current.GetCallbackChannel<IRemoteClient>();
-            Client = Client<IRemoteClient>.Build(callback.RegisterClient(), callback);
+
+            if (ServerManager.DefaultSettings.DiscoverySettings.DiscoveryBehavior == RemotePlusLibrary.Configuration.ProxyConnectionMode.Connect)
+            {
+                Client = Client<RemoteClient>.Build(ServerManager.proxyChannel.RegisterClient(), new RemoteClient(null, true));
+            }
+            else
+            {
+                var callback = OperationContext.Current.GetCallbackChannel<IRemoteClient>();
+                Client = Client<RemoteClient>.Build(callback.RegisterClient(), new RemoteClient(callback, false));
+            }
             ServerManager.Logger.AddOutput("Received registiration object from client.", OutputLevel.Info);
             this.Settings = Settings;
             var l = ServerManager.Logger.AddOutput("Processing registiration object.", OutputLevel.Debug);
@@ -667,62 +679,6 @@ namespace RemotePlusServer
             return ServerManager.DefaultService.Commands.Keys;
         }
 
-        public ServerExtensionCollectionProgrammer GetCollectionProgrammer()
-        {
-            // OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
-            ServerExtensionCollectionProgrammer cprog = new ServerExtensionCollectionProgrammer();
-            return cprog;
-        }
-
-        public ServerExtensionLibraryProgrammer GetServerLibraryProgrammer(string LibraryName)
-        {
-            // OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
-            ServerExtensionLibrary lib = ServerManager.DefaultCollection.Libraries[LibraryName];
-            ServerExtensionLibraryProgrammer slprog = new ServerExtensionLibraryProgrammer(lib.FriendlyName, lib.Name, lib.LibraryType);
-            return slprog;
-        }
-
-        public ServerExtensionProgrammer GetServerExtensionProgrammer(string ExtensionName)
-        {
-            // OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
-            ServerExtensionProgrammer seprog = new ServerExtensionProgrammer()
-            {
-                ExtensionDetails = ServerManager.DefaultCollection.GetAllExtensions()[ExtensionName].GeneralDetails
-            };
-            return seprog;
-        }
-
-        public ServerExtensionProgrammer GetServerExtensionProgrammer(string LibraryName, string ExtensionName)
-        {
-            // OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
-            ServerExtensionProgrammer seprog = new ServerExtensionProgrammer()
-            {
-                ExtensionDetails = ServerManager.DefaultCollection.Libraries[LibraryName].Extensions[ExtensionName].GeneralDetails
-            };
-            return seprog;
-        }
-
-        public void ProgramServerEstensionCollection(ServerExtensionCollectionProgrammer collectProgrammer)
-        {
-            // OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
-        }
-
-        public void ProgramServerExtesnionLibrary(ServerExtensionLibraryProgrammer libProgrammer)
-        {
-            // OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
-        }
-
-        public void ProgramServerExtension(string LibraryName, ServerExtensionProgrammer seProgrammer)
-        {
-            // OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
-            ServerExtensionProgrammerUpdateEvent programmerEvent = new ServerExtensionProgrammerUpdateEvent(seProgrammer);
-            ServerManager.DefaultCollection.Libraries[LibraryName].Extensions[seProgrammer.ExtensionDetails.Name].ProgramRequested(programmerEvent);
-            if(!programmerEvent.Cancel)
-            {
-                //TODO: Add modifications to server extension here.
-            }
-        }
-
         public void SwitchUser()
         {
             // OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
@@ -769,7 +725,7 @@ namespace RemotePlusServer
 
         public void Disconnect()
         {
-            ServerManager.Logger.AddOutput($"Client \"{Client.FriendlyName}\" [{Client.UniqueID}] disconectted.", OutputLevel.Info);
+            ServerManager.Logger.AddOutput($"Client \"{Client.FriendlyName ?? "\"\""}\" [{Client.UniqueID}] disconectted.", OutputLevel.Info);
         }
 
         public void EncryptFile(string fileName, string password)

@@ -249,6 +249,10 @@
       <Project>{0334629b-6302-42a8-b159-f8646b4d8650}</Project>
       <Name>RemotePlusLibrary.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\RemotePlusLibrary.Discovery\RemotePlusLibrary.Discovery.csproj">
+      <Project>{FC3EB84C-D1B0-4B5C-9406-DFFA9BC5A5FC}</Project>
+      <Name>RemotePlusLibrary.Discovery</Name>
+    </ProjectReference>
     <ProjectReference Include="..\RemotePlusLibrary.Extension\RemotePlusLibrary.Extension.csproj">
       <Project>{2AA5E768-7E0A-4B0C-A0D1-F79153902DF9}</Project>
       <Name>RemotePlusLibrary.Extension</Name>

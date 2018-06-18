@@ -74,6 +74,9 @@ namespace RemotePlusClient
             this.extensionView = new System.Windows.Forms.TabPage();
             this.treeView1 = new System.Windows.Forms.TreeView();
             this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
+            this.cmb_servers = new System.Windows.Forms.ToolStripComboBox();
             this.contextMenuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -81,6 +84,7 @@ namespace RemotePlusClient
             this.splitContainer1.SuspendLayout();
             this.emi_Left.SuspendLayout();
             this.extensionView.SuspendLayout();
+            this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // contextMenuStrip1
@@ -286,7 +290,7 @@ namespace RemotePlusClient
             // splitContainer1
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer1.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer1.Location = new System.Drawing.Point(0, 25);
             this.splitContainer1.Name = "splitContainer1";
             this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
@@ -299,8 +303,8 @@ namespace RemotePlusClient
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.tabControl1);
-            this.splitContainer1.Size = new System.Drawing.Size(789, 393);
-            this.splitContainer1.SplitterDistance = 263;
+            this.splitContainer1.Size = new System.Drawing.Size(789, 368);
+            this.splitContainer1.SplitterDistance = 246;
             this.splitContainer1.TabIndex = 3;
             // 
             // tabControl2
@@ -309,7 +313,7 @@ namespace RemotePlusClient
             this.tabControl2.Location = new System.Drawing.Point(200, 0);
             this.tabControl2.Name = "tabControl2";
             this.tabControl2.SelectedIndex = 0;
-            this.tabControl2.Size = new System.Drawing.Size(589, 263);
+            this.tabControl2.Size = new System.Drawing.Size(589, 246);
             this.tabControl2.TabIndex = 1;
             // 
             // emi_Left
@@ -321,7 +325,7 @@ namespace RemotePlusClient
             this.emi_Left.Multiline = true;
             this.emi_Left.Name = "emi_Left";
             this.emi_Left.SelectedIndex = 0;
-            this.emi_Left.Size = new System.Drawing.Size(200, 263);
+            this.emi_Left.Size = new System.Drawing.Size(200, 246);
             this.emi_Left.TabIndex = 0;
             // 
             // extensionView
@@ -330,7 +334,7 @@ namespace RemotePlusClient
             this.extensionView.Location = new System.Drawing.Point(23, 4);
             this.extensionView.Name = "extensionView";
             this.extensionView.Padding = new System.Windows.Forms.Padding(3);
-            this.extensionView.Size = new System.Drawing.Size(173, 255);
+            this.extensionView.Size = new System.Drawing.Size(173, 238);
             this.extensionView.TabIndex = 0;
             this.extensionView.Text = "Extensions";
             this.extensionView.UseVisualStyleBackColor = true;
@@ -341,7 +345,7 @@ namespace RemotePlusClient
             this.treeView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.treeView1.Location = new System.Drawing.Point(3, 3);
             this.treeView1.Name = "treeView1";
-            this.treeView1.Size = new System.Drawing.Size(167, 249);
+            this.treeView1.Size = new System.Drawing.Size(167, 232);
             this.treeView1.TabIndex = 0;
             // 
             // tabControl1
@@ -351,8 +355,30 @@ namespace RemotePlusClient
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(789, 126);
+            this.tabControl1.Size = new System.Drawing.Size(789, 118);
             this.tabControl1.TabIndex = 0;
+            // 
+            // toolStrip1
+            // 
+            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripLabel1,
+            this.cmb_servers});
+            this.toolStrip1.Location = new System.Drawing.Point(0, 0);
+            this.toolStrip1.Name = "toolStrip1";
+            this.toolStrip1.Size = new System.Drawing.Size(789, 25);
+            this.toolStrip1.TabIndex = 1;
+            this.toolStrip1.Text = "toolStrip1";
+            // 
+            // toolStripLabel1
+            // 
+            this.toolStripLabel1.Name = "toolStripLabel1";
+            this.toolStripLabel1.Size = new System.Drawing.Size(44, 22);
+            this.toolStripLabel1.Text = "Servers";
+            // 
+            // cmb_servers
+            // 
+            this.cmb_servers.Name = "cmb_servers";
+            this.cmb_servers.Size = new System.Drawing.Size(121, 25);
             // 
             // MainF
             // 
@@ -360,12 +386,14 @@ namespace RemotePlusClient
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(789, 393);
             this.Controls.Add(this.splitContainer1);
+            this.Controls.Add(this.toolStrip1);
             this.Menu = this.mainMenu1;
             this.Name = "MainF";
             this.Text = "RemotePlusClient";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainF_FormClosing);
             this.Load += new System.EventHandler(this.MainF_Load);
+            this.Resize += new System.EventHandler(this.MainF_Resize);
             this.contextMenuStrip1.ResumeLayout(false);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
@@ -373,7 +401,10 @@ namespace RemotePlusClient
             this.splitContainer1.ResumeLayout(false);
             this.emi_Left.ResumeLayout(false);
             this.extensionView.ResumeLayout(false);
+            this.toolStrip1.ResumeLayout(false);
+            this.toolStrip1.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -414,5 +445,8 @@ namespace RemotePlusClient
         private TabControl tabControl1;
         private TabPage extensionView;
         private TreeView treeView1;
+        private ToolStrip toolStrip1;
+        private ToolStripLabel toolStripLabel1;
+        private ToolStripComboBox cmb_servers;
     }
 }

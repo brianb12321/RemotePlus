@@ -106,8 +106,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands.cs" />
-    <Compile Include="Discovery\DiscoveryProxyService.cs" />
-    <Compile Include="Discovery\OnOnlineAnnouncementAsyncResult.cs" />
     <Compile Include="ExtensionSystem\ServerExtensionLibrary.cs" />
     <Compile Include="ExtensionSystem\ServerInitEnvironment.cs" />
     <Compile Include="FileTransferService.cs" />
@@ -118,6 +116,8 @@
     <Compile Include="Proxies\ClientInstance.cs" />
     <Compile Include="Proxies\LuaServerInstance.cs" />
     <Compile Include="Proxies\StaticRemoteFunctions.cs" />
+    <Compile Include="ProxyServerRemoteImpl.cs" />
+    <Compile Include="Remote.cs" />
     <Compile Include="ScriptPackageExtensions.cs" />
     <Compile Include="ServerControls.cs">
       <SubType>Form</SubType>
@@ -133,6 +133,10 @@
     <Compile Include="ServerPrerequisites.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\RemotePlusLibrary.Configuration\RemotePlusLibrary.Configuration.csproj">
+      <Project>{8A8A5888-1CE7-46ED-B8DE-1AC7671F3426}</Project>
+      <Name>RemotePlusLibrary.Configuration</Name>
+    </ProjectReference>
     <ProjectReference Include="..\RemotePlusLibrary.Core.EmailService\RemotePlusLibrary.Core.EmailService.csproj">
       <Project>{166C0846-95A7-4134-9A6C-BB2E5C9C4594}</Project>
       <Name>RemotePlusLibrary.Core.EmailService</Name>
@@ -140,6 +144,10 @@
     <ProjectReference Include="..\RemotePlusLibrary.Core\RemotePlusLibrary.Core.csproj">
       <Project>{0334629b-6302-42a8-b159-f8646b4d8650}</Project>
       <Name>RemotePlusLibrary.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RemotePlusLibrary.Discovery\RemotePlusLibrary.Discovery.csproj">
+      <Project>{fc3eb84c-d1b0-4b5c-9406-dffa9bc5a5fc}</Project>
+      <Name>RemotePlusLibrary.Discovery</Name>
     </ProjectReference>
     <ProjectReference Include="..\RemotePlusLibrary.Extension\RemotePlusLibrary.Extension.csproj">
       <Project>{2AA5E768-7E0A-4B0C-A0D1-F79153902DF9}</Project>

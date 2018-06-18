@@ -1,17 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.ServiceModel;
-using Logging;
+﻿using Logging;
 using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusLibrary.Security.AccountSystem;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.ServiceModel;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace RemotePlusLibrary
+namespace RemotePlusLibrary.Discovery
 {
-    public interface IRemoteClient : IClient, IBidirectionalContract
+    [ServiceContract(CallbackContract = typeof(IRemote))]
+    public interface IProxyServerRemote : IBidirectionalContract
     {
+        [OperationContract]
+        void Register();
         [OperationContract(IsOneWay = true)]
         void TellMessage(Guid serverGuid, string Message, Logging.OutputLevel o);
         [OperationContract(Name = "TellMessageToServerConsole")]

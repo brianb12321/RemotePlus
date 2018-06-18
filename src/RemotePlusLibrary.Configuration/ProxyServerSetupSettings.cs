@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RemotePlusLibrary.Discovery
+namespace RemotePlusLibrary.Configuration
 {
     [DataContract]
     public class ProxyServerSetupSettings
@@ -13,8 +13,8 @@ namespace RemotePlusLibrary.Discovery
         [DataMember]
         public int DiscoveryPort { get; set; } = 9001;
         [DataMember]
-        public string ProbeName { get; set; } = "Probe";
+        public string ProxyEndpointName { get; set; } = "Proxy";
         [DataMember]
-        public string AnnouncementName { get; set; } = "Announcement";
+        public string ProxyClientEndpointName { get; set; } = "ProxyClient";
     }
 }

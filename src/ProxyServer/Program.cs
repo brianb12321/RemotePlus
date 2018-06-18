@@ -8,13 +8,14 @@ using Logging;
 using System.Reflection;
 using RemotePlusLibrary.Discovery;
 using System.Windows.Forms;
+using System.ServiceModel.Dispatcher;
 
 namespace ProxyServer
 {
     class ProxyManager
     {
         public static CMDLogging Logger { get; } = new CMDLogging();
-        static ProbeService<Discovery.DiscoveryProxyService> ProxyService { get; set; }
+        static ProbeService<ProxyServerRemoteImpl> ProxyService { get; set; }
         [STAThread]
         static void Main(string[] args)
         {
@@ -35,10 +36,10 @@ namespace ProxyServer
         private static void CreateProxyServer()
         {
             Logger.AddOutput("Opening proxy server.", OutputLevel.Info);
-            ProxyService = ProbeService<Discovery.DiscoveryProxyService>.CreateProbeService(new Discovery.DiscoveryProxyService(),
+            ProxyService = ProbeService<ProxyServerRemoteImpl>.CreateProxyService(typeof(IProxyServerRemote), new ProxyServerRemoteImpl(),
                 9001,
-                "Probe",
-                "Announcement",
+                "Proxy",
+                "ProxyClient",
                 (m, o) => Logger.AddOutput(m, o), null);
             ProxyService.HostOpened += ProxyService_HostOpened;
             ProxyService.HostClosed += ProxyService_HostClosed;

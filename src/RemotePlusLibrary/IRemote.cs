@@ -26,7 +26,7 @@ namespace RemotePlusLibrary
     /// </summary>
     [ServiceContract(CallbackContract = typeof(IRemoteClient))]
     [ServiceKnownType("GetKnownTypes", typeof(DefaultKnownTypeManager))]
-    public interface IRemote : IBidirectionalContract
+    public interface IRemote : IBidirectionalContract, IClient
     {
         [OperationContract()]
         [FaultContract(typeof(ServerFault))]
@@ -61,27 +61,6 @@ namespace RemotePlusLibrary
         [OperationContract]
         [FaultContract(typeof(ServerFault))]
         IEnumerable<CommandDescription> GetCommands();
-        [OperationContract]
-        [FaultContract(typeof(ServerFault))]
-        ServerExtensionCollectionProgrammer GetCollectionProgrammer();
-        [OperationContract]
-        [FaultContract(typeof(ServerFault))]
-        ServerExtensionLibraryProgrammer GetServerLibraryProgrammer(string LibraryName);
-        [OperationContract(Name = "GetServerExtensionProgrammer")]
-        [FaultContract(typeof(ServerFault))]
-        ServerExtensionProgrammer GetServerExtensionProgrammer(string ExtensionName);
-        [OperationContract(Name = "GetServerExtensionProgrammerWithLibraryName")]
-        [FaultContract(typeof(ServerFault))]
-        ServerExtensionProgrammer GetServerExtensionProgrammer(string LibraryName, string ExtensionName);
-        [OperationContract()]
-        [FaultContract(typeof(ServerFault))]
-        void ProgramServerEstensionCollection(ServerExtensionCollectionProgrammer collectProgrammer);
-        [OperationContract()]
-        [FaultContract(typeof(ServerFault))]
-        void ProgramServerExtesnionLibrary(ServerExtensionLibraryProgrammer libProgrammer);
-        [OperationContract()]
-        [FaultContract(typeof(ServerFault))]
-        void ProgramServerExtension(string LibraryName, ServerExtensionProgrammer seProgrammer);
         [OperationContract()]
         [FaultContract(typeof(ServerFault))]
         void SwitchUser();

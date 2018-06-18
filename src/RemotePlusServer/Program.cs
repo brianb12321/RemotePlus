@@ -21,6 +21,7 @@ using RemotePlusLibrary.Security.AccountSystem;
 using RemotePlusLibrary.Security.AccountSystem.Policies;
 using RemotePlusLibrary.Discovery;
 using System.ServiceModel.Discovery;
+using RemotePlusLibrary.Configuration;
 
 namespace RemotePlusServer
 {
@@ -40,7 +41,7 @@ namespace RemotePlusServer
         /// <summary>
         /// When the built-in proxy service is enabled, contains the proxy server.
         /// </summary>
-        public static ProbeService<Discovery.DiscoveryProxyService> ProxyService { get; private set; }
+        public static ProbeService<ProxyServerRemoteImpl> ProxyService { get; private set; }
         /// <summary>
         /// The main server configuration. Provides settings for the main server.
         /// </summary>
@@ -192,26 +193,16 @@ namespace RemotePlusServer
             DefaultService.HostOpened += Host_Opened;
             DefaultService.HostOpening += Host_Opening;
             DefaultService.HostUnknownMessageReceived += Host_UnknownMessageReceived;
-            if(DefaultSettings.DiscoverySettings.DiscoveryBehavior == ProxyConnectionMode.Connect)
-            {
-                Logger.AddOutput("The server will be part of a proxy cluster. Please use the proxy server to connect to this server.", OutputLevel.Info);
-                {
-                    AnnouncementEndpoint ae = new AnnouncementEndpoint(_ConnectionFactory.BuildBinding(), new EndpointAddress(DefaultSettings.DiscoverySettings.Connection.AnnouncementURL));
-                    ServiceDiscoveryBehavior serviceDiscoveryBehavior = new ServiceDiscoveryBehavior();
-                    serviceDiscoveryBehavior.AnnouncementEndpoints.Add(ae);
-                    DefaultService.Host.Description.Behaviors.Add(serviceDiscoveryBehavior);
-                }
-            }
         }
         private static void OpenBuiltInProxyServer()
         {
             if(DefaultSettings.DiscoverySettings.DiscoveryBehavior == ProxyConnectionMode.BuiltIn)
             {
                 Logger.AddOutput("Opening proxy server.", OutputLevel.Info);
-                ProxyService = ProbeService<Discovery.DiscoveryProxyService>.CreateProbeService(new Discovery.DiscoveryProxyService(),
+                ProxyService = ProbeService<ProxyServerRemoteImpl>.CreateProxyService(typeof(IProxyServerRemote), new ProxyServerRemoteImpl(),
                     DefaultSettings.DiscoverySettings.Setup.DiscoveryPort,
-                    DefaultSettings.DiscoverySettings.Setup.ProbeName,
-                    DefaultSettings.DiscoverySettings.Setup.AnnouncementName,
+                    DefaultSettings.DiscoverySettings.Setup.ProxyEndpointName,
+                    DefaultSettings.DiscoverySettings.Setup.ProxyClientEndpointName,
                     (m, o) => Logger.AddOutput(m, o), null);
                 ProxyService.HostOpened += ProxyService_HostOpened;
                 ProxyService.HostClosed += ProxyService_HostClosed;
@@ -411,13 +402,25 @@ namespace RemotePlusServer
                 Logger.AddOutput("The extensions folder does not exist.", OutputLevel.Info);
             }
         }
+        public static DuplexChannelFactory<IProxyServerRemote> proxyChannelFactory = null;
+        public static IProxyServerRemote proxyChannel = null;
         public static void RunInServerMode()
         {
-            DefaultService.Start();
-            FileTransferService.Start();
-            if (DefaultSettings.DiscoverySettings.DiscoveryBehavior == ProxyConnectionMode.BuiltIn)
+            if (DefaultSettings.DiscoverySettings.DiscoveryBehavior == ProxyConnectionMode.Connect)
             {
-                ProxyService.Start();
+                Logger.AddOutput("The server will be part of a proxy cluster. Please use the proxy server to connect to this server.", OutputLevel.Info);
+                proxyChannelFactory = new DuplexChannelFactory<IProxyServerRemote>(DefaultService.Remote, _ConnectionFactory.BuildBinding(), new EndpointAddress(DefaultSettings.DiscoverySettings.Connection.ProxyServerURL));
+                proxyChannel = proxyChannelFactory.CreateChannel();
+                proxyChannel.Register();
+            }
+            else
+            {
+                DefaultService.Start();
+                FileTransferService.Start();
+                if (DefaultSettings.DiscoverySettings.DiscoveryBehavior == ProxyConnectionMode.BuiltIn)
+                {
+                    ProxyService.Start();
+                }
             }
         }
 
@@ -620,9 +623,13 @@ namespace RemotePlusServer
             SaveLog();
             DefaultService.Close();
             FileTransferService.Close();
-            if(DefaultSettings.DiscoverySettings.DiscoveryBehavior == ProxyConnectionMode.BuiltIn)
+            if(DefaultSettings.DiscoverySettings.DiscoveryBehavior == ProxyConnectionMode.BuiltIn && ProxyService != null)
             {
                 ProxyService.Close();
+            }
+            if(DefaultSettings.DiscoverySettings.DiscoveryBehavior == ProxyConnectionMode.Connect && proxyChannelFactory != null)
+            {
+                proxyChannelFactory.Close();
             }
             Environment.Exit(0);
         }

@@ -55,7 +55,7 @@ namespace RemotePlusLibrary
         [DataMember]
         [Category(SERVER_SETTINGS_CATEGORY_SERVER)]
         [TypeConverter(typeof(ExpandableObjectConverter))]
-        public Discovery.DiscoverySettings DiscoverySettings { get; set; } = new Discovery.DiscoverySettings();
+        public DiscoverySettings DiscoverySettings { get; set; } = new DiscoverySettings();
         #endregion
         #region Extension
 
