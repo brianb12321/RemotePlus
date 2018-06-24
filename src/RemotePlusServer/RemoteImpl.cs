@@ -51,71 +51,91 @@ namespace RemotePlusServer
         public UserAccount LoggedInUser { get; private set; }
         private Dictionary<string, ServerExtension> _allExtensions;
         public string CurrentPath = Environment.CurrentDirectory;
-        void CheckRegisteration(string Action)
+        bool CheckRegisteration(string Action)
         {
             var l = ServerManager.Logger.AddOutput($"Checking registiration for action {Action}.", OutputLevel.Info);
-            Client.ClientCallback.TellMessage(new UILogItem(l.Level, l.Message, l.From));
             if (!Registered)
             {
                 ServerManager.Logger.AddOutput("The client is not registired to the server.", OutputLevel.Error);
-                OperationContext.Current.GetCallbackChannel<IRemoteClient>().Disconnect(Guid.NewGuid(), "you must be registered.");
+                if (ServerManager.proxyChannelFactory.State == CommunicationState.Opened)
+                {
+                    ServerManager.proxyChannel.TellMessage(Guid.NewGuid(), new UILogItem(OutputLevel.Error, "You must be registered.", "Server Host"));
+                    return false;
+                }
+                else
+                {
+                    OperationContext.Current.GetCallbackChannel<IRemoteClient>().Disconnect(Guid.NewGuid(), "You must be registered.");
+                    return true;
+                }
+            }
+            else
+            {
+                return true;
             }
         }
         public void Beep(int Hertz, int Duration)
         {
-            CheckRegisteration("beep");
-            if (LoggedInUser.Role.AttachedPolicyObject.Policies.FindSubFolder("Operations").Policies.First(p => p.ShortName == "EnableConsole").Values["Value"] != "True")
+            if (CheckRegisteration("beep"))
             {
-                Client.ClientCallback.TellMessage("You do not have promission to use the beep function.", OutputLevel.Info);
-            }
-            else
-            {
-                Console.Beep(Hertz, Duration);
-                Client.ClientCallback.TellMessage($"Console beeped. Hertz: {Hertz}, Duration: {Duration}", OutputLevel.Info);
+                if (LoggedInUser.Role.AttachedPolicyObject.Policies.FindSubFolder("Operations").Policies.First(p => p.ShortName == "EnableConsole").Values["Value"] != "True")
+                {
+                    Client.ClientCallback.TellMessage("You do not have promission to use the beep function.", OutputLevel.Info);
+                }
+                else
+                {
+                    Console.Beep(Hertz, Duration);
+                    Client.ClientCallback.TellMessage($"Console beeped. Hertz: {Hertz}, Duration: {Duration}", OutputLevel.Info);
+                }
             }
             // OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
         }
 
         public void PlaySound(string FileName)
         {
-            CheckRegisteration("PlaySound");
-            if (LoggedInUser.Role.AttachedPolicyObject.Policies.FindSubFolder("Operations").Policies.First(p => p.ShortName == "EnableConsole").Values["Value"] != "True")
+            if(CheckRegisteration("PlaySound"))
             {
-                Client.ClientCallback.TellMessage("You do not have promission to use the PlaySound function.", OutputLevel.Info);
-            }
-            else
-            {
-                System.Media.SoundPlayer sp = new System.Media.SoundPlayer(FileName);
-                sp.Play();
+                if (LoggedInUser.Role.AttachedPolicyObject.Policies.FindSubFolder("Operations").Policies.First(p => p.ShortName == "EnableConsole").Values["Value"] != "True")
+                {
+                    Client.ClientCallback.TellMessage("You do not have promission to use the PlaySound function.", OutputLevel.Info);
+                }
+                else
+                {
+                    System.Media.SoundPlayer sp = new System.Media.SoundPlayer(FileName);
+                    sp.Play();
+                }
             }
         }
 
         public void PlaySoundLoop(string FileName)
         {
-            CheckRegisteration("PlaySoundLoop");
-            if (LoggedInUser.Role.AttachedPolicyObject.Policies.FindSubFolder("Operations").Policies.First(p => p.ShortName == "EnableConsole").Values["Value"] != "True")
+            if (CheckRegisteration("PlaySoundLoop"))
             {
-                Client.ClientCallback.TellMessage("You do not have promission to use the CanPlaySoundLoop function.", OutputLevel.Info);
-            }
-            else
-            {
-                System.Media.SoundPlayer sp = new System.Media.SoundPlayer(FileName);
-                sp.PlayLooping();
+                if (LoggedInUser.Role.AttachedPolicyObject.Policies.FindSubFolder("Operations").Policies.First(p => p.ShortName == "EnableConsole").Values["Value"] != "True")
+                {
+                    Client.ClientCallback.TellMessage("You do not have promission to use the CanPlaySoundLoop function.", OutputLevel.Info);
+                }
+                else
+                {
+                    System.Media.SoundPlayer sp = new System.Media.SoundPlayer(FileName);
+                    sp.PlayLooping();
+                }
             }
             // OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
         }
 
         public void PlaySoundSync(string FileName)
         {
-            CheckRegisteration("PlaySoundSync");
-            if (LoggedInUser.Role.AttachedPolicyObject.Policies.FindSubFolder("Operations").Policies.First(p => p.ShortName == "EnableConsole").Values["Value"] != "True")
+            if (CheckRegisteration("PlaySoundSync"))
             {
-                Client.ClientCallback.TellMessage("You do not have promission to use the CanPlaySoundSync function.", OutputLevel.Info);
-            }
-            else
-            {
-                System.Media.SoundPlayer sp = new System.Media.SoundPlayer(FileName);
-                sp.PlaySync();
+                if (LoggedInUser.Role.AttachedPolicyObject.Policies.FindSubFolder("Operations").Policies.First(p => p.ShortName == "EnableConsole").Values["Value"] != "True")
+                {
+                    Client.ClientCallback.TellMessage("You do not have promission to use the CanPlaySoundSync function.", OutputLevel.Info);
+                }
+                else
+                {
+                    System.Media.SoundPlayer sp = new System.Media.SoundPlayer(FileName);
+                    sp.PlaySync();
+                }
             }
             // OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
         }
@@ -174,12 +194,15 @@ namespace RemotePlusServer
                 }
             }
             _HookManager.RunHooks(LibraryBuilder.LOGIN_HOOK, new RemotePlusLibrary.Extension.HookSystem.HookArguments(LibraryBuilder.LOGIN_HOOK));
-            Client.ClientCallback.ChangePrompt(new RemotePlusLibrary.Extension.CommandSystem.PromptBuilder()
+            if (Client.ClientType != ClientType.CommandLine)
             {
-                Path = CurrentPath,
-                AdditionalData = "Current Path",
-                CurrentUser = LoggedInUser.Credentials.Username
-            });
+                Client.ClientCallback.ChangePrompt(new RemotePlusLibrary.Extension.CommandSystem.PromptBuilder()
+                {
+                    Path = CurrentPath,
+                    AdditionalData = "Current Path",
+                    CurrentUser = LoggedInUser.Credentials.Username
+                });
+            }
             // OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
         }
 
@@ -198,201 +221,217 @@ namespace RemotePlusServer
 
         public void RunProgram(string Program, string Argument)
         {
-            CheckRegisteration("RunProgram");
-            if (LoggedInUser.Role.AttachedPolicyObject.Policies.FindSubFolder("Operations").Policies.First(p => p.ShortName == "EnableConsole").Values["Value"] != "True")
+            if (CheckRegisteration("RunProgram"))
             {
-                Client.ClientCallback.TellMessage("You do not have promission to use the CanRunProgram function.", OutputLevel.Info);
-            }
-            else
-            {
-                ServerManager.Logger.AddOutput("Creating process component.", OutputLevel.Debug);
-                Process p = new Process();
-                ServerManager.Logger.AddOutput($"File to execute: {Program}", OutputLevel.Debug);
-                p.StartInfo.FileName = Program;
-                ServerManager.Logger.AddOutput($"File arguments: {Argument}", OutputLevel.Debug);
-                p.StartInfo.Arguments = Argument;
-                ServerManager.Logger.AddOutput($"Shell execution is disabled.", OutputLevel.Debug);
-                p.StartInfo.UseShellExecute = false;
-                ServerManager.Logger.AddOutput($"Error stream will be redirected.", OutputLevel.Debug);
-                p.StartInfo.RedirectStandardError = true;
-                ServerManager.Logger.AddOutput($"Standord stream will be redirected.", OutputLevel.Debug);
-                p.StartInfo.RedirectStandardOutput = true;
-                p.ErrorDataReceived += (sender, e) =>
+                if (LoggedInUser.Role.AttachedPolicyObject.Policies.FindSubFolder("Operations").Policies.First(p => p.ShortName == "EnableConsole").Values["Value"] != "True")
                 {
-                    if (e.Data != null)
+                    Client.ClientCallback.TellMessage("You do not have promission to use the CanRunProgram function.", OutputLevel.Info);
+                }
+                else
+                {
+                    ServerManager.Logger.AddOutput("Creating process component.", OutputLevel.Debug);
+                    Process p = new Process();
+                    ServerManager.Logger.AddOutput($"File to execute: {Program}", OutputLevel.Debug);
+                    p.StartInfo.FileName = Program;
+                    ServerManager.Logger.AddOutput($"File arguments: {Argument}", OutputLevel.Debug);
+                    p.StartInfo.Arguments = Argument;
+                    ServerManager.Logger.AddOutput($"Shell execution is disabled.", OutputLevel.Debug);
+                    p.StartInfo.UseShellExecute = false;
+                    ServerManager.Logger.AddOutput($"Error stream will be redirected.", OutputLevel.Debug);
+                    p.StartInfo.RedirectStandardError = true;
+                    ServerManager.Logger.AddOutput($"Standord stream will be redirected.", OutputLevel.Debug);
+                    p.StartInfo.RedirectStandardOutput = true;
+                    p.ErrorDataReceived += (sender, e) =>
                     {
-                        if (Client.ExtraData.TryGetValue("ps_appendNewLine", out string val))
+                        if (e.Data != null)
                         {
-                            if (val == "false")
+                            if (Client.ExtraData.TryGetValue("ps_appendNewLine", out string val))
                             {
-                                Client.ClientCallback.TellMessageToServerConsole(e.Data);
+                                if (val == "false")
+                                {
+                                    Client.ClientCallback.TellMessageToServerConsole(e.Data);
+                                }
+                                else
+                                {
+                                    Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, $"Extra data for appendText is invalid. Value: {val}", "Server Host"));
+                                }
                             }
                             else
                             {
-                                Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, $"Extra data for appendText is invalid. Value: {val}", "Server Host"));
+                                Client.ClientCallback.TellMessageToServerConsole(e.Data + "\n");
                             }
                         }
-                        else
-                        {
-                            Client.ClientCallback.TellMessageToServerConsole(e.Data + "\n");
-                        }
-                    }
-                };
-                p.OutputDataReceived += (sender, e) =>
-                {
-                    if (e.Data != null)
+                    };
+                    p.OutputDataReceived += (sender, e) =>
                     {
-                        if (Client.ExtraData.TryGetValue("ps_appendNewLine", out string val))
+                        if (e.Data != null)
                         {
-                            if (val == "false")
+                            if (Client.ExtraData.TryGetValue("ps_appendNewLine", out string val))
                             {
-                                Client.ClientCallback.TellMessageToServerConsole(e.Data);
+                                if (val == "false")
+                                {
+                                    Client.ClientCallback.TellMessageToServerConsole(e.Data);
+                                }
+                                else
+                                {
+                                    Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, $"Extra data for appendText is invalid. Value: {val}", "Server Host"));
+                                }
                             }
                             else
                             {
-                                Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, $"Extra data for appendText is invalid. Value: {val}", "Server Host"));
+                                Client.ClientCallback.TellMessageToServerConsole(e.Data + "\n");
                             }
                         }
-                        else
-                        {
-                            Client.ClientCallback.TellMessageToServerConsole(e.Data + "\n");
-                        }
-                    }
-                };
-                ServerManager.Logger.AddOutput("Starting process component.", OutputLevel.Info);
-                p.Start();
-                ServerManager.Logger.AddOutput("Beginning error stream read line.", OutputLevel.Debug);
-                p.BeginErrorReadLine();
-                ServerManager.Logger.AddOutput("Beginning standord stream reade line.", OutputLevel.Debug);
-                p.BeginOutputReadLine();
+                    };
+                    ServerManager.Logger.AddOutput("Starting process component.", OutputLevel.Info);
+                    p.Start();
+                    ServerManager.Logger.AddOutput("Beginning error stream read line.", OutputLevel.Debug);
+                    p.BeginErrorReadLine();
+                    ServerManager.Logger.AddOutput("Beginning standord stream reade line.", OutputLevel.Debug);
+                    p.BeginOutputReadLine();
+                }
             }
             // OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
         }
 
         public DialogResult ShowMessageBox(string Message, string Caption, System.Windows.Forms.MessageBoxIcon Icon, System.Windows.Forms.MessageBoxButtons Buttons)
         {
-            CheckRegisteration("ShowMessageBox");
-            if (LoggedInUser.Role.AttachedPolicyObject.Policies.FindSubFolder("Operations").Policies.First(p => p.ShortName == "EnableConsole").Values["Value"] != "True")
+            if (CheckRegisteration("ShowMessageBox"))
             {
-                Client.ClientCallback.TellMessage("You do not have promission to use the CanShowMessageBox function.", OutputLevel.Info);
-                return DialogResult.Abort;
+                if (LoggedInUser.Role.AttachedPolicyObject.Policies.FindSubFolder("Operations").Policies.First(p => p.ShortName == "EnableConsole").Values["Value"] != "True")
+                {
+                    Client.ClientCallback.TellMessage("You do not have promission to use the CanShowMessageBox function.", OutputLevel.Info);
+                    return DialogResult.Abort;
+                }
+                else
+                {
+                    var dr = MessageBox.Show(Message, Caption, Buttons, Icon);
+                    Client.ClientCallback.TellMessage(new UILogItem(OutputLevel.Info, $"The user responded to the message box. Response: {dr.ToString()}", "Server Host"));
+                    return dr;
+                }
             }
             else
             {
-                var dr = MessageBox.Show(Message, Caption, Buttons, Icon);
-                Client.ClientCallback.TellMessage(new UILogItem(OutputLevel.Info, $"The user responded to the message box. Response: {dr.ToString()}", "Server Host"));
-                return dr;
+                return DialogResult.Abort;
             }
             // OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
         }
 
         public void Speak(string Message, VoiceGender Gender, VoiceAge Age)
         {
-            CheckRegisteration("Speak");
-            if (LoggedInUser.Role.AttachedPolicyObject.Policies.FindSubFolder("Operations").Policies.First(p => p.ShortName == "EnableConsole").Values["Value"] != "True")
+            if (CheckRegisteration("Speak"))
             {
-                Client.ClientCallback.TellMessage("You do not have promission to use the Speak function.", OutputLevel.Info);
-            }
-            else
-            {
-                System.Speech.Synthesis.SpeechSynthesizer ss = new System.Speech.Synthesis.SpeechSynthesizer();
-                ss.SelectVoiceByHints(Gender, Age);
-                ss.Speak(Message);
-                Client.ClientCallback.TellMessage($"Server spoke. Message: {Message}, gender: {Gender.ToString()}, age: {Age.ToString()}", OutputLevel.Info);
+                if (LoggedInUser.Role.AttachedPolicyObject.Policies.FindSubFolder("Operations").Policies.First(p => p.ShortName == "EnableConsole").Values["Value"] != "True")
+                {
+                    Client.ClientCallback.TellMessage("You do not have promission to use the Speak function.", OutputLevel.Info);
+                }
+                else
+                {
+                    System.Speech.Synthesis.SpeechSynthesizer ss = new System.Speech.Synthesis.SpeechSynthesizer();
+                    ss.SelectVoiceByHints(Gender, Age);
+                    ss.Speak(Message);
+                    Client.ClientCallback.TellMessage($"Server spoke. Message: {Message}, gender: {Gender.ToString()}, age: {Age.ToString()}", OutputLevel.Info);
+                }
             }
             // OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
         }
 
         public CommandPipeline RunServerCommand(string Command, CommandExecutionMode commandMode)
         {
-            CommandPipeline pipe = new CommandPipeline();
-            int pos = 0;
-            CheckRegisteration("RunServerCommand");
-            if (LoggedInUser.Role.AttachedPolicyObject.Policies.FindSubFolder("Operations").Policies.First(p => p.ShortName == "EnableConsole").Values["Value"] != "True")
+            if (CheckRegisteration("RunServerCommand"))
             {
-                Client.ClientCallback.TellMessage("You do not have promission to use the Console function.", OutputLevel.Info);
-                return null;
-            }
-            else
-            {
-                //This is script command.
-                if (Command.StartsWith("::"))
+                CommandPipeline pipe = new CommandPipeline();
+                int pos = 0;
+                if (LoggedInUser.Role.AttachedPolicyObject.Policies.FindSubFolder("Operations").Policies.First(p => p.ShortName == "EnableConsole").Values["Value"] != "True")
                 {
-                    try
-                    {
-                        ServerManager.ScriptBuilder.ExecuteStringUsingSameScriptScope(Command.TrimStart(':'));
-                    }
-                    catch (Exception ex)
-                    {
-                        Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, $"Could not execute script file: {ex.Message}", ScriptBuilder.SCRIPT_LOG_CONSTANT));
-                    }
+                    Client.ClientCallback.TellMessage("You do not have promission to use the Console function.", OutputLevel.Info);
+                    return null;
                 }
                 else
                 {
-                    CommandParser parser = new CommandParser(Command);
-                    try
+                    //This is script command.
+                    if (Command.StartsWith("::"))
                     {
-                        var tokens = parser.Parse(true);
-                        var newTokens = RunSubRoutines(parser, pipe, pos);
-                        foreach (CommandToken token in newTokens)
+                        try
                         {
-                            foreach (List<CommandToken> allTokens in parser.ParsedTokens)
+                            ServerManager.ScriptBuilder.ExecuteStringUsingSameScriptScope(Command.TrimStart(':'));
+                        }
+                        catch (Exception ex)
+                        {
+                            Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, $"Could not execute script file: {ex.Message}", ScriptBuilder.SCRIPT_LOG_CONSTANT));
+                        }
+                    }
+                    else
+                    {
+                        CommandParser parser = new CommandParser(Command);
+                        try
+                        {
+                            var tokens = parser.Parse(true);
+                            var newTokens = RunSubRoutines(parser, pipe, pos);
+                            foreach (CommandToken token in newTokens)
                             {
-                                var index = allTokens.IndexOf(token);
-                                if (index != -1)
+                                foreach (List<CommandToken> allTokens in parser.ParsedTokens)
                                 {
-                                    parser.ParsedTokens[parser.ParsedTokens.IndexOf(allTokens)][index] = token;
+                                    var index = allTokens.IndexOf(token);
+                                    if (index != -1)
+                                    {
+                                        parser.ParsedTokens[parser.ParsedTokens.IndexOf(allTokens)][index] = token;
+                                    }
                                 }
                             }
+                            var newVariableTokens = RunVariableReplacement(parser, out bool success);
+                            if (success != true)
+                            {
+                                return pipe;
+                            }
+                            foreach (CommandToken token in newVariableTokens)
+                            {
+                                foreach (List<CommandToken> allTokens in parser.ParsedTokens)
+                                {
+                                    var index = allTokens.IndexOf(token);
+                                    if (index != -1)
+                                    {
+                                        parser.ParsedTokens[parser.ParsedTokens.IndexOf(allTokens)][index] = token;
+                                    }
+                                }
+                            }
+                            var newQouteTokens = ParseOutQoutes(parser);
+                            foreach (CommandToken token in newQouteTokens)
+                            {
+                                foreach (List<CommandToken> allTokens in parser.ParsedTokens)
+                                {
+                                    var index = allTokens.IndexOf(token);
+                                    if (index != -1)
+                                    {
+                                        parser.ParsedTokens[parser.ParsedTokens.IndexOf(allTokens)][index] = token;
+                                    }
+                                }
+                            }
+                            //Run the commands
+                            foreach (List<CommandToken> commands in parser.ParsedTokens)
+                            {
+                                var request = new CommandRequest(commands.ToArray());
+                                var routine = new CommandRoutine(request, ServerManager.Execute(request, CommandExecutionMode.Client, pipe));
+                                pipe.Add(pos++, routine);
+                            }
                         }
-                        var newVariableTokens = RunVariableReplacement(parser, out bool success);
-                        if (success != true)
+                        catch (ParserException e)
                         {
+                            UILogItem parseMessage = new UILogItem(OutputLevel.Error, $"Unable to parse command: {e.Message}");
+                            parseMessage.From = "Server Host";
+                            ServerManager.Logger.AddOutput(parseMessage.Message, parseMessage.Level, parseMessage.From);
+                            Client.ClientCallback.TellMessageToServerConsole(parseMessage);
                             return pipe;
                         }
-                        foreach (CommandToken token in newVariableTokens)
-                        {
-                            foreach (List<CommandToken> allTokens in parser.ParsedTokens)
-                            {
-                                var index = allTokens.IndexOf(token);
-                                if (index != -1)
-                                {
-                                    parser.ParsedTokens[parser.ParsedTokens.IndexOf(allTokens)][index] = token;
-                                }
-                            }
-                        }
-                        var newQouteTokens = ParseOutQoutes(parser);
-                        foreach (CommandToken token in newQouteTokens)
-                        {
-                            foreach (List<CommandToken> allTokens in parser.ParsedTokens)
-                            {
-                                var index = allTokens.IndexOf(token);
-                                if (index != -1)
-                                {
-                                    parser.ParsedTokens[parser.ParsedTokens.IndexOf(allTokens)][index] = token;
-                                }
-                            }
-                        }
-                        //Run the commands
-                        foreach (List<CommandToken> commands in parser.ParsedTokens)
-                        {
-                            var request = new CommandRequest(commands.ToArray());
-                            var routine = new CommandRoutine(request, ServerManager.Execute(request, CommandExecutionMode.Client, pipe));
-                            pipe.Add(pos++, routine);
-                        }
-                    }
-                    catch (ParserException e)
-                    {
-                        UILogItem parseMessage = new UILogItem(OutputLevel.Error, $"Unable to parse command: {e.Message}");
-                        parseMessage.From = "Server Host";
-                        ServerManager.Logger.AddOutput(parseMessage.Message, parseMessage.Level, parseMessage.From);
-                        Client.ClientCallback.TellMessageToServerConsole(parseMessage);
-                        return pipe;
                     }
                 }
+                // OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
+                return pipe;
             }
-            // OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
-            return pipe;
+            else
+            {
+                return null;
+            }
         }
 
         private CommandToken[] RunVariableReplacement(CommandParser p, out bool success)
@@ -570,19 +609,21 @@ namespace RemotePlusServer
 
         public void UpdateServerSettings(ServerSettings Settings)
         {
-            CheckRegisteration("UpdateServerSettings");
-            if (LoggedInUser.Role.AttachedPolicyObject.Policies.FindSubFolder("Operations").Policies.First(p => p.ShortName == "EnableConsole").Values["Value"] != "True")
+            if (CheckRegisteration("UpdateServerSettings"))
             {
-                Client.ClientCallback.TellMessage(new UILogItem(OutputLevel.Error, "You do not have permission to change server settings.", "Server Host"));
-            }
-            else
-            {
-                ServerManager.Logger.AddOutput("Updating server settings.", OutputLevel.Info);
-                ServerManager.DefaultSettings = Settings;
-                Client.ClientCallback.TellMessage("Saving settings.", OutputLevel.Info);
-                ServerManager.DefaultSettings.Save();
-                Client.ClientCallback.TellMessage("Settings saved.", OutputLevel.Info);
-                ServerManager.Logger.AddOutput("Settings saved.", OutputLevel.Info);
+                if (LoggedInUser.Role.AttachedPolicyObject.Policies.FindSubFolder("Operations").Policies.First(p => p.ShortName == "EnableConsole").Values["Value"] != "True")
+                {
+                    Client.ClientCallback.TellMessage(new UILogItem(OutputLevel.Error, "You do not have permission to change server settings.", "Server Host"));
+                }
+                else
+                {
+                    ServerManager.Logger.AddOutput("Updating server settings.", OutputLevel.Info);
+                    ServerManager.DefaultSettings = Settings;
+                    Client.ClientCallback.TellMessage("Saving settings.", OutputLevel.Info);
+                    ServerManager.DefaultSettings.Save();
+                    Client.ClientCallback.TellMessage("Settings saved.", OutputLevel.Info);
+                    ServerManager.Logger.AddOutput("Settings saved.", OutputLevel.Info);
+                }
             }
             // OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
         }
@@ -590,16 +631,22 @@ namespace RemotePlusServer
         public ServerSettings GetServerSettings()
         {
             // OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
-            CheckRegisteration("GetServerSettings");
-            if (LoggedInUser.Role.AttachedPolicyObject.Policies.FindSubFolder("Operations").Policies.First(p => p.ShortName == "GetServerSettings").Values["Value"] != "True")
+            if (CheckRegisteration("GetServerSettings"))
             {
-                Client.ClientCallback.TellMessage(new UILogItem(OutputLevel.Error, "You do not have permission to change server settings.", "Server Host"));
-                return null;
+                if (LoggedInUser.Role.AttachedPolicyObject.Policies.FindSubFolder("Operations").Policies.First(p => p.ShortName == "GetServerSettings").Values["Value"] != "True")
+                {
+                    Client.ClientCallback.TellMessage(new UILogItem(OutputLevel.Error, "You do not have permission to change server settings.", "Server Host"));
+                    return null;
+                }
+                else
+                {
+                    ServerManager.Logger.AddOutput("Retreiving server settings.", OutputLevel.Info);
+                    return ServerManager.DefaultSettings;
+                }
             }
             else
             {
-                ServerManager.Logger.AddOutput("Retreiving server settings.", OutputLevel.Info);
-                return ServerManager.DefaultSettings;
+                return null;
             }
         }
 
@@ -610,73 +657,103 @@ namespace RemotePlusServer
         public UserAccount GetLoggedInUser()
         {
             // OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
-            CheckRegisteration("GetLoggedInUser");
-            return LoggedInUser;
+            if (CheckRegisteration("GetLoggedInUser"))
+            {
+                return LoggedInUser;
+            }
+            else
+            {
+                return null;
+            }
         }
 
         public ExtensionReturn RunExtension(string ExtensionName, ExtensionExecutionContext Context, string[] args)
         {
             // OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
-            CheckRegisteration("RunExtension");
-            if (LoggedInUser.Role.AttachedPolicyObject.Policies.FindSubFolder("Operations").Policies.First(p => p.ShortName == "EnableConsole").Values["Value"] != "True")
+            if (CheckRegisteration("RunExtension"))
             {
-                Client.ClientCallback.TellMessage(new UILogItem(OutputLevel.Error, "You do not have permission to run an extension.", "Server Host"));
-                return new ExtensionReturn(ExtensionStatusCodes.ACCESS_DENIED);
+                if (LoggedInUser.Role.AttachedPolicyObject.Policies.FindSubFolder("Operations").Policies.First(p => p.ShortName == "EnableConsole").Values["Value"] != "True")
+                {
+                    Client.ClientCallback.TellMessage(new UILogItem(OutputLevel.Error, "You do not have permission to run an extension.", "Server Host"));
+                    return new ExtensionReturn(ExtensionStatusCodes.ACCESS_DENIED);
+                }
+                else
+                {
+                    ServerManager.Logger.AddOutput($"Executing extension. Name: {ExtensionName}, CallType: {Context.Mode.ToString()}", OutputLevel.Info);
+                    try
+                    {
+                        ServerExtension e = _allExtensions[ExtensionName];
+                        if (e.SupportClientTypes != ClientSupportedTypes.Both && ((Client.ClientType == ClientType.CommandLine && e.SupportClientTypes == ClientSupportedTypes.GUI) || (Client.ClientType == ClientType.GUI && e.SupportClientTypes == ClientSupportedTypes.CommandLine)))
+                        {
+                            ServerManager.Logger.AddOutput($"Unsupported client type. Please use a {e.SupportClientTypes} client instead.", OutputLevel.Info);
+                            Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, $"Unsupported client type. Please use a {e.SupportClientTypes} client instead.", "Server Host"));
+                        }
+                        var s = e.Execute(Context, args);
+                        ServerManager.Logger.AddOutput($"Returnaing extension response. Success: {(s.ReturnCode == 0 ? true : false)}", OutputLevel.Debug);
+                        return s;
+                    }
+                    catch (KeyNotFoundException)
+                    {
+                        ServerManager.Logger.AddOutput($"Extension {ExtensionName} does not exist.", OutputLevel.Error);
+                        Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, $"Extension {ExtensionName} does not exist.", "Server Host"));
+                        return new ExtensionReturn(ExtensionStatusCodes.EXTENSION_NOT_FOUND);
+                    }
+                }
             }
             else
             {
-                ServerManager.Logger.AddOutput($"Executing extension. Name: {ExtensionName}, CallType: {Context.Mode.ToString()}", OutputLevel.Info);
-                try
-                {
-                    ServerExtension e = _allExtensions[ExtensionName];
-                    if (e.SupportClientTypes != ClientSupportedTypes.Both && ((Client.ClientType == ClientType.CommandLine && e.SupportClientTypes == ClientSupportedTypes.GUI) || (Client.ClientType == ClientType.GUI && e.SupportClientTypes == ClientSupportedTypes.CommandLine)))
-                    {
-                        ServerManager.Logger.AddOutput($"Unsupported client type. Please use a {e.SupportClientTypes} client instead.", OutputLevel.Info);
-                        Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, $"Unsupported client type. Please use a {e.SupportClientTypes} client instead.", "Server Host"));
-                    }
-                    var s = e.Execute(Context, args);
-                    ServerManager.Logger.AddOutput($"Returnaing extension response. Success: {(s.ReturnCode == 0 ? true : false)}", OutputLevel.Debug);
-                    return s;
-                }
-                catch (KeyNotFoundException)
-                {
-                    ServerManager.Logger.AddOutput($"Extension {ExtensionName} does not exist.", OutputLevel.Error);
-                    Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, $"Extension {ExtensionName} does not exist.", "Server Host"));
-                    return new ExtensionReturn(ExtensionStatusCodes.EXTENSION_NOT_FOUND);
-                }
+                return null;
             }
         }
 
         public List<ExtensionDetails> GetExtensionNames()
         {
             // OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
-            CheckRegisteration("GetExtensionNames");
-            List<ExtensionDetails> l = new List<ExtensionDetails>();
-            foreach (KeyValuePair<string, ServerExtension> s in _allExtensions)
+            if (CheckRegisteration("GetExtensionNames"))
             {
-                l.Add(s.Value.GeneralDetails);
+                List<ExtensionDetails> l = new List<ExtensionDetails>();
+                foreach (KeyValuePair<string, ServerExtension> s in _allExtensions)
+                {
+                    l.Add(s.Value.GeneralDetails);
+                }
+                return l;
             }
-            return l;
+            else
+            {
+                return null;
+            }
         }
         public IEnumerable<CommandDescription> GetCommands()
         {
-            // OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
-            List<CommandDescription> rc = new List<CommandDescription>();
-            CheckRegisteration("GetCommands");
-            ServerManager.Logger.AddOutput("Requesting commands list.", OutputLevel.Info);
-            Client.ClientCallback.TellMessage("Returning commands list.", OutputLevel.Info);
-            foreach(KeyValuePair<string, CommandDelegate> currentCommand in ServerManager.DefaultService.Commands)
+            if (CheckRegisteration("GetCommands"))
             {
-                rc.Add(new CommandDescription() { Help = RemotePlusConsole.GetCommandHelp(currentCommand.Value), Behavior = RemotePlusConsole.GetCommandBehavior(currentCommand.Value), HelpPage = RemotePlusConsole.GetCommandHelpPage(currentCommand.Value), CommandName = currentCommand.Key });
+                // OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
+                List<CommandDescription> rc = new List<CommandDescription>();
+                ServerManager.Logger.AddOutput("Requesting commands list.", OutputLevel.Info);
+                Client.ClientCallback.TellMessage("Returning commands list.", OutputLevel.Info);
+                foreach (KeyValuePair<string, CommandDelegate> currentCommand in ServerManager.DefaultService.Commands)
+                {
+                    rc.Add(new CommandDescription() { Help = RemotePlusConsole.GetCommandHelp(currentCommand.Value), Behavior = RemotePlusConsole.GetCommandBehavior(currentCommand.Value), HelpPage = RemotePlusConsole.GetCommandHelpPage(currentCommand.Value), CommandName = currentCommand.Key });
+                }
+                return rc;
             }
-            return rc;
+            else
+            {
+                return null;
+            }
         }
         public IEnumerable<string> GetCommandsAsStrings()
         {
             // OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
-            CheckRegisteration("GetCommandsAsStrings");
-            Client.ClientCallback.SendSignal(new SignalMessage("operation_completed", ""));
-            return ServerManager.DefaultService.Commands.Keys;
+            if (CheckRegisteration("GetCommandsAsStrings"))
+            {
+                Client.ClientCallback.SendSignal(new SignalMessage("operation_completed", ""));
+                return ServerManager.DefaultService.Commands.Keys;
+            }
+            else
+            {
+                return null;
+            }
         }
 
         public void SwitchUser()
@@ -796,35 +873,43 @@ namespace RemotePlusServer
         public EmailSettings GetServerEmailSettings()
         {
             // OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
-            CheckRegisteration("GetServerEmailSettings");
-            if (LoggedInUser.Role.AttachedPolicyObject.Policies.FindSubFolder("Operations").Policies.First(p => p.ShortName == "EnableConsole").Values["Value"] != "True")
+            if (CheckRegisteration("GetServerEmailSettings"))
             {
-                Client.ClientCallback.TellMessage(new UILogItem(OutputLevel.Error, "You do not have permission to change email server settings.", "Server Host"));
-                return null;
+                if (LoggedInUser.Role.AttachedPolicyObject.Policies.FindSubFolder("Operations").Policies.First(p => p.ShortName == "EnableConsole").Values["Value"] != "True")
+                {
+                    Client.ClientCallback.TellMessage(new UILogItem(OutputLevel.Error, "You do not have permission to change email server settings.", "Server Host"));
+                    return null;
+                }
+                else
+                {
+                    ServerManager.Logger.AddOutput("Retreiving email server settings.", OutputLevel.Info);
+                    return ServerManager.DefaultEmailSettings;
+                }
             }
             else
             {
-                ServerManager.Logger.AddOutput("Retreiving email server settings.", OutputLevel.Info);
-                return ServerManager.DefaultEmailSettings;
+                return null;
             }
         }
 
         public void UpdateServerEmailSettings(EmailSettings emailSetting)
         {
             // OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
-            CheckRegisteration("UpdateServerEmailSettings");
-            if (LoggedInUser.Role.AttachedPolicyObject.Policies.FindSubFolder("Operations").Policies.First(p => p.ShortName == "EnableConsole").Values["Value"] != "True")
+            if (CheckRegisteration("UpdateServerEmailSettings"))
             {
-                Client.ClientCallback.TellMessage(new UILogItem(OutputLevel.Error, "You do not have permission to change server email settings.", "Server Host"));
-            }
-            else
-            {
-                ServerManager.Logger.AddOutput("Updating server email settings.", OutputLevel.Info);
-                ServerManager.DefaultEmailSettings = emailSetting;
-                Client.ClientCallback.TellMessage("Saving settings.", OutputLevel.Info);
-                ServerManager.DefaultEmailSettings.Save();
-                Client.ClientCallback.TellMessage("Settings saved.", OutputLevel.Info);
-                ServerManager.Logger.AddOutput("Settings saved.", OutputLevel.Info);
+                if (LoggedInUser.Role.AttachedPolicyObject.Policies.FindSubFolder("Operations").Policies.First(p => p.ShortName == "EnableConsole").Values["Value"] != "True")
+                {
+                    Client.ClientCallback.TellMessage(new UILogItem(OutputLevel.Error, "You do not have permission to change server email settings.", "Server Host"));
+                }
+                else
+                {
+                    ServerManager.Logger.AddOutput("Updating server email settings.", OutputLevel.Info);
+                    ServerManager.DefaultEmailSettings = emailSetting;
+                    Client.ClientCallback.TellMessage("Saving settings.", OutputLevel.Info);
+                    ServerManager.DefaultEmailSettings.Save();
+                    Client.ClientCallback.TellMessage("Settings saved.", OutputLevel.Info);
+                    ServerManager.Logger.AddOutput("Settings saved.", OutputLevel.Info);
+                }
             }
         }
 

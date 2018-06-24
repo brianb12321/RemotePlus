@@ -33,7 +33,7 @@ namespace RemotePlusClientCmd
         {
             //ClientCmdManager.WaitFlag = true;
             ClientCmdManager.Remote.Close();
-            ClientCmdManager.Logger.AddOutput(new LogItem(OutputLevel.Error, "Server disconnected. " + Reason, "CLient") { Color = ConsoleColor.Red });
+            ClientCmdManager.Logger.AddOutput(new LogItem(OutputLevel.Error, $"Server [{guid}] disconnected. " + Reason, "CLient") { Color = ConsoleColor.Red });
             //ClientCmdManager.WaitFlag = false;
         }
 
@@ -76,7 +76,7 @@ namespace RemotePlusClientCmd
         public UserCredentials RequestAuthentication(Guid guid, AuthenticationRequest Request)
         {
             //ClientCmdManager.WaitFlag = true;
-            Console.WriteLine($"The server requires authentication. Reason: {Request.Reason}");
+            Console.WriteLine($"The server [{guid}] requires authentication. Reason: {Request.Reason}");
             Console.Write("Enter Username: ");
             string username = Console.ReadLine();
             Console.Write("Enter Password: ");
@@ -127,7 +127,7 @@ namespace RemotePlusClientCmd
         public void TellMessage(Guid guid, string Message, OutputLevel o)
         {
             //ClientCmdManager.WaitFlag = true;
-            LogItem li = new LogItem(o, Message, "Server Host");
+            LogItem li = new LogItem(o, Message, $"Server Host ({guid})");
             if (o == OutputLevel.Warning)
             {
                 li.Color = ClientCmdManager.Logger.ConsoleForegroundWarning;
@@ -170,6 +170,7 @@ namespace RemotePlusClientCmd
                     li.Color = ClientCmdManager.Logger.ConsoleForegroundDebug;
                 }
             }
+            li.From += $" ({guid})";
             ClientCmdManager.Logger.AddOutput(new LogItem(li.Level, li.Message, li.From) { Color = li.Color });
             //ClientCmdManager.WaitFlag = false;
         }
@@ -198,6 +199,7 @@ namespace RemotePlusClientCmd
                         l.Color = ClientCmdManager.Logger.ConsoleForegroundDebug;
                     }
                 }
+                l.From += $" ({guid})";
                 ClientCmdManager.Logger.AddOutput(new LogItem(l.Level, l.Message, l.From) { Color = l.Color });
                 //ClientCmdManager.WaitFlag = false;
             }
@@ -209,11 +211,11 @@ namespace RemotePlusClientCmd
             string f = "";
             if (string.IsNullOrEmpty(li.From))
             {
-                f = "Server Console " + "Server Host";
+                f = "Server Console " + "Server Host" + $" ({guid})";
             }
             else
             {
-                f = "Server Console " + li.From;
+                f = "Server Console " + li.From + $" ({guid})";
             }
             li.From = f;
             if (ClientCmdManager.Logger.OverrideLogItemObjectColorValue)

@@ -16,6 +16,7 @@ namespace RemotePlusLibrary.Discovery
         public ServiceEndpoint ClientEndpoint { get; private set; }
         public ProbeService(Type serviceType, I singleTon, string proxyAddress, string proxyClientAddress, Action<I> callback) : base(serviceType, singleTon, _ConnectionFactory.BuildBinding(), proxyAddress, callback)
         {
+            Commands = new Dictionary<string, Extension.CommandSystem.CommandDelegate>();
             ClientEndpoint = Host.AddServiceEndpoint(typeof(IProxyRemote), _ConnectionFactory.BuildBinding(), proxyClientAddress);
         }
         public static ProbeService<I> CreateProxyService(Type serviceType, I singleTon, int port, string proxyEndpoint, string proxyClientEndpoint, Action<string, OutputLevel> callback, Action<I> setupCallback)

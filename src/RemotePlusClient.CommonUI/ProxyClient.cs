@@ -262,5 +262,10 @@ namespace RemotePlusClient.CommonUI
         {
             return Channel.GetSelectedServerGuid();
         }
+
+        public CommandPipeline ExecuteProxyCommand(string command, CommandExecutionMode mode)
+        {
+            return Channel.ExecuteProxyCommand(command, mode);
+        }
     }
 }

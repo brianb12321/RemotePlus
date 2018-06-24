@@ -18,6 +18,8 @@ using System.Speech.Synthesis;
 using System.Windows.Forms;
 using Logging;
 using RemotePlusLibrary.Core;
+using System.Text.RegularExpressions;
+using System.Reflection;
 
 namespace ProxyServer
 {
@@ -31,84 +33,83 @@ namespace ProxyServer
     [GlobalException(typeof(GlobalErrorHandler))]
     public class ProxyServerRemoteImpl : IProxyServerRemote, IProxyRemote
     {
-        Client<IRemote> selectedClient = null;
-        Client<IRemoteClient> ProxyClient = null;
-        List<Client<IRemote>> ConnectedServers { get; } = new List<Client<IRemote>>();
-
+        public Client<IRemote> SelectedClient = null;
+        public Client<IRemoteClient> ProxyClient = null;
+        public List<Client<IRemote>> ConnectedServers { get; } = new List<Client<IRemote>>();
         public void Beep(int Hertz, int Duration)
         {
-            selectedClient.ClientCallback.Beep(Hertz, Duration);
+            SelectedClient.ClientCallback.Beep(Hertz, Duration);
         }
 
         public void DecryptFile(string fileName, string password)
         {
-            selectedClient.ClientCallback.DecryptFile(fileName, password);
+            SelectedClient.ClientCallback.DecryptFile(fileName, password);
         }
 
         public void Disconnect()
         {
-            selectedClient.ClientCallback.Disconnect();
-            ConnectedServers.Remove(selectedClient);
+            SelectedClient.ClientCallback.Disconnect();
+            ConnectedServers.Remove(SelectedClient);
         }
 
         public void EncryptFile(string fileName, string password)
         {
-            selectedClient.ClientCallback.EncryptFile(fileName, password);
+            SelectedClient.ClientCallback.EncryptFile(fileName, password);
         }
 
         public bool ExecuteScript(string script)
         {
-            return selectedClient.ClientCallback.ExecuteScript(script);
+            return SelectedClient.ClientCallback.ExecuteScript(script);
         }
 
         public string GetCommandHelpDescription(string command)
         {
-            return selectedClient.ClientCallback.GetCommandHelpDescription(command);
+            return SelectedClient.ClientCallback.GetCommandHelpDescription(command);
         }
 
         public string GetCommandHelpPage(string command)
         {
-            return selectedClient.ClientCallback.GetCommandHelpPage(command);
+            return SelectedClient.ClientCallback.GetCommandHelpPage(command);
         }
 
         public IEnumerable<CommandDescription> GetCommands()
         {
-            return selectedClient.ClientCallback.GetCommands();
+            return SelectedClient.ClientCallback.GetCommands();
         }
 
         public IEnumerable<string> GetCommandsAsStrings()
         {
-            return selectedClient.ClientCallback.GetCommandsAsStrings();
+            return SelectedClient.ClientCallback.GetCommandsAsStrings();
         }
 
         public List<ExtensionDetails> GetExtensionNames()
         {
-            return selectedClient.ClientCallback.GetExtensionNames();
+            return SelectedClient.ClientCallback.GetExtensionNames();
         }
 
         public UserAccount GetLoggedInUser()
         {
-            return selectedClient.ClientCallback.GetLoggedInUser();
+            return SelectedClient.ClientCallback.GetLoggedInUser();
         }
 
         public IDirectory GetRemoteFiles(string path, bool useRequest)
         {
-            return selectedClient.ClientCallback.GetRemoteFiles(path, useRequest);
+            return SelectedClient.ClientCallback.GetRemoteFiles(path, useRequest);
         }
 
         public ScriptGlobalInformation[] GetScriptGlobals()
         {
-            return selectedClient.ClientCallback.GetScriptGlobals();
+            return SelectedClient.ClientCallback.GetScriptGlobals();
         }
 
         public EmailSettings GetServerEmailSettings()
         {
-            return selectedClient.ClientCallback.GetServerEmailSettings();
+            return SelectedClient.ClientCallback.GetServerEmailSettings();
         }
 
         public List<string> GetServerRoleNames()
         {
-            return selectedClient.ClientCallback.GetServerRoleNames();
+            return SelectedClient.ClientCallback.GetServerRoleNames();
         }
 
         public Guid[] GetServers()
@@ -118,22 +119,22 @@ namespace ProxyServer
 
         public ServerSettings GetServerSettings()
         {
-            return selectedClient.ClientCallback.GetServerSettings();
+            return SelectedClient.ClientCallback.GetServerSettings();
         }
 
         public void PlaySound(string FileName)
         {
-            selectedClient.ClientCallback.PlaySound(FileName);
+            SelectedClient.ClientCallback.PlaySound(FileName);
         }
 
         public void PlaySoundLoop(string FileName)
         {
-            selectedClient.ClientCallback.PlaySoundLoop(FileName);
+            SelectedClient.ClientCallback.PlaySoundLoop(FileName);
         }
 
         public void PlaySoundSync(string FileName)
         {
-            selectedClient.ClientCallback.PlaySoundSync(FileName);
+            SelectedClient.ClientCallback.PlaySoundSync(FileName);
         }
 
         public void ProxyDisconnect()
@@ -150,11 +151,41 @@ namespace ProxyServer
         {
             var callback = OperationContext.Current.GetCallbackChannel<IRemoteClient>();
             ProxyClient = Client<IRemoteClient>.Build(callback.RegisterClient(), callback);
+            if(ProxyClient.ClientType == ClientType.CommandLine)
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.AppendLine("=================================================================================");
+                sb.AppendLine($"                        Welcome to RemotePlus Proxy                             ");
+                sb.AppendLine();
+                sb.AppendLine($"Version: {Assembly.GetExecutingAssembly().GetName().Version}                    ");
+                sb.AppendLine("YOU ARE LIABLE FOR ANY DAMAGES OR ILLEGAL ACTIVITIES USING THIS PROGRAM. MAKE    ");
+                sb.AppendLine("SURE YOU ARE AUTHORIZED TO LOAD REMOTEPLUS ONTO ANY SYSTEM THAT ISN'T YOURS.     ");
+                sb.AppendLine("WE AREN'T RESPONSIBLE FOR ANY DATA LOSS DUE TO A CUSTOM EXTENSION OR SCRIPT.     ");
+                sb.AppendLine("If you found a bug in the RemotePlus code, please open an issue at               ");
+                sb.AppendLine("http://github.com/brianb12321/RemotePlus");
+                sb.AppendLine("=================================================================================");
+                sb.AppendLine();
+                sb.AppendLine($"There are {ConnectedServers.Count} server(s) connected to the proxy server.");
+                sb.AppendLine("To view all the servers connected, enter {viewServers} into the console.");
+                sb.AppendLine("To switch the selected server, enter {switchServer} into the console.");
+                sb.AppendLine("Any command that is not part of the proxy server will be executed on the selected server.");
+                sb.AppendLine($"Proxy server GUID: {ProxyManager.ProxyGuid}");
+                sb.AppendLine();
+                sb.AppendLine();
+                ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyManager.ProxyGuid, sb.ToString());
+                ProxyClient.ClientCallback.ChangePrompt(ProxyManager.ProxyGuid, new RemotePlusLibrary.Extension.CommandSystem.PromptBuilder()
+                {
+                    Path = "",
+                    CurrentUser = "",
+                    AdditionalData = "Proxy"
+                });
+                ProxyClient.ClientCallback.RegistirationComplete(ProxyManager.ProxyGuid);
+            }
         }
 
         public string ReadFileAsString(string fileName)
         {
-            return selectedClient.ClientCallback.ReadFileAsString(fileName);
+            return SelectedClient.ClientCallback.ReadFileAsString(fileName);
         }
 
         public void Register()
@@ -162,78 +193,113 @@ namespace ProxyServer
             var callback = OperationContext.Current.GetCallbackChannel<IRemote>();
             var tempClient = Client<IRemote>.Build(new ClientBuilder(ClientType.Server), callback);
             ConnectedServers.Add(tempClient);
+            if(SelectedClient == null)
+            {
+                SelectedClient = tempClient;
+            }
             ProxyManager.Logger.AddOutput($"Server [{tempClient.UniqueID}] joined the proxy cluster.", Logging.OutputLevel.Info);
         }
 
         public void Register(RegisterationObject Settings)
         {
-            selectedClient.ClientCallback.Register(Settings);
+            SelectedClient.ClientCallback.Register(Settings);
         }
 
         public void Restart()
         {
-            selectedClient.ClientCallback.Restart();
+            SelectedClient.ClientCallback.Restart();
         }
 
         public ExtensionReturn RunExtension(string ExtensionName, ExtensionExecutionContext Context, string[] args)
         {
-            return selectedClient.ClientCallback.RunExtension(ExtensionName, Context, args);
+            return SelectedClient.ClientCallback.RunExtension(ExtensionName, Context, args);
         }
 
         public void RunProgram(string Program, string Argument)
         {
-            selectedClient.ClientCallback.RunProgram(Program, Argument);
+            SelectedClient.ClientCallback.RunProgram(Program, Argument);
         }
 
         public CommandPipeline RunServerCommand(string Command, CommandExecutionMode commandMode)
         {
-            return selectedClient.ClientCallback.RunServerCommand(Command, commandMode);
+            return SelectedClient.ClientCallback.RunServerCommand(Command, commandMode);
         }
 
         public void SelectServer(int serverPosition)
         {
-            selectedClient = ConnectedServers[serverPosition];
+            try
+            {
+                SelectedClient = ConnectedServers[serverPosition];
+                if (ProxyClient.ClientType == ClientType.CommandLine)
+                {
+                    ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyManager.ProxyGuid, new UILogItem(OutputLevel.Info, $"Server {serverPosition} is now active.", "Proxy Server"));
+                    ProxyClient.ClientCallback.ChangePrompt(ProxyManager.ProxyGuid, new RemotePlusLibrary.Extension.CommandSystem.PromptBuilder()
+                    {
+                        AdditionalData = $"Server {serverPosition}"
+                    });
+                }
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyManager.ProxyGuid, "The requested server is not connected.");
+            }
         }
 
         public void SelectServer(Guid guid)
         {
-            selectedClient = ConnectedServers.First(s => s.UniqueID == guid);
+            SelectedClient = ConnectedServers.First(s => s.UniqueID == guid);
+            if (SelectedClient == null)
+            {
+                ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyManager.ProxyGuid, "The requested server is not connected.");
+            }
+            else
+            {
+                if (ProxyClient.ClientType == ClientType.CommandLine)
+                {
+                    SelectedClient.ClientCallback.Register(new RegisterationObject());
+                    ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyManager.ProxyGuid, new UILogItem(OutputLevel.Info, $"Server {guid} is now active.", "Proxy Server"));
+                    ProxyClient.ClientCallback.ChangePrompt(ProxyManager.ProxyGuid, new RemotePlusLibrary.Extension.CommandSystem.PromptBuilder()
+                    {
+                        AdditionalData = $"Server {guid}"
+                    });
+                }
+            }
         }
 
         public bool SendEmail(string To, string Subject, string Message)
         {
-            return selectedClient.ClientCallback.SendEmail(To, Subject, Message);
+            return SelectedClient.ClientCallback.SendEmail(To, Subject, Message);
         }
 
         public DialogResult ShowMessageBox(string Message, string Caption, MessageBoxIcon Icon, MessageBoxButtons Buttons)
         {
-            return selectedClient.ClientCallback.ShowMessageBox(Message, Caption, Icon, Buttons);
+            return SelectedClient.ClientCallback.ShowMessageBox(Message, Caption, Icon, Buttons);
         }
 
         public void Speak(string Message, VoiceGender Gender, VoiceAge Age)
         {
-            selectedClient.ClientCallback.Speak(Message, Gender, Age);
+            SelectedClient.ClientCallback.Speak(Message, Gender, Age);
         }
 
         public void SwitchUser()
         {
-            selectedClient.ClientCallback.SwitchUser();
+            SelectedClient.ClientCallback.SwitchUser();
         }
 
         public void UpdateServerEmailSettings(EmailSettings emailSetting)
         {
-            selectedClient.ClientCallback.UpdateServerEmailSettings(emailSetting);
+            SelectedClient.ClientCallback.UpdateServerEmailSettings(emailSetting);
         }
 
         public void UpdateServerSettings(ServerSettings Settings)
         {
-            selectedClient.ClientCallback.UpdateServerSettings(Settings);
+            SelectedClient.ClientCallback.UpdateServerSettings(Settings);
         }
 
 
         public void Disconnect(Guid guid, string Reason)
         {
-            ProxyClient.ClientCallback.Disconnect(selectedClient.UniqueID, Reason);
+            ProxyClient.ClientCallback.Disconnect(SelectedClient.UniqueID, Reason);
         }
         public RemotePlusLibrary.Extension.CommandSystem.PromptBuilder GetCurrentPrompt()
         {
@@ -246,60 +312,312 @@ namespace ProxyServer
 
         public void RegistirationComplete(Guid guid)
         {
-            ProxyClient.ClientCallback.RegistirationComplete(selectedClient.UniqueID);
+            ProxyClient.ClientCallback.RegistirationComplete(SelectedClient.UniqueID);
         }
         public UserCredentials RequestAuthentication(Guid guid, AuthenticationRequest Request)
         {
-            return ProxyClient.ClientCallback.RequestAuthentication(selectedClient.UniqueID, Request);
+            return ProxyClient.ClientCallback.RequestAuthentication(SelectedClient.UniqueID, Request);
         }
 
         public ReturnData RequestInformation(Guid guid, RequestBuilder builder)
         {
-            return ProxyClient.ClientCallback.RequestInformation(selectedClient.UniqueID, builder);
+            return ProxyClient.ClientCallback.RequestInformation(SelectedClient.UniqueID, builder);
         }
         public void TellMessage(Guid guid, string Message, OutputLevel o)
         {
-            ProxyClient.ClientCallback.TellMessage(selectedClient.UniqueID, Message, o);
+            ProxyClient.ClientCallback.TellMessage(SelectedClient.UniqueID, Message, o);
         }
 
         public void TellMessage(Guid guid, UILogItem li)
         {
-            ProxyClient.ClientCallback.TellMessage(selectedClient.UniqueID, li);
+            ProxyClient.ClientCallback.TellMessage(SelectedClient.UniqueID, li);
         }
 
         public void TellMessage(Guid guid, UILogItem[] Logs)
         {
-            ProxyClient.ClientCallback.TellMessage(selectedClient.UniqueID, Logs);
+            ProxyClient.ClientCallback.TellMessage(SelectedClient.UniqueID, Logs);
         }
 
         public void TellMessageToServerConsole(Guid guid, UILogItem li)
         {
-            ProxyClient.ClientCallback.TellMessageToServerConsole(selectedClient.UniqueID, li);
+            ProxyClient.ClientCallback.TellMessageToServerConsole(SelectedClient.UniqueID, li);
         }
 
         public void TellMessageToServerConsole(Guid guid, string Message)
         {
-            ProxyClient.ClientCallback.TellMessageToServerConsole(selectedClient.UniqueID, Message);
+            ProxyClient.ClientCallback.TellMessageToServerConsole(SelectedClient.UniqueID, Message);
         }
 
         public void TellMessageToServerConsole(Guid guid, ConsoleText text)
         {
-            ProxyClient.ClientCallback.TellMessageToServerConsole(selectedClient.UniqueID, text);
+            ProxyClient.ClientCallback.TellMessageToServerConsole(SelectedClient.UniqueID, text);
         }
 
         public void SendSignal(Guid guid, SignalMessage signal)
         {
-            ProxyClient.ClientCallback.SendSignal(selectedClient.UniqueID, signal);
+            ProxyClient.ClientCallback.SendSignal(SelectedClient.UniqueID, signal);
         }
 
         public void ChangePrompt(Guid guid, RemotePlusLibrary.Extension.CommandSystem.PromptBuilder newPrompt)
         {
-            ProxyClient.ClientCallback.ChangePrompt(selectedClient.UniqueID, newPrompt);
+            ProxyClient.ClientCallback.ChangePrompt(SelectedClient.UniqueID, newPrompt);
         }
 
         public Guid GetSelectedServerGuid()
         {
-            return selectedClient.UniqueID;
+            return SelectedClient.UniqueID;
         }
+        #region Command Methods
+        public CommandPipeline ExecuteProxyCommand(string Command, CommandExecutionMode mode)
+        {
+            CommandPipeline pipe = new CommandPipeline();
+            int pos = 0;
+            try
+            {
+                CommandParser parser = new CommandParser(Command);
+                try
+                {
+                    var tokens = parser.Parse(true);
+                    var newTokens = RunSubRoutines(parser, pipe, pos);
+                    foreach (CommandToken token in newTokens)
+                    {
+                        foreach (List<CommandToken> allTokens in parser.ParsedTokens)
+                        {
+                            var index = allTokens.IndexOf(token);
+                            if (index != -1)
+                            {
+                                parser.ParsedTokens[parser.ParsedTokens.IndexOf(allTokens)][index] = token;
+                            }
+                        }
+                    }
+                    var newVariableTokens = RunVariableReplacement(parser, out bool success);
+                    if (success != true)
+                    {
+                        return pipe;
+                    }
+                    foreach (CommandToken token in newVariableTokens)
+                    {
+                        foreach (List<CommandToken> allTokens in parser.ParsedTokens)
+                        {
+                            var index = allTokens.IndexOf(token);
+                            if (index != -1)
+                            {
+                                parser.ParsedTokens[parser.ParsedTokens.IndexOf(allTokens)][index] = token;
+                            }
+                        }
+                    }
+                    var newQouteTokens = ParseOutQoutes(parser);
+                    foreach (CommandToken token in newQouteTokens)
+                    {
+                        foreach (List<CommandToken> allTokens in parser.ParsedTokens)
+                        {
+                            var index = allTokens.IndexOf(token);
+                            if (index != -1)
+                            {
+                                parser.ParsedTokens[parser.ParsedTokens.IndexOf(allTokens)][index] = token;
+                            }
+                        }
+                    }
+                    //Run the commands
+                    foreach (List<CommandToken> commands in parser.ParsedTokens)
+                    {
+                        var request = new CommandRequest(commands.ToArray());
+                        var routine = new CommandRoutine(request, ProxyManager.Execute(request, mode, pipe));
+                        if(routine.Output.ResponseCode == 3131)
+                        {
+                            RunServerCommand(Command, CommandExecutionMode.Client);
+                        }
+                        pipe.Add(pos++, routine);
+                    }
+                }
+                catch (ParserException e)
+                {
+                    UILogItem parseMessage = new UILogItem(OutputLevel.Error, $"Unable to parse command: {e.Message}");
+                    parseMessage.From = "Server Host";
+                    ProxyManager.Logger.AddOutput(parseMessage.Message, parseMessage.Level, parseMessage.From);
+                    ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyManager.ProxyGuid, parseMessage);
+                    return pipe;
+                }
+            }
+            catch (Exception ex)
+            {
+                ProxyClient.ClientCallback.TellMessageToServerConsole(SelectedClient.UniqueID, new UILogItem(OutputLevel.Error, $"There was an error in the command: {ex.Message}", "Proxy Server"));
+                return pipe;
+            }
+            return pipe;
+        }
+        private CommandToken[] RunVariableReplacement(CommandParser p, out bool success)
+        {
+            success = true;
+            List<CommandToken> tokenList = new List<CommandToken>();
+            var variableTokens = p.GetVariables();
+            foreach (CommandToken variableToken in variableTokens)
+            {
+                var variablename = variableToken.OriginalValue.Remove(0, 1);
+                if (ProxyManager.ProxyService.Variables.ContainsKey(variablename))
+                {
+                    var variableValue = ProxyManager.ProxyService.Variables[variablename];
+
+                    variableToken.Value = variableValue;
+                    success = true;
+                    tokenList.Add(variableToken);
+                }
+                else
+                {
+                    ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyManager.ProxyGuid, new UILogItem(OutputLevel.Error, $"Variable {variablename} does not exist", "Proxy Server"));
+                    success = false;
+                }
+            }
+            return tokenList.ToArray();
+        }
+        private CommandToken[] RunVariableReplacement(CommandToken[] tokens, out bool success)
+        {
+            success = true;
+            List<CommandToken> tokenList = new List<CommandToken>();
+            foreach (CommandToken variableToken in tokens)
+            {
+                var variablename = variableToken.OriginalValue.Remove(0, 1);
+                if (ProxyManager.ProxyService.Variables.ContainsKey(variablename))
+                {
+                    var variableValue = ProxyManager.ProxyService.Variables[variablename];
+
+                    variableToken.Value = variableValue;
+                    success = true;
+                    tokenList.Add(variableToken);
+                }
+                else
+                {
+                    ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyManager.ProxyGuid, new UILogItem(OutputLevel.Error, $"Variable {variablename} does not exist", "Proxy Server"));
+                    success = false;
+                }
+            }
+            return tokenList.ToArray();
+        }
+
+        private IEnumerable<CommandToken> RunSubRoutines(CommandParser p, CommandPipeline pipe, int position)
+        {
+            foreach (CommandToken routineToken in p.GetSubRoutines())
+            {
+                var commandToExecute = Regex.Match(routineToken.OriginalValue, CommandToken.SUBROUTINE_PATTERN).Groups[1].Value;
+                var parsedCommand = p.Parse(commandToExecute, false);
+                var newTokens = RunSubRoutines(p.GetSubRoutines(parsedCommand), p, pipe, position);
+                foreach (CommandToken token in newTokens)
+                {
+                    foreach (List<CommandToken> allTokens in parsedCommand)
+                    {
+                        var index = allTokens.IndexOf(token);
+                        if (index != -1)
+                        {
+                            parsedCommand[parsedCommand.IndexOf(allTokens)][index] = token;
+                        }
+                    }
+                }
+                var newVariableTokens = RunVariableReplacement(p.GetVariables(parsedCommand), out bool success);
+                if (success != true)
+                {
+                    yield return routineToken;
+                }
+                foreach (CommandToken token in newVariableTokens)
+                {
+                    foreach (List<CommandToken> allTokens in parsedCommand)
+                    {
+                        var index = allTokens.IndexOf(token);
+                        if (index != -1)
+                        {
+                            parsedCommand[parsedCommand.IndexOf(allTokens)][index] = token;
+                        }
+                    }
+                }
+                var newQouteTokens = ParseOutQoutes(p.GetQoutedToken(parsedCommand));
+                foreach (CommandToken token in newQouteTokens)
+                {
+                    foreach (List<CommandToken> allTokens in parsedCommand)
+                    {
+                        var index = allTokens.IndexOf(token);
+                        if (index != -1)
+                        {
+                            parsedCommand[parsedCommand.IndexOf(allTokens)][index] = token;
+                        }
+                    }
+                }
+                foreach (List<CommandToken> allCommands in parsedCommand)
+                {
+                    var request = new CommandRequest(allCommands.ToArray());
+                    var routine = new CommandRoutine(request, ProxyManager.Execute(request, CommandExecutionMode.Client, pipe));
+                    routineToken.Value = routine.Output.CustomStatusMessage;
+                    position++;
+                }
+                yield return routineToken;
+            }
+        }
+        private IEnumerable<CommandToken> RunSubRoutines(CommandToken[] tokens, CommandParser p, CommandPipeline pipe, int position)
+        {
+            foreach (CommandToken routineToken in tokens)
+            {
+                var commandToExecute = Regex.Match(routineToken.OriginalValue, CommandToken.SUBROUTINE_PATTERN).Groups[1].Value;
+                var parsedCommand = p.Parse(commandToExecute, false);
+
+                var newVariableTokens = RunVariableReplacement(p.GetVariables(parsedCommand), out bool success);
+                if (success != true)
+                {
+                    yield return routineToken;
+                }
+                foreach (CommandToken token in newVariableTokens)
+                {
+                    foreach (List<CommandToken> allTokens in parsedCommand)
+                    {
+                        var index = allTokens.IndexOf(token);
+                        if (index != -1)
+                        {
+                            parsedCommand[parsedCommand.IndexOf(allTokens)][index] = token;
+                        }
+                    }
+                }
+                var newQouteTokens = ParseOutQoutes(p.GetQoutedToken(parsedCommand));
+                foreach (CommandToken token in newQouteTokens)
+                {
+                    foreach (List<CommandToken> allTokens in parsedCommand)
+                    {
+                        var index = allTokens.IndexOf(token);
+                        if (index != -1)
+                        {
+                            parsedCommand[parsedCommand.IndexOf(allTokens)][index] = token;
+                        }
+                    }
+                }
+                foreach (List<CommandToken> allCommands in parsedCommand)
+                {
+                    var request = new CommandRequest(allCommands.ToArray());
+                    var routine = new CommandRoutine(request, ProxyManager.Execute(request, CommandExecutionMode.Client, pipe));
+                    routineToken.Value = routine.Output.CustomStatusMessage;
+                    position++;
+                }
+                yield return routineToken;
+            }
+        }
+        private IEnumerable<CommandToken> ParseOutQoutes(CommandToken[] tokens)
+        {
+            List<CommandToken> tokenList = new List<CommandToken>();
+            foreach (CommandToken qouteToken in tokens)
+            {
+                var qouteName = Regex.Match(qouteToken.OriginalValue, CommandToken.QOUTE_PATTERN).Groups[1].Value;
+                qouteToken.Value = qouteName.Replace('^', '&');
+                tokenList.Add(qouteToken);
+            }
+            return tokenList.ToArray();
+        }
+        private IEnumerable<CommandToken> ParseOutQoutes(CommandParser p)
+        {
+            List<CommandToken> tokenList = new List<CommandToken>();
+            var qouteTokens = p.GetQoutedToken();
+            foreach (CommandToken qouteToken in qouteTokens)
+            {
+                var qouteName = Regex.Match(qouteToken.OriginalValue, CommandToken.QOUTE_PATTERN).Groups[1].Value;
+                qouteToken.Value = qouteName.Replace('^', '&');
+                tokenList.Add(qouteToken);
+            }
+            return tokenList.ToArray();
+        }
+        #endregion
     }
 }

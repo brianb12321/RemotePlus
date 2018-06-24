@@ -39,10 +39,6 @@ namespace RemotePlusServer
         /// </summary>
         public static RemotePlusService<RemoteImpl> DefaultService { get; private set; }
         /// <summary>
-        /// When the built-in proxy service is enabled, contains the proxy server.
-        /// </summary>
-        public static ProbeService<ProxyServerRemoteImpl> ProxyService { get; private set; }
-        /// <summary>
         /// The main server configuration. Provides settings for the main server.
         /// </summary>
         public static ServerSettings DefaultSettings { get; set; }
@@ -183,7 +179,6 @@ namespace RemotePlusServer
             DefaultService.Host.Description.Behaviors.Add(throt);
             SetupFileTransferService();
             LoadExtensionLibraries();
-            OpenBuiltInProxyServer();
             OpenMex();
             DefaultService.Remote.Setup();
             Logger.AddOutput("Attaching server events.", OutputLevel.Debug);
@@ -193,21 +188,6 @@ namespace RemotePlusServer
             DefaultService.HostOpened += Host_Opened;
             DefaultService.HostOpening += Host_Opening;
             DefaultService.HostUnknownMessageReceived += Host_UnknownMessageReceived;
-        }
-        private static void OpenBuiltInProxyServer()
-        {
-            if(DefaultSettings.DiscoverySettings.DiscoveryBehavior == ProxyConnectionMode.BuiltIn)
-            {
-                Logger.AddOutput("Opening proxy server.", OutputLevel.Info);
-                ProxyService = ProbeService<ProxyServerRemoteImpl>.CreateProxyService(typeof(IProxyServerRemote), new ProxyServerRemoteImpl(),
-                    DefaultSettings.DiscoverySettings.Setup.DiscoveryPort,
-                    DefaultSettings.DiscoverySettings.Setup.ProxyEndpointName,
-                    DefaultSettings.DiscoverySettings.Setup.ProxyClientEndpointName,
-                    (m, o) => Logger.AddOutput(m, o), null);
-                ProxyService.HostOpened += ProxyService_HostOpened;
-                ProxyService.HostClosed += ProxyService_HostClosed;
-                ProxyService.HostFaulted += ProxyService_HostFaulted;
-            }
         }
 
         private static void ProxyService_HostFaulted(object sender, EventArgs e)
@@ -417,10 +397,6 @@ namespace RemotePlusServer
             {
                 DefaultService.Start();
                 FileTransferService.Start();
-                if (DefaultSettings.DiscoverySettings.DiscoveryBehavior == ProxyConnectionMode.BuiltIn)
-                {
-                    ProxyService.Start();
-                }
             }
         }
 
@@ -623,10 +599,6 @@ namespace RemotePlusServer
             SaveLog();
             DefaultService.Close();
             FileTransferService.Close();
-            if(DefaultSettings.DiscoverySettings.DiscoveryBehavior == ProxyConnectionMode.BuiltIn && ProxyService != null)
-            {
-                ProxyService.Close();
-            }
             if(DefaultSettings.DiscoverySettings.DiscoveryBehavior == ProxyConnectionMode.Connect && proxyChannelFactory != null)
             {
                 proxyChannelFactory.Close();

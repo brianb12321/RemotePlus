@@ -1,4 +1,6 @@
-﻿using System;
+﻿using RemotePlusLibrary.Extension.CommandSystem;
+using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
@@ -22,5 +24,7 @@ namespace RemotePlusLibrary.Discovery
         void ProxyRegister();
         [OperationContract]
         void ProxyDisconnect();
+        [OperationContract]
+        CommandPipeline ExecuteProxyCommand(string command, CommandExecutionMode mode);
     }
 }

@@ -34,8 +34,10 @@ namespace RemotePlusClientCmd
         [CommandHelp("Closes the connection to the server.")]
         static CommandResponse close(CommandRequest args, CommandPipeline pipe)
         {
-            Remote.Disconnect();
-            Remote.Close();
+            Remote?.Disconnect();
+            Remote?.Close();
+            Proxy?.ProxyDisconnect();
+            Proxy?.Close();
             Environment.Exit(0);
             return new CommandResponse((int)CommandStatus.Success);
         }

@@ -119,6 +119,12 @@
     <Compile Include="ExtensionSystem\FormPosition.cs" />
     <Compile Include="ExtensionSystem\IClientExtension.cs" />
     <Compile Include="ExtensionSystem\IClientLibraryStartup.cs" />
+    <Compile Include="ExtensionView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ExtensionView.Designer.cs">
+      <DependentUpon>ExtensionView.cs</DependentUpon>
+    </Compile>
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="MainF.cs">
       <SubType>Form</SubType>
@@ -202,6 +208,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ExtensionDetailsDialog.resx">
       <DependentUpon>ExtensionDetailsDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="extensionView.resx">
+      <DependentUpon>ExtensionView.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainF.resx">
       <DependentUpon>MainF.cs</DependentUpon>

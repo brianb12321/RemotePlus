@@ -24,6 +24,7 @@ namespace RemotePlusClientCmd
         public static ServiceClient Remote = null;
         public static CMDLogging Logger = null;
         public static PromptBuilder prompt = new PromptBuilder();
+        public static ProxyClient Proxy = null;
         public static string BaseURL;
         public static int Port;
         public static bool WaitFlag = true;
@@ -78,16 +79,16 @@ namespace RemotePlusClientCmd
                     ro.LoginRightAway = true;
                     ro.Credentials = new UserCredentials(username, password);
                 };
-                Connect(url, ro);
-                AcceptInput();
+                Connect(url, ro, false);
+                AcceptInput(false);
             }
             else
             {
                 var options = new CommandLineOptions();
                 if (CommandLine.Parser.Default.ParseArguments(args, options))
                 {
-                    Connect(options.Url, new RegisterationObject() { LoginRightAway = true, Credentials = new UserCredentials(options.Username, options.Password), VerboseError = options.Verbose });
-                    AcceptInput();
+                    Connect(options.Url, new RegisterationObject() { LoginRightAway = true, Credentials = new UserCredentials(options.Username, options.Password), VerboseError = options.Verbose }, options.UseProxy);
+                    AcceptInput(options.UseProxy);
                 }
             }
         }
@@ -98,15 +99,26 @@ namespace RemotePlusClientCmd
                 d.ShowDialog();
             }
         }
-        static void Connect(string url, RegisterationObject ro)
+        static void Connect(string url, RegisterationObject ro, bool useProxy)
         {
-            var ea = new EndpointAddress(url);
-            BaseURL = ea.Uri.Host;
-            Port = ea.Uri.Port;
-            Remote = new ServiceClient(new ClientCallback(), _ConnectionFactory.BuildBinding(), ea);
-            Remote.Register(ro);
+            if (useProxy)
+            {
+                var ea = new EndpointAddress(url);
+                BaseURL = ea.Uri.Host;
+                Port = ea.Uri.Port;
+                Proxy = new ProxyClient(new ClientCallback(), _ConnectionFactory.BuildBinding(), ea);
+                Proxy.ProxyRegister();
+            }
+            else
+            {
+                var ea = new EndpointAddress(url);
+                BaseURL = ea.Uri.Host;
+                Port = ea.Uri.Port;
+                Remote = new ServiceClient(new ClientCallback(), _ConnectionFactory.BuildBinding(), ea);
+                Remote.Register(ro);
+            }
         }
-        static void AcceptInput()
+        static void AcceptInput(bool useProxy)
         {
             Console.WriteLine("Enter a command to the server. Type {help} for a list of commands.");
             while (true)
@@ -166,7 +178,14 @@ namespace RemotePlusClientCmd
                     }
                     else
                     {
-                        Remote.RunServerCommand(c, CommandExecutionMode.Client);
+                        if (useProxy)
+                        {
+                            Proxy.ExecuteProxyCommand(c, CommandExecutionMode.Client);
+                        }
+                        else
+                        {
+                            Remote.RunServerCommand(c, CommandExecutionMode.Client);
+                        }
                     }
                 }
             }
@@ -220,8 +239,14 @@ namespace RemotePlusClientCmd
         private static void WritePrompt()
         {
             Console.ResetColor();
-            Console.Write(prompt.CurrentUser);
-            Console.Write(prompt.Path.Insert(0, "$::"));
+            if (!string.IsNullOrEmpty(prompt.CurrentUser))
+            {
+                Console.Write(prompt.CurrentUser);
+            }
+            if (!string.IsNullOrEmpty(prompt.Path))
+            {
+                Console.Write(prompt.Path.Insert(0, "$::"));
+            }
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.Write(" [");
             Console.ForegroundColor = ConsoleColor.Cyan;

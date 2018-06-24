@@ -134,6 +134,8 @@ namespace RemotePlusClient
             c.WindowState = FormWindowState.Maximized;
             c.FormBorderStyle = FormBorderStyle.None;
             c.TopLevel = false;
+            c.AutoSize = true;
+            c.AutoSizeMode = AutoSizeMode.GrowOnly;
             c.Dock = DockStyle.Fill;
             TabPage t = new TabPage(Name)
             {
@@ -151,6 +153,8 @@ namespace RemotePlusClient
             c.WindowState = FormWindowState.Maximized;
             c.FormBorderStyle = FormBorderStyle.None;
             c.TopLevel = false;
+            c.AutoSize = true;
+            c.AutoSizeMode = AutoSizeMode.GrowOnly;
             c.Dock = DockStyle.Fill;
             TabPage t = new TabPage(Name)
             {
@@ -169,6 +173,8 @@ namespace RemotePlusClient
             c.FormBorderStyle = FormBorderStyle.None;
             c.TopLevel = false;
             c.Dock = DockStyle.Fill;
+            c.AutoSize = true;
+            c.AutoSizeMode = AutoSizeMode.GrowOnly;
             TabPage t = new TabPage(Name)
             {
                 Name = Id
@@ -195,7 +201,7 @@ namespace RemotePlusClient
         {
             OpenConsole(Remote, FormPosition.Top, true);
         }
-        public void OpenConsole(IRemote client, FormPosition position, bool enableInput)
+        public void OpenConsole(Guid selectedGuid, IRemote client, FormPosition position, bool enableInput)
         {
             if (Remote == null && FoundServers != null)
             {
@@ -204,11 +210,25 @@ namespace RemotePlusClient
                     ServerConsoleObj = new ServerConsole(client, enableInput);
                     if (position == FormPosition.Top)
                     {
-                        AddTabToMainTabControl($"Server Console ()", ServerConsoleObj);
+                        if (selectedGuid == Guid.Empty)
+                        {
+                            AddTabToMainTabControl($"Server Console", ServerConsoleObj);
+                        }
+                        else
+                        {
+                            AddTabToMainTabControl($"Server Console ({selectedGuid})", ServerConsoleObj);
+                        }
                     }
                     else if (position == FormPosition.Bottum)
                     {
-                        AddTabToConsoleTabControl($"Server Console", ServerConsoleObj);
+                        if (selectedGuid == Guid.Empty)
+                        {
+                            AddTabToMainTabControl($"Server Console", ServerConsoleObj);
+                        }
+                        else
+                        {
+                            AddTabToConsoleTabControl($"Server Console ({selectedGuid})", ServerConsoleObj);
+                        }
                     }
                 }
                 else
@@ -243,6 +263,10 @@ namespace RemotePlusClient
                 }
             }
         }
+        public void OpenConsole(IRemote client, FormPosition position, bool enableInput)
+        {
+            OpenConsole(Guid.Empty, client, position, enableInput);
+        }
         public void CloseBottumConsole()
         {
             if (!tabControl1.TabPages.ContainsKey("ServerConsole"))
@@ -255,6 +279,7 @@ namespace RemotePlusClient
         {
             TopPages = new Dictionary<string, ThemedForm>();
             BottumPages = new Dictionary<string, ThemedForm>();
+            AddTabToSideControl("Extensions", new ExtensionView());
             OpenConsole();
             Application.ThreadException += Application_ThreadException;
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
@@ -287,24 +312,6 @@ namespace RemotePlusClient
         private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
         {
 
-        }
-
-        private void contextMenuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
-        {
-            if (e.ClickedItem.Name == "mi_open")
-            {
-                var collection = DefaultCollection.GetAllExtensions();
-                var extension = collection[treeView1.SelectedNode.Name];
-                switch(extension.Position)
-                {
-                    case FormPosition.Top:
-                        AddTabToMainTabControl(extension.GeneralDetails.Name, extension.ExtensionForm);
-                        break;
-                    case FormPosition.Bottum:
-                        AddTabToConsoleTabControl(extension.GeneralDetails.Name, extension.ExtensionForm);
-                        break;
-                }
-            }
         }
 
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -348,7 +355,7 @@ namespace RemotePlusClient
                             Name = f2.Key,
                             Tag = f2.Value
                         };
-                        this.Invoke(new MethodInvoker(() => treeView1.Nodes.Add(tn)));
+                        this.Invoke(new MethodInvoker(() => ((ExtensionView)emi_Left.TabPages[0].Controls[0]).treeView1.Nodes.Add(tn)));
                     }
                     this.Invoke(new MethodInvoker(() => MainF.ConsoleObj.Logger.AddOutput("Extension loaded.", Logging.OutputLevel.Info)));
                 });
@@ -548,6 +555,31 @@ namespace RemotePlusClient
         private void MainF_Resize(object sender, EventArgs e)
         {
             this.Refresh();
+        }
+
+        private void treeView1_Resize(object sender, EventArgs e)
+        {
+
+        }
+
+        private void tabControl2_Resize(object sender, EventArgs e)
+        {
+
+        }
+
+        private void tabControl1_Resize(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void emi_Left_Resize(object sender, EventArgs e)
+        {
+
+        }
+
+        private void splitContainer1_Resize(object sender, EventArgs e)
+        {
+
         }
     }
 }

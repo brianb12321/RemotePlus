@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -36,6 +37,18 @@ namespace RemotePlusLibrary.Extension.Gui
                 InitializeTheme(t);
             }
             base.Show(parentWindow);
+        }
+        public virtual void ResizeForm(Size resizePoint)
+        {
+            this.Height = resizePoint.Height;
+            this.Width = resizePoint.Width;
+            foreach(Control c in Controls)
+            {
+                c.SuspendLayout();
+                c.Height = resizePoint.Height;
+                c.Width = resizePoint.Width;
+                c.ResumeLayout();
+            }
         }
     }
 }

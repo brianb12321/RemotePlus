@@ -116,7 +116,6 @@
     <Compile Include="Proxies\ClientInstance.cs" />
     <Compile Include="Proxies\LuaServerInstance.cs" />
     <Compile Include="Proxies\StaticRemoteFunctions.cs" />
-    <Compile Include="ProxyServerRemoteImpl.cs" />
     <Compile Include="Remote.cs" />
     <Compile Include="ScriptPackageExtensions.cs" />
     <Compile Include="ServerControls.cs">

@@ -79,7 +79,7 @@ namespace RemotePlusLibrary
         /// <summary>
         /// The commands that are loaded on the server.
         /// </summary>
-        public Dictionary<string, CommandDelegate> Commands { get; } = new Dictionary<string, CommandDelegate>();
+        public Dictionary<string, CommandDelegate> Commands { get; protected set; }
         /// <summary>
         /// The variables that are defined on the server.
         /// </summary>
@@ -92,6 +92,7 @@ namespace RemotePlusLibrary
         /// <param name="setupCallback">The function to call when setting up the service implementation.</param>
         protected RemotePlusService(Type contractType, I singleTon, Binding binding, string address, Action<I> setupCallback)
         {
+            Commands = new Dictionary<string, CommandDelegate>();
             Remote = singleTon;
             setupCallback?.Invoke(Remote);
             Host = new ServiceHost(Remote);
@@ -99,12 +100,14 @@ namespace RemotePlusLibrary
         }
         protected RemotePlusService(Binding b, I singleTon, Action<I> setupCallback)
         {
+            Commands = new Dictionary<string, CommandDelegate>();
             Remote = singleTon;
             setupCallback?.Invoke(Remote);
             Host = new ServiceHost(Remote);
         }
         private RemotePlusService(Type contractType, Binding binding, string address)
         {
+            Commands = new Dictionary<string, CommandDelegate>();
             Host = new ServiceHost(typeof(I));
             Host.AddServiceEndpoint(contractType, binding, address);
         }
