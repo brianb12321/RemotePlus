@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using RemotePlusLibrary;
 using System.Drawing;
 using RemotePlusServer;
+using RemotePlusLibrary.RequestSystem;
 
 namespace RemotePlusClientCmd.RequestHelpers
 {

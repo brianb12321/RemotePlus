@@ -9,10 +9,11 @@ using RemotePlusLibrary.Extension;
 
 namespace RemotePlusClient.ExtensionSystem
 {
-    public interface IClientExtension : IExtension<ClientExtensionDetails>
+    public interface IClientExtension
     {
         ThemedForm ExtensionForm { get; }
         bool StaticPositioned { get; }
         FormPosition Position { get; }
+        string ExtensionName { get; }
     }
 }

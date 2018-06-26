@@ -1,5 +1,8 @@
-﻿using RemotePlusLibrary;
+﻿using RemotePlusClient.CommonUI.Controls.FileBrowserHelpers;
+using RemotePlusLibrary;
+using RemotePlusLibrary.Contracts;
 using RemotePlusLibrary.FileTransfer;
+using RemotePlusLibrary.FileTransfer.BrowserClasses;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

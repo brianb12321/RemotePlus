@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Logging;
 using RemotePlusClient.CommonUI;
+using RemotePlusClient.CommonUI.ConnectionClients;
 using RemotePlusLibrary;
 using RemotePlusLibrary.Core;
 

@@ -20,7 +20,7 @@ namespace RemotePlusLibrary.Core
             binding.MaxReceivedMessageSize = int.MaxValue;
             binding.ReceiveTimeout = TimeSpan.MaxValue;
             binding.SendTimeout = TimeSpan.MaxValue;
-            binding.MaxConnections = 1;
+            binding.MaxConnections = 100;
             return binding;
         }
         public static NetHttpBinding BuildHttpBinding()

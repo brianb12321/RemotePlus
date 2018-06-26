@@ -1,5 +1,7 @@
 ﻿using RemotePlusClient.CommonUI;
+using RemotePlusClient.CommonUI.Controls.FileBrowserHelpers;
 using RemotePlusLibrary;
+using RemotePlusLibrary.RequestSystem;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,7 +22,14 @@ namespace RemotePlusClientCmd.Requests
 
         public RawDataRequest RequestData(RequestBuilder builder)
         {
-            fd = new FindRemoteFileDialog(FilterMode.File, ClientCmdManager.Remote, ClientCmdManager.BaseURL, ClientCmdManager.Port);
+            if (ClientCmdManager.ProxyEnabled)
+            {
+                fd = new FindRemoteFileDialog(FilterMode.File, ClientCmdManager.Proxy, ClientCmdManager.BaseURL, ClientCmdManager.Port);
+            }
+            else
+            {
+                fd = new FindRemoteFileDialog(FilterMode.File, ClientCmdManager.Remote, ClientCmdManager.BaseURL, ClientCmdManager.Port);
+            }
             if (fd.ShowDialog() == DialogResult.OK)
             {
                 return RawDataRequest.Success(fd.FilePath);

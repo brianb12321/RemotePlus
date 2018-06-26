@@ -8,15 +8,18 @@ using RemotePlusLibrary.Extension.CommandSystem;
 using System.Speech.Synthesis;
 using System.Media;                             
 using System.Diagnostics;
-using RemotePlusLibrary.AccountSystem;
+using RemotePlusLibrary.Security.AccountSystem;
 using System.Threading;
+using RemotePlusLibrary.Contracts;
+using RemotePlusLibrary.RequestSystem;
+using RemotePlusLibrary.Security.Authentication;
+using RemotePlusLibrary.Client;
 
 namespace RemotePlusClientCmd
 {
     [CallbackBehavior(ConcurrencyMode = ConcurrencyMode.Reentrant,
         IncludeExceptionDetailInFaults = true,
         UseSynchronizationContext = false)]
-    [RemotePlusLibrary.Core.STAOperationBehavior]
     class ClientCallback : IRemoteClient
     {
         public void Beep(int Hertz, int Duration)
@@ -24,16 +27,16 @@ namespace RemotePlusClientCmd
             Console.Beep(Hertz, Duration);
         }
 
-        public void ChangePrompt(RemotePlusLibrary.Extension.CommandSystem.PromptBuilder newPrompt)
+        public void ChangePrompt(Guid guid, RemotePlusLibrary.Extension.CommandSystem.PromptBuilder newPrompt)
         {
             ClientCmdManager.prompt = newPrompt;
         }
 
-        public void Disconnect(string Reason)
+        public void Disconnect(Guid guid, string Reason)
         {
             //ClientCmdManager.WaitFlag = true;
             ClientCmdManager.Remote.Close();
-            ClientCmdManager.Logger.AddOutput(new LogItem(OutputLevel.Error, "Server disconnected. " + Reason, "CLient") { Color = ConsoleColor.Red });
+            ClientCmdManager.Logger.AddOutput(new LogItem(OutputLevel.Error, $"Server [{guid}] disconnected. " + Reason, "CLient") { Color = ConsoleColor.Red });
             //ClientCmdManager.WaitFlag = false;
         }
 
@@ -68,15 +71,15 @@ namespace RemotePlusClientCmd
             return cb;
         }
 
-        public void RegistirationComplete()
+        public void RegistirationComplete(Guid guid)
         {
             ClientCmdManager.WaitFlag = false;
         }
 
-        public UserCredentials RequestAuthentication(AuthenticationRequest Request)
+        public UserCredentials RequestAuthentication(Guid guid, AuthenticationRequest Request)
         {
             //ClientCmdManager.WaitFlag = true;
-            Console.WriteLine($"The server requires authentication. Reason: {Request.Reason}");
+            Console.WriteLine($"The server [{guid}] requires authentication. Reason: {Request.Reason}");
             Console.Write("Enter Username: ");
             string username = Console.ReadLine();
             Console.Write("Enter Password: ");
@@ -85,7 +88,7 @@ namespace RemotePlusClientCmd
             return new UserCredentials(username, password);
         }
 
-        public ReturnData RequestInformation(RequestBuilder builder)
+        public ReturnData RequestInformation(Guid guid, RequestBuilder builder)
         {
             ReturnData data = null;
             Thread t = new Thread((p) => data = RequestStore.Show((RequestBuilder)p));
@@ -100,7 +103,7 @@ namespace RemotePlusClientCmd
             Process.Start(Program, Argument);
         }
 
-        public void SendSignal(SignalMessage message)
+        public void SendSignal(Guid guid, SignalMessage message)
         {
             //ClientCmdManager.WaitFlag = true;
             switch (message.Message)
@@ -124,10 +127,10 @@ namespace RemotePlusClientCmd
             ss.Speak(Message);
         }
 
-        public void TellMessage(string Message, OutputLevel o)
+        public void TellMessage(Guid guid, string Message, OutputLevel o)
         {
             //ClientCmdManager.WaitFlag = true;
-            LogItem li = new LogItem(o, Message, "Server Host");
+            LogItem li = new LogItem(o, Message, $"Server Host ({guid})");
             if (o == OutputLevel.Warning)
             {
                 li.Color = ClientCmdManager.Logger.ConsoleForegroundWarning;
@@ -148,7 +151,7 @@ namespace RemotePlusClientCmd
             //ClientCmdManager.WaitFlag = false;
         }
 
-        public void TellMessage(UILogItem li)
+        public void TellMessage(Guid guid, UILogItem li)
         {
             //ClientCmdManager.WaitFlag = true;
             if (ClientCmdManager.Logger.OverrideLogItemObjectColorValue)
@@ -170,11 +173,12 @@ namespace RemotePlusClientCmd
                     li.Color = ClientCmdManager.Logger.ConsoleForegroundDebug;
                 }
             }
+            li.From += $" ({guid})";
             ClientCmdManager.Logger.AddOutput(new LogItem(li.Level, li.Message, li.From) { Color = li.Color });
             //ClientCmdManager.WaitFlag = false;
         }
 
-        public void TellMessage(UILogItem[] Logs)
+        public void TellMessage(Guid guid, UILogItem[] Logs)
         {
             //ClientCmdManager.WaitFlag = true;
             foreach (UILogItem l in Logs)
@@ -198,22 +202,23 @@ namespace RemotePlusClientCmd
                         l.Color = ClientCmdManager.Logger.ConsoleForegroundDebug;
                     }
                 }
+                l.From += $" ({guid})";
                 ClientCmdManager.Logger.AddOutput(new LogItem(l.Level, l.Message, l.From) { Color = l.Color });
                 //ClientCmdManager.WaitFlag = false;
             }
         }
 
-        public void TellMessageToServerConsole(UILogItem li)
+        public void TellMessageToServerConsole(Guid guid, UILogItem li)
         {
             //ClientCmdManager.WaitFlag = true;
             string f = "";
             if (string.IsNullOrEmpty(li.From))
             {
-                f = "Server Console " + "Server Host";
+                f = "Server Console " + "Server Host" + $" ({guid})";
             }
             else
             {
-                f = "Server Console " + li.From;
+                f = "Server Console " + li.From + $" ({guid})";
             }
             li.From = f;
             if (ClientCmdManager.Logger.OverrideLogItemObjectColorValue)
@@ -239,14 +244,14 @@ namespace RemotePlusClientCmd
             //ClientCmdManager.WaitFlag = false;
         }
 
-        public void TellMessageToServerConsole(string Message)
+        public void TellMessageToServerConsole(Guid guid, string Message)
         {
             //ClientCmdManager.WaitFlag = true;
             Console.Write(Message);
             //ClientCmdManager.WaitFlag = false;
         }
 
-        public void TellMessageToServerConsole(ConsoleText text)
+        public void TellMessageToServerConsole(Guid guid, ConsoleText text)
         {
             Colorful.Console.ForegroundColor = text.TextColor;
             Colorful.Console.Write(text.Text);

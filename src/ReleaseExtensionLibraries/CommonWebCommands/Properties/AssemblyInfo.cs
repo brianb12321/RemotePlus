@@ -1,7 +1,6 @@
 ﻿using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using RemotePlusLibrary.Extension;
+using RemotePlusLibrary.Extension.ExtensionLoader;
 
 [assembly: ExtensionLibrary(typeof(CommonWebCommands.Startup), "WebCommands",
     FriendlyName = "Web Commands",

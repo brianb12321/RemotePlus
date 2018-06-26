@@ -10,9 +10,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using RemotePlusLibrary.AccountSystem;
-using RemotePlusLibrary.AccountSystem.Policies;
+using RemotePlusLibrary.Security.AccountSystem;
+using RemotePlusLibrary.Security.AccountSystem.Policies;
 using System.Diagnostics;
+using RemotePlusClient.Settings;
 
 namespace RemotePlusClient
 {
@@ -48,16 +49,10 @@ namespace RemotePlusClient
                 ClientSettings.Save();
             }
             InitializeDefaultKnownTypes();
-            InitializePolicyEditors();
             RequestStore.Init();
             RequestStore.Add("global_selectFile", new SelectFileRequest());
             MainWindow = new MainF();
             Application.Run(MainWindow);
-        }
-
-        private static void InitializePolicyEditors()
-        {
-            RemotePlusLibrary.Editors.PolicyManagerClasses.PolicyEditors.Add("Default", new RemotePlusLibrary.Editors.PolicyManagerClasses.EditPolicyDialogBox());
         }
 
         static void InitializeDefaultKnownTypes()

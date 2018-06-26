@@ -18,6 +18,8 @@ namespace RemotePlusClientCmd
         public string Password { get; set; }
         [Option('v', "verbose", HelpText = "Tells the server to use verbosity logging", DefaultValue = false)]
         public bool Verbose { get; set; }
+        [Option('p', "proxy", HelpText = "When enabled, the client will connect to a proxy server.", DefaultValue = false)]
+        public bool UseProxy { get; set; }
         [ParserState]
         public IParserState LastParserState { get; set; }
         [HelpOption]

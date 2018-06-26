@@ -56,7 +56,7 @@
     <Compile Include="AuthenticationDialog.Designer.cs">
       <DependentUpon>AuthenticationDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="ColorRequest.cs" />
+    <Compile Include="Requests\ColorRequest.cs" />
     <Compile Include="Connection\ConnectionConfiguration.cs" />
     <Compile Include="Connection\NewConnectionDialog.cs">
       <SubType>Form</SubType>
@@ -70,50 +70,39 @@
     <Compile Include="Connection\SelectConfigurationDialog.Designer.cs">
       <DependentUpon>SelectConfigurationDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="EmailGui\ConfigureEmailDialogBox.cs">
+    <Compile Include="Design\Editors\GUI\ExtensionRulesStringCollectionEditorForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="EmailGui\ConfigureEmailDialogBox.Designer.cs">
-      <DependentUpon>ConfigureEmailDialogBox.cs</DependentUpon>
+    <Compile Include="Design\Editors\GUI\ExtensionRulesStringCollectionEditorForm.Designer.cs">
+      <DependentUpon>ExtensionRulesStringCollectionEditorForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="EmailGui\EmailAdvancedDialogBox.cs">
+    <Compile Include="Design\Editors\GUI\SelectRoleDialogBox.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="EmailGui\EmailAdvancedDialogBox.Designer.cs">
-      <DependentUpon>EmailAdvancedDialogBox.cs</DependentUpon>
+    <Compile Include="Design\Editors\GUI\SelectRoleDialogBox.Designer.cs">
+      <DependentUpon>SelectRoleDialogBox.cs</DependentUpon>
     </Compile>
-    <Compile Include="EmailGui\SendEmailForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="EmailGui\SendEmailForm.Designer.cs">
-      <DependentUpon>SendEmailForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="FileAssociationSettings.cs" />
-    <Compile Include="FileBrowser.cs">
+    <Compile Include="Design\Editors\UserAccountEditor.cs" />
+    <Compile Include="Controls\FileBrowserHelpers\FileAssociationSettings.cs" />
+    <Compile Include="Controls\FileBrowser.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="FileBrowser.Designer.cs">
+    <Compile Include="Controls\FileBrowser.Designer.cs">
       <DependentUpon>FileBrowser.cs</DependentUpon>
     </Compile>
-    <Compile Include="FileOperationEventArgs.cs" />
-    <Compile Include="FileSelectedEventArgs.cs" />
+    <Compile Include="Controls\FileBrowserHelpers\FileOperationEventArgs.cs" />
+    <Compile Include="Controls\FileBrowserHelpers\FileSelectedEventArgs.cs" />
     <Compile Include="FileTransfer.cs" />
-    <Compile Include="FilterMode.cs" />
+    <Compile Include="Controls\FileBrowserHelpers\FilterMode.cs" />
     <Compile Include="FindRemoteFileDialog.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="FindRemoteFileDialog.Designer.cs">
       <DependentUpon>FindRemoteFileDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="MessageBoxRequest.cs" />
+    <Compile Include="Requests\MessageBoxRequest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RequestProperties\RequestStringProperties.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="RequestProperties\RequestStringProperties.Designer.cs">
-      <DependentUpon>RequestStringProperties.cs</DependentUpon>
-    </Compile>
-    <Compile Include="RequestSettings\RequestStringSettings.cs" />
+    <Compile Include="ConnectionClients\ProxyClient.cs" />
     <Compile Include="RequestStore.cs" />
     <Compile Include="RequestStringDialogBox.cs">
       <SubType>Form</SubType>
@@ -121,7 +110,8 @@
     <Compile Include="RequestStringDialogBox.Designer.cs">
       <DependentUpon>RequestStringDialogBox.cs</DependentUpon>
     </Compile>
-    <Compile Include="SpeechRequest.cs" />
+    <Compile Include="ConnectionClients\ServiceClient.cs" />
+    <Compile Include="Requests\SpeechRequest.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="AuthenticationDialog.resx">
@@ -133,24 +123,15 @@
     <EmbeddedResource Include="Connection\SelectConfigurationDialog.resx">
       <DependentUpon>SelectConfigurationDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="EmailGui\ConfigureEmailDialogBox.resx">
-      <DependentUpon>ConfigureEmailDialogBox.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="EmailGui\EmailAdvancedDialogBox.resx">
-      <DependentUpon>EmailAdvancedDialogBox.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="EmailGui\SendEmailForm.resx">
-      <DependentUpon>SendEmailForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FileBrowser.resx">
+    <EmbeddedResource Include="Controls\FileBrowser.resx">
       <DependentUpon>FileBrowser.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Design\Editors\GUI\ExtensionRulesStringCollectionEditorForm.resx">
+      <DependentUpon>ExtensionRulesStringCollectionEditorForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FindRemoteFileDialog.resx">
       <DependentUpon>FindRemoteFileDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="RequestProperties\RequestStringProperties.resx">
-      <DependentUpon>RequestStringProperties.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="RequestStringDialogBox.resx">
       <DependentUpon>RequestStringDialogBox.cs</DependentUpon>
@@ -161,22 +142,31 @@
       <Project>{8a8a5888-1ce7-46ed-b8de-1ac7671f3426}</Project>
       <Name>RemotePlusLibrary.Configuration</Name>
     </ProjectReference>
-    <ProjectReference Include="..\RemotePlusLibrary.Core.EmailService\RemotePlusLibrary.Core.EmailService.csproj">
-      <Project>{166C0846-95A7-4134-9A6C-BB2E5C9C4594}</Project>
-      <Name>RemotePlusLibrary.Core.EmailService</Name>
-    </ProjectReference>
     <ProjectReference Include="..\RemotePlusLibrary.Core\RemotePlusLibrary.Core.csproj">
       <Project>{0334629b-6302-42a8-b159-f8646b4d8650}</Project>
       <Name>RemotePlusLibrary.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\RemotePlusLibrary.Discovery\RemotePlusLibrary.Discovery.csproj">
+      <Project>{FC3EB84C-D1B0-4B5C-9406-DFFA9BC5A5FC}</Project>
+      <Name>RemotePlusLibrary.Discovery</Name>
+    </ProjectReference>
     <ProjectReference Include="..\RemotePlusLibrary.Extension\RemotePlusLibrary.Extension.csproj">
       <Project>{2aa5e768-7e0a-4b0c-a0d1-f79153902df9}</Project>
       <Name>RemotePlusLibrary.Extension</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RemotePlusLibrary.Scripting\RemotePlusLibrary.Scripting.csproj">
+      <Project>{5C399F78-C133-4F9B-9758-C36A4B7FAE98}</Project>
+      <Name>RemotePlusLibrary.Scripting</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RemotePlusLibrary.Security\RemotePlusLibrary.Security.csproj">
+      <Project>{e4e0bb7e-b995-4ebe-8efb-3c09bf64a3a2}</Project>
+      <Name>RemotePlusLibrary.Security</Name>
     </ProjectReference>
     <ProjectReference Include="..\RemotePlusLibrary\RemotePlusLibrary.csproj">
       <Project>{00c22a1f-d3df-4193-aaa8-9907d08e2511}</Project>
       <Name>RemotePlusLibrary</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -105,11 +105,6 @@
       <Name>RemotePlusLibrary.Configuration</Name>
       <Private>False</Private>
     </ProjectReference>
-    <ProjectReference Include="..\..\RemotePlusLibrary.Core.EmailService\RemotePlusLibrary.Core.EmailService.csproj">
-      <Project>{166c0846-95a7-4134-9a6c-bb2e5c9c4594}</Project>
-      <Name>RemotePlusLibrary.Core.EmailService</Name>
-      <Private>False</Private>
-    </ProjectReference>
     <ProjectReference Include="..\..\RemotePlusLibrary.Core\RemotePlusLibrary.Core.csproj">
       <Project>{0334629b-6302-42a8-b159-f8646b4d8650}</Project>
       <Name>RemotePlusLibrary.Core</Name>

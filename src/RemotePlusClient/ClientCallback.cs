@@ -10,8 +10,13 @@ using RemotePlusLibrary.Extension.CommandSystem;
 using System.Media;
 using System.Diagnostics;
 using System.Speech.Synthesis;
-using RemotePlusLibrary.AccountSystem;
 using System.Threading;
+using RemotePlusLibrary.Security.AccountSystem;
+using RemotePlusLibrary.RequestSystem;
+using RemotePlusClient.UIForms;
+using RemotePlusLibrary.Client;
+using RemotePlusLibrary.Security.Authentication;
+using RemotePlusLibrary.Contracts;
 
 namespace RemotePlusClient
 {
@@ -20,6 +25,7 @@ namespace RemotePlusClient
         UseSynchronizationContext = false)]
     public class ClientCallback : IRemoteClient
     {
+        public int ServerPosition { get; private set; }
         public bool SwapFlag { get; private set; }
         public bool ConsoleStreamEnabled { get; private set; } = true;
         Logger consoleStream = null;
@@ -42,6 +48,10 @@ namespace RemotePlusClient
         }
 
         #region Callback Methods
+        public ClientCallback(int serverPos)
+        {
+            ServerPosition = serverPos;
+        }
         public void Beep(int Hertz, int Duration)
         {
             Console.Beep(Hertz, Duration);
@@ -79,14 +89,14 @@ namespace RemotePlusClient
             ss.SelectVoiceByHints(Gender, Age);
             ss.Speak(Message);
         }
-        public void Disconnect(string Reason)
+        public void Disconnect(Guid serverGuid, string Reason)
         {
-            LogItem l = new LogItem(Logging.OutputLevel.Error, "The server disconnected from the client. Reason: " + Reason, "Server Host");
+            LogItem l = new LogItem(Logging.OutputLevel.Error, $"The server {ServerPosition} disconnected from the client. Reason: " + Reason, $"Server Host ({serverGuid})");
             MainF.ConsoleObj.Logger.AddOutput(l);
             MainF.Disconnect();
         }
 
-        public UserCredentials RequestAuthentication(AuthenticationRequest Request)
+        public UserCredentials RequestAuthentication(Guid serverGuid, AuthenticationRequest Request)
         {
             AuthenticationDialog ad = new AuthenticationDialog(Request);
             if(ad.ShowDialog() == DialogResult.OK)
@@ -99,24 +109,25 @@ namespace RemotePlusClient
             }
         }
 
-        public void TellMessage(string Message, Logging.OutputLevel o)
+        public void TellMessage(Guid serverGuid, string Message, Logging.OutputLevel o)
         {
             if (ConsoleStreamEnabled)
             {
                 if (!SwapFlag)
                 {
-                    ClientApp.Logger.AddOutput(Message, o, "Server Host");
+                    ClientApp.Logger.AddOutput(Message, o, $"Server Host ({serverGuid}");
                 }
                 else
                 {
-                    consoleStream.AddOutput(Message, o, "Server Host");
+                    consoleStream.AddOutput(Message, o, $"Server Host ({serverGuid})");
                 }
-                MainF.ConsoleObj.Logger.AddOutput(Message, o, "Server Host");
+                MainF.ConsoleObj.Logger.AddOutput(Message, o, $"Server Host ({serverGuid})");
             }
         }
 
-        public void TellMessage(UILogItem li)
+        public void TellMessage(Guid serverGuid, UILogItem li)
         {
+            li.From += $" ({serverGuid})";
             if (ConsoleStreamEnabled)
             {
                 if (!SwapFlag)
@@ -131,12 +142,13 @@ namespace RemotePlusClient
             }
         }
 
-        public void TellMessage(UILogItem[] Logs)
+        public void TellMessage(Guid serverGuid, UILogItem[] Logs)
         {
             if (ConsoleStreamEnabled)
             {
                 foreach (LogItem li in Logs)
                 {
+                    li.From += $" ({serverGuid})";
                     if (!SwapFlag)
                     {
                         ClientApp.Logger.AddOutput(new LogItem(li.Level, li.Message, li.From));
@@ -150,11 +162,11 @@ namespace RemotePlusClient
             }
         }
 
-        public void TellMessageToServerConsole(UILogItem li)
+        public void TellMessageToServerConsole(Guid serverGuid, UILogItem li)
         {
             if (MainF.ServerConsoleObj == null)
             {
-                li.From = "Server Console";
+                li.From = $"Server Console ({serverGuid}";
                 MainF.ConsoleObj.Logger.AddOutput(li);
             }
             else
@@ -174,7 +186,7 @@ namespace RemotePlusClient
             return builder;
         }
 
-        public void TellMessageToServerConsole(string Message)
+        public void TellMessageToServerConsole(Guid serverGuid, string Message)
         {
             if (MainF.ServerConsoleObj == null)
             {
@@ -186,7 +198,7 @@ namespace RemotePlusClient
             }
         }
 
-        public ReturnData RequestInformation(RequestBuilder builder)
+        public ReturnData RequestInformation(Guid serverGuid, RequestBuilder builder)
         {
             ReturnData data = null;
             Thread t = new Thread((p) => data = RequestStore.Show((RequestBuilder)p));
@@ -196,12 +208,12 @@ namespace RemotePlusClient
             return data;
         }
 
-        public void RegistirationComplete()
+        public void RegistirationComplete(Guid serverGuid)
         {
-            Role.GlobalPool = MainF.Remote.GetServerRolePool();
+            //Role.RoleNames = MainF.Remote.GetServerRoleNames().ToArray();
         }
 
-        public void SendSignal(SignalMessage message)
+        public void SendSignal(Guid serverGuid, SignalMessage message)
         {
             switch(message.Message)
             {
@@ -214,7 +226,7 @@ namespace RemotePlusClient
             }
         }
 
-        public void ChangePrompt(RemotePlusLibrary.Extension.CommandSystem.PromptBuilder newPrompt)
+        public void ChangePrompt(Guid serverGuid, RemotePlusLibrary.Extension.CommandSystem.PromptBuilder newPrompt)
         {
             //TODO: Implement Prompt
         }
@@ -224,7 +236,7 @@ namespace RemotePlusClient
             return null;
         }
 
-        public void TellMessageToServerConsole(ConsoleText text)
+        public void TellMessageToServerConsole(Guid serverGuid, ConsoleText text)
         {
             Color originalColor = MainF.ConsoleObj.ForeColor;
             MainF.ConsoleObj.ForeColor = text.TextColor;

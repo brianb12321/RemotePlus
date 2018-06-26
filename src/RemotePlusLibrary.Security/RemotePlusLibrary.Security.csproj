@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{E4E0BB7E-B995-4EBE-8EFB-3C09BF64A3A2}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>RemotePlusLibrary.Security</RootNamespace>
+    <AssemblyName>RemotePlusLibrary.Security</AssemblyName>
+    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AccountSystem\AccountException.cs" />
+    <Compile Include="AccountSystem\AccountManager.cs" />
+    <Compile Include="AccountSystem\DefaultPolicy.cs" />
+    <Compile Include="AccountSystem\Design\Converters\UserAccountCollectionDescriptor.cs" />
+    <Compile Include="AccountSystem\Policies\OperationPolicies.cs" />
+    <Compile Include="AccountSystem\PolicyObject.cs" />
+    <Compile Include="AccountSystem\Role.cs" />
+    <Compile Include="AccountSystem\RoleException.cs" />
+    <Compile Include="AccountSystem\RolePool.cs" />
+    <Compile Include="AccountSystem\SecurityPolicy.cs" />
+    <Compile Include="AccountSystem\SecurityPolicyFolder.cs" />
+    <Compile Include="AccountSystem\UserAccount.cs" />
+    <Compile Include="AccountSystem\UserCollection.cs" />
+    <Compile Include="AccountSystem\UserCredentials.cs" />
+    <Compile Include="Authentication\AuthenticationSeverity.cs" />
+    <Compile Include="Authentication\AuthenticationRequest.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\RemotePlusLibrary.Configuration\RemotePlusLibrary.Configuration.csproj">
+      <Project>{8A8A5888-1CE7-46ED-B8DE-1AC7671F3426}</Project>
+      <Name>RemotePlusLibrary.Configuration</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RemotePlusLibrary.Core\RemotePlusLibrary.Core.csproj">
+      <Project>{0334629b-6302-42a8-b159-f8646b4d8650}</Project>
+      <Name>RemotePlusLibrary.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

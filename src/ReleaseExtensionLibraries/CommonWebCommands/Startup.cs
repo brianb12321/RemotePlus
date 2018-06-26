@@ -8,6 +8,8 @@ using System.IO;
 using RemotePlusLibrary.Extension;
 using RemotePlusLibrary.Extension.HookSystem;
 using RemotePlusLibrary;
+using RemotePlusLibrary.Extension.ExtensionLoader.Initialization;
+using RemotePlusLibrary.RequestSystem;
 
 namespace CommonWebCommands
 {

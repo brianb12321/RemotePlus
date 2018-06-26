@@ -22,10 +22,7 @@ namespace ClientTools
 
         public ThemedForm ExtensionForm => this;
 
-        public ClientExtensionDetails GeneralDetails => new ClientExtensionDetails("Test", "1.0.0.0")
-        {
-            Description = "A client extension that "
-        };
+        public string ExtensionName => "Test";
 
         public bool StaticPositioned => true;
 

@@ -86,6 +86,7 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.IdentityModel" />
     <Reference Include="System.IO.Compression.FileSystem">
       <Private>True</Private>
     </Reference>
@@ -93,6 +94,7 @@
     <Reference Include="System.Management.Instrumentation" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceModel.Discovery" />
     <Reference Include="System.Speech" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
@@ -111,10 +113,11 @@
     <Compile Include="Internal\_ClientTextReader.cs" />
     <Compile Include="Internal\_ClientTextWriter.cs" />
     <Compile Include="Internal\_HookManager.cs" />
+    <Compile Include="ExtensionSystem\ServerLibraryBuilder.cs" />
     <Compile Include="Proxies\ClientInstance.cs" />
     <Compile Include="Proxies\LuaServerInstance.cs" />
     <Compile Include="Proxies\StaticRemoteFunctions.cs" />
-    <Compile Include="RemotePlusService.cs" />
+    <Compile Include="Remote.cs" />
     <Compile Include="ScriptPackageExtensions.cs" />
     <Compile Include="ServerControls.cs">
       <SubType>Form</SubType>
@@ -130,13 +133,17 @@
     <Compile Include="ServerPrerequisites.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\RemotePlusLibrary.Core.EmailService\RemotePlusLibrary.Core.EmailService.csproj">
-      <Project>{166C0846-95A7-4134-9A6C-BB2E5C9C4594}</Project>
-      <Name>RemotePlusLibrary.Core.EmailService</Name>
+    <ProjectReference Include="..\RemotePlusLibrary.Configuration\RemotePlusLibrary.Configuration.csproj">
+      <Project>{8A8A5888-1CE7-46ED-B8DE-1AC7671F3426}</Project>
+      <Name>RemotePlusLibrary.Configuration</Name>
     </ProjectReference>
     <ProjectReference Include="..\RemotePlusLibrary.Core\RemotePlusLibrary.Core.csproj">
       <Project>{0334629b-6302-42a8-b159-f8646b4d8650}</Project>
       <Name>RemotePlusLibrary.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RemotePlusLibrary.Discovery\RemotePlusLibrary.Discovery.csproj">
+      <Project>{fc3eb84c-d1b0-4b5c-9406-dffa9bc5a5fc}</Project>
+      <Name>RemotePlusLibrary.Discovery</Name>
     </ProjectReference>
     <ProjectReference Include="..\RemotePlusLibrary.Extension\RemotePlusLibrary.Extension.csproj">
       <Project>{2AA5E768-7E0A-4B0C-A0D1-F79153902DF9}</Project>
@@ -146,6 +153,10 @@
     <ProjectReference Include="..\RemotePlusLibrary.Scripting\RemotePlusLibrary.Scripting.csproj">
       <Project>{5c399f78-c133-4f9b-9758-c36a4b7fae98}</Project>
       <Name>RemotePlusLibrary.Scripting</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RemotePlusLibrary.Security\RemotePlusLibrary.Security.csproj">
+      <Project>{e4e0bb7e-b995-4ebe-8efb-3c09bf64a3a2}</Project>
+      <Name>RemotePlusLibrary.Security</Name>
     </ProjectReference>
     <ProjectReference Include="..\RemotePlusLibrary\RemotePlusLibrary.csproj">
       <Project>{00c22a1f-d3df-4193-aaa8-9907d08e2511}</Project>

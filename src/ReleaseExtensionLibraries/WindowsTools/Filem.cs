@@ -14,6 +14,7 @@ using RemotePlusServer;
 using RemotePlusLibrary;
 using System.Windows.Forms;
 using System.Drawing;
+using RemotePlusLibrary.RequestSystem;
 
 namespace WindowsTools
 {

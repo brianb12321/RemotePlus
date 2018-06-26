@@ -6,6 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using RemotePlusLibrary;
+using RemotePlusLibrary.Contracts;
+using RemotePlusLibrary.RequestSystem;
 using RemotePlusLibrary.Scripting;
 
 namespace RemotePlusServer.Proxies

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using RemotePlusLibrary;
 using ConsoLovers.ConsoleToolkit;
+using RemotePlusLibrary.RequestSystem;
 
 namespace RemotePlusClientCmd.Requests
 {

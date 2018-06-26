@@ -1,4 +1,6 @@
-﻿namespace RemotePlusClient.CommonUI
+﻿using RemotePlusClient.CommonUI.Controls;
+
+namespace RemotePlusClient.CommonUI
 {
     partial class FindRemoteFileDialog
     {
@@ -34,7 +36,7 @@
             port = 0;
             this.progressWorker = new System.ComponentModel.BackgroundWorker();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.fileBrowser1 = new RemotePlusClient.CommonUI.FileBrowser(_base, port);
+            this.fileBrowser1 = new RemotePlusClient.CommonUI.Controls.FileBrowser(_base, port);
             this.btn_Cancel = new System.Windows.Forms.Button();
             this.btn_OK = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
@@ -76,13 +78,13 @@
             this.fileBrowser1.CountLabel = 0;
             this.fileBrowser1.CurrentPath = "";
             this.fileBrowser1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.fileBrowser1.Filter = RemotePlusClient.CommonUI.FilterMode.File;
+            this.fileBrowser1.Filter = RemotePlusClient.CommonUI.Controls.FileBrowserHelpers.FilterMode.File;
             this.fileBrowser1.Location = new System.Drawing.Point(0, 0);
             this.fileBrowser1.Name = "fileBrowser1";
             this.fileBrowser1.Size = new System.Drawing.Size(751, 271);
             this.fileBrowser1.StatusMessage = "Idle";
             this.fileBrowser1.TabIndex = 0;
-            this.fileBrowser1.FileSelected += new System.EventHandler<RemotePlusClient.CommonUI.FileSelectedEventArgs>(this.fileBrowser1_FileSelected);
+            this.fileBrowser1.FileSelected += new System.EventHandler<RemotePlusClient.CommonUI.Controls.FileBrowserHelpers.FileSelectedEventArgs>(this.fileBrowser1_FileSelected);
             this.fileBrowser1.TreeVewAfterSelect += new System.EventHandler<System.Windows.Forms.TreeViewEventArgs>(this.fileBrowser1_TreeVewAfterSelect);
             // 
             // btn_Cancel

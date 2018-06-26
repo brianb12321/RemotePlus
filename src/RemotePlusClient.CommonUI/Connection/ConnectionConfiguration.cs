@@ -16,7 +16,7 @@ namespace RemotePlusClient.CommonUI.Connection
     [DataContract]
     public class ConnectionConfiguration : IFileConfig
     {
-        public const string CONFIGURATION_NAME = ConfigurationHelper.CLIENT_CONFIGURATION_PATH + "\\Connections";
+        public const string CONFIGURATION_NAME = ConfigurationHelper<ConnectionConfiguration>.CLIENT_CONFIGURATION_PATH + "\\Connections";
         [DataMember]
         public string ServerAddress { get; set; }
         [DataMember]
@@ -30,24 +30,24 @@ namespace RemotePlusClient.CommonUI.Connection
         }
         public void Load()
         {
-            var loadedData = ConfigurationHelper.LoadConfig<ConnectionConfiguration>(Path.Combine(CONFIGURATION_NAME, ConfigurationFileName), null);
+            var loadedData = ConfigurationHelper<ConnectionConfiguration>.LoadConfig(Path.Combine(CONFIGURATION_NAME, ConfigurationFileName), null);
             ServerAddress = loadedData.ServerAddress;
             RegisterationDetails = loadedData.RegisterationDetails;
         }
 
         public void Save()
         {
-            ConfigurationHelper.SaveConfig(this, Path.Combine(ConnectionConfiguration.CONFIGURATION_NAME, ConfigurationFileName), null);
+            ConfigurationHelper<ConnectionConfiguration>.SaveConfig(this, Path.Combine(ConnectionConfiguration.CONFIGURATION_NAME, ConfigurationFileName), null);
         }
 
         public void Save(string fileName)
         {
-            ConfigurationHelper.SaveConfig(this, Path.IsPathRooted(fileName) ? fileName : Path.Combine(CONFIGURATION_NAME, ConfigurationFileName), null);
+            ConfigurationHelper<ConnectionConfiguration>.SaveConfig(this, Path.IsPathRooted(fileName) ? fileName : Path.Combine(CONFIGURATION_NAME, ConfigurationFileName), null);
         }
 
         public void Load(string fileName)
         {
-            ConfigurationHelper.SaveConfig(this, Path.IsPathRooted(fileName) ? fileName : Path.Combine(CONFIGURATION_NAME, ConfigurationFileName), null);
+            ConfigurationHelper<ConnectionConfiguration>.SaveConfig(this, Path.IsPathRooted(fileName) ? fileName : Path.Combine(CONFIGURATION_NAME, ConfigurationFileName), null);
         }
     }
 }

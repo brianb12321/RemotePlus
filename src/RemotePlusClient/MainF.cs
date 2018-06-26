@@ -1,20 +1,24 @@
 ﻿using RemotePlusLibrary;
-using RemotePlusLibrary.Extension;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Linq;
 using System.ServiceModel;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Logging;
-using System.Threading;
 using RemotePlusLibrary.Extension.Gui;
 using RemotePlusClient.ExtensionSystem;
 using RemotePlusLibrary.Core;
+using RemotePlusClient.UIForms.Consoles;
+using RemotePlusClient.CommonUI.ConnectionClients;
+using RemotePlusClient.UIForms.Connection;
+using RemotePlusClient.UIForms;
+using RemotePlusLibrary.Contracts;
+using RemotePlusLibrary.Core.Faults;
+using RemotePlusClient.UIForms.SettingDialogs;
+using RemotePlusClient.UIForms.CommandSystem;
+using RemotePlusClient.UIForms.Scripting;
 
 namespace RemotePlusClient
 {
@@ -26,6 +30,7 @@ namespace RemotePlusClient
         public static ServiceClient Remote = null;
         public static ConsoleDialog ConsoleObj = null;
         public static ClientCallback LocalCallback = null;
+        public static ProxyClient FoundServers = null;
         public static string BaseAddress { get; private set; }
         public static int Port { get; set; }
         public static ClientLibraryCollection DefaultCollection { get; private set; }
@@ -48,6 +53,11 @@ namespace RemotePlusClient
                 ConsoleObj.Logger.DefaultFrom = "Client";
                 ConsoleObj.Logger.AddOutput("Closed", Logging.OutputLevel.Info);
             }
+            else if(FoundServers != null)
+            {
+                FoundServers.ProxyDisconnect();
+                FoundServers.Close();
+            }
         }
         private void connectToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -57,7 +67,14 @@ namespace RemotePlusClient
                 Address = d.Address.ToString();
                 BaseAddress = d.Address.Uri.Host;
                 Port = d.Address.Uri.Port;
-                Connect(d.RegObject);
+                if (d.UseProxy)
+                {
+                    ConnectToProxyServer();
+                }
+                else
+                {
+                    Connect(d.RegObject);
+                }
             }
         }
         private void OpenConsole()
@@ -85,12 +102,13 @@ namespace RemotePlusClient
         {
             try
             {
-                LocalCallback = new ClientCallback();
+                LocalCallback = new ClientCallback(0);
                 Remote = new ServiceClient(LocalCallback, _ConnectionFactory.BuildBinding(), new EndpointAddress(Address));
                 Remote.Open();
                 ConsoleObj.Logger.AddOutput("Registering...", Logging.OutputLevel.Info);
                 Remote.Register(Settings);
                 EnableMenuItems();
+                cmb_servers.Items.Add(Remote);
             }
             catch (Exception ex)
             {
@@ -98,7 +116,19 @@ namespace RemotePlusClient
                 MessageBox.Show("Error connecting to server. " + ex.Message, "Connection error.", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
+        private void ConnectToProxyServer()
+        {
+            LocalCallback = new ClientCallback(0);
+            Uri proxyEndpointAddress = new Uri(Address);
+            FoundServers = new ProxyClient(LocalCallback, _ConnectionFactory.BuildBinding(), new EndpointAddress(proxyEndpointAddress));
+            FoundServers.Connect();
+            FoundServers.ProxyRegister();
+            ConsoleObj.Logger.AddOutput($"Found {FoundServers.GetServers().Count()} servers joined to the proxy server.", OutputLevel.Info);
+            AddTabToSideControl("Server Explorer", new ServerExplorer());
+            string[] servers = FoundServers.GetServers().Select(g => g.ToString()).ToArray();
+            cmb_servers.Items.AddRange(servers);
+            connectMenuItem.Enabled = false;
+        }
         public void AddTabToConsoleTabControl(string Name, ThemedForm c)
         {
             string Id = $"{Name}";
@@ -106,6 +136,8 @@ namespace RemotePlusClient
             c.WindowState = FormWindowState.Maximized;
             c.FormBorderStyle = FormBorderStyle.None;
             c.TopLevel = false;
+            c.AutoSize = true;
+            c.AutoSizeMode = AutoSizeMode.GrowOnly;
             c.Dock = DockStyle.Fill;
             TabPage t = new TabPage(Name)
             {
@@ -123,6 +155,8 @@ namespace RemotePlusClient
             c.WindowState = FormWindowState.Maximized;
             c.FormBorderStyle = FormBorderStyle.None;
             c.TopLevel = false;
+            c.AutoSize = true;
+            c.AutoSizeMode = AutoSizeMode.GrowOnly;
             c.Dock = DockStyle.Fill;
             TabPage t = new TabPage(Name)
             {
@@ -141,6 +175,8 @@ namespace RemotePlusClient
             c.FormBorderStyle = FormBorderStyle.None;
             c.TopLevel = false;
             c.Dock = DockStyle.Fill;
+            c.AutoSize = true;
+            c.AutoSizeMode = AutoSizeMode.GrowOnly;
             TabPage t = new TabPage(Name)
             {
                 Name = Id
@@ -165,22 +201,36 @@ namespace RemotePlusClient
 
         private void consoleToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            OpenConsole(FormPosition.Top, true);
+            OpenConsole(Remote, FormPosition.Top, true);
         }
-        public void OpenConsole(FormPosition position, bool enableInput)
+        public void OpenConsole(Guid selectedGuid, IRemote client, FormPosition position, bool enableInput)
         {
-            if (Remote.State == CommunicationState.Opened)
+            if (Remote == null && FoundServers != null)
             {
                 if (ServerConsoleObj == null)
                 {
-                    ServerConsoleObj = new ServerConsole(enableInput);
+                    ServerConsoleObj = new ServerConsole(client, enableInput);
                     if (position == FormPosition.Top)
                     {
-                        AddTabToMainTabControl("Server Console", ServerConsoleObj);
+                        if (selectedGuid == Guid.Empty)
+                        {
+                            AddTabToMainTabControl($"Server Console", ServerConsoleObj);
+                        }
+                        else
+                        {
+                            AddTabToMainTabControl($"Server Console ({selectedGuid})", ServerConsoleObj);
+                        }
                     }
-                    else if(position == FormPosition.Bottum)
+                    else if (position == FormPosition.Bottum)
                     {
-                        AddTabToConsoleTabControl("Server Console", ServerConsoleObj);
+                        if (selectedGuid == Guid.Empty)
+                        {
+                            AddTabToMainTabControl($"Server Console", ServerConsoleObj);
+                        }
+                        else
+                        {
+                            AddTabToConsoleTabControl($"Server Console ({selectedGuid})", ServerConsoleObj);
+                        }
                     }
                 }
                 else
@@ -190,8 +240,34 @@ namespace RemotePlusClient
             }
             else
             {
-                MessageBox.Show("Please connect to a server to open console.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                if (Remote.State == CommunicationState.Opened)
+                {
+                    if (ServerConsoleObj == null)
+                    {
+                        ServerConsoleObj = new ServerConsole(client, enableInput);
+                        if (position == FormPosition.Top)
+                        {
+                            AddTabToMainTabControl("Server Console", ServerConsoleObj);
+                        }
+                        else if (position == FormPosition.Bottum)
+                        {
+                            AddTabToConsoleTabControl("Server Console", ServerConsoleObj);
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("You can't have another console seassion.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Please connect to a server to open console.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
+        }
+        public void OpenConsole(IRemote client, FormPosition position, bool enableInput)
+        {
+            OpenConsole(Guid.Empty, client, position, enableInput);
         }
         public void CloseBottumConsole()
         {
@@ -205,6 +281,7 @@ namespace RemotePlusClient
         {
             TopPages = new Dictionary<string, ThemedForm>();
             BottumPages = new Dictionary<string, ThemedForm>();
+            AddTabToSideControl("Extensions", new ExtensionView());
             OpenConsole();
             Application.ThreadException += Application_ThreadException;
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
@@ -239,24 +316,6 @@ namespace RemotePlusClient
 
         }
 
-        private void contextMenuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
-        {
-            if (e.ClickedItem.Name == "mi_open")
-            {
-                var collection = DefaultCollection.GetAllExtensions();
-                var extension = collection[treeView1.SelectedNode.Name];
-                switch(extension.Position)
-                {
-                    case FormPosition.Top:
-                        AddTabToMainTabControl(extension.GeneralDetails.Name, extension.ExtensionForm);
-                        break;
-                    case FormPosition.Bottum:
-                        AddTabToConsoleTabControl(extension.GeneralDetails.Name, extension.ExtensionForm);
-                        break;
-                }
-            }
-        }
-
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ServerSettingsDialog ssd = new ServerSettingsDialog();
@@ -285,7 +344,7 @@ namespace RemotePlusClient
             {
                 ClientInitEnvironment env = new ClientInitEnvironment((ConsoleObj.Logger.errorcount > 0) ? true : false);
                 var lib = ClientExtensionLibrary.LoadClientLibrary(ofd.FileName,
-                    (f) => MainF.ConsoleObj.Logger.AddOutput($"Form load: {f.GeneralDetails.Name}", OutputLevel.Info),
+                    (f) => MainF.ConsoleObj.Logger.AddOutput($"Form load: {f.ExtensionName}", OutputLevel.Info),
                     (m, o) => ConsoleObj.Logger.AddOutput(new UILogItem(o, m, "Extension Loader")),
                     env);
                 DefaultCollection.Libraries.Add(lib.Name, lib);
@@ -293,12 +352,12 @@ namespace RemotePlusClient
                 {
                     foreach (KeyValuePair<string, IClientExtension> f2 in DefaultCollection.GetAllExtensions())
                     {
-                        TreeNode tn = new TreeNode(f2.Value.GeneralDetails.Name)
+                        TreeNode tn = new TreeNode(f2.Value.ExtensionName)
                         {
                             Name = f2.Key,
                             Tag = f2.Value
                         };
-                        this.Invoke(new MethodInvoker(() => treeView1.Nodes.Add(tn)));
+                        this.Invoke(new MethodInvoker(() => ((ExtensionView)emi_Left.TabPages[0].Controls[0]).treeView1.Nodes.Add(tn)));
                     }
                     this.Invoke(new MethodInvoker(() => MainF.ConsoleObj.Logger.AddOutput("Extension loaded.", Logging.OutputLevel.Info)));
                 });
@@ -343,20 +402,6 @@ namespace RemotePlusClient
             }
         }
 
-        private void getServerExtensionNamesToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            foreach(ExtensionDetails s in Remote.GetExtensionNames())
-            {
-                ConsoleObj.Logger.AddOutput("Extension name: " + s.Name, Logging.OutputLevel.Info);
-            }
-        }
-
-        private void getExtensionsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            ExtensionDetailsDialog edd = new ExtensionDetailsDialog();
-            edd.ShowDialog();
-        }
-
         private void menuItem3_Click(object sender, EventArgs e)
         {
             if (Remote.State == CommunicationState.Opened)
@@ -369,7 +414,7 @@ namespace RemotePlusClient
                 {
                     if (ServerConsoleObj == null)
                     {
-                        ServerConsoleObj = new ServerConsole(ofd.FileName);
+                        ServerConsoleObj = new ServerConsole(Remote, ofd.FileName);
                         AddTabToMainTabControl("Server Console", ServerConsoleObj);
                     }
                     else
@@ -428,22 +473,6 @@ namespace RemotePlusClient
             AddTabToMainTabControl("Remote File Browser", new RemoteFileBrowser());
         }
 
-        private void configure_menuItem_Click(object sender, EventArgs e)
-        {
-            using (CommonUI.EmailGui.ConfigureEmailDialogBox emailConfig = new CommonUI.EmailGui.ConfigureEmailDialogBox(Remote.GetServerEmailSettings()))
-            {
-                if(emailConfig.ShowDialog() == DialogResult.OK)
-                {
-                    Remote.UpdateServerEmailSettings(emailConfig.EmailSettings);
-                }
-            }
-        }
-
-        private void sendEmail_menuItem_Click(object sender, EventArgs e)
-        {
-            AddTabToMainTabControl("Send email", new CommonUI.EmailGui.SendEmailForm(Remote));
-        }
-
         private void mi_pipeLineBrowser_Click(object sender, EventArgs e)
         {
             AddTabToConsoleTabControl(CommandPipelineViewer.NAME, new CommandPipelineViewer());
@@ -487,10 +516,40 @@ namespace RemotePlusClient
 
         private void mi_openScriptingEnvironment_Click(object sender, EventArgs e)
         {
-            AddTabToMainTabControl(ScriptingEditor.NAME, new ScriptingEditor());
+            AddTabToMainTabControl(ScriptingEditor.NAME, new ScriptingEditor(Remote));
         }
 
         private void splitContainer1_Panel1_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void MainF_Resize(object sender, EventArgs e)
+        {
+            this.Refresh();
+        }
+
+        private void treeView1_Resize(object sender, EventArgs e)
+        {
+
+        }
+
+        private void tabControl2_Resize(object sender, EventArgs e)
+        {
+
+        }
+
+        private void tabControl1_Resize(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void emi_Left_Resize(object sender, EventArgs e)
+        {
+
+        }
+
+        private void splitContainer1_Resize(object sender, EventArgs e)
         {
 
         }

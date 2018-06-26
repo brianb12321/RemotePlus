@@ -1,17 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using RemotePlusLibrary;
-using RemotePlusClient.CommonUI.RequestProperties;
-using RemotePlusLibrary.Configuration;
-using RemotePlusClient.CommonUI.RequestSettings;
-using System.IO;
+using RemotePlusLibrary.RequestSystem;
 
 namespace RemotePlusClient.CommonUI
 {
@@ -62,10 +51,7 @@ namespace RemotePlusClient.CommonUI
 
         void IDataRequest.UpdateProperties()
         {
-            using (RequestStringProperties pd = new RequestStringProperties())
-            {
-                pd.ShowDialog();
-            }
+            throw new NotImplementedException();
         }
 
         private void RequestStringDialogBox_Shown(object sender, EventArgs e)
