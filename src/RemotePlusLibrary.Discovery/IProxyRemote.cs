@@ -1,15 +1,13 @@
-﻿using RemotePlusLibrary.Extension.CommandSystem;
+﻿using RemotePlusLibrary.Contracts;
+using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.ServiceModel;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RemotePlusLibrary.Discovery
 {
-    [ServiceContract(CallbackContract = typeof(IRemoteClient))]
+    [ServiceContract(CallbackContract = typeof(IRemoteClient),
+        SessionMode = SessionMode.Required)]
     public interface IProxyRemote : IRemote
     {
         [OperationContract(Name = "SelectServerByNumber")]

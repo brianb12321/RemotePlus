@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>RemotePlusLibrary.Extension</RootNamespace>
     <AssemblyName>RemotePlusLibrary.Extension</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -49,59 +49,45 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClientSupportedTypes.cs" />
-    <Compile Include="CommandSystem\CommandClasses\CommandParser.cs" />
+    <Compile Include="CommandSystem\CommandClasses\Parsing\CommandParser.cs" />
     <Compile Include="CommandSystem\CommandClasses\CommandPipeline.cs" />
     <Compile Include="CommandSystem\CommandClasses\CommandRequest.cs" />
     <Compile Include="CommandSystem\CommandClasses\CommandResponse.cs" />
     <Compile Include="CommandSystem\CommandClasses\CommandRoutine.cs" />
-    <Compile Include="CommandSystem\CommandClasses\CommandToken.cs" />
-    <Compile Include="CommandSystem\CommandClasses\ParserException.cs" />
-    <Compile Include="CommandSystem\CommandClasses\TokenSet.cs" />
-    <Compile Include="CommandSystem\CommandClasses\TokenType.cs" />
+    <Compile Include="CommandSystem\CommandClasses\Parsing\CommandToken.cs" />
+    <Compile Include="CommandSystem\CommandClasses\Parsing\ParserException.cs" />
+    <Compile Include="CommandSystem\CommandClasses\Parsing\TokenSet.cs" />
+    <Compile Include="CommandSystem\CommandClasses\Parsing\TokenType.cs" />
     <Compile Include="CommandSystem\CommandDescription.cs" />
     <Compile Include="CommandSystem\ConsoleText.cs" />
-    <Compile Include="CommandSystem\ConsoleTextExtensions.cs" />
     <Compile Include="CommandSystem\PromptBuilder.cs" />
     <Compile Include="CommandSystem\StatusCodeDeliveryMethod.cs" />
-    <Compile Include="CommandSystem\TableParser.cs" />
-    <Compile Include="DependencyException.cs" />
-    <Compile Include="DependencyType.cs" />
+    <Compile Include="ExtensionLoader\DependencyException.cs" />
+    <Compile Include="ExtensionLoader\DependencyType.cs" />
     <Compile Include="ExtensionDevelopmentState.cs" />
-    <Compile Include="ExtensionStatusCodes.cs" />
     <Compile Include="HookSystem\HookArguments.cs" />
-    <Compile Include="IInitEnvironment.cs" />
-    <Compile Include="ILibraryBuilder.cs" />
-    <Compile Include="LibraryBuilder.cs" />
+    <Compile Include="ExtensionLoader\Initialization\IInitEnvironment.cs" />
+    <Compile Include="ExtensionLoader\Initialization\ILibraryBuilder.cs" />
     <Compile Include="CommandSystem\CommandBehaviorAttribute.cs" />
     <Compile Include="CommandSystem\CommandExecutionMode.cs" />
     <Compile Include="CommandSystem\CommandHelpAttribute.cs" />
     <Compile Include="CommandSystem\CommandStatus.cs" />
     <Compile Include="CallType.cs" />
     <Compile Include="CommandSystem\RemotePlusConsole.cs" />
-    <Compile Include="ExtensionLibraryBase.cs" />
-    <Compile Include="ExtensionDetails.cs" />
+    <Compile Include="ExtensionLoader\ExtensionLibraryBase.cs" />
     <Compile Include="CommandSystem\HelpPageAttribute.cs" />
     <Compile Include="CommandSystem\HelpSourceType.cs" />
-    <Compile Include="ExtensionExecutionContext.cs" />
-    <Compile Include="ExtensionLibraryCollectionBase.cs" />
+    <Compile Include="ExtensionLoader\ExtensionLibraryCollectionBase.cs" />
     <Compile Include="Gui\ThemedForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Gui\Theme.cs" />
-    <Compile Include="OperationStatus.cs" />
-    <Compile Include="Programmer\Programmer.cs" />
-    <Compile Include="Programmer\ServerExtensionCollectionProgrammer.cs" />
-    <Compile Include="ExtensionLibraryAttribute.cs" />
-    <Compile Include="ExtensionLibraryType.cs" />
-    <Compile Include="IExtension.cs" />
-    <Compile Include="ILibraryStartup.cs" />
-    <Compile Include="InvalidExtensionLibraryException.cs" />
+    <Compile Include="ExtensionLoader\ExtensionLibraryAttribute.cs" />
+    <Compile Include="ExtensionLoader\ExtensionLibraryType.cs" />
+    <Compile Include="ExtensionLoader\Initialization\ILibraryStartup.cs" />
+    <Compile Include="ExtensionLoader\InvalidExtensionLibraryException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Programmer\ServerExtensionLibraryProgrammer.cs" />
-    <Compile Include="Programmer\ServerExtensionProgrammer.cs" />
-    <Compile Include="Programmer\ServerExtensionProgrammerUpdateEvent.cs" />
     <Compile Include="RequiresDependencyAttribute.cs" />
-    <Compile Include="ServerExtension.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\RemotePlusLibrary.Configuration\RemotePlusLibrary.Configuration.csproj">

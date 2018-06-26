@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using RemotePlusLibrary;
 using RemotePlusLibrary.Extension;
+using RemotePlusLibrary.Extension.ExtensionLoader;
 
 namespace RemotePlusClient.ExtensionSystem
 {

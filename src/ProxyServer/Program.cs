@@ -12,6 +12,7 @@ using System.ServiceModel.Dispatcher;
 using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
 using RemotePlusLibrary.Extension;
+using RemotePlusLibrary.Client;
 
 namespace ProxyServer
 {

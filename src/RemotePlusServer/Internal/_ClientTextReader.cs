@@ -11,7 +11,7 @@ namespace RemotePlusServer.Internal
     {
         public override string ReadLine()
         {
-            return ServerManager.DefaultService.Remote.Client.ClientCallback.RequestInformation(new RemotePlusLibrary.RequestBuilder("rcmd_textBox", "", null)).Data.ToString();
+            return ServerManager.DefaultService.Remote.Client.ClientCallback.RequestInformation(new RemotePlusLibrary.RequestSystem.RequestBuilder("rcmd_textBox", "", null)).Data.ToString();
         }
     }
 }

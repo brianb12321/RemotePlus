@@ -6,16 +6,15 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using RemotePlusLibrary.Extension.CommandSystem;
 using System.Speech.Synthesis;
 using System.Windows.Forms;
-using RemotePlusLibrary.Core.EmailService;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
 using RemotePlusServer.ExtensionSystem;
-using RemotePlusLibrary;
 using System.Drawing;
 using RemotePlusLibrary.Scripting.ScriptPackageEngine;
+using RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing;
+using RemotePlusLibrary.RequestSystem;
 
 namespace RemotePlusServer
 {
@@ -59,17 +58,6 @@ namespace RemotePlusServer
             var response = new CommandResponse((int)CommandStatus.Success);
             response.Metadata.Add("helpText", helpString);
             return response;
-        }
-        [CommandHelp("Executes a loaded extension on the server.")]
-        [HelpPage("ex.txt", Source = HelpSourceType.File)]
-        private static CommandResponse ExCommand(CommandRequest args, CommandPipeline pipe)
-        {
-            var statusCode = DefaultService.Remote.RunExtension((string)args.Arguments[1].Value, new ExtensionExecutionContext(CallType.CommandLine), args.Arguments.Skip(1).Select(f => f.ToString()).ToArray()).ReturnCode;
-            if (statusCode != ExtensionStatusCodes.EXTENSION_NOT_FOUND)
-            {
-                DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, "Extension executed.", "Server Host"));
-            }
-            return new CommandResponse((int)CommandStatus.Success);
         }
         [CommandHelp("Gets the server log.")]
         [HelpPage("logs.txt", Source = HelpSourceType.File)]
@@ -404,22 +392,6 @@ namespace RemotePlusServer
         {
             DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, $"The path to the server is {Environment.CurrentDirectory}"));
             return new CommandResponse((int)CommandStatus.Success);
-        }
-        [CommandHelp("Sends a sample email.")]
-        [CommandBehavior(IndexCommandInHelp = false)]
-        private static CommandResponse sample_Email(CommandRequest args, CommandPipeline pipe)
-        {
-            EmailClient client = new EmailClient(ServerManager.DefaultEmailSettings);
-            if(client.SendEmail("This is a test email from RemotePlus", "test email from RemotePlus", out Exception err))
-            {
-                DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, "Email sent"));
-                return new CommandResponse((int)CommandStatus.Success);
-            }
-            else
-            {
-                DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, $"Unable to send email. {err.Message}"));
-                return new CommandResponse((int)CommandStatus.Fail);
-            }
         }
         [CommandHelp("Changes the current working directory.")]
         private static CommandResponse cd(CommandRequest args, CommandPipeline pipe)

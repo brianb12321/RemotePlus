@@ -1,22 +1,24 @@
 ﻿using RemotePlusLibrary;
-using RemotePlusLibrary.Extension;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Linq;
 using System.ServiceModel;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Logging;
-using System.Threading;
 using RemotePlusLibrary.Extension.Gui;
 using RemotePlusClient.ExtensionSystem;
 using RemotePlusLibrary.Core;
-using System.ServiceModel.Discovery;
-using RemotePlusClient.CommonUI;
+using RemotePlusClient.UIForms.Consoles;
+using RemotePlusClient.CommonUI.ConnectionClients;
+using RemotePlusClient.UIForms.Connection;
+using RemotePlusClient.UIForms;
+using RemotePlusLibrary.Contracts;
+using RemotePlusLibrary.Core.Faults;
+using RemotePlusClient.UIForms.SettingDialogs;
+using RemotePlusClient.UIForms.CommandSystem;
+using RemotePlusClient.UIForms.Scripting;
 
 namespace RemotePlusClient
 {
@@ -342,7 +344,7 @@ namespace RemotePlusClient
             {
                 ClientInitEnvironment env = new ClientInitEnvironment((ConsoleObj.Logger.errorcount > 0) ? true : false);
                 var lib = ClientExtensionLibrary.LoadClientLibrary(ofd.FileName,
-                    (f) => MainF.ConsoleObj.Logger.AddOutput($"Form load: {f.GeneralDetails.Name}", OutputLevel.Info),
+                    (f) => MainF.ConsoleObj.Logger.AddOutput($"Form load: {f.ExtensionName}", OutputLevel.Info),
                     (m, o) => ConsoleObj.Logger.AddOutput(new UILogItem(o, m, "Extension Loader")),
                     env);
                 DefaultCollection.Libraries.Add(lib.Name, lib);
@@ -350,7 +352,7 @@ namespace RemotePlusClient
                 {
                     foreach (KeyValuePair<string, IClientExtension> f2 in DefaultCollection.GetAllExtensions())
                     {
-                        TreeNode tn = new TreeNode(f2.Value.GeneralDetails.Name)
+                        TreeNode tn = new TreeNode(f2.Value.ExtensionName)
                         {
                             Name = f2.Key,
                             Tag = f2.Value
@@ -398,20 +400,6 @@ namespace RemotePlusClient
             {
                 MessageBox.Show("There are no tabs to close.");
             }
-        }
-
-        private void getServerExtensionNamesToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            foreach(ExtensionDetails s in Remote.GetExtensionNames())
-            {
-                ConsoleObj.Logger.AddOutput("Extension name: " + s.Name, Logging.OutputLevel.Info);
-            }
-        }
-
-        private void getExtensionsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            ExtensionDetailsDialog edd = new ExtensionDetailsDialog();
-            edd.ShowDialog();
         }
 
         private void menuItem3_Click(object sender, EventArgs e)
@@ -483,22 +471,6 @@ namespace RemotePlusClient
         private void browseFile_MenuItem_Click(object sender, EventArgs e)
         {
             AddTabToMainTabControl("Remote File Browser", new RemoteFileBrowser());
-        }
-
-        private void configure_menuItem_Click(object sender, EventArgs e)
-        {
-            using (CommonUI.EmailGui.ConfigureEmailDialogBox emailConfig = new CommonUI.EmailGui.ConfigureEmailDialogBox(Remote.GetServerEmailSettings()))
-            {
-                if(emailConfig.ShowDialog() == DialogResult.OK)
-                {
-                    Remote.UpdateServerEmailSettings(emailConfig.EmailSettings);
-                }
-            }
-        }
-
-        private void sendEmail_menuItem_Click(object sender, EventArgs e)
-        {
-            AddTabToMainTabControl("Send email", new CommonUI.EmailGui.SendEmailForm(Remote));
         }
 
         private void mi_pipeLineBrowser_Click(object sender, EventArgs e)

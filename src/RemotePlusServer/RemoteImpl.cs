@@ -6,21 +6,24 @@ using System.Windows.Forms;
 using Logging;
 using System.Speech.Synthesis;
 using RemotePlusLibrary.Core;
-using RemotePlusLibrary.Extension;
 using System.Diagnostics;
 using RemotePlusLibrary.Extension.CommandSystem;
 using System.IO;
-using RemotePlusLibrary.Extension.Programmer;
-using RemotePlusLibrary.Core.EmailService;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
 using RemotePlusServer.ExtensionSystem;
-using RemotePlusLibrary.FileTransfer;
 using System.Text.RegularExpressions;
 using RemotePlusServer.Internal;
 using System.Linq;
 using RemotePlusLibrary.Scripting;
 using RemotePlusLibrary.Security.AccountSystem;
 using RemotePlusLibrary.Discovery;
+using RemotePlusLibrary.Core.Faults;
+using RemotePlusLibrary.FileTransfer.BrowserClasses;
+using RemotePlusLibrary.Contracts;
+using RemotePlusLibrary.Client;
+using RemotePlusLibrary.Security.Authentication;
+using RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing;
+using RemotePlusLibrary.Configuration.ServerSettings;
 
 namespace RemotePlusServer
 {
@@ -31,9 +34,10 @@ namespace RemotePlusServer
         MaxItemsInObjectGraph = int.MaxValue)]
     [CallbackBehavior(IncludeExceptionDetailInFaults = true,
         ConcurrencyMode = ConcurrencyMode.Multiple,
-        UseSynchronizationContext = false)]
+        UseSynchronizationContext = false,
+        MaxItemsInObjectGraph = int.MaxValue)]
     [GlobalException(typeof(GlobalErrorHandler))]
-    public class RemoteImpl : IRemote
+    public class RemoteImpl : IRemote, IRemoteWithProxy
     {
         const string OPERATION_COMPLETED = "Operation_Completed";
         public RemoteImpl()
@@ -42,14 +46,12 @@ namespace RemotePlusServer
         }
         internal void Setup()
         {
-            ServerManager.Logger.AddOutput("Added temperary extensions into dictionary.", OutputLevel.Debug);
-            _allExtensions = ServerManager.DefaultCollection.GetAllExtensions();
+
         }
         public RegisterationObject Settings { get; private set; }
         public Client<RemoteClient> Client { get; set; }
         public bool Registered { get; private set; }
         public UserAccount LoggedInUser { get; private set; }
-        private Dictionary<string, ServerExtension> _allExtensions;
         public string CurrentPath = Environment.CurrentDirectory;
         bool CheckRegisteration(string Action)
         {
@@ -147,7 +149,7 @@ namespace RemotePlusServer
             ServerManager.Logger.AddOutput("Instanitiating callback object.", OutputLevel.Debug);
             ServerManager.Logger.AddOutput("Getting ClientBuilder from client.", OutputLevel.Debug);
 
-            if (ServerManager.DefaultSettings.DiscoverySettings.DiscoveryBehavior == RemotePlusLibrary.Configuration.ProxyConnectionMode.Connect)
+            if (ServerManager.DefaultSettings.DiscoverySettings.DiscoveryBehavior == RemotePlusLibrary.Configuration.ServerSettings.ProxyConnectionMode.Connect)
             {
                 Client = Client<RemoteClient>.Build(ServerManager.proxyChannel.RegisterClient(), new RemoteClient(null, true));
             }
@@ -179,7 +181,7 @@ namespace RemotePlusServer
             {
                 var l3 = ServerManager.Logger.AddOutput("Awaiting credentials from the client.", OutputLevel.Info);
                 Client.ClientCallback.TellMessage(new UILogItem(l3.Level, l3.Message, l3.From));
-                UserCredentials upp = Client.ClientCallback.RequestAuthentication(new AuthenticationRequest(AutehnticationSeverity.Normal) { Reason = "The server requires credentials to register." });
+                UserCredentials upp = Client.ClientCallback.RequestAuthentication(new AuthenticationRequest(AuthenticationSeverity.Normal) { Reason = "The server requires credentials to register." });
                 var account = LogIn(upp);
                 if (account == null)
                 {
@@ -193,8 +195,8 @@ namespace RemotePlusServer
                     RegisterComplete();
                 }
             }
-            _HookManager.RunHooks(LibraryBuilder.LOGIN_HOOK, new RemotePlusLibrary.Extension.HookSystem.HookArguments(LibraryBuilder.LOGIN_HOOK));
-            if (Client.ClientType != ClientType.CommandLine)
+            _HookManager.RunHooks(ServerLibraryBuilder.LOGIN_HOOK, new RemotePlusLibrary.Extension.HookSystem.HookArguments(ServerLibraryBuilder.LOGIN_HOOK));
+            if (Client.ClientType == ClientType.CommandLine && ServerManager.proxyChannelFactory == null)
             {
                 Client.ClientCallback.ChangePrompt(new RemotePlusLibrary.Extension.CommandSystem.PromptBuilder()
                 {
@@ -667,62 +669,6 @@ namespace RemotePlusServer
             }
         }
 
-        public ExtensionReturn RunExtension(string ExtensionName, ExtensionExecutionContext Context, string[] args)
-        {
-            // OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
-            if (CheckRegisteration("RunExtension"))
-            {
-                if (LoggedInUser.Role.AttachedPolicyObject.Policies.FindSubFolder("Operations").Policies.First(p => p.ShortName == "EnableConsole").Values["Value"] != "True")
-                {
-                    Client.ClientCallback.TellMessage(new UILogItem(OutputLevel.Error, "You do not have permission to run an extension.", "Server Host"));
-                    return new ExtensionReturn(ExtensionStatusCodes.ACCESS_DENIED);
-                }
-                else
-                {
-                    ServerManager.Logger.AddOutput($"Executing extension. Name: {ExtensionName}, CallType: {Context.Mode.ToString()}", OutputLevel.Info);
-                    try
-                    {
-                        ServerExtension e = _allExtensions[ExtensionName];
-                        if (e.SupportClientTypes != ClientSupportedTypes.Both && ((Client.ClientType == ClientType.CommandLine && e.SupportClientTypes == ClientSupportedTypes.GUI) || (Client.ClientType == ClientType.GUI && e.SupportClientTypes == ClientSupportedTypes.CommandLine)))
-                        {
-                            ServerManager.Logger.AddOutput($"Unsupported client type. Please use a {e.SupportClientTypes} client instead.", OutputLevel.Info);
-                            Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, $"Unsupported client type. Please use a {e.SupportClientTypes} client instead.", "Server Host"));
-                        }
-                        var s = e.Execute(Context, args);
-                        ServerManager.Logger.AddOutput($"Returnaing extension response. Success: {(s.ReturnCode == 0 ? true : false)}", OutputLevel.Debug);
-                        return s;
-                    }
-                    catch (KeyNotFoundException)
-                    {
-                        ServerManager.Logger.AddOutput($"Extension {ExtensionName} does not exist.", OutputLevel.Error);
-                        Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, $"Extension {ExtensionName} does not exist.", "Server Host"));
-                        return new ExtensionReturn(ExtensionStatusCodes.EXTENSION_NOT_FOUND);
-                    }
-                }
-            }
-            else
-            {
-                return null;
-            }
-        }
-
-        public List<ExtensionDetails> GetExtensionNames()
-        {
-            // OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
-            if (CheckRegisteration("GetExtensionNames"))
-            {
-                List<ExtensionDetails> l = new List<ExtensionDetails>();
-                foreach (KeyValuePair<string, ServerExtension> s in _allExtensions)
-                {
-                    l.Add(s.Value.GeneralDetails);
-                }
-                return l;
-            }
-            else
-            {
-                return null;
-            }
-        }
         public IEnumerable<CommandDescription> GetCommands()
         {
             if (CheckRegisteration("GetCommands"))
@@ -762,7 +708,7 @@ namespace RemotePlusServer
             LogOff();
             ServerManager.Logger.AddOutput("Logging in.", OutputLevel.Info ,"Server Host");
             Client.ClientCallback.TellMessage(new UILogItem(OutputLevel.Info, "Logging in.", "Server Host"));
-            var cred = Client.ClientCallback.RequestAuthentication(new AuthenticationRequest(AutehnticationSeverity.Normal) { Reason = "Please provide a username and password to switch to." });
+            var cred = Client.ClientCallback.RequestAuthentication(new AuthenticationRequest(AuthenticationSeverity.Normal) { Reason = "Please provide a username and password to switch to." });
             LogIn(cred);
         }
         private void LogOff()
@@ -841,91 +787,47 @@ namespace RemotePlusServer
             if (subDir.Parent == null)
             {
                 DriveInfo driveInfo = new DriveInfo(subDir.FullName);
-                RemoteDrive drive = new RemoteDrive(driveInfo.Name, driveInfo.VolumeLabel);
-                //Get files
-                foreach (FileInfo files in driveInfo.RootDirectory.EnumerateFiles())
+                if(driveInfo.IsReady)
                 {
-                    drive.Files.Add(new RemoteFile(files.FullName, files.CreationTime, files.LastAccessTime));
+                    RemoteDrive drive = new RemoteDrive(driveInfo.Name, driveInfo.VolumeLabel);
+                    //Get files
+                    foreach (FileInfo files in driveInfo.RootDirectory.EnumerateFiles())
+                    {
+                        drive.Files.Add(new RemoteFile(files.FullName, files.CreationTime, files.LastAccessTime));
+                    }
+                    //Get Folders
+                    foreach (DirectoryInfo folders in driveInfo.RootDirectory.EnumerateDirectories())
+                    {
+                        drive.Directories.Add(new RemoteDirectory(folders.FullName, folders.LastAccessTime));
+                    }
+                    return drive;
                 }
-                //Get Folders
-                foreach (DirectoryInfo folders in driveInfo.RootDirectory.EnumerateDirectories())
+                else
                 {
-                    drive.Directories.Add(new RemoteDirectory(folders.FullName, folders.LastAccessTime));
-                }
-                return drive;
-            }
-            else
-            {
-                RemoteDirectory r = new RemoteDirectory(subDir.FullName, subDir.LastAccessTime);
-                //Get files
-                foreach (FileInfo files in subDir.EnumerateFiles())
-                {
-                    r.Files.Add(new RemoteFile(files.FullName, files.CreationTime, files.LastAccessTime));
-                }
-                //Get Folders
-                foreach (DirectoryInfo folders in subDir.EnumerateDirectories())
-                {
-                    r.Directories.Add(new RemoteDirectory(folders.FullName, folders.LastAccessTime));
-                }
-                return r;
-            }
-        }
-        public EmailSettings GetServerEmailSettings()
-        {
-            // OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
-            if (CheckRegisteration("GetServerEmailSettings"))
-            {
-                if (LoggedInUser.Role.AttachedPolicyObject.Policies.FindSubFolder("Operations").Policies.First(p => p.ShortName == "EnableConsole").Values["Value"] != "True")
-                {
-                    Client.ClientCallback.TellMessage(new UILogItem(OutputLevel.Error, "You do not have permission to change email server settings.", "Server Host"));
                     return null;
                 }
-                else
-                {
-                    ServerManager.Logger.AddOutput("Retreiving email server settings.", OutputLevel.Info);
-                    return ServerManager.DefaultEmailSettings;
-                }
             }
             else
             {
-                return null;
-            }
-        }
-
-        public void UpdateServerEmailSettings(EmailSettings emailSetting)
-        {
-            // OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
-            if (CheckRegisteration("UpdateServerEmailSettings"))
-            {
-                if (LoggedInUser.Role.AttachedPolicyObject.Policies.FindSubFolder("Operations").Policies.First(p => p.ShortName == "EnableConsole").Values["Value"] != "True")
+                try
                 {
-                    Client.ClientCallback.TellMessage(new UILogItem(OutputLevel.Error, "You do not have permission to change server email settings.", "Server Host"));
+                    RemoteDirectory r = new RemoteDirectory(subDir.FullName, subDir.LastAccessTime);
+                    //Get files
+                    foreach (FileInfo files in subDir.EnumerateFiles())
+                    {
+                        r.Files.Add(new RemoteFile(files.FullName, files.CreationTime, files.LastAccessTime));
+                    }
+                    //Get Folders
+                    foreach (DirectoryInfo folders in subDir.EnumerateDirectories())
+                    {
+                        r.Directories.Add(new RemoteDirectory(folders.FullName, folders.LastAccessTime));
+                    }
+                    return r;
                 }
-                else
+                catch (UnauthorizedAccessException ex)
                 {
-                    ServerManager.Logger.AddOutput("Updating server email settings.", OutputLevel.Info);
-                    ServerManager.DefaultEmailSettings = emailSetting;
-                    Client.ClientCallback.TellMessage("Saving settings.", OutputLevel.Info);
-                    ServerManager.DefaultEmailSettings.Save();
-                    Client.ClientCallback.TellMessage("Settings saved.", OutputLevel.Info);
-                    ServerManager.Logger.AddOutput("Settings saved.", OutputLevel.Info);
+                    throw new FaultException<ServerFault>(new ServerFault(), ex.Message);
                 }
-            }
-        }
-
-        public bool SendEmail(string To, string Subject, string Message)
-        {
-            // OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
-            EmailClient client = new EmailClient(ServerManager.DefaultEmailSettings);
-            if(client.SendEmail(To, Subject, Message, out Exception err))
-            {
-                Client.ClientCallback.TellMessage(new UILogItem(OutputLevel.Info, "Email message sent.", "Server Host"));
-                return true;
-            }
-            else
-            {
-                Client.ClientCallback.TellMessage(new UILogItem(OutputLevel.Error, $"Email message failed: {err.ToString()}", "Server Host"));
-                return false;
             }
         }
 
@@ -963,6 +865,11 @@ namespace RemotePlusServer
                 l.Add(r.RoleName);
             }
             return l;
+        }
+
+        public void ServerRegistered(Guid serverGuid)
+        {
+            ServerManager.ServerGuid = serverGuid;
         }
     }
 }

@@ -1,5 +1,7 @@
 ﻿using RemotePlusClient.CommonUI;
+using RemotePlusClient.CommonUI.Controls.FileBrowserHelpers;
 using RemotePlusLibrary;
+using RemotePlusLibrary.RequestSystem;
 using System;
 using System.Collections.Generic;
 using System.Linq;

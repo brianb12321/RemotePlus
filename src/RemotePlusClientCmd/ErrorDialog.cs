@@ -1,4 +1,5 @@
 ﻿using RemotePlusLibrary.Core;
+using RemotePlusLibrary.Core.Faults;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

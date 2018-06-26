@@ -1,7 +1,6 @@
 ﻿using ClientTools;
-using RemotePlusLibrary.Extension;
+using RemotePlusLibrary.Extension.ExtensionLoader;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 [assembly: ExtensionLibrary(typeof(Startup), "ClientTools",

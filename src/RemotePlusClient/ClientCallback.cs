@@ -12,6 +12,11 @@ using System.Diagnostics;
 using System.Speech.Synthesis;
 using System.Threading;
 using RemotePlusLibrary.Security.AccountSystem;
+using RemotePlusLibrary.RequestSystem;
+using RemotePlusClient.UIForms;
+using RemotePlusLibrary.Client;
+using RemotePlusLibrary.Security.Authentication;
+using RemotePlusLibrary.Contracts;
 
 namespace RemotePlusClient
 {

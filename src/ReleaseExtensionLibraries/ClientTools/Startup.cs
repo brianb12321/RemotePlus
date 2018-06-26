@@ -5,12 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using RemotePlusLibrary.Extension;
+using RemotePlusLibrary.Extension.ExtensionLoader.Initialization;
 
 namespace ClientTools
 {
-    public class Startup : IClientLibraryStartup
+    public class Startup : ILibraryStartup
     {
-        public void ClientInit(ILibraryBuilder builder, IInitEnvironment env)
+        public void Init(ILibraryBuilder builder, IInitEnvironment env)
         {
                
         }

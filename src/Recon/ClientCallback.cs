@@ -11,8 +11,12 @@ using System.Windows.Forms;
 using Logging;
 using RemotePlusClient.CommonUI;
 using RemotePlusLibrary;
+using RemotePlusLibrary.Client;
+using RemotePlusLibrary.Contracts;
 using RemotePlusLibrary.Extension.CommandSystem;
+using RemotePlusLibrary.RequestSystem;
 using RemotePlusLibrary.Security.AccountSystem;
+using RemotePlusLibrary.Security.Authentication;
 
 namespace Recon
 {

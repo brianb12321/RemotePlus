@@ -18,7 +18,7 @@ namespace ClientTools
     {
         public ThemedForm ExtensionForm => this;
 
-        public ClientExtensionDetails GeneralDetails => new ClientExtensionDetails("Speak", "1.0.0.0");
+        public string ExtensionName => "Speak";
 
         public bool StaticPositioned => true;
 

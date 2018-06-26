@@ -62,67 +62,65 @@
   <ItemGroup>
     <Compile Include="ClientApp.cs" />
     <Compile Include="ClientCallback.cs" />
-    <Compile Include="ConsoleSettings.cs" />
-    <Compile Include="ConsoleSettingsDialogBox.cs">
+    <Compile Include="ExtensionSystem\ClientLibraryBuilder.cs" />
+    <Compile Include="Settings\ConsoleSettings.cs" />
+    <Compile Include="UIForms\Scripting\ScriptIcons.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ScriptIcons.resx</DependentUpon>
+    </Compile>
+    <Compile Include="UIForms\SettingDialogs\ConsoleSettingsDialogBox.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ConsoleSettingsDialogBox.Designer.cs">
+    <Compile Include="UIForms\SettingDialogs\ConsoleSettingsDialogBox.Designer.cs">
       <DependentUpon>ConsoleSettingsDialogBox.cs</DependentUpon>
     </Compile>
-    <Compile Include="ExtensionSystem\ClientExtensionDetails.cs" />
     <Compile Include="ExtensionSystem\ClientInitEnvironment..cs" />
     <Compile Include="ExtensionSystem\ClientLibraryCollection.cs" />
-    <Compile Include="ClientSettings.cs" />
-    <Compile Include="CommandBrowserDialog.cs">
+    <Compile Include="Settings\ClientSettings.cs" />
+    <Compile Include="UIForms\CommandSystem\CommandBrowserDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="CommandBrowserDialog.Designer.cs">
+    <Compile Include="UIForms\CommandSystem\CommandBrowserDialog.Designer.cs">
       <DependentUpon>CommandBrowserDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="CommandPipelineViewer.cs">
+    <Compile Include="UIForms\CommandSystem\CommandPipelineViewer.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="CommandPipelineViewer.Designer.cs">
+    <Compile Include="UIForms\CommandSystem\CommandPipelineViewer.Designer.cs">
       <DependentUpon>CommandPipelineViewer.cs</DependentUpon>
     </Compile>
-    <Compile Include="ConnectAdvancedDialogBox.cs">
+    <Compile Include="UIForms\Connection\ConnectAdvancedDialogBox.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ConnectAdvancedDialogBox.Designer.cs">
+    <Compile Include="UIForms\Connection\ConnectAdvancedDialogBox.Designer.cs">
       <DependentUpon>ConnectAdvancedDialogBox.cs</DependentUpon>
     </Compile>
-    <Compile Include="ConnectDialog.cs">
+    <Compile Include="UIForms\Connection\ConnectDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ConnectDialog.Designer.cs">
+    <Compile Include="UIForms\Connection\ConnectDialog.Designer.cs">
       <DependentUpon>ConnectDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="ConnectionBuilderDialogBox.cs">
+    <Compile Include="UIForms\Connection\ConnectionBuilderDialogBox.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ConnectionBuilderDialogBox.Designer.cs">
+    <Compile Include="UIForms\Connection\ConnectionBuilderDialogBox.Designer.cs">
       <DependentUpon>ConnectionBuilderDialogBox.cs</DependentUpon>
     </Compile>
-    <Compile Include="ConsoleDialog.cs">
+    <Compile Include="UIForms\Console\ConsoleDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ConsoleDialog.Designer.cs">
+    <Compile Include="UIForms\Console\ConsoleDialog.Designer.cs">
       <DependentUpon>ConsoleDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ExtensionDetailsDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ExtensionDetailsDialog.Designer.cs">
-      <DependentUpon>ExtensionDetailsDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="ExtensionSystem\ClientExtensionLibrary.cs" />
     <Compile Include="ExtensionSystem\FormPosition.cs" />
     <Compile Include="ExtensionSystem\IClientExtension.cs" />
-    <Compile Include="ExtensionSystem\IClientLibraryStartup.cs" />
-    <Compile Include="ExtensionView.cs">
+    <Compile Include="UIForms\ExtensionView.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ExtensionView.Designer.cs">
+    <Compile Include="UIForms\ExtensionView.Designer.cs">
       <DependentUpon>ExtensionView.cs</DependentUpon>
     </Compile>
     <Compile Include="GlobalSuppressions.cs" />
@@ -133,54 +131,49 @@
       <DependentUpon>MainF.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RemoteFileBrowser.cs">
+    <Compile Include="UIForms\RemoteFileBrowser.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="RemoteFileBrowser.Designer.cs">
+    <Compile Include="UIForms\RemoteFileBrowser.Designer.cs">
       <DependentUpon>RemoteFileBrowser.cs</DependentUpon>
     </Compile>
-    <Compile Include="ScriptAutoCompleteItem.cs" />
-    <Compile Include="ScriptIcons.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ScriptIcons.resx</DependentUpon>
-    </Compile>
-    <Compile Include="ScriptingEditor.cs">
+    <Compile Include="UIForms\Scripting\ScriptAutoCompleteItem.cs" />
+    <Compile Include="UIForms\Scripting\ScriptingEditor.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ScriptingEditor.Designer.cs">
+    <Compile Include="UIForms\Scripting\ScriptingEditor.Designer.cs">
       <DependentUpon>ScriptingEditor.cs</DependentUpon>
     </Compile>
-    <Compile Include="ScriptObjectViewer.cs">
+    <Compile Include="UIForms\Scripting\ScriptObjectViewer.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ScriptObjectViewer.Designer.cs">
+    <Compile Include="UIForms\Scripting\ScriptObjectViewer.Designer.cs">
       <DependentUpon>ScriptObjectViewer.cs</DependentUpon>
     </Compile>
     <Compile Include="SelectFileRequest.cs" />
-    <Compile Include="ServerConsole.cs">
+    <Compile Include="UIForms\Console\ServerConsole.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ServerConsole.Designer.cs">
+    <Compile Include="UIForms\Console\ServerConsole.Designer.cs">
       <DependentUpon>ServerConsole.cs</DependentUpon>
     </Compile>
-    <Compile Include="ServerExplorer.cs">
+    <Compile Include="UIForms\ServerExplorer.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ServerExplorer.Designer.cs">
+    <Compile Include="UIForms\ServerExplorer.Designer.cs">
       <DependentUpon>ServerExplorer.cs</DependentUpon>
     </Compile>
-    <Compile Include="ServerSettingsDialog.cs">
+    <Compile Include="UIForms\SettingDialogs\ServerSettingsDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ServerSettingsDialog.Designer.cs">
+    <Compile Include="UIForms\SettingDialogs\ServerSettingsDialog.Designer.cs">
       <DependentUpon>ServerSettingsDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="UINodeType.cs" />
-    <Compile Include="ViewRequestDialogBox.cs">
+    <Compile Include="UIForms\ViewRequestDialogBox.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ViewRequestDialogBox.Designer.cs">
+    <Compile Include="UIForms\ViewRequestDialogBox.Designer.cs">
       <DependentUpon>ViewRequestDialogBox.cs</DependentUpon>
     </Compile>
   </ItemGroup>
@@ -188,56 +181,57 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="CommandBrowserDialog.resx">
+    <EmbeddedResource Include="UIForms\CommandSystem\CommandBrowserDialog.resx">
       <DependentUpon>CommandBrowserDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="CommandPipelineViewer.resx">
+    <EmbeddedResource Include="UIForms\CommandSystem\CommandPipelineViewer.resx">
       <DependentUpon>CommandPipelineViewer.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ConnectDialog.resx">
+    <EmbeddedResource Include="UIForms\Connection\ConnectAdvancedDialogBox.resx">
+      <DependentUpon>ConnectAdvancedDialogBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UIForms\Connection\ConnectDialog.resx">
       <DependentUpon>ConnectDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ConnectionBuilderDialogBox.resx">
+    <EmbeddedResource Include="UIForms\Connection\ConnectionBuilderDialogBox.resx">
       <DependentUpon>ConnectionBuilderDialogBox.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ConsoleDialog.resx">
+    <EmbeddedResource Include="UIForms\Console\ConsoleDialog.resx">
       <DependentUpon>ConsoleDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ConsoleSettingsDialogBox.resx">
+    <EmbeddedResource Include="UIForms\SettingDialogs\ConsoleSettingsDialogBox.resx">
       <DependentUpon>ConsoleSettingsDialogBox.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ExtensionDetailsDialog.resx">
-      <DependentUpon>ExtensionDetailsDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="extensionView.resx">
+    <EmbeddedResource Include="UIForms\extensionView.resx">
       <DependentUpon>ExtensionView.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainF.resx">
       <DependentUpon>MainF.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="RemoteFileBrowser.resx">
+    <EmbeddedResource Include="UIForms\RemoteFileBrowser.resx">
       <DependentUpon>RemoteFileBrowser.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ScriptIcons.resx">
+    <EmbeddedResource Include="UIForms\Scripting\ScriptIcons.resx">
       <Generator>ResXFileCodeGenerator</Generator>
+      <SubType>Designer</SubType>
       <LastGenOutput>ScriptIcons.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="ScriptingEditor.resx">
+    <EmbeddedResource Include="UIForms\Scripting\ScriptingEditor.resx">
       <DependentUpon>ScriptingEditor.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ScriptObjectViewer.resx">
+    <EmbeddedResource Include="UIForms\Scripting\ScriptObjectViewer.resx">
       <DependentUpon>ScriptObjectViewer.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ServerConsole.resx">
+    <EmbeddedResource Include="UIForms\Console\ServerConsole.resx">
       <DependentUpon>ServerConsole.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ServerExplorer.resx">
+    <EmbeddedResource Include="UIForms\ServerExplorer.resx">
       <DependentUpon>ServerExplorer.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ServerSettingsDialog.resx">
+    <EmbeddedResource Include="UIForms\SettingDialogs\ServerSettingsDialog.resx">
       <DependentUpon>ServerSettingsDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ViewRequestDialogBox.resx">
+    <EmbeddedResource Include="UIForms\ViewRequestDialogBox.resx">
       <DependentUpon>ViewRequestDialogBox.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
@@ -249,10 +243,6 @@
     <ProjectReference Include="..\RemotePlusLibrary.Configuration\RemotePlusLibrary.Configuration.csproj">
       <Project>{8A8A5888-1CE7-46ED-B8DE-1AC7671F3426}</Project>
       <Name>RemotePlusLibrary.Configuration</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\RemotePlusLibrary.Core.EmailService\RemotePlusLibrary.Core.EmailService.csproj">
-      <Project>{166C0846-95A7-4134-9A6C-BB2E5C9C4594}</Project>
-      <Name>RemotePlusLibrary.Core.EmailService</Name>
     </ProjectReference>
     <ProjectReference Include="..\RemotePlusLibrary.Core\RemotePlusLibrary.Core.csproj">
       <Project>{0334629b-6302-42a8-b159-f8646b4d8650}</Project>
@@ -281,20 +271,18 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="python-syntax.xshd">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\function_kCl_icon.ico" />
+    <None Include="UIForms\Scripting\Resources\function_kCl_icon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\table_JoW_icon.ico" />
+    <None Include="UIForms\Scripting\Resources\table_JoW_icon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Resources\runScript.ico" />
+    <Content Include="UIForms\Scripting\Resources\runScript.ico" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

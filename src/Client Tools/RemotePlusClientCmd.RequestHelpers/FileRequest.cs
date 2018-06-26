@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using RemotePlusClient.CommonUI;
 using RemotePlusLibrary;
+using RemotePlusLibrary.RequestSystem;
 
 namespace RemotePlusClientCmd.RequestHelpers
 {

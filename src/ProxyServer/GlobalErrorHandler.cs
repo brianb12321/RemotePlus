@@ -1,5 +1,7 @@
 ﻿
 using RemotePlusLibrary.Core;
+using RemotePlusLibrary.Core.Faults;
+using RemotePlusLibrary.Discovery;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,10 +28,7 @@ namespace ProxyServer
 
         public void ProvideFault(Exception error, MessageVersion version, ref Message fault)
         {
-            FaultException<ServerFault> fexp = new FaultException<ServerFault>(new ServerFault()
-            {
-                StackTrace = error.StackTrace
-            }, error.Message);
+            FaultException<ProxyFault> fexp = new FaultException<ProxyFault>(new ProxyFault(ProxyManager.ProxyService.Remote.SelectedClient.UniqueID), error.Message);
             MessageFault m = fexp.CreateMessageFault();
             fault = Message.CreateMessage(version, m, null);
         }

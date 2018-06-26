@@ -56,6 +56,8 @@
     <Compile Include="AccountSystem\UserAccount.cs" />
     <Compile Include="AccountSystem\UserCollection.cs" />
     <Compile Include="AccountSystem\UserCredentials.cs" />
+    <Compile Include="Authentication\AuthenticationSeverity.cs" />
+    <Compile Include="Authentication\AuthenticationRequest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

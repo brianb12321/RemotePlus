@@ -1,6 +1,10 @@
 ﻿using Logging;
+using RemotePlusLibrary.Client;
+using RemotePlusLibrary.Contracts;
 using RemotePlusLibrary.Extension.CommandSystem;
+using RemotePlusLibrary.RequestSystem;
 using RemotePlusLibrary.Security.AccountSystem;
+using RemotePlusLibrary.Security.Authentication;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,10 +14,13 @@ using System.Threading.Tasks;
 
 namespace RemotePlusLibrary.Discovery
 {
-    [ServiceContract(CallbackContract = typeof(IRemote))]
+    [ServiceContract(CallbackContract = typeof(IRemoteWithProxy),
+        SessionMode = SessionMode.Required)]
     public interface IProxyServerRemote : IBidirectionalContract
     {
-        [OperationContract]
+        [OperationContract(IsOneWay = true, IsTerminating = true)]
+        void Leave(Guid serverGuid);
+        [OperationContract(IsInitiating = true)]
         void Register();
         [OperationContract(IsOneWay = true)]
         void TellMessage(Guid serverGuid, string Message, Logging.OutputLevel o);

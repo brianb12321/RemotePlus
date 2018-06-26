@@ -15,6 +15,9 @@ using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
 using RemotePlusLibrary.Extension;
 using System.Text.RegularExpressions;
 using RemotePlusLibrary.Security.AccountSystem;
+using RemotePlusClient.CommonUI.ConnectionClients;
+using RemotePlusLibrary.Core.Faults;
+using RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing;
 
 namespace RemotePlusClientCmd
 {
@@ -28,6 +31,7 @@ namespace RemotePlusClientCmd
         public static string BaseURL;
         public static int Port;
         public static bool WaitFlag = true;
+        public static bool ProxyEnabled { get; private set; }
         [STAThread]
         static void Main(string[] args)
         {
@@ -88,6 +92,7 @@ namespace RemotePlusClientCmd
                 if (CommandLine.Parser.Default.ParseArguments(args, options))
                 {
                     Connect(options.Url, new RegisterationObject() { LoginRightAway = true, Credentials = new UserCredentials(options.Username, options.Password), VerboseError = options.Verbose }, options.UseProxy);
+                    ProxyEnabled = options.UseProxy;
                     AcceptInput(options.UseProxy);
                 }
             }
@@ -107,6 +112,16 @@ namespace RemotePlusClientCmd
                 BaseURL = ea.Uri.Host;
                 Port = ea.Uri.Port;
                 Proxy = new ProxyClient(new ClientCallback(), _ConnectionFactory.BuildBinding(), ea);
+                Proxy.ChannelFactory.Faulted += (sender, e) =>
+                {
+                    var dr = MessageBox.Show("The connection to the proxy server has faulted. Would you like to reconnect to the server.", "RemotePlusClientCmd", MessageBoxButtons.YesNo, MessageBoxIcon.Error);
+                    if(dr == DialogResult.Yes)
+                    {
+                        Proxy = new ProxyClient(new ClientCallback(), _ConnectionFactory.BuildBinding(), ea);
+                        WaitFlag = false;
+                        Proxy.ProxyRegister();
+                    }
+                };
                 Proxy.ProxyRegister();
             }
             else

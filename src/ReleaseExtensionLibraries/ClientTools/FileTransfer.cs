@@ -18,7 +18,7 @@ namespace ClientTools
     {
         public ThemedForm ExtensionForm => this;
 
-        public ClientExtensionDetails GeneralDetails => new ClientExtensionDetails("FileTransfer", "1.0.0.0");
+        public string ExtensionName => "FileTransfer";
 
         public bool StaticPositioned => true;
 

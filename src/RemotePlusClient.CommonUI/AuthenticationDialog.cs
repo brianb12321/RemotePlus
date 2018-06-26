@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using RemotePlusLibrary.Security.AccountSystem;
+using RemotePlusLibrary.Security.Authentication;
 
 namespace RemotePlusClient.CommonUI
 {
@@ -25,15 +26,15 @@ namespace RemotePlusClient.CommonUI
         {
             switch(Request.Severity)
             {
-                case AutehnticationSeverity.Danger:
+                case AuthenticationSeverity.Danger:
                     panel1.BackColor = Color.Red;
                     label4.Text = "The server is requesting authorization for a dangerous operation.";
                     break;
-                case AutehnticationSeverity.Normal:
+                case AuthenticationSeverity.Normal:
                     panel1.BackColor = Color.Blue;
                     label4.Text = "The server is requesting authorization.";
                     break;
-                case AutehnticationSeverity.Risk:
+                case AuthenticationSeverity.Risk:
                     panel1.BackColor = Color.Yellow;
                     label4.Text = "The server is requesting authorization for a risky operation.";
                     break;

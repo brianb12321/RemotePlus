@@ -12,6 +12,7 @@ using System.Security.AccessControl;
 using System.Security.Principal;
 using System.Windows.Forms;
 using RemotePlusLibrary.Scripting;
+using RemotePlusLibrary.RequestSystem;
 
 namespace WindowsTools
 {
@@ -20,7 +21,7 @@ namespace WindowsTools
         [CommandHelp("Cleans your disk of temperary files.")]
         public static CommandResponse dskCleanCommand(CommandRequest args, CommandPipeline pipe)
         {
-            if (ServerManager.DefaultService.Remote.Client.ClientType != RemotePlusLibrary.ClientType.CommandLine)
+            if (ServerManager.DefaultService.Remote.Client.ClientType != RemotePlusLibrary.Client.ClientType.CommandLine)
             {
                 ServerManager.DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(Logging.OutputLevel.Error, "dskClean does not work on a GUI yet.", "dskClean"));
                 return new CommandResponse(-3);

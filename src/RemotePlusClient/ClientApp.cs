@@ -13,6 +13,7 @@ using System.Windows.Forms;
 using RemotePlusLibrary.Security.AccountSystem;
 using RemotePlusLibrary.Security.AccountSystem.Policies;
 using System.Diagnostics;
+using RemotePlusClient.Settings;
 
 namespace RemotePlusClient
 {

@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using Logging;
 using System.IO;
 using RemotePlusLibrary.Extension;
+using RemotePlusLibrary.Extension.ExtensionLoader;
+using RemotePlusLibrary.Extension.ExtensionLoader.Initialization;
 
 namespace RemotePlusClient.ExtensionSystem
 {
@@ -35,14 +37,14 @@ namespace RemotePlusClient.ExtensionSystem
                     }
                     Version version = ExtensionLibraryBase<ClientExtensionLibrary>.ParseVersion(ea.Version);
                     var deps = LoadClientDependencies(a, logCallback, callback, env);
-                    if (!typeof(IClientLibraryStartup).IsAssignableFrom(ea.Startup))
+                    if (!typeof(ILibraryStartup).IsAssignableFrom(ea.Startup))
                     {
                         throw new ArgumentException("The startup type does not implement ILibraryStartup.");
                     }
                     else
                     {
-                        var st = (IClientLibraryStartup)Activator.CreateInstance(ea.Startup);
-                        st.ClientInit(new LibraryBuilder(ea.Name, ea.FriendlyName, ea.Version, ea.LibraryType), env);
+                        var st = (ILibraryStartup)Activator.CreateInstance(ea.Startup);
+                        st.Init(new ClientLibraryBuilder(ea.Name, ea.FriendlyName, ea.Version, ea.LibraryType), env);
                         lib = new ClientExtensionLibrary(ea.FriendlyName, ea.Name, ea.LibraryType, guid, deps, version);
                         foreach (Type t in a.GetTypes())
                         {
@@ -50,7 +52,7 @@ namespace RemotePlusClient.ExtensionSystem
                             {
                                 var f = (IClientExtension)Activator.CreateInstance(t);
                                 callback(f);
-                                lib.Extensions.Add(f.GeneralDetails.Name, f);
+                                lib.Extensions.Add(f.ExtensionName, f);
                             }
                         }
                     }

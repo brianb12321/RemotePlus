@@ -49,7 +49,6 @@ namespace RemotePlusClient
             this.browseFile_MenuItem = new System.Windows.Forms.MenuItem();
             this.menuItem1 = new System.Windows.Forms.MenuItem();
             this.menuItem6 = new System.Windows.Forms.MenuItem();
-            this.menuItem7 = new System.Windows.Forms.MenuItem();
             this.menuItem4 = new System.Windows.Forms.MenuItem();
             this.menuItem5 = new System.Windows.Forms.MenuItem();
             this.menuItem9 = new System.Windows.Forms.MenuItem();
@@ -61,9 +60,6 @@ namespace RemotePlusClient
             this.command_browse_menuItem = new System.Windows.Forms.MenuItem();
             this.mi_pipeLineBrowser = new System.Windows.Forms.MenuItem();
             this.menuItem10 = new System.Windows.Forms.MenuItem();
-            this.configure_menuItem = new System.Windows.Forms.MenuItem();
-            this.sendEmail_menuItem = new System.Windows.Forms.MenuItem();
-            this.menuItem11 = new System.Windows.Forms.MenuItem();
             this.mainMenu1 = new System.Windows.Forms.MainMenu(this.components);
             this.menuItem12 = new System.Windows.Forms.MenuItem();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
@@ -150,15 +146,9 @@ namespace RemotePlusClient
             this.menuItem6.Text = "Load";
             this.menuItem6.Click += new System.EventHandler(this.loadToolStripMenuItem_Click);
             // 
-            // menuItem7
-            // 
-            this.menuItem7.Index = 1;
-            this.menuItem7.Text = "View";
-            this.menuItem7.Click += new System.EventHandler(this.getExtensionsToolStripMenuItem_Click);
-            // 
             // menuItem4
             // 
-            this.menuItem4.Index = 2;
+            this.menuItem4.Index = 1;
             this.menuItem4.Text = "Show requests";
             this.menuItem4.Click += new System.EventHandler(this.showRequests_MenuItem);
             // 
@@ -167,7 +157,6 @@ namespace RemotePlusClient
             this.menuItem5.Index = 2;
             this.menuItem5.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
             this.menuItem6,
-            this.menuItem7,
             this.menuItem4});
             this.menuItem5.Text = "Extensions";
             // 
@@ -231,26 +220,6 @@ namespace RemotePlusClient
             this.mi_pipeLineBrowser});
             this.menuItem10.Text = "Commands";
             // 
-            // configure_menuItem
-            // 
-            this.configure_menuItem.Index = 0;
-            this.configure_menuItem.Text = "Configure";
-            this.configure_menuItem.Click += new System.EventHandler(this.configure_menuItem_Click);
-            // 
-            // sendEmail_menuItem
-            // 
-            this.sendEmail_menuItem.Index = 1;
-            this.sendEmail_menuItem.Text = "Send Email";
-            this.sendEmail_menuItem.Click += new System.EventHandler(this.sendEmail_menuItem_Click);
-            // 
-            // menuItem11
-            // 
-            this.menuItem11.Index = 6;
-            this.menuItem11.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-            this.configure_menuItem,
-            this.sendEmail_menuItem});
-            this.menuItem11.Text = "Email";
-            // 
             // mainMenu1
             // 
             this.mainMenu1.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
@@ -259,8 +228,7 @@ namespace RemotePlusClient
             this.menuItem5,
             this.menuItem8,
             this.menuItem2,
-            this.menuItem10,
-            this.menuItem11});
+            this.menuItem10});
             // 
             // menuItem12
             // 
@@ -390,7 +358,6 @@ namespace RemotePlusClient
         private MenuItem browseFile_MenuItem;
         private MenuItem menuItem1;
         private MenuItem menuItem6;
-        private MenuItem menuItem7;
         private MenuItem menuItem4;
         private MenuItem menuItem5;
         private MenuItem menuItem9;
@@ -401,9 +368,6 @@ namespace RemotePlusClient
         private MenuItem command_browse_menuItem;
         private MenuItem mi_pipeLineBrowser;
         private MenuItem menuItem10;
-        private MenuItem configure_menuItem;
-        private MenuItem sendEmail_menuItem;
-        private MenuItem menuItem11;
         private MainMenu mainMenu1;
         private ContextMenuStrip cms_extensionFormBottom;
         private MenuItem menuItem12;

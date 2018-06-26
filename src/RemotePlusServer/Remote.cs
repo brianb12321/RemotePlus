@@ -1,7 +1,11 @@
 ﻿using Logging;
 using RemotePlusLibrary;
+using RemotePlusLibrary.Client;
+using RemotePlusLibrary.Contracts;
 using RemotePlusLibrary.Extension.CommandSystem;
+using RemotePlusLibrary.RequestSystem;
 using RemotePlusLibrary.Security.AccountSystem;
+using RemotePlusLibrary.Security.Authentication;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,7 +25,7 @@ namespace RemotePlusServer
             useProxy = up;
         }
         IRemoteClient c = null;
-        public Guid Server = Guid.Empty;
+        public Guid Server = Guid.NewGuid();
         public void Beep(int Hertz, int Duration)
         {
             if (useProxy)

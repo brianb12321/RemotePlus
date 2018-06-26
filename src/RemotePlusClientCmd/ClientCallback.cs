@@ -10,13 +10,16 @@ using System.Media;
 using System.Diagnostics;
 using RemotePlusLibrary.Security.AccountSystem;
 using System.Threading;
+using RemotePlusLibrary.Contracts;
+using RemotePlusLibrary.RequestSystem;
+using RemotePlusLibrary.Security.Authentication;
+using RemotePlusLibrary.Client;
 
 namespace RemotePlusClientCmd
 {
     [CallbackBehavior(ConcurrencyMode = ConcurrencyMode.Reentrant,
         IncludeExceptionDetailInFaults = true,
         UseSynchronizationContext = false)]
-    [RemotePlusLibrary.Core.STAOperationBehavior]
     class ClientCallback : IRemoteClient
     {
         public void Beep(int Hertz, int Duration)

@@ -10,7 +10,6 @@ using RemotePlusLibrary.Core;
 using System.Diagnostics;
 using System.Reflection;
 using System.Windows.Forms;
-using RemotePlusLibrary.Core.EmailService;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
 using RemotePlusServer.ExtensionSystem;
 using RemotePlusLibrary.Scripting;
@@ -20,8 +19,10 @@ using System.ServiceModel.Description;
 using RemotePlusLibrary.Security.AccountSystem;
 using RemotePlusLibrary.Security.AccountSystem.Policies;
 using RemotePlusLibrary.Discovery;
-using System.ServiceModel.Discovery;
-using RemotePlusLibrary.Configuration;
+using RemotePlusLibrary.Configuration.ServerSettings;
+using RemotePlusLibrary.RequestSystem;
+using RemotePlusLibrary.Contracts;
+using RemotePlusLibrary.Client;
 
 namespace RemotePlusServer
 {
@@ -43,13 +44,10 @@ namespace RemotePlusServer
         /// </summary>
         public static ServerSettings DefaultSettings { get; set; }
         /// <summary>
-        /// The main email configuration. Provides settings for the default SMTP settings and sets the behavior of the SMTP client.
-        /// </summary>
-        public static EmailSettings DefaultEmailSettings { get; set; } = new EmailSettings();
-        /// <summary>
         /// The global container that all house the libraries that are loaded into the system.
         /// </summary>
         public static ServerExtensionLibraryCollection DefaultCollection { get; } = new ServerExtensionLibraryCollection();
+        public static Guid ServerGuid { get; set; }
         /// <summary>
         /// The remote implementation of the file service.
         /// </summary>
@@ -75,7 +73,6 @@ namespace RemotePlusServer
                 sw.Start();
                 InitalizeKnownTypes();
                 ScanForServerSettingsFile();
-                ScanForEmailSettingsFile();
                 InitializeScriptingEngine();
                 CreateServer();
                 InitializeVariables();
@@ -139,30 +136,6 @@ namespace RemotePlusServer
             catch (ArgumentException)
             {
 
-            }
-        }
-        private static void ScanForEmailSettingsFile()
-        {
-            if (!File.Exists(EmailSettings.EMAIL_CONFIG_FILE))
-            {
-                Logger.AddOutput("The email settings file does not exist. Creating server settings file.", OutputLevel.Warning);
-                DefaultEmailSettings.Save();
-            }
-            else
-            {
-                Logger.AddOutput("Loading email settings file.", OutputLevel.Info);
-                try
-                {
-                    DefaultEmailSettings.Load();
-                }
-                catch (Exception ex)
-                {
-#if DEBUG
-                    Logger.AddOutput("Unable to load email settings. " + ex.ToString(), OutputLevel.Error);
-#else
-                    Logger.AddOutput("Unable to load email settings. " + ex.Message, OutputLevel.Error);
-#endif
-                }
             }
         }
 
@@ -282,7 +255,6 @@ namespace RemotePlusServer
         private static void InitializeCommands()
         {
             Logger.AddOutput("Loading Commands.", OutputLevel.Info);
-            DefaultService.Commands.Add("ex", ExCommand);
             DefaultService.Commands.Add("ps", ProcessStartCommand);
             DefaultService.Commands.Add("help", Help);
             DefaultService.Commands.Add("logs", Logs);
@@ -601,6 +573,7 @@ namespace RemotePlusServer
             FileTransferService.Close();
             if(DefaultSettings.DiscoverySettings.DiscoveryBehavior == ProxyConnectionMode.Connect && proxyChannelFactory != null)
             {
+                proxyChannel.Leave(ServerGuid);
                 proxyChannelFactory.Close();
             }
             Environment.Exit(0);

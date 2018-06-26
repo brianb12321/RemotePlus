@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using RemotePlusLibrary.Extension;
 using RemotePlusServer.ExtensionSystem;
 using System.ServiceModel;
+using RemotePlusLibrary.Extension.ExtensionLoader.Initialization;
 
 namespace RemotePlusServer.Internal
 {

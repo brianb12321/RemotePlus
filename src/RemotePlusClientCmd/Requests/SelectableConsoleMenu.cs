@@ -7,6 +7,7 @@ using RemotePlusLibrary;
 using ConsoLovers.ConsoleToolkit.Menu;
 using System.Drawing;
 using ConsoLovers.ConsoleToolkit.Console;
+using RemotePlusLibrary.RequestSystem;
 
 namespace RemotePlusClientCmd.Requests
 {

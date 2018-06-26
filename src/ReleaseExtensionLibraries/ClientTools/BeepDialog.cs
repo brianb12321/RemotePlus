@@ -17,7 +17,7 @@ namespace ClientTools
     {
         public ThemedForm ExtensionForm => this;
 
-        public ClientExtensionDetails GeneralDetails => new ClientExtensionDetails("Beep", "1.0.0.0");
+        public string ExtensionName => "Beep";
 
         public bool StaticPositioned => true;
 

@@ -6,12 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using RemotePlusLibrary.Discovery;
 using RemotePlusLibrary;
-using RemotePlusLibrary.Core.EmailService;
-using RemotePlusLibrary.Extension;
 using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
-using RemotePlusLibrary.Extension.Programmer;
-using RemotePlusLibrary.FileTransfer;
 using RemotePlusLibrary.Scripting;
 using RemotePlusLibrary.Security.AccountSystem;
 using System.Speech.Synthesis;
@@ -20,6 +16,14 @@ using Logging;
 using RemotePlusLibrary.Core;
 using System.Text.RegularExpressions;
 using System.Reflection;
+using RemotePlusLibrary.Configuration.ServerSettings;
+using RemotePlusLibrary.Client;
+using RemotePlusLibrary.Contracts;
+using RemotePlusLibrary.FileTransfer.BrowserClasses;
+using RemotePlusLibrary.Core.Faults;
+using RemotePlusLibrary.RequestSystem;
+using RemotePlusLibrary.Security.Authentication;
+using RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing;
 
 namespace ProxyServer
 {
@@ -27,15 +31,12 @@ namespace ProxyServer
         InstanceContextMode = InstanceContextMode.Single,
         ConcurrencyMode = ConcurrencyMode.Multiple,
         UseSynchronizationContext = false)]
-    [CallbackBehavior(IncludeExceptionDetailInFaults = true,
-        ConcurrencyMode = ConcurrencyMode.Multiple,
-         UseSynchronizationContext = false)]
     [GlobalException(typeof(GlobalErrorHandler))]
     public class ProxyServerRemoteImpl : IProxyServerRemote, IProxyRemote
     {
-        public Client<IRemote> SelectedClient = null;
+        public SessionClient<IRemoteWithProxy> SelectedClient = null;
         public Client<IRemoteClient> ProxyClient = null;
-        public List<Client<IRemote>> ConnectedServers { get; } = new List<Client<IRemote>>();
+        public List<SessionClient<IRemoteWithProxy>> ConnectedServers { get; } = new List<SessionClient<IRemoteWithProxy>>();
         public void Beep(int Hertz, int Duration)
         {
             SelectedClient.ClientCallback.Beep(Hertz, Duration);
@@ -82,11 +83,6 @@ namespace ProxyServer
             return SelectedClient.ClientCallback.GetCommandsAsStrings();
         }
 
-        public List<ExtensionDetails> GetExtensionNames()
-        {
-            return SelectedClient.ClientCallback.GetExtensionNames();
-        }
-
         public UserAccount GetLoggedInUser()
         {
             return SelectedClient.ClientCallback.GetLoggedInUser();
@@ -94,17 +90,19 @@ namespace ProxyServer
 
         public IDirectory GetRemoteFiles(string path, bool useRequest)
         {
-            return SelectedClient.ClientCallback.GetRemoteFiles(path, useRequest);
+            try
+            {
+                return SelectedClient.ClientCallback.GetRemoteFiles(path, useRequest);
+            }
+            catch (FaultException<ServerFault> ex)
+            {
+                throw new FaultException<ProxyFault>(new ProxyFault(SelectedClient.UniqueID), ex.Message);
+            }
         }
 
         public ScriptGlobalInformation[] GetScriptGlobals()
         {
             return SelectedClient.ClientCallback.GetScriptGlobals();
-        }
-
-        public EmailSettings GetServerEmailSettings()
-        {
-            return SelectedClient.ClientCallback.GetServerEmailSettings();
         }
 
         public List<string> GetServerRoleNames()
@@ -140,7 +138,7 @@ namespace ProxyServer
         public void ProxyDisconnect()
         {
             ProxyManager.Logger.AddOutput($"Client [{ProxyClient.UniqueID}] disconnected from proxy server. Proxy server notifying connected servers that the client has disconnected.", OutputLevel.Info);
-            foreach(Client<IRemote> client in ConnectedServers)
+            foreach(Client<IRemoteWithProxy> client in ConnectedServers)
             {
                 client.ClientCallback.Disconnect();
                 ProxyManager.Logger.AddOutput($"Server [{client.UniqueID}] notified of client disconnection.", OutputLevel.Info);
@@ -166,8 +164,8 @@ namespace ProxyServer
                 sb.AppendLine("=================================================================================");
                 sb.AppendLine();
                 sb.AppendLine($"There are {ConnectedServers.Count} server(s) connected to the proxy server.");
-                sb.AppendLine("To view all the servers connected, enter {viewServers} into the console.");
-                sb.AppendLine("To switch the selected server, enter {switchServer} into the console.");
+                sb.AppendLine("To view all the servers connected, enter {proxyViewServers} into the console.");
+                sb.AppendLine("To switch the selected server, enter {proxySwitchServer} into the console.");
                 sb.AppendLine("Any command that is not part of the proxy server will be executed on the selected server.");
                 sb.AppendLine($"Proxy server GUID: {ProxyManager.ProxyGuid}");
                 sb.AppendLine();
@@ -179,6 +177,13 @@ namespace ProxyServer
                     CurrentUser = "",
                     AdditionalData = "Proxy"
                 });
+                ProxyClient.Channel = OperationContext.Current.Channel;
+                ProxyClient.Channel.Faulted += (sender, e) =>
+                {
+                    ProxyManager.Logger.AddOutput($"Client [{ProxyClient.UniqueID}] is now in the faulted state.", OutputLevel.Error);
+                    ProxyClient = null;
+                };
+                ProxyManager.Logger.AddOutput($"Client [{ProxyClient.UniqueID}] is now registered.", OutputLevel.Info);
                 ProxyClient.ClientCallback.RegistirationComplete(ProxyManager.ProxyGuid);
             }
         }
@@ -190,13 +195,26 @@ namespace ProxyServer
 
         public void Register()
         {
-            var callback = OperationContext.Current.GetCallbackChannel<IRemote>();
-            var tempClient = Client<IRemote>.Build(new ClientBuilder(ClientType.Server), callback);
+            var callback = OperationContext.Current.GetCallbackChannel<IRemoteWithProxy>();
+            SessionClient<IRemoteWithProxy> tempClient = SessionClient<IRemoteWithProxy>.BuildSessionClient(new ClientBuilder(ClientType.Server), callback);
+            tempClient.SessionId = OperationContext.Current.Channel.SessionId;
             ConnectedServers.Add(tempClient);
+            tempClient.Channel = OperationContext.Current.Channel;
             if(SelectedClient == null)
             {
                 SelectedClient = tempClient;
             }
+            tempClient.Channel.Faulted += (sender, e) =>
+            {
+                var closedClient = ConnectedServers.First(s => s.Channel == tempClient.Channel);
+                ProxyManager.Logger.AddOutput($"Server [{closedClient.UniqueID}] closed without proper shutdown.", OutputLevel.Info);
+                ConnectedServers.Remove(closedClient);
+                if (SelectedClient == closedClient)
+                {
+                    Task.Run(() => ProxyClient.ClientCallback.RequestInformation(ProxyManager.ProxyGuid, RequestBuilder.RequestMessageBox($"Server [{SelectedClient.UniqueID}] has disconnected without proper shutdown. Please select another server to be the active server.", "Proxy Server", MessageBoxButtons.OK, MessageBoxIcon.Information)));
+                }
+            };
+            tempClient.ClientCallback.ServerRegistered(tempClient.UniqueID);
             ProxyManager.Logger.AddOutput($"Server [{tempClient.UniqueID}] joined the proxy cluster.", Logging.OutputLevel.Info);
         }
 
@@ -208,11 +226,6 @@ namespace ProxyServer
         public void Restart()
         {
             SelectedClient.ClientCallback.Restart();
-        }
-
-        public ExtensionReturn RunExtension(string ExtensionName, ExtensionExecutionContext Context, string[] args)
-        {
-            return SelectedClient.ClientCallback.RunExtension(ExtensionName, Context, args);
         }
 
         public void RunProgram(string Program, string Argument)
@@ -266,11 +279,6 @@ namespace ProxyServer
             }
         }
 
-        public bool SendEmail(string To, string Subject, string Message)
-        {
-            return SelectedClient.ClientCallback.SendEmail(To, Subject, Message);
-        }
-
         public DialogResult ShowMessageBox(string Message, string Caption, MessageBoxIcon Icon, MessageBoxButtons Buttons)
         {
             return SelectedClient.ClientCallback.ShowMessageBox(Message, Caption, Icon, Buttons);
@@ -284,11 +292,6 @@ namespace ProxyServer
         public void SwitchUser()
         {
             SelectedClient.ClientCallback.SwitchUser();
-        }
-
-        public void UpdateServerEmailSettings(EmailSettings emailSetting)
-        {
-            SelectedClient.ClientCallback.UpdateServerEmailSettings(emailSetting);
         }
 
         public void UpdateServerSettings(ServerSettings Settings)
@@ -619,5 +622,19 @@ namespace ProxyServer
             return tokenList.ToArray();
         }
         #endregion
+        public void Leave(Guid serverGuid)
+        {
+            var foundServer = ConnectedServers.First(s => s.UniqueID == serverGuid);
+            if(foundServer != null)
+            {
+                ProxyManager.Logger.AddOutput($"Server [{foundServer.UniqueID}] disconnected gracefully.", OutputLevel.Info);
+                ConnectedServers.Remove(foundServer);
+                //Notify client that the active server has disconnected gracefully.
+                if(SelectedClient == foundServer)
+                {
+                    Task.Run(() => ProxyClient.ClientCallback.RequestInformation(ProxyManager.ProxyGuid, RequestBuilder.RequestMessageBox($"Server [{SelectedClient.UniqueID}] has disconnected gracefully. Please select another server to be the active server.", "Proxy Server", MessageBoxButtons.OK, MessageBoxIcon.Information)));
+                }
+            }
+        }
     }
 }

@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using IronPython;
+using RemotePlusLibrary.Extension.ExtensionLoader.Initialization;
 
 namespace WindowsTools
 {
