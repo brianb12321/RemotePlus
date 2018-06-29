@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RemotePlusServer.ExtensionSystem
+namespace RemotePlusServer.Core.ExtensionSystem
 {
     public class ServerLibraryBuilder : ILibraryBuilder
     {

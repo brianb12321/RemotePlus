@@ -1,4 +1,5 @@
 ﻿using Logging;
+using RemotePlusServer.Core;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -7,7 +8,6 @@ using System.Net.NetworkInformation;
 using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
-using static RemotePlusServer.ServerManager;
 
 namespace RemotePlusServer
 {

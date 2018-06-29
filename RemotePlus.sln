@@ -47,6 +47,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProxyServer", "src\ProxySer
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemotePlusLibrary.Discovery", "src\RemotePlusLibrary.Discovery\RemotePlusLibrary.Discovery.csproj", "{FC3EB84C-D1B0-4B5C-9406-DFFA9BC5A5FC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemotePlusServer.Core", "src\RemotePlusServer.Core\RemotePlusServer.Core.csproj", "{5669A80C-19D9-4DBE-BF5A-BBFCBF947634}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -133,6 +135,10 @@ Global
 		{FC3EB84C-D1B0-4B5C-9406-DFFA9BC5A5FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FC3EB84C-D1B0-4B5C-9406-DFFA9BC5A5FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FC3EB84C-D1B0-4B5C-9406-DFFA9BC5A5FC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5669A80C-19D9-4DBE-BF5A-BBFCBF947634}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5669A80C-19D9-4DBE-BF5A-BBFCBF947634}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5669A80C-19D9-4DBE-BF5A-BBFCBF947634}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5669A80C-19D9-4DBE-BF5A-BBFCBF947634}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -39,6 +39,9 @@
       <HintPath>..\..\Libs\Logging.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Ninject, Version=3.3.4.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Ninject.3.3.4\lib\net45\Ninject.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
@@ -55,6 +58,8 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IOC\IOCContainer.cs" />
+    <Compile Include="IRemotePlusService.cs" />
     <Compile Include="RequestSystem\AcquisitionMode.cs" />
     <Compile Include="Client\Client.cs" />
     <Compile Include="Client\ClientBuilder.cs" />
@@ -75,7 +80,6 @@
     <Compile Include="RequestSystem\RawDataRequest.cs" />
     <Compile Include="RegistirationObject.cs" />
     <Compile Include="FileTransfer\Service\RemoteFileInfo.cs" />
-    <Compile Include="RemotePlusService.cs" />
     <Compile Include="RequestSystem\RequestBuilder.cs" />
     <Compile Include="RequestSystem\RequestException.cs" />
     <Compile Include="RequestSystem\RequestState.cs" />
@@ -107,6 +111,9 @@
       <Project>{E4E0BB7E-B995-4EBE-8EFB-3C09BF64A3A2}</Project>
       <Name>RemotePlusLibrary.Security</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

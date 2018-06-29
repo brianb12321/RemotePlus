@@ -2,6 +2,7 @@
 using RemotePlusLibrary;
 using RemotePlusLibrary.Client;
 using RemotePlusLibrary.Contracts;
+using RemotePlusLibrary.Discovery;
 using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusLibrary.RequestSystem;
 using RemotePlusLibrary.Security.AccountSystem;
@@ -9,6 +10,7 @@ using RemotePlusLibrary.Security.Authentication;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.ServiceModel;
 using System.Speech.Synthesis;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,10 +21,12 @@ namespace RemotePlusServer
     public class RemoteClient : IClient
     {
         bool useProxy = false;
-        public RemoteClient(IRemoteClient client, bool up)
+        IProxyServerRemote proxyChannel = null;
+        public RemoteClient(IRemoteClient client, bool up, IProxyServerRemote pc)
         {
             c = client;
             useProxy = up;
+            proxyChannel = pc;
         }
         IRemoteClient c = null;
         public Guid Server = Guid.NewGuid();
@@ -30,7 +34,7 @@ namespace RemotePlusServer
         {
             if (useProxy)
             {
-                ServerManager.proxyChannel.Beep(Hertz, Duration);
+                proxyChannel.Beep(Hertz, Duration);
             }
             else
             {
@@ -42,7 +46,7 @@ namespace RemotePlusServer
         {
             if (useProxy)
             {
-                ServerManager.proxyChannel.ChangePrompt(Server, newPrompt);
+                proxyChannel.ChangePrompt(Server, newPrompt);
             }
             else
             {
@@ -54,7 +58,7 @@ namespace RemotePlusServer
         {
             if (useProxy)
             {
-                ServerManager.proxyChannel.Disconnect(Server, Reason);
+                proxyChannel.Disconnect(Server, Reason);
             }
             else
             {
@@ -66,7 +70,7 @@ namespace RemotePlusServer
         {
             if (useProxy)
             {
-                return ServerManager.proxyChannel.GetCurrentPrompt();
+                return proxyChannel.GetCurrentPrompt();
             }
             else
             {
@@ -78,7 +82,7 @@ namespace RemotePlusServer
         {
             if (useProxy)
             {
-                ServerManager.proxyChannel.PlaySound(FileName);
+                proxyChannel.PlaySound(FileName);
             }
             else
             {
@@ -90,7 +94,7 @@ namespace RemotePlusServer
         {
             if (useProxy)
             {
-                ServerManager.proxyChannel.PlaySoundLoop(FileName);
+                proxyChannel.PlaySoundLoop(FileName);
             }
             else
             {
@@ -102,7 +106,7 @@ namespace RemotePlusServer
         {
             if (useProxy)
             {
-                ServerManager.proxyChannel.PlaySoundSync(FileName);
+                proxyChannel.PlaySoundSync(FileName);
             }
             else
             {
@@ -114,7 +118,7 @@ namespace RemotePlusServer
         {
             if (useProxy)
             {
-                return ServerManager.proxyChannel.RegisterClient();
+                return proxyChannel.RegisterClient();
             }
             else
             {
@@ -126,7 +130,7 @@ namespace RemotePlusServer
         {
             if (useProxy)
             {
-                ServerManager.proxyChannel.RegistirationComplete(Server);
+                proxyChannel.RegistirationComplete(Server);
             }
             else
             {
@@ -138,7 +142,7 @@ namespace RemotePlusServer
         {
             if (useProxy)
             {
-                return ServerManager.proxyChannel.RequestAuthentication(Server, Request);
+                return proxyChannel.RequestAuthentication(Server, Request);
             }
             else
             {
@@ -150,7 +154,7 @@ namespace RemotePlusServer
         {
             if (useProxy)
             {
-                return ServerManager.proxyChannel.RequestInformation(Server, builder);
+                return proxyChannel.RequestInformation(Server, builder);
             }
             else
             {
@@ -162,7 +166,7 @@ namespace RemotePlusServer
         {
             if (useProxy)
             {
-                ServerManager.proxyChannel.RunProgram(Program, Argument);
+                proxyChannel.RunProgram(Program, Argument);
             }
             else
             {
@@ -174,7 +178,7 @@ namespace RemotePlusServer
         {
             if (useProxy)
             {
-                ServerManager.proxyChannel.SendSignal(Server, signal);
+                proxyChannel.SendSignal(Server, signal);
             }
             else
             {
@@ -186,7 +190,7 @@ namespace RemotePlusServer
         {
             if (useProxy)
             {
-                return ServerManager.proxyChannel.ShowMessageBox(Message, Caption, Icon, Buttons);
+                return proxyChannel.ShowMessageBox(Message, Caption, Icon, Buttons);
             }
             else
             {
@@ -198,7 +202,7 @@ namespace RemotePlusServer
         {
             if (useProxy)
             {
-                ServerManager.proxyChannel.Speak(Message, Gender, Age);
+                proxyChannel.Speak(Message, Gender, Age);
             }
             else
             {
@@ -210,7 +214,7 @@ namespace RemotePlusServer
         {
             if (useProxy)
             {
-                ServerManager.proxyChannel.TellMessage(Server, Message, o);
+                proxyChannel.TellMessage(Server, Message, o);
             }
             else
             {
@@ -222,7 +226,7 @@ namespace RemotePlusServer
         {
             if (useProxy)
             {
-                ServerManager.proxyChannel.TellMessage(Server, li);
+                proxyChannel.TellMessage(Server, li);
             }
             else
             {
@@ -234,7 +238,7 @@ namespace RemotePlusServer
         {
             if (useProxy)
             {
-                ServerManager.proxyChannel.TellMessage(Server, Logs);
+                proxyChannel.TellMessage(Server, Logs);
             }
             else
             {
@@ -246,7 +250,7 @@ namespace RemotePlusServer
         {
             if (useProxy)
             {
-                ServerManager.proxyChannel.TellMessageToServerConsole(Server, li);
+                proxyChannel.TellMessageToServerConsole(Server, li);
             }
             else
             {
@@ -258,7 +262,7 @@ namespace RemotePlusServer
         {
             if (useProxy)
             {
-                ServerManager.proxyChannel.TellMessageToServerConsole(Server, Message);
+                proxyChannel.TellMessageToServerConsole(Server, Message);
             }
             else
             {
@@ -270,7 +274,7 @@ namespace RemotePlusServer
         {
             if (useProxy)
             {
-                ServerManager.proxyChannel.TellMessageToServerConsole(Server, text);
+                proxyChannel.TellMessageToServerConsole(Server, text);
             }
             else
             {

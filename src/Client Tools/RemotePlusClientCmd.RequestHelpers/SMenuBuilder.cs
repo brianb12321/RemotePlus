@@ -7,6 +7,7 @@ using RemotePlusLibrary;
 using System.Drawing;
 using RemotePlusServer;
 using RemotePlusLibrary.RequestSystem;
+using RemotePlusServer.Core;
 
 namespace RemotePlusClientCmd.RequestHelpers
 {
@@ -79,7 +80,7 @@ namespace RemotePlusClientCmd.RequestHelpers
         }
         public int BuildAndSend()
         {
-            return int.Parse(char.ToString((char)ServerManager.DefaultService.Remote.Client.ClientCallback.RequestInformation(Build()).Data));
+            return int.Parse(char.ToString((char)ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(Build()).Data));
         }
     }
 }

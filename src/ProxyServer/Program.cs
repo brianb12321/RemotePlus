@@ -20,7 +20,7 @@ namespace ProxyServer
     {
         public static CMDLogging Logger { get; } = new CMDLogging();
         public static Guid ProxyGuid { get; } = Guid.NewGuid();
-        public static ProbeService<ProxyServerRemoteImpl> ProxyService { get; set; }
+        public static IRemotePlusService<ProxyServerRemoteImpl> ProxyService { get; set; }
         [STAThread]
         static void Main(string[] args)
         {
@@ -38,12 +38,12 @@ namespace ProxyServer
         {
             if (int.TryParse(req.Arguments[1].Value, out int result))
             {
-                ProxyService.Remote.SelectServer(result);
+                ProxyService.RemoteInterface.SelectServer(result);
                 return new CommandResponse((int)CommandStatus.Success);
             }
             else
             {
-                ProxyService.Remote.ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyService.Remote.GetSelectedServerGuid(), new UILogItem(OutputLevel.Error, "The specifed server index does not exist."));
+                ProxyService.RemoteInterface.ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyService.RemoteInterface.GetSelectedServerGuid(), new UILogItem(OutputLevel.Error, "The specifed server index does not exist."));
                 return new CommandResponse((int)CommandStatus.Fail);
             }
         }
@@ -51,25 +51,25 @@ namespace ProxyServer
         static CommandResponse viewServers(CommandRequest req, CommandPipeline pipe)
         {
             StringBuilder sb = new StringBuilder();
-            for(int i = 0; i < ProxyService.Remote.ConnectedServers.Count; i++)
+            for(int i = 0; i < ProxyService.RemoteInterface.ConnectedServers.Count; i++)
             {
-                sb.AppendLine($"Index: {i}, GUID: {ProxyService.Remote.ConnectedServers[i].UniqueID}");
+                sb.AppendLine($"Index: {i}, GUID: {ProxyService.RemoteInterface.ConnectedServers[i].UniqueID}");
             }
-            ProxyService.Remote.ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyGuid, sb.ToString());
+            ProxyService.RemoteInterface.ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyGuid, sb.ToString());
             return new CommandResponse((int)CommandStatus.Success);
         }
         [CommandHelp("Shows help screen.")]
         static CommandResponse help(CommandRequest req, CommandPipeline pipe)
         {
             var helpString = RemotePlusConsole.ShowHelp(ProxyService.Commands, req.Arguments.Select(t => t.Value).ToArray());
-            ProxyService.Remote.ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyGuid, helpString);
-            ProxyService.Remote.ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyGuid, "\nAny commands not listed on this list will be executed on the selected server.\n");
+            ProxyService.RemoteInterface.ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyGuid, helpString);
+            ProxyService.RemoteInterface.ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyGuid, "\nAny commands not listed on this list will be executed on the selected server.\n");
             return new CommandResponse((int)CommandStatus.Success);
         }
         [CommandHelp("Establish registeration with the selected server.")]
         static CommandResponse register(CommandRequest req, CommandPipeline pipe)
         {
-            ProxyService.Remote.Register(new RegisterationObject());
+            ProxyService.RemoteInterface.Register(new RegisterationObject());
             return new CommandResponse((int)CommandStatus.Success);
         }
 
@@ -89,7 +89,7 @@ namespace ProxyServer
         private static void CreateProxyServer()
         {
             Logger.AddOutput("Opening proxy server.", OutputLevel.Info);
-            ProxyService = ProbeService<ProxyServerRemoteImpl>.CreateProxyService(typeof(IProxyServerRemote), new ProxyServerRemoteImpl(),
+            ProxyService = ProbeService.CreateProxyService(typeof(IProxyServerRemote), new ProxyServerRemoteImpl(),
                 9001,
                 "Proxy",
                 "ProxyClient",
@@ -135,27 +135,27 @@ namespace ProxyServer
                         if (ba.TopChainCommand && pipe.Count > 0)
                         {
                             Logger.AddOutput($"This is a top-level command.", OutputLevel.Error);
-                            ProxyService.Remote.ProxyClient.ClientCallback.TellMessage(ProxyGuid, $"This is a top-level command.", OutputLevel.Error);
+                            ProxyService.RemoteInterface.ProxyClient.ClientCallback.TellMessage(ProxyGuid, $"This is a top-level command.", OutputLevel.Error);
                             return new CommandResponse((int)CommandStatus.AccessDenied);
                         }
                         if (commandMode != ba.ExecutionType)
                         {
                             Logger.AddOutput($"The command requires you to be in {ba.ExecutionType} mode.", OutputLevel.Error);
-                            ProxyService.Remote.ProxyClient.ClientCallback.TellMessage(ProxyGuid, $"The command requires you to be in {ba.ExecutionType} mode.", OutputLevel.Error);
+                            ProxyService.RemoteInterface.ProxyClient.ClientCallback.TellMessage(ProxyGuid, $"The command requires you to be in {ba.ExecutionType} mode.", OutputLevel.Error);
                             return new CommandResponse((int)CommandStatus.AccessDenied);
                         }
-                        if (ba.SupportClients != ClientSupportedTypes.Both && ((ProxyService.Remote.ProxyClient.ClientType == ClientType.GUI && ba.SupportClients != ClientSupportedTypes.GUI) || (ProxyService.Remote.ProxyClient.ClientType == ClientType.CommandLine && ba.SupportClients != ClientSupportedTypes.CommandLine)))
+                        if (ba.SupportClients != ClientSupportedTypes.Both && ((ProxyService.RemoteInterface.ProxyClient.ClientType == ClientType.GUI && ba.SupportClients != ClientSupportedTypes.GUI) || (ProxyService.RemoteInterface.ProxyClient.ClientType == ClientType.CommandLine && ba.SupportClients != ClientSupportedTypes.CommandLine)))
                         {
                             if (string.IsNullOrEmpty(ba.ClientRejectionMessage))
                             {
                                 Logger.AddOutput($"Your client must be a {ba.SupportClients.ToString()} client.", OutputLevel.Error);
-                                ProxyService.Remote.ProxyClient.ClientCallback.TellMessage(ProxyGuid, $"Your client must be a {ba.SupportClients.ToString()} client.", OutputLevel.Error);
+                                ProxyService.RemoteInterface.ProxyClient.ClientCallback.TellMessage(ProxyGuid, $"Your client must be a {ba.SupportClients.ToString()} client.", OutputLevel.Error);
                                 return new CommandResponse((int)CommandStatus.UnsupportedClient);
                             }
                             else
                             {
                                 Logger.AddOutput(ba.ClientRejectionMessage, OutputLevel.Error);
-                                ProxyService.Remote.ProxyClient.ClientCallback.TellMessage(ProxyGuid, ba.ClientRejectionMessage, OutputLevel.Error);
+                                ProxyService.RemoteInterface.ProxyClient.ClientCallback.TellMessage(ProxyGuid, ba.ClientRejectionMessage, OutputLevel.Error);
                                 return new CommandResponse((int)CommandStatus.UnsupportedClient);
                             }
                         }
@@ -172,17 +172,17 @@ namespace ProxyServer
                     var sc = command(c, pipe);
                     if (scdm == StatusCodeDeliveryMethod.TellMessage)
                     {
-                        ProxyService.Remote.ProxyClient.ClientCallback.TellMessage(ProxyGuid, $"Command {c.Arguments[0]} finished with status code {sc.ToString()}", OutputLevel.Info);
+                        ProxyService.RemoteInterface.ProxyClient.ClientCallback.TellMessage(ProxyGuid, $"Command {c.Arguments[0]} finished with status code {sc.ToString()}", OutputLevel.Info);
                     }
                     else if (scdm == StatusCodeDeliveryMethod.TellMessageToServerConsole)
                     {
-                        ProxyService.Remote.ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyGuid, new UILogItem(OutputLevel.Info, $"Command {c.Arguments[0]} finished with status code {sc.ToString()}"));
+                        ProxyService.RemoteInterface.ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyGuid, new UILogItem(OutputLevel.Info, $"Command {c.Arguments[0]} finished with status code {sc.ToString()}"));
                     }
                     return sc;
                 }
                 catch (KeyNotFoundException)
                 {
-                    Logger.AddOutput($"Failed to find the command. Passing command to selected server [{ProxyService.Remote.SelectedClient.UniqueID}]", OutputLevel.Debug);
+                    Logger.AddOutput($"Failed to find the command. Passing command to selected server [{ProxyService.RemoteInterface.SelectedClient.UniqueID}]", OutputLevel.Debug);
                     return new CommandResponse(3131);
                 }
             }
@@ -195,7 +195,7 @@ namespace ProxyServer
                 else
                 {
                     Logger.AddOutput("command failed: " + ex.Message, OutputLevel.Info);
-                    ProxyService.Remote.ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyGuid, new UILogItem(OutputLevel.Error, "Error whie executing command: " + ex.Message, "Server Host"));
+                    ProxyService.RemoteInterface.ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyGuid, new UILogItem(OutputLevel.Error, "Error whie executing command: " + ex.Message, "Server Host"));
                     return new CommandResponse((int)CommandStatus.Fail);
                 }
             }

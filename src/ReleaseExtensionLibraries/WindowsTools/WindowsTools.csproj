@@ -125,10 +125,9 @@
       <Name>RemotePlusLibrary</Name>
       <Private>False</Private>
     </ProjectReference>
-    <ProjectReference Include="..\..\RemotePlusServer\RemotePlusServer.csproj">
-      <Project>{4e41f31e-dce5-4b9c-a2d6-20bf6acd9c84}</Project>
-      <Name>RemotePlusServer</Name>
-      <Private>False</Private>
+    <ProjectReference Include="..\..\RemotePlusServer.Core\RemotePlusServer.Core.csproj">
+      <Project>{5669A80C-19D9-4DBE-BF5A-BBFCBF947634}</Project>
+      <Name>RemotePlusServer.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

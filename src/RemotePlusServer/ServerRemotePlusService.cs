@@ -2,6 +2,8 @@
 using RemotePlusLibrary;
 using RemotePlusLibrary.Core;
 using RemotePlusLibrary.Extension.CommandSystem;
+using RemotePlusServer;
+using RemotePlusServer.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,79 +20,23 @@ namespace RemotePlusLibrary
     /// Provides a container for the service.
     /// </summary>
     /// <typeparam name="I">The implementation of the service to use.</typeparam>
-    public class RemotePlusService<I> : NetNode where I : new()
+    public class ServerRemotePlusService : IRemotePlusService<ServerRemoteInterface>
     {
-        /// <summary>
-        /// The host object.
-        /// </summary>
-        public ServiceHost Host { get; private set; } = null;
-        /// <summary>
-        /// Occures when the host object is closed.
-        /// </summary>
-        public event EventHandler HostClosed
-        {
-            add { Host.Closed += value; }
-            remove { Host.Closed -= value; }
-        }
-        /// <summary>
-        /// Occures when the host object is being closed.
-        /// </summary>
-        public event EventHandler HostClosing
-        {
-            add { Host.Closing += value; }
-            remove { Host.Closing -= value; }
-        }
-        /// <summary>
-        /// Occures when there was an error that has not been resolved, thus causing the server to be in a faulted state.
-        /// </summary>
-        public event EventHandler HostFaulted
-        {
-            add { Host.Faulted += value; }
-            remove { Host.Faulted -= value; }
-        }
-        /// <summary>
-        /// Occures when the server has started.
-        /// </summary>
-        public event EventHandler HostOpened
-        {
-            add { Host.Opened += value; }
-            remove { Host.Opened -= value; }
-        }
-        /// <summary>
-        /// Occures when the server is opening.
-        /// </summary>
-        public event EventHandler HostOpening
-        {
-            add { Host.Opening += value; }
-            remove { Host.Opening -= value; }
-        }
-        /// <summary>
-        /// Occures when a unkown message has been received by the server.
-        /// </summary>
-        public event EventHandler<UnknownMessageReceivedEventArgs> HostUnknownMessageReceived
-        {
-            add { Host.UnknownMessageReceived += value; }
-            remove { Host.UnknownMessageReceived -= value; }
-        }
-        /// <summary>
-        /// The remote implemtation of the service.
-        /// </summary>
-        public I Remote { get; } = new I();
-        /// <summary>
-        /// The commands that are loaded on the server.
-        /// </summary>
-        public Dictionary<string, CommandDelegate> Commands { get; protected set; }
-        /// <summary>
-        /// The variables that are defined on the server.
-        /// </summary>
+        public ServiceHost Host { get; private set; }
+
+        public RemoteImpl Remote { get; private set; }
+
+        public Dictionary<string, CommandDelegate> Commands { get; set; } = new Dictionary<string, CommandDelegate>();
         public VariableManager Variables { get; set; }
+        public ServerRemoteInterface RemoteInterface { get; private set; } = new ServerRemoteInterface();
+
         /// <summary>
         /// Creates a new instance of the <see cref="RemotePlusService{I}"/> class
         /// </summary>
         /// <param name="singleTon">The instance of the service implementation.</param>
         /// <param name="portNumber">The port number to use for listening.</param>
         /// <param name="setupCallback">The function to call when setting up the service implementation.</param>
-        protected RemotePlusService(Type contractType, I singleTon, Binding binding, string address, Action<I> setupCallback)
+        protected ServerRemotePlusService(Type contractType, RemoteImpl singleTon, Binding binding, string address, Action<RemoteImpl> setupCallback)
         {
             Commands = new Dictionary<string, CommandDelegate>();
             Remote = singleTon;
@@ -98,19 +44,51 @@ namespace RemotePlusLibrary
             Host = new ServiceHost(Remote);
             Host.AddServiceEndpoint(contractType, binding, address);
         }
-        protected RemotePlusService(Binding b, I singleTon, Action<I> setupCallback)
+        protected ServerRemotePlusService(Binding b, RemoteImpl singleTon, Action<RemoteImpl> setupCallback)
         {
             Commands = new Dictionary<string, CommandDelegate>();
             Remote = singleTon;
             setupCallback?.Invoke(Remote);
             Host = new ServiceHost(Remote);
         }
-        private RemotePlusService(Type contractType, Binding binding, string address)
+        private ServerRemotePlusService(Type contractType, Binding binding, string address)
         {
             Commands = new Dictionary<string, CommandDelegate>();
-            Host = new ServiceHost(typeof(I));
+            Host = new ServiceHost(typeof(RemoteImpl));
             Host.AddServiceEndpoint(contractType, binding, address);
         }
+
+        public event EventHandler HostClosed
+        {
+            add { Host.Closed += value; }
+            remove { Host.Closed -= value; }
+        }
+        public event EventHandler HostClosing
+        {
+            add { Host.Closing += value; }
+            remove { Host.Closing -= value; }
+        }
+        public event EventHandler HostFaulted
+        {
+            add { Host.Faulted += value; }
+            remove { Host.Faulted += value; }
+        }
+        public event EventHandler HostOpened
+        {
+            add { Host.Opened += value; }
+            remove { Host.Opened -= value; }
+        }
+        public event EventHandler HostOpening
+        {
+            add { Host.Opening += value; }
+            remove { Host.Opening -= value; }
+        }
+        public event EventHandler<UnknownMessageReceivedEventArgs> HostUnknownMessageReceived
+        {
+            add { Host.UnknownMessageReceived += value; }
+            remove { Host.UnknownMessageReceived -= value; }
+        }
+
         public void AddEndpoint<TEndpoint>(TEndpoint endpoint, Binding binding, string endpointName, Action<TEndpoint> setupCallback)
         {
             setupCallback?.Invoke(endpoint);
@@ -138,9 +116,9 @@ namespace RemotePlusLibrary
         /// <param name="callback">The callback to use when an event occures for logging.</param>
         /// <param name="setupCallback">The callback to use when setting up the service implementation.</param>
         /// <returns></returns>
-        public static RemotePlusService<I> Create(Type contractType, I singleTon, int port, string defaultEndpoint, Action<string, OutputLevel> callback, Action<I> setupCallback)
+        public static IRemotePlusService<ServerRemoteInterface> Create(Type contractType, RemoteImpl singleTon, int port, string defaultEndpoint, Action<string, OutputLevel> callback, Action<RemoteImpl> setupCallback)
         {
-            RemotePlusService<I> temp;
+            ServerRemotePlusService temp;
             callback?.Invoke("Building endpoint URL.", OutputLevel.Debug);
             string url = $"net.tcp://{Dns.GetHostName()}:{port}/{defaultEndpoint}";
             callback?.Invoke($"URL built {url}", OutputLevel.Debug);
@@ -154,12 +132,13 @@ namespace RemotePlusLibrary
             dataBuilder.AppendLine($"MaxBufferSize: {binding.MaxBufferSize}");
             dataBuilder.AppendLine($"MaxReceivedMessageSize: {binding.MaxReceivedMessageSize}");
             callback?.Invoke(dataBuilder.ToString(), OutputLevel.Debug);
-            temp = new RemotePlusService<I>(contractType, singleTon, binding, url, setupCallback);
+            temp = new ServerRemotePlusService(contractType, singleTon, binding, url, setupCallback);
+            singleTon.SetRemoteInterface(temp.RemoteInterface);
             return temp;
         }
-        public static RemotePlusService<I> CreateNotSingle(Type contractType, int port, string defaultEndpoint, Action<string, OutputLevel> callback)
+        public static IRemotePlusService<ServerRemoteInterface> CreateNotSingle(Type contractType, int port, string defaultEndpoint, Action<string, OutputLevel> callback)
         {
-            RemotePlusService<I> temp;
+            ServerRemotePlusService temp;
             callback?.Invoke("Building endpoint URL.", OutputLevel.Debug);
             string url = $"net.tcp://0.0.0.0:{port}/{defaultEndpoint}";
             callback?.Invoke($"URL built {url}", OutputLevel.Debug);
@@ -173,12 +152,12 @@ namespace RemotePlusLibrary
             dataBuilder.AppendLine($"MaxBufferSize: {binding.MaxBufferSize}");
             dataBuilder.AppendLine($"MaxReceivedMessageSize: {binding.MaxReceivedMessageSize}");
             callback?.Invoke(dataBuilder.ToString(), OutputLevel.Debug);
-            temp = new RemotePlusService<I>(contractType, binding, url);
+            temp = new ServerRemotePlusService(contractType, binding, url);
             return temp;
         }
-        public static RemotePlusService<I> CreateNotSingle(Type contractType, int port, Binding binding, string defaultEndpoint, Action<string, OutputLevel> callback)
+        public static IRemotePlusService<ServerRemoteInterface> CreateNotSingle(Type contractType, int port, Binding binding, string defaultEndpoint, Action<string, OutputLevel> callback)
         {
-            RemotePlusService<I> temp;
+            ServerRemotePlusService temp;
             callback?.Invoke("Building endpoint URL.", OutputLevel.Debug);
             string url = $"{binding.Scheme}://0.0.0.0:{port}/{defaultEndpoint}";
             callback?.Invoke($"URL built {url}", OutputLevel.Debug);
@@ -188,7 +167,7 @@ namespace RemotePlusLibrary
             dataBuilder.AppendLine("Binding configurations:");
             dataBuilder.AppendLine();
             callback?.Invoke(dataBuilder.ToString(), OutputLevel.Debug);
-            temp = new RemotePlusService<I>(contractType, binding, url);
+            temp = new ServerRemotePlusService(contractType, binding, url);
             return temp;
         }
     }

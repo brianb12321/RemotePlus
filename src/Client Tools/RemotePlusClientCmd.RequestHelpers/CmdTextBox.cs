@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using RemotePlusLibrary;
 using RemotePlusLibrary.RequestSystem;
 using RemotePlusServer;
+using RemotePlusServer.Core;
 
 namespace RemotePlusClientCmd.RequestHelpers
 {
@@ -30,7 +31,7 @@ namespace RemotePlusClientCmd.RequestHelpers
 
         public string BuildAndSend()
         {
-            return (string)ServerManager.DefaultService.Remote.Client.ClientCallback.RequestInformation(Build()).Data;
+            return (string)ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(Build()).Data;
         }
     }
 }

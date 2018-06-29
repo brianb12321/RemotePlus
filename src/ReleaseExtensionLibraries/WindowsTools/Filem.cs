@@ -15,6 +15,7 @@ using RemotePlusLibrary;
 using System.Windows.Forms;
 using System.Drawing;
 using RemotePlusLibrary.RequestSystem;
+using RemotePlusServer.Core;
 
 namespace WindowsTools
 {
@@ -26,8 +27,8 @@ namespace WindowsTools
         const int DELAY_TIMER = 3000;
         static void SendMessage(string message, OutputLevel level)
         {
-            RemotePlusServer.ServerManager.DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(level, message, "FileM"));
-            RemotePlusServer.ServerManager.Logger.AddOutput(message, level, "FileM");
+            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(level, message, "FileM"));
+            ServerManager.Logger.AddOutput(message, level, "FileM");
         }
         [CommandHelp("Allows you to manage files on the remote file system.")]
         [CommandBehavior(SupportClients = RemotePlusLibrary.Extension.ClientSupportedTypes.CommandLine,
@@ -35,7 +36,7 @@ namespace WindowsTools
             CommandDevelepmentState = RemotePlusLibrary.Extension.ExtensionDevelopmentState.InDevelopment)]
         public static CommandResponse filem_command(CommandRequest args, CommandPipeline pipe)
         {
-            //if(ServerManager.DefaultService.Remote.Client.ClientType != ClientType.CommandLine)
+            //if(ServerManager.ServerRemoteService.RemoteInterface.Client.ClientType != ClientType.CommandLine)
             //{
             //    SendMessage("FileM is currently only availible to command line users.", OutputLevel.Error);
             //    return new CommandResponse(-999); // Random Error Code
@@ -63,7 +64,7 @@ namespace WindowsTools
         }
         static void openFile()
         {
-            string file = (string)ServerManager.DefaultService.Remote.Client.ClientCallback.RequestInformation(RequestBuilder.RequestFile()).Data;
+            string file = (string)ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(RequestBuilder.RequestFile()).Data;
             //var filePath = new CmdTextBox("Enter file path to open").BuildAndSend();
             try
             {
@@ -114,20 +115,20 @@ namespace WindowsTools
 
         private static void AppendFile(string fullName)
         {
-            string message = (string)ServerManager.DefaultService.Remote.Client.ClientCallback.RequestInformation(new RequestBuilder("rcmd_multitextBox", "Please enter text to append to the file. When finished, hit {ENTER}", null)).Data;
+            string message = (string)ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(new RequestBuilder("rcmd_multitextBox", "Please enter text to append to the file. When finished, hit {ENTER}", null)).Data;
             File.AppendAllText(fullName, message);
             SendMessage($"File {fullName} appended.", OutputLevel.Info);
         }
         private static void OverrideFile(string file)
         {
-            string message = (string)ServerManager.DefaultService.Remote.Client.ClientCallback.RequestInformation(new RequestBuilder("rcmd_multitextBox", "Please enter text to override. When finished, hit {ENTER}", null)).Data;
+            string message = (string)ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(new RequestBuilder("rcmd_multitextBox", "Please enter text to override. When finished, hit {ENTER}", null)).Data;
             File.WriteAllText(file, message);
             SendMessage($"File {file} overwritten.", OutputLevel.Info);
         }
 
         static void DeleteFile(string file)
         {
-            var result = (DialogResult)Enum.Parse(typeof(DialogResult), (string)ServerManager.DefaultService.Remote.Client.ClientCallback.RequestInformation(RequestBuilder.RequestMessageBox($"Are you sure that you want to delete {Path.GetFileName(file)}? You cannot revert once completed.", "File Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)).Data);
+            var result = (DialogResult)Enum.Parse(typeof(DialogResult), (string)ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(RequestBuilder.RequestMessageBox($"Are you sure that you want to delete {Path.GetFileName(file)}? You cannot revert once completed.", "File Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)).Data);
             if(result == DialogResult.Yes)
             {
                 SendMessage($"Deleting {file}.", OutputLevel.Info);

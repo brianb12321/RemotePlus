@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Speech.Synthesis;
 using RemotePlusLibrary.Scripting;
+using RemotePlusServer.Core;
 
 namespace RemotePlusServer.Proxies
 {
@@ -52,12 +53,12 @@ namespace RemotePlusServer.Proxies
                 default:
                     throw new Exception("Invalid voice age option.");
             }
-            ServerManager.DefaultService.Remote.Speak(message, vg, va);
+            ServerManager.ServerRemoteService.RemoteInterface.Speak(message, vg, va);
         }
         [IndexScriptObject]
         public static void beep(int freq, int duration)
         {
-            ServerManager.DefaultService.Remote.Beep(freq, duration);
+            ServerManager.ServerRemoteService.RemoteInterface.Beep(freq, duration);
         }
     }
 }

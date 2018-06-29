@@ -8,6 +8,7 @@ using System.Net;
 using RemotePlusServer;
 using Logging;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
+using RemotePlusServer.Core;
 
 namespace CommonWebCommands
 {
@@ -19,12 +20,12 @@ namespace CommonWebCommands
             WebClient client = new WebClient();
             try
             {
-                ServerManager.DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(client.DownloadString(args.Arguments[1].Value));
+                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(client.DownloadString(args.Arguments[1].Value));
                 return new CommandResponse((int)CommandStatus.Success);
             }
             catch (Exception ex)
             {
-                ServerManager.DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(OutputLevel.Error, $"Unable to download file: {ex.Message}", "WebCommands"));
+                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(OutputLevel.Error, $"Unable to download file: {ex.Message}", "WebCommands"));
                 return new CommandResponse((int)CommandStatus.Fail);
             }
         }

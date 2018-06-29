@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using RemotePlusServer.Core;
 
 namespace RemotePlusServer.Internal
 {
@@ -11,12 +12,12 @@ namespace RemotePlusServer.Internal
     {
         public override void Write(char value)
         {
-            ServerManager.DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(value.ToString());
+            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(value.ToString());
         }
 
         public override void Write(string value)
         {
-            ServerManager.DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(value);
+            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(value);
         }
 
         public override Encoding Encoding

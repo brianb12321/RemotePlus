@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using RemotePlusLibrary.Extension;
 using RemotePlusLibrary.Extension.ExtensionLoader.Initialization;
 
-namespace RemotePlusServer.ExtensionSystem
+namespace RemotePlusServer.Core.ExtensionSystem
 {
     public class ServerInitEnvironment : IInitEnvironment
     {

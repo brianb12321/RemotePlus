@@ -7,6 +7,7 @@ using System.Diagnostics;
 using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusServer;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
+using RemotePlusServer.Core;
 
 namespace CommonWebCommands
 {
@@ -17,8 +18,8 @@ namespace CommonWebCommands
         {
             try
             {
-                ServerManager.DefaultService.Remote.RunProgram("cmd.exe", $"/c \"start chrome.exe {args.Arguments[1]}\"");
-                ServerManager.DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(Logging.OutputLevel.Info, "chrome started", "WebCommands"));
+                ServerManager.ServerRemoteService.RemoteInterface.RunProgram("cmd.exe", $"/c \"start chrome.exe {args.Arguments[1]}\"");
+                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(Logging.OutputLevel.Info, "chrome started", "WebCommands"));
                 return new CommandResponse((int)CommandStatus.Success);
             }
             catch
@@ -32,8 +33,8 @@ namespace CommonWebCommands
         {
             try
             {
-                ServerManager.DefaultService.Remote.RunProgram("cmd.exe", $"/c \"start iexplore.exe {args.Arguments[1]}\"");
-                ServerManager.DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(Logging.OutputLevel.Info, "chrome started", "WebCommands"));
+                ServerManager.ServerRemoteService.RemoteInterface.RunProgram("cmd.exe", $"/c \"start iexplore.exe {args.Arguments[1]}\"");
+                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(Logging.OutputLevel.Info, "chrome started", "WebCommands"));
                 return new CommandResponse((int)CommandStatus.Success);
             }
             catch
@@ -47,8 +48,8 @@ namespace CommonWebCommands
         {
             try
             {
-                ServerManager.DefaultService.Remote.RunProgram("cmd.exe", $"/c \"start opera.exe {args.Arguments[1]}\"");
-                ServerManager.DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(Logging.OutputLevel.Info, "Opera started", "WebCommands"));
+                ServerManager.ServerRemoteService.RemoteInterface.RunProgram("cmd.exe", $"/c \"start opera.exe {args.Arguments[1]}\"");
+                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(Logging.OutputLevel.Info, "Opera started", "WebCommands"));
                 return new CommandResponse((int)CommandStatus.Success);
             }
             catch
@@ -62,8 +63,8 @@ namespace CommonWebCommands
         {
             try
             {
-                ServerManager.DefaultService.Remote.RunProgram("cmd.exe", $"/c \"start firefox.exe {args.Arguments[1]}\"");
-                ServerManager.DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(Logging.OutputLevel.Info, "Firefox started", "WebCommands"));
+                ServerManager.ServerRemoteService.RemoteInterface.RunProgram("cmd.exe", $"/c \"start firefox.exe {args.Arguments[1]}\"");
+                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(Logging.OutputLevel.Info, "Firefox started", "WebCommands"));
                 return new CommandResponse((int)CommandStatus.Success);
             }
             catch

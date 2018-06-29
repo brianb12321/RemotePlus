@@ -27,7 +27,7 @@ namespace RemotePlusServer
             button1.Enabled = false;
             Hide();
 #else
-            ServerManager.RunInServerMode();
+            ServerStartup.RunInServerMode();
             button2.Enabled = true;
             button1.Enabled = false;
 #endif
@@ -35,7 +35,7 @@ namespace RemotePlusServer
 
         private void button2_Click(object sender, EventArgs e)
         {
-            ServerManager.Close();
+            ServerStartup.Close();
         }
 
         private void ServerControls_Load(object sender, EventArgs e)

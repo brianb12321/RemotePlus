@@ -1,6 +1,7 @@
 ﻿
 using RemotePlusLibrary.Core;
 using RemotePlusLibrary.Core.Faults;
+using RemotePlusServer.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;

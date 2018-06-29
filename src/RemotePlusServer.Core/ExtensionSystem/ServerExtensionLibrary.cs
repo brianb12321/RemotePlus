@@ -7,7 +7,7 @@ using RemotePlusLibrary.Extension;
 using RemotePlusLibrary.Extension.ExtensionLoader;
 using RemotePlusLibrary.Extension.ExtensionLoader.Initialization;
 
-namespace RemotePlusServer.ExtensionSystem
+namespace RemotePlusServer.Core.ExtensionSystem
 {
     /// <summary>
     /// Represents a server extension library.

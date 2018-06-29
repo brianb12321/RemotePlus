@@ -10,6 +10,7 @@ using RemotePlusLibrary.Extension.HookSystem;
 using RemotePlusLibrary;
 using RemotePlusLibrary.Extension.ExtensionLoader.Initialization;
 using RemotePlusLibrary.RequestSystem;
+using RemotePlusServer.Core;
 
 namespace CommonWebCommands
 {
@@ -22,20 +23,20 @@ namespace CommonWebCommands
             ServerManager.Logger.AddOutput("Welcome to WebCommands.", Logging.OutputLevel.Info, "WebCommands");
             ServerManager.Logger.AddOutput("Adding Chrome", Logging.OutputLevel.Info, "WebCommands");
             CheckChrome();
-            ServerManager.DefaultService.Commands.Add("chrome", WebCommands.chrome);
+            ServerManager.ServerRemoteService.Commands.Add("chrome", WebCommands.chrome);
             ServerManager.Logger.AddOutput("Adding Internet Explore", Logging.OutputLevel.Info, "WebCommands");
             CheckIE();
-            ServerManager.DefaultService.Commands.Add("ie", WebCommands.ie);
+            ServerManager.ServerRemoteService.Commands.Add("ie", WebCommands.ie);
             ServerManager.Logger.AddOutput("Adding Opera", Logging.OutputLevel.Info, "WebCommands");
             CheckOpera();
-            ServerManager.DefaultService.Commands.Add("opera", WebCommands.opera);
+            ServerManager.ServerRemoteService.Commands.Add("opera", WebCommands.opera);
             ServerManager.Logger.AddOutput("Adding Firefox", Logging.OutputLevel.Info, "WebCommands");
             CHeckFirefox();
-            ServerManager.DefaultService.Commands.Add("firefox", WebCommands.firefox);
+            ServerManager.ServerRemoteService.Commands.Add("firefox", WebCommands.firefox);
         }
         void checkIfUserAcceptsDisclamer(HookArguments args)
         {
-            ServerManager.DefaultService.Remote.Client.ClientCallback.RequestInformation(RequestBuilder.RequestMessageBox("Do not use CommonWebCommands to cause harm!", "Warning", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Warning));
+            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(RequestBuilder.RequestMessageBox("Do not use CommonWebCommands to cause harm!", "Warning", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Warning));
         }
         void CheckIE()
         {

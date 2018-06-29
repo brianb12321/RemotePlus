@@ -1,5 +1,6 @@
 ﻿using Microsoft.Scripting;
 using RemotePlusLibrary.Scripting.ScriptPackageEngine;
+using RemotePlusServer.Core;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -14,7 +15,7 @@ namespace RemotePlusServer
         public static bool ExecuteScript(this ScriptPackage package)
         {
             Guid g = Guid.NewGuid();
-            ServerManager.InitializeGlobals();
+            ServerStartup.InitializeGlobals();
             package.PackageContents.ExtractAll(g.ToString());
             try
             {

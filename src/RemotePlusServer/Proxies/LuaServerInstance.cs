@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Logging;
 using RemotePlusLibrary.Scripting;
+using RemotePlusServer.Core;
 
 namespace RemotePlusServer.Proxies
 {
@@ -19,7 +20,7 @@ namespace RemotePlusServer.Proxies
         {
             get
             {
-                return ServerManager.DefaultService.Remote.CurrentPath;
+                return ServerManager.ServerRemoteService.RemoteInterface.CurrentPath;
             }
         }
         [IndexScriptObject]
@@ -30,7 +31,7 @@ namespace RemotePlusServer.Proxies
             StringBuilder builder = new StringBuilder();
             builder.AppendLine("ServerName: RemotePlus");
             builder.AppendLine($"ServerVersion: {ServerManager.DefaultSettings.ServerVersion}");
-            ServerManager.DefaultService.Remote.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(Logging.OutputLevel.Info, builder.ToString()));
+            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(Logging.OutputLevel.Info, builder.ToString()));
         }
         [IndexScriptObject]
         public void printToServerConsole(string message)

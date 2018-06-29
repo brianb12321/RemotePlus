@@ -5,9 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using RemotePlusLibrary.Extension;
-using RemotePlusServer.ExtensionSystem;
 using System.ServiceModel;
 using RemotePlusLibrary.Extension.ExtensionLoader.Initialization;
+using RemotePlusServer.Core;
+using RemotePlusServer.Core.ExtensionSystem;
 
 namespace RemotePlusServer.Internal
 {
