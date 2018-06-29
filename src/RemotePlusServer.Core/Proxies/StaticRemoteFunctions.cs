@@ -7,9 +7,9 @@ using System.Speech.Synthesis;
 using RemotePlusLibrary.Scripting;
 using RemotePlusServer.Core;
 
-namespace RemotePlusServer.Proxies
+namespace RemotePlusServer.Core.Proxies
 {
-    internal class StaticRemoteFunctions
+    public class StaticRemoteFunctions
     {
         [IndexScriptObject]
         public static void speak(string message, int voiceGender, int voiceAge)

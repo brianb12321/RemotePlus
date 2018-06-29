@@ -8,14 +8,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RemotePlusServer
+namespace RemotePlusServer.Core
 {
     public static class ScriptPackageExtensions
     {
         public static bool ExecuteScript(this ScriptPackage package)
         {
             Guid g = Guid.NewGuid();
-            ServerStartup.InitializeGlobals();
+            ServerCore.ServerBuilderExtensions.InitializeGlobals();
             package.PackageContents.ExtractAll(g.ToString());
             try
             {

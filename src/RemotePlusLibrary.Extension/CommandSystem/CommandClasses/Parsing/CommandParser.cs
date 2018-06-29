@@ -10,7 +10,7 @@ namespace RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing
     /// <summary>
     /// Parses a string to tokens which can be fed to the command.
     /// </summary>
-    public class CommandParser
+    public class CommandParser : IParser
     {
         public List<List<CommandToken>> ParsedTokens { get; set; } = new List<List<CommandToken>>();
         public string OriginalCommand { get; set; }

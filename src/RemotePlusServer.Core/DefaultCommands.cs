@@ -1,29 +1,28 @@
-﻿using Logging;
-using RemotePlusLibrary.Extension;
+﻿using RemotePlusLibrary.Extension.CommandSystem;
+using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
+using RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Text;
-using RemotePlusLibrary.Extension.CommandSystem;
-using System.Speech.Synthesis;
+using System.Threading.Tasks;
 using System.Windows.Forms;
-using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
-using System.Drawing;
-using RemotePlusLibrary.Scripting.ScriptPackageEngine;
-using RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing;
-using RemotePlusLibrary.RequestSystem;
-using RemotePlusServer.Core;
+using System.Speech.Synthesis;
+using Logging;
+using System.Diagnostics;
 using RemotePlusServer.Core.ExtensionSystem;
+using System.IO;
+using RemotePlusLibrary.RequestSystem;
+using RemotePlusLibrary.Scripting.ScriptPackageEngine;
+using System.Drawing;
 
-namespace RemotePlusServer
+namespace RemotePlusServer.Core
 {
-    public static partial class ServerStartup
+    public static class DefaultCommands
     {
         [CommandHelp("Starts a new process on the server.")]
         [HelpPage("ps.txt", Source = HelpSourceType.File)]
-        private static CommandResponse ProcessStartCommand(CommandRequest args, CommandPipeline pipe)
+        public static CommandResponse ProcessStartCommand(CommandRequest args, CommandPipeline pipe)
         {
             if (args.Arguments.Count > 2)
             {
@@ -52,7 +51,7 @@ namespace RemotePlusServer
             return new CommandResponse((int)CommandStatus.Fail);
         }
         [CommandHelp("Displays a list of commands.")]
-        private static CommandResponse Help(CommandRequest args, CommandPipeline pipe)
+        public static CommandResponse Help(CommandRequest args, CommandPipeline pipe)
         {
             var helpString = RemotePlusConsole.ShowHelp(ServerManager.ServerRemoteService.Commands, args.Arguments.Select(f => f.ToString()).ToArray());
             ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, helpString, "Server Host"));
@@ -62,9 +61,9 @@ namespace RemotePlusServer
         }
         [CommandHelp("Gets the server log.")]
         [HelpPage("logs.txt", Source = HelpSourceType.File)]
-        private static CommandResponse Logs(CommandRequest args, CommandPipeline pipe)
+        public static CommandResponse Logs(CommandRequest args, CommandPipeline pipe)
         {
-            foreach(var l in ServerManager.Logger.buffer)
+            foreach (var l in ServerManager.Logger.buffer)
             {
                 ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(l.Level, l.Message, l.From));
             }
@@ -72,11 +71,11 @@ namespace RemotePlusServer
         }
         [CommandHelp("Manages variables on the server.")]
         [HelpPage("vars.txt", Source = HelpSourceType.File)]
-        private static CommandResponse vars(CommandRequest args, CommandPipeline pipe)
+        public static CommandResponse vars(CommandRequest args, CommandPipeline pipe)
         {
-            if(args.Arguments.Count >= 2)
+            if (args.Arguments.Count >= 2)
             {
-                if(args.Arguments[1].Value == "new")
+                if (args.Arguments[1].Value == "new")
                 {
                     if (args.Arguments.Count >= 4)
                     {
@@ -105,7 +104,7 @@ namespace RemotePlusServer
                         return new CommandResponse((int)CommandStatus.Fail);
                     }
                 }
-                else if(args.Arguments[1].Value == "view")
+                else if (args.Arguments[1].Value == "view")
                 {
                     StringBuilder sb = new StringBuilder();
                     sb.AppendLine();
@@ -129,17 +128,17 @@ namespace RemotePlusServer
             }
         }
         [CommandHelp("Gets the date and time set on the remote server.")]
-        private static CommandResponse dateTime(CommandRequest args, CommandPipeline pipe)
+        public static CommandResponse dateTime(CommandRequest args, CommandPipeline pipe)
         {
             ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, DateTime.Now.ToString()));
             return new CommandResponse((int)CommandStatus.Success);
         }
         [CommandHelp("Gets the list of processes running on the remote server.")]
-        private static CommandResponse processes(CommandRequest args, CommandPipeline pipe)
+        public static CommandResponse processes(CommandRequest args, CommandPipeline pipe)
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendLine();
-            foreach(var p in Process.GetProcesses())
+            foreach (var p in Process.GetProcesses())
             {
                 try
                 {
@@ -154,13 +153,13 @@ namespace RemotePlusServer
             return new CommandResponse((int)CommandStatus.Success);
         }
         [CommandHelp("Returns the server version.")]
-        private static CommandResponse version(CommandRequest args, CommandPipeline pipe)
+        public static CommandResponse version(CommandRequest args, CommandPipeline pipe)
         {
             ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, ServerManager.DefaultSettings.ServerVersion));
             return new CommandResponse((int)CommandStatus.Success);
         }
         [CommandHelp("Executes the EncryptFile service method.")]
-        private static CommandResponse svm_encyptFile(CommandRequest args, CommandPipeline pipe)
+        public static CommandResponse svm_encyptFile(CommandRequest args, CommandPipeline pipe)
         {
             try
             {
@@ -174,7 +173,7 @@ namespace RemotePlusServer
             }
         }
         [CommandHelp("Executes the DecryptFile service method.")]
-        private static CommandResponse svm_decryptFile(CommandRequest args, CommandPipeline pipe)
+        public static CommandResponse svm_decryptFile(CommandRequest args, CommandPipeline pipe)
         {
             try
             {
@@ -189,30 +188,30 @@ namespace RemotePlusServer
         }
         [CommandHelp("Wraps around the beep function.")]
         [HelpPage("beep.txt", Source = HelpSourceType.File)]
-        private static CommandResponse svm_beep(CommandRequest args, CommandPipeline pipe)
+        public static CommandResponse svm_beep(CommandRequest args, CommandPipeline pipe)
         {
             ServerManager.ServerRemoteService.RemoteInterface.Beep(int.Parse(args.Arguments[1].Value), int.Parse(args.Arguments[2].Value));
             return new CommandResponse((int)CommandStatus.Success);
         }
         [CommandHelp("Wraps around the speak function.")]
-        private static CommandResponse svm_speak(CommandRequest args, CommandPipeline pipe)
+        public static CommandResponse svm_speak(CommandRequest args, CommandPipeline pipe)
         {
             VoiceAge age = VoiceAge.Adult;
             VoiceGender gender = VoiceGender.Male;
             string message = "";
-            if(args.Arguments[1].Value == "vg_male")
+            if (args.Arguments[1].Value == "vg_male")
             {
                 gender = VoiceGender.Male;
             }
-            else if(args.Arguments[1].Value == "vg_female")
+            else if (args.Arguments[1].Value == "vg_female")
             {
                 gender = VoiceGender.Female;
             }
-            else if(args.Arguments[1].Value == "vg_neutral")
+            else if (args.Arguments[1].Value == "vg_neutral")
             {
                 gender = VoiceGender.Neutral;
             }
-            else if(args.Arguments[1].Value == "vg_notSet")
+            else if (args.Arguments[1].Value == "vg_notSet")
             {
                 gender = VoiceGender.NotSet;
             }
@@ -233,7 +232,7 @@ namespace RemotePlusServer
             {
                 age = VoiceAge.Senior;
             }
-            else if(args.Arguments[2].Value == "va_teen")
+            else if (args.Arguments[2].Value == "va_teen")
             {
                 age = VoiceAge.Teen;
             }
@@ -262,7 +261,7 @@ namespace RemotePlusServer
         }
         [CommandHelp("Wraps around the showMessageBox function.")]
         [HelpPage("showMessageBox.txt", Source = HelpSourceType.File)]
-        private static CommandResponse svm_showMessageBox(CommandRequest args, CommandPipeline pipe)
+        public static CommandResponse svm_showMessageBox(CommandRequest args, CommandPipeline pipe)
         {
             MessageBoxButtons buttons = MessageBoxButtons.OK;
             MessageBoxIcon icon = MessageBoxIcon.None;
@@ -361,7 +360,7 @@ namespace RemotePlusServer
             {
                 caption = "RemotePlusServer";
             }
-            if(message_start != 0)
+            if (message_start != 0)
             {
                 if (args.Arguments[message_start + 1].Type == TokenType.QouteBody)
                 {
@@ -389,13 +388,13 @@ namespace RemotePlusServer
             return response;
         }
         [CommandHelp("Displays the path of the current server folder.")]
-        private static CommandResponse path(CommandRequest args, CommandPipeline pipe)
+        public static CommandResponse path(CommandRequest args, CommandPipeline pipe)
         {
             ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, $"The path to the server is {Environment.CurrentDirectory}"));
             return new CommandResponse((int)CommandStatus.Success);
         }
         [CommandHelp("Changes the current working directory.")]
-        private static CommandResponse cd(CommandRequest args, CommandPipeline pipe)
+        public static CommandResponse cd(CommandRequest args, CommandPipeline pipe)
         {
             if (args.Arguments.Count < 2)
             {
@@ -414,7 +413,7 @@ namespace RemotePlusServer
             }
         }
         [CommandHelp("Prints the message to the screen.")]
-        private static CommandResponse echo(CommandRequest args, CommandPipeline pipe)
+        public static CommandResponse echo(CommandRequest args, CommandPipeline pipe)
         {
             string message = "";
             if (args.Arguments[1].Type == TokenType.QouteBody)
@@ -432,7 +431,7 @@ namespace RemotePlusServer
             };
         }
         [CommandHelp("Loads an extension library dll into the system.")]
-        private static CommandResponse loadExtensionLibrary(CommandRequest args, CommandPipeline pipe)
+        public static CommandResponse loadExtensionLibrary(CommandRequest args, CommandPipeline pipe)
         {
             try
             {
@@ -478,12 +477,12 @@ namespace RemotePlusServer
         public static CommandResponse deleteFile(CommandRequest args, CommandPipeline pipe)
         {
             bool autoAccept = args.Arguments.HasFlag("--acceptDisclamer");
-            if(File.Exists(args.Arguments[1].Value))
+            if (File.Exists(args.Arguments[1].Value))
             {
-                if(!autoAccept)
+                if (!autoAccept)
                 {
                     DialogResult result = (DialogResult)Enum.Parse(typeof(DialogResult), (string)ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(RequestBuilder.RequestMessageBox("You are about to delete a file. THIS OPERATION IS PERMANENT!!", "WARNING", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)).Data);
-                    if(result == DialogResult.Yes)
+                    if (result == DialogResult.Yes)
                     {
                         File.Delete(args.Arguments[1].Value);
                         return new CommandResponse((int)CommandStatus.Success);
@@ -509,7 +508,7 @@ namespace RemotePlusServer
         [CommandHelp("Reads the specified file and prints the contents to the screen.")]
         public static CommandResponse echoFile(CommandRequest args, CommandPipeline pipe)
         {
-            if(File.Exists(args.Arguments[1].Value))
+            if (File.Exists(args.Arguments[1].Value))
             {
                 ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(File.ReadAllText(args.Arguments[1].Value));
                 return new CommandResponse((int)CommandStatus.Success);
@@ -524,7 +523,7 @@ namespace RemotePlusServer
         public static CommandResponse ls(CommandRequest args, CommandPipeline pipe)
         {
             StringBuilder builder = new StringBuilder();
-            foreach(string file in Directory.GetFiles(ServerManager.ServerRemoteService.RemoteInterface.CurrentPath))
+            foreach (string file in Directory.GetFiles(ServerManager.ServerRemoteService.RemoteInterface.CurrentPath))
             {
                 ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText(Path.GetFileName(file) + "\t") { TextColor = Color.LightGray });
             }
@@ -547,7 +546,7 @@ namespace RemotePlusServer
         [CommandHelp("Opens a script package and executes the entry-point script.")]
         public static CommandResponse scp(CommandRequest args, CommandPipeline pipe)
         {
-            ScriptPackage package = ScriptPackage.Open(args.Arguments[1].Value); 
+            ScriptPackage package = ScriptPackage.Open(args.Arguments[1].Value);
             try
             {
                 package.ExecuteScript();

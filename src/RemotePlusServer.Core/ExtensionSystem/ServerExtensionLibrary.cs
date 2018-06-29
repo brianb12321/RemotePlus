@@ -14,7 +14,7 @@ namespace RemotePlusServer.Core.ExtensionSystem
     /// </summary>
     public class ServerExtensionLibrary : ExtensionLibraryBase<string>
     {
-        private ServerExtensionLibrary(string friendlyName, string name, ExtensionLibraryType type, Guid g, RequiresDependencyAttribute[] deps, Version v) : base(friendlyName, name, type, g, deps, v)
+        protected ServerExtensionLibrary(string friendlyName, string name, ExtensionLibraryType type, Guid g, RequiresDependencyAttribute[] deps, Version v) : base(friendlyName, name, type, g, deps, v)
         {
         }
 

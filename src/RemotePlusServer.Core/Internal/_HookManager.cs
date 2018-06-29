@@ -15,7 +15,7 @@ namespace RemotePlusServer.Internal
     /// <summary>
     /// Provides functionality that is used to locate and execute server hooks. THIS IS A INTERNAL CLASS
     /// </summary>
-    internal static class _HookManager
+    public static class _HookManager
     {
         public static void RunHooks(string hookCategory, HookArguments args)
         {

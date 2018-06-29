@@ -49,6 +49,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemotePlusLibrary.Discovery
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemotePlusServer.Core", "src\RemotePlusServer.Core\RemotePlusServer.Core.csproj", "{5669A80C-19D9-4DBE-BF5A-BBFCBF947634}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DefaultServerCore", "src\DefaultServerCore\DefaultServerCore.csproj", "{97FBBC51-9569-4128-B1BC-989CC832D00F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -139,6 +141,10 @@ Global
 		{5669A80C-19D9-4DBE-BF5A-BBFCBF947634}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5669A80C-19D9-4DBE-BF5A-BBFCBF947634}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5669A80C-19D9-4DBE-BF5A-BBFCBF947634}.Release|Any CPU.Build.0 = Release|Any CPU
+		{97FBBC51-9569-4128-B1BC-989CC832D00F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{97FBBC51-9569-4128-B1BC-989CC832D00F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{97FBBC51-9569-4128-B1BC-989CC832D00F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{97FBBC51-9569-4128-B1BC-989CC832D00F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -108,18 +108,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Commands.cs" />
     <Compile Include="FileTransferService.cs" />
     <Compile Include="FileTransferServiceImpl.cs" />
     <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="Internal\_ClientTextReader.cs" />
-    <Compile Include="Internal\_ClientTextWriter.cs" />
-    <Compile Include="Internal\_HookManager.cs" />
-    <Compile Include="Proxies\ClientInstance.cs" />
-    <Compile Include="Proxies\LuaServerInstance.cs" />
-    <Compile Include="Proxies\StaticRemoteFunctions.cs" />
+    <Compile Include="ServerBuilder.cs" />
     <Compile Include="ServerRemotePlusService.cs" />
-    <Compile Include="ScriptPackageExtensions.cs" />
     <Compile Include="ServerControls.cs">
       <SubType>Form</SubType>
     </Compile>

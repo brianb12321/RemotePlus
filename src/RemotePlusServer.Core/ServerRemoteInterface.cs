@@ -144,7 +144,7 @@ namespace RemotePlusServer.Core
             }
             else
             {
-                CommandParser parser = new CommandParser(Command);
+                IParser parser = new CommandParser(Command);
                 try
                 {
                     var tokens = parser.Parse(true);
@@ -207,7 +207,7 @@ namespace RemotePlusServer.Core
             }
             return pipe;
         }
-        protected virtual CommandToken[] RunVariableReplacement(CommandParser p, out bool success)
+        protected virtual CommandToken[] RunVariableReplacement(IParser p, out bool success)
         {
             success = true;
             List<CommandToken> tokenList = new List<CommandToken>();
@@ -254,7 +254,7 @@ namespace RemotePlusServer.Core
             }
             return tokenList.ToArray();
         }
-        protected virtual IEnumerable<CommandToken> RunSubRoutines(CommandParser p, CommandPipeline pipe, int position)
+        protected virtual IEnumerable<CommandToken> RunSubRoutines(IParser p, CommandPipeline pipe, int position)
         {
             foreach (CommandToken routineToken in p.GetSubRoutines())
             {
@@ -310,7 +310,7 @@ namespace RemotePlusServer.Core
                 yield return routineToken;
             }
         }
-        protected virtual IEnumerable<CommandToken> RunSubRoutines(CommandToken[] tokens, CommandParser p, CommandPipeline pipe, int position)
+        protected virtual IEnumerable<CommandToken> RunSubRoutines(CommandToken[] tokens, IParser p, CommandPipeline pipe, int position)
         {
             foreach (CommandToken routineToken in tokens)
             {
@@ -366,7 +366,7 @@ namespace RemotePlusServer.Core
             }
             return tokenList.ToArray();
         }
-        protected virtual IEnumerable<CommandToken> ParseOutQoutes(CommandParser p)
+        protected virtual IEnumerable<CommandToken> ParseOutQoutes(IParser p)
         {
             List<CommandToken> tokenList = new List<CommandToken>();
             var qouteTokens = p.GetQoutedToken();

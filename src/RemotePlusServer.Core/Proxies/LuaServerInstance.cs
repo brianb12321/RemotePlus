@@ -8,7 +8,7 @@ using Logging;
 using RemotePlusLibrary.Scripting;
 using RemotePlusServer.Core;
 
-namespace RemotePlusServer.Proxies
+namespace RemotePlusServer.Core.Proxies
 {
     /// <summary>
     /// Provides functions that allows a script to close the server and get global information about the server.

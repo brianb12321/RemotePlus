@@ -1,30 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ServiceModel;
 using RemotePlusLibrary;
-using RemotePlusLibrary.Extension;
 using System.IO;
 using Logging;
-using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusLibrary.Core;
 using System.Diagnostics;
 using System.Reflection;
 using System.Windows.Forms;
-using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
-using RemotePlusLibrary.Scripting;
-using RemotePlusServer.Proxies;
 using RemotePlusLibrary.FileTransfer.Service;
 using System.ServiceModel.Description;
-using RemotePlusLibrary.Security.AccountSystem;
-using RemotePlusLibrary.Security.AccountSystem.Policies;
 using RemotePlusLibrary.Discovery;
 using RemotePlusLibrary.Configuration.ServerSettings;
-using RemotePlusLibrary.RequestSystem;
 using RemotePlusLibrary.Contracts;
-using RemotePlusLibrary.Client;
-using Ninject;
 using RemotePlusServer.Core;
-using RemotePlusServer.Core.ExtensionSystem;
+using RemotePlusServer.Core.ServerCore;
 
 namespace RemotePlusServer
 {
@@ -39,13 +28,13 @@ namespace RemotePlusServer
         [STAThread]
         static void Main(string[] args)
         {
-//            try
-//            {
-//#if !DEBUG
-//                AppDomain.CurrentDomain.FirstChanceException += (sender, e) => ServerManager.Logger.AddOutput($"Error occured during server execution: {e.Exception.Message}", OutputLevel.Error);
-//#else
-//                AppDomain.CurrentDomain.FirstChanceException += (sender, e) => ServerManager.Logger.AddOutput($"Error occured during server execution: {e.Exception.ToString()}", OutputLevel.Error);
-//#endif
+            try
+            {
+#if !DEBUG
+                AppDomain.CurrentDomain.FirstChanceException += (sender, e) => ServerManager.Logger.AddOutput($"Error occured during server execution: {e.Exception.Message}", OutputLevel.Error);
+#else
+                AppDomain.CurrentDomain.FirstChanceException += (sender, e) => ServerManager.Logger.AddOutput($"Error occured during server execution: {e.Exception.ToString()}", OutputLevel.Error);
+#endif
                 var a = Assembly.GetExecutingAssembly().GetName();
                 Console.WriteLine($"Welcome to {a.Name}, version: {a.Version.ToString()}\n\n");
                 IOCContainer.Setup();
@@ -54,13 +43,8 @@ namespace RemotePlusServer
                 ServerManager.Logger.AddOutput(new LogItem(OutputLevel.Info, "NOTE: Tracing may be enabled on the server.", "Server Host") { Color = ConsoleColor.Cyan });
                 sw = new Stopwatch();
                 sw.Start();
-                InitalizeKnownTypes();
-                ScanForServerSettingsFile();
-                InitializeScriptingEngine();
-                CreateServer();
-                LoadExtensionLibraries();
-                InitializeVariables();
-                InitializeCommands();
+                ServerManager.Logger.AddOutput("Starting server core to setup server.", OutputLevel.Info);
+                LoadServerCoreExtension();
                 if (CheckPrerequisites())
                 {
                     bool autoStart = false;
@@ -72,54 +56,48 @@ namespace RemotePlusServer
                     Application.SetCompatibleTextRenderingDefault(false);
                     Application.Run(new ServerControls(autoStart));
                 }
-            //}
-            //catch (Exception ex)
-            //{
-                //if (Debugger.IsAttached)
-                //{
-                //    //throw;
-                //}
-//#if !COGNITO
-//                ServerManager.Logger.AddOutput("Internal server error: " + ex.Message, OutputLevel.Error);
-//                Console.Write("Press any key to exit.");
-//                Console.ReadKey();
-//                SaveLog();
-//#else
-//                MessageBox.Show("Internal server error: " + ex.Message);
-//                SaveLog();
-//#endif
-
-            //}
         }
-
-        private static void InitializeScriptingEngine()
-        {
-            ServerManager.Logger.AddOutput("Starting scripting engine.", OutputLevel.Info);
-            ServerManager.Logger.AddOutput("Initializing functions and variables.", OutputLevel.Info, "Scripting Engine");
-            InitializeGlobals();
-            ServerManager.ScriptBuilder.InitializeEngine();
-            ServerManager.Logger.AddOutput($"Engine started. IronPython version {ServerManager.ScriptBuilder.ScriptingEngine.LanguageVersion.ToString()}", OutputLevel.Info, "Scripting Engine");
-            ServerManager.Logger.AddOutput("Redirecting STDOUT to duplex channel.", OutputLevel.Debug, "Scripting Engine");
-            ServerManager.ScriptBuilder.ScriptingEngine.Runtime.IO.SetOutput(new MemoryStream(), new Internal._ClientTextWriter());
-            //ServerManager.ScriptBuilder.ScriptingEngine.Runtime.IO.SetInput(new MemoryStream(), new Internal._ClientTextReader(), Encoding.ASCII);
-            ServerManager.Logger.AddOutput("Finished starting scripting engine.", OutputLevel.Info);
-        }
-
-        internal static void InitializeGlobals()
-        {
-            try
+            catch (Exception ex)
             {
-                ServerManager.ScriptBuilder.AddScriptObject("serverInstance", new LuaServerInstance(), "Provides access to the global server instance.", ScriptGlobalType.Variable);
-                ServerManager.ScriptBuilder.AddScriptObject("executeServerCommand", new Func<string, CommandPipeline>((command => ServerManager.ServerRemoteService.RemoteInterface.RunServerCommand(command, CommandExecutionMode.Script))), "Executes a command to the server.", ScriptGlobalType.Function);
-                ServerManager.ScriptBuilder.AddScriptObject("speak", new Action<string, int, int>(StaticRemoteFunctions.speak), "Makes the server speak.", ScriptGlobalType.Function);
-                ServerManager.ScriptBuilder.AddScriptObject("beep", new Action<int, int>(StaticRemoteFunctions.beep), "Makes the server beep.", ScriptGlobalType.Function);
-                ServerManager.ScriptBuilder.AddScriptObject("functionExists", new Func<string, bool>((name) => ServerManager.ScriptBuilder.FunctionExists(name)), "Returns true if the function exists in the server.", ScriptGlobalType.Function);
-                ServerManager.ScriptBuilder.AddScriptObject("createRequestBuilder", new Func<string, string, Dictionary<string, string>, RequestBuilder>(ClientInstance.createRequestBuilder), "Generates a request builder to be used to generate a request.", ScriptGlobalType.Function);
-                ServerManager.ScriptBuilder.AddScriptObject("clientPrint", new Action<string>((text => ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(text))), "Prints the text to the client-console", ScriptGlobalType.Function);
+                if (Debugger.IsAttached)
+                {
+                    //throw;
+                }
+#if !COGNITO
+    ServerManager.Logger.AddOutput("Internal server error: " + ex.Message, OutputLevel.Error);
+                Console.Write("Press any key to exit.");
+                Console.ReadKey();
+                SaveLog();
+#else
+                MessageBox.Show("Internal server error: " + ex.Message);
+                SaveLog();
+#endif
+
+}
+        }
+
+        private static void LoadServerCoreExtension()
+        {
+            bool foundCore = false;
+            foreach(string coreFile in Directory.GetFiles(Environment.CurrentDirectory))
+            {
+                if(Path.GetExtension(coreFile) == ".dll")
+                {
+                    var core = ServerCoreLoader.LoadServerCoreLibrary(coreFile);
+                    if(core != null)
+                    {
+                        foundCore = true;
+                        ServerBuilder sb = new ServerBuilder();
+                        core.InitializeServer(sb);
+                        sb.Run();
+                        break;
+                    }
+                }
             }
-            catch (ArgumentException)
+            if(foundCore == false)
             {
-
+                ServerManager.Logger.AddOutput("A server core is not present. Cannot start server.", OutputLevel.Error);
+                Environment.Exit(-1);
             }
         }
 
@@ -213,60 +191,6 @@ namespace RemotePlusServer
             }
         }
 
-        private static void InitalizeKnownTypes()
-        {
-            ServerManager.Logger.AddOutput("Adding default known types.", OutputLevel.Info);
-            DefaultKnownTypeManager.LoadDefaultTypes();
-            ServerManager.Logger.AddOutput("Adding UserAccount to known type list.", OutputLevel.Debug);
-            DefaultKnownTypeManager.AddType(typeof(UserAccount));
-        }
-
-        private static void InitializeVariables()
-        {
-            if(File.Exists("Variables.xml"))
-            {
-                ServerManager.Logger.AddOutput("Loading variables.", OutputLevel.Info);
-                ServerManager.ServerRemoteService.Variables = VariableManager.Load();
-            }
-            else
-            {
-                ServerManager.Logger.AddOutput("There is no variable file. Beginning variable initialization.", OutputLevel.Warning);
-                ServerManager.ServerRemoteService.Variables = VariableManager.New();
-                ServerManager.ServerRemoteService.Variables.Add("Name", "RemotePlusServer");
-                ServerManager.Logger.AddOutput("Saving file.", OutputLevel.Info);
-                ServerManager.ServerRemoteService.Variables.Save();
-            }
-        }
-
-        private static void InitializeCommands()
-        {
-            ServerManager.Logger.AddOutput("Loading Commands.", OutputLevel.Info);
-            ServerManager.ServerRemoteService.Commands.Add("ps", ProcessStartCommand);
-            ServerManager.ServerRemoteService.Commands.Add("help", Help);
-            ServerManager.ServerRemoteService.Commands.Add("logs", Logs);
-            ServerManager.ServerRemoteService.Commands.Add("vars", vars);
-            ServerManager.ServerRemoteService.Commands.Add("dateTime", dateTime);
-            ServerManager.ServerRemoteService.Commands.Add("processes", processes);
-            ServerManager.ServerRemoteService.Commands.Add("version", version);
-            ServerManager.ServerRemoteService.Commands.Add("encrypt", svm_encyptFile);
-            ServerManager.ServerRemoteService.Commands.Add("decrypt", svm_decryptFile);
-            ServerManager.ServerRemoteService.Commands.Add("beep", svm_beep);
-            ServerManager.ServerRemoteService.Commands.Add("speak", svm_speak);
-            ServerManager.ServerRemoteService.Commands.Add("showMessageBox", svm_showMessageBox);
-            ServerManager.ServerRemoteService.Commands.Add("path", path);
-            ServerManager.ServerRemoteService.Commands.Add("cd", cd);
-            ServerManager.ServerRemoteService.Commands.Add("echo", echo);
-            ServerManager.ServerRemoteService.Commands.Add("load-extensionLibrary", loadExtensionLibrary);
-            ServerManager.ServerRemoteService.Commands.Add("cp", cp);
-            ServerManager.ServerRemoteService.Commands.Add("deleteFile", deleteFile);
-            ServerManager.ServerRemoteService.Commands.Add("echoFile", echoFile);
-            ServerManager.ServerRemoteService.Commands.Add("ls", ls);
-            ServerManager.ServerRemoteService.Commands.Add("genMan", genMan);
-            ServerManager.ServerRemoteService.Commands.Add("scp", scp);
-            ServerManager.ServerRemoteService.Commands.Add("resetStaticScript", resetStaticScript);
-            ServerManager.ServerRemoteService.Commands.Add("requestFile", requestFile);
-        }
-
         static bool CheckPrerequisites()
         {
             ServerManager.Logger.AddOutput("Checking prerequisites.", OutputLevel.Info);
@@ -296,48 +220,6 @@ namespace RemotePlusServer
             {
                 ServerManager.Logger.AddOutput(new LogItem(OutputLevel.Info, $"Validation passed. Elapsed time: {sw.Elapsed.ToString()}", "Server Host") { Color = ConsoleColor.Green });
                 return true;
-            }
-        }
-        static void LoadExtensionLibraries()
-        {
-            List<string> excludedFiles = new List<string>();
-            ServerManager.Logger.AddOutput("Loading extensions...", Logging.OutputLevel.Info);
-            if (Directory.Exists("extensions"))
-            {
-                if (File.Exists("extensions\\excludes.txt"))
-                {
-                    ServerManager.Logger.AddOutput("Found an excludes.txt file. Reading file...", OutputLevel.Info);
-                    foreach(string excludedFile in File.ReadLines("extensions\\excludes.txt"))
-                    {
-                        ServerManager.Logger.AddOutput($"{excludedFile} is excluded from the extension search.", OutputLevel.Info);
-                        excludedFiles.Add("extensions\\" + excludedFile);
-                    }
-                    ServerManager.Logger.AddOutput("Finished reading extension exclusion file.", OutputLevel.Info);
-                }
-                ServerInitEnvironment env = new ServerInitEnvironment(false);
-                foreach (string files in Directory.GetFiles("extensions"))
-                {
-                    if (Path.GetExtension(files) == ".dll" && !excludedFiles.Contains(files))
-                    {
-                        try
-                        {
-                            ServerManager.Logger.AddOutput($"Found extension file ({Path.GetFileName(files)})", Logging.OutputLevel.Info);
-                            env.PreviousError = ServerManager.Logger.errorcount > 0 ? true : false;
-                            var lib = ServerExtensionLibrary.LoadServerLibrary(files, (m, o) => ServerManager.Logger.AddOutput(m, o), env);
-                            ServerManager.DefaultCollection.Libraries.Add(lib.Name, lib);
-                        }
-                        catch (Exception ex)
-                        {
-                            ServerManager.Logger.AddOutput($"Could not load \"{files}\" because of a load error or initialization error. Error: {ex.Message}", OutputLevel.Warning);
-                        }
-                        env.InitPosition++;
-                    }
-                }
-                ServerManager.Logger.AddOutput($"{ServerManager.DefaultCollection.Libraries.Count} extension libraries loaded.", OutputLevel.Info);
-            }
-            else
-            {
-                ServerManager.Logger.AddOutput("The extensions folder does not exist.", OutputLevel.Info);
             }
         }
         public static DuplexChannelFactory<IProxyServerRemote> proxyChannelFactory = null;
@@ -395,80 +277,6 @@ namespace RemotePlusServer
             ServerManager.Logger.AddOutput("The server is now closed.", OutputLevel.Info);
         }
 
-        static void ScanForServerSettingsFile()
-        {
-            if (!File.Exists("Configurations\\Server\\Roles.config"))
-            {
-                buildAdminPolicyObject();
-                Role.InitializeRolePool();
-                ServerManager.Logger.AddOutput("The server roles file does not exist. Creating server roles settings file.", OutputLevel.Warning);
-                var r = Role.CreateRole("Administrators");
-                Role.GlobalPool.Roles.Add(r);
-                DefaultKnownTypeManager.AddType(typeof(OperationPolicies));
-                DefaultKnownTypeManager.AddType(typeof(DefaultPolicy));
-                Role.GlobalPool.Save();
-            }
-            else
-            {
-                ServerManager.Logger.AddOutput("Loading server roles file.", OutputLevel.Info);
-                try
-                {
-                    DefaultKnownTypeManager.AddType(typeof(OperationPolicies));
-                    DefaultKnownTypeManager.AddType(typeof(DefaultPolicy));
-                    Role.GlobalPool.Load();
-                }
-                catch (Exception ex)
-                {
-#if DEBUG
-                    ServerManager.Logger.AddOutput("Unable to load server settings. " + ex.ToString(), OutputLevel.Error);
-#else
-                    ServerManager.Logger.AddOutput("Unable to load server settings. " + ex.Message, OutputLevel.Error);
-#endif
-                }
-            }
-            if(!Directory.Exists("Users"))
-            {
-                ServerManager.Logger.AddOutput("The Users folder does not exist. Creating folder.", OutputLevel.Warning);
-                Directory.CreateDirectory("Users");
-                AccountManager.CreateAccount(new UserCredentials("admin", "password"), "Administrators");
-            }
-            else
-            {
-                AccountManager.RefreshAccountList();
-            }
-            ServerManager.DefaultSettings = new ServerSettings();
-            if (!File.Exists("Configurations\\Server\\GlobalServerSettings.config"))
-            {
-                ServerManager.Logger.AddOutput("The server settings file does not exist. Creating server settings file.", OutputLevel.Warning);
-                ServerManager.DefaultSettings.Save();
-            }
-            else
-            {
-                ServerManager.Logger.AddOutput("Loading server settings file.", OutputLevel.Info);
-                try
-                {
-                    ServerManager.DefaultSettings.Load();
-                }
-                catch (Exception ex)
-                {
-#if DEBUG
-                    ServerManager.Logger.AddOutput("Unable to load server settings. " + ex.ToString(), OutputLevel.Error);
-#else
-                    ServerManager.Logger.AddOutput("Unable to load server settings. " + ex.Message, OutputLevel.Error);
-#endif
-                }
-            }
-        }
-
-        private static void buildAdminPolicyObject()
-        {
-            var policies = new OperationPolicies();
-            policies.EnableConsole = true;
-            PolicyObject adminObject = new PolicyObject("Admin");
-            adminObject.Policies.Folders.Add(policies);
-            adminObject.Save();
-        }
-
         public static void Close()
         {
             SaveLog();
@@ -480,6 +288,32 @@ namespace RemotePlusServer
                 proxyChannelFactory.Close();
             }
             Environment.Exit(0);
+        }
+        public static IServerBuilder CreateServer(this IServerBuilder builder)
+        {
+            return builder.AddTask(() =>
+            {
+                var endpointAddress = "Remote";
+                if (ServerManager.DefaultSettings.DiscoverySettings.DiscoveryBehavior == ProxyConnectionMode.Connect)
+                {
+                    endpointAddress += $"/{Guid.NewGuid()}";
+                }
+                _remote = new RemoteImpl();
+                var service = ServerRemotePlusService.Create(typeof(IRemote), _remote, ServerManager.DefaultSettings.PortNumber, endpointAddress, (m, o) => ServerManager.Logger.AddOutput(m, o), null);
+                ServiceThrottlingBehavior throt = new System.ServiceModel.Description.ServiceThrottlingBehavior();
+                throt.MaxConcurrentCalls = int.MaxValue;
+                service.Host.Description.Behaviors.Add(throt);
+                SetupFileTransferService();
+                ServerManager.Logger.AddOutput("Attaching server events.", OutputLevel.Debug);
+                service.HostClosed += Host_Closed;
+                service.HostClosing += Host_Closing;
+                service.HostFaulted += Host_Faulted;
+                service.HostOpened += Host_Opened;
+                service.HostOpening += Host_Opening;
+                service.HostUnknownMessageReceived += Host_UnknownMessageReceived;
+                OpenMex(service, ServerManager.FileTransferService);
+                IOCContainer.Kernel.Bind<IRemotePlusService<ServerRemoteInterface>>().ToConstant(service);
+            });
         }
     }
 }

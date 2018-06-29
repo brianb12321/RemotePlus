@@ -1,18 +1,23 @@
 ﻿using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using RemotePlusServer.Core.ServerCore;
+using DefaultServerCore;
 
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("RemotePlusLibrary.Discovery")]
+[assembly: AssemblyTitle("DefaultServerCore")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("RemotePlusLibrary.Discovery")]
+[assembly: AssemblyProduct("DefaultServerCore")]
 [assembly: AssemblyCopyright("Copyright ©  2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
+[assembly: ServerCoreLibrary(typeof(Startup), "DefaultCore",
+    FriendlyName = "Default Core",
+    LibraryType = RemotePlusLibrary.Extension.ExtensionLoader.ExtensionLibraryType.Server)]
 
 // Setting ComVisible to false makes the types in this assembly not visible
 // to COM components.  If you need to access a type in this assembly from
@@ -20,7 +25,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("3a76b045-ea3f-4607-b13b-ec543581601e")]
+[assembly: Guid("97fbbc51-9569-4128-b1bc-989cc832d00f")]
 
 // Version information for an assembly consists of the following four values:
 //

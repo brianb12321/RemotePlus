@@ -11,7 +11,7 @@ using RemotePlusLibrary.RequestSystem;
 using RemotePlusLibrary.Scripting;
 using RemotePlusServer.Core;
 
-namespace RemotePlusServer.Proxies
+namespace RemotePlusServer.Core.Proxies
 {
     public class ClientInstance : IBidirectionalContract
     {
