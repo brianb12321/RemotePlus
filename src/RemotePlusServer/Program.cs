@@ -30,11 +30,6 @@ namespace RemotePlusServer
         {
             try
             {
-#if !DEBUG
-                AppDomain.CurrentDomain.FirstChanceException += (sender, e) => ServerManager.Logger.AddOutput($"Error occured during server execution: {e.Exception.Message}", OutputLevel.Error);
-#else
-                AppDomain.CurrentDomain.FirstChanceException += (sender, e) => ServerManager.Logger.AddOutput($"Error occured during server execution: {e.Exception.ToString()}", OutputLevel.Error);
-#endif
                 var a = Assembly.GetExecutingAssembly().GetName();
                 Console.WriteLine($"Welcome to {a.Name}, version: {a.Version.ToString()}\n\n");
                 IOCContainer.Setup();
