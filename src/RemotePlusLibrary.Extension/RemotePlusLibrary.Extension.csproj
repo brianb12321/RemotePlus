@@ -55,6 +55,7 @@
     <Compile Include="CommandSystem\CommandClasses\CommandResponse.cs" />
     <Compile Include="CommandSystem\CommandClasses\CommandRoutine.cs" />
     <Compile Include="CommandSystem\CommandClasses\Parsing\CommandToken.cs" />
+    <Compile Include="CommandSystem\CommandClasses\Parsing\IParser.cs" />
     <Compile Include="CommandSystem\CommandClasses\Parsing\ParserException.cs" />
     <Compile Include="CommandSystem\CommandClasses\Parsing\TokenSet.cs" />
     <Compile Include="CommandSystem\CommandClasses\Parsing\TokenType.cs" />

@@ -218,9 +218,9 @@ namespace RemotePlusClientCmd
         //    foreach (CommandToken variableToken in variableTokens)
         //    {
         //        var variablename = variableToken.OriginalValue.Remove(0, 1);
-        //        if (ServerManager.DefaultService.Variables.ContainsKey(variablename))
+        //        if (ServerManager.ServerRemoteService.Variables.ContainsKey(variablename))
         //        {
-        //            var variableValue = ServerManager.DefaultService.Variables[variablename];
+        //            var variableValue = ServerManager.ServerRemoteService.Variables[variablename];
         //            variableToken.Value = variableValue;
         //            success = true;
         //            tokenList.Add(variableToken);

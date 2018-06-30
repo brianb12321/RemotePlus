@@ -82,6 +82,9 @@
       <HintPath>..\..\packages\DynamicLanguageRuntime.1.2.1\lib\net45\Microsoft.VisualStudio.CodeCoverage.Shim.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Ninject, Version=3.3.4.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Ninject.3.3.4\lib\net45\Ninject.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
@@ -105,20 +108,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Commands.cs" />
-    <Compile Include="ExtensionSystem\ServerExtensionLibrary.cs" />
-    <Compile Include="ExtensionSystem\ServerInitEnvironment.cs" />
     <Compile Include="FileTransferService.cs" />
+    <Compile Include="FileTransferServiceImpl.cs" />
     <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="Internal\_ClientTextReader.cs" />
-    <Compile Include="Internal\_ClientTextWriter.cs" />
-    <Compile Include="Internal\_HookManager.cs" />
-    <Compile Include="ExtensionSystem\ServerLibraryBuilder.cs" />
-    <Compile Include="Proxies\ClientInstance.cs" />
-    <Compile Include="Proxies\LuaServerInstance.cs" />
-    <Compile Include="Proxies\StaticRemoteFunctions.cs" />
-    <Compile Include="Remote.cs" />
-    <Compile Include="ScriptPackageExtensions.cs" />
+    <Compile Include="ServerBuilder.cs" />
+    <Compile Include="ServerRemotePlusService.cs" />
     <Compile Include="ServerControls.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -126,7 +120,6 @@
       <DependentUpon>ServerControls.cs</DependentUpon>
     </Compile>
     <Compile Include="GlobalErrorHandler.cs" />
-    <Compile Include="ExtensionSystem\ServerExtensionLibraryCollection.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RemoteImpl.cs" />
@@ -161,6 +154,10 @@
     <ProjectReference Include="..\RemotePlusLibrary\RemotePlusLibrary.csproj">
       <Project>{00c22a1f-d3df-4193-aaa8-9907d08e2511}</Project>
       <Name>RemotePlusLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RemotePlusServer.Core\RemotePlusServer.Core.csproj">
+      <Project>{5669A80C-19D9-4DBE-BF5A-BBFCBF947634}</Project>
+      <Name>RemotePlusServer.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

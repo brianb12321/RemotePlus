@@ -28,7 +28,7 @@ namespace ProxyServer
 
         public void ProvideFault(Exception error, MessageVersion version, ref Message fault)
         {
-            FaultException<ProxyFault> fexp = new FaultException<ProxyFault>(new ProxyFault(ProxyManager.ProxyService.Remote.SelectedClient.UniqueID), error.Message);
+            FaultException<ProxyFault> fexp = new FaultException<ProxyFault>(new ProxyFault(ProxyManager.ProxyService.RemoteInterface.SelectedClient.UniqueID), error.Message);
             MessageFault m = fexp.CreateMessageFault();
             fault = Message.CreateMessage(version, m, null);
         }

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using RemotePlusLibrary.Extension;
 using RemotePlusLibrary.Extension.ExtensionLoader.Initialization;
 using RemotePlusServer;
+using RemotePlusServer.Core;
 
 namespace ServerMath
 {
@@ -14,8 +15,8 @@ namespace ServerMath
         public void Init(ILibraryBuilder builder, IInitEnvironment env)
         {
             ServerManager.Logger.AddOutput("Registering math commands.", Logging.OutputLevel.Info, builder.FriendlyName);
-            ServerManager.DefaultService.Commands.Add("abs", MathCommands.abs);
-            ServerManager.DefaultService.Commands.Add("pow", MathCommands.pow);
+            ServerManager.ServerRemoteService.Commands.Add("abs", MathCommands.abs);
+            ServerManager.ServerRemoteService.Commands.Add("pow", MathCommands.pow);
         }
     }
 }

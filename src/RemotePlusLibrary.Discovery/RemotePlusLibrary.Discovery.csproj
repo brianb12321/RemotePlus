@@ -49,7 +49,6 @@
     <Compile Include="IProxyRemote.cs" />
     <Compile Include="IProxyServerRemote.cs" />
     <Compile Include="IRemoteWithProxy.cs" />
-    <Compile Include="ProbeService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

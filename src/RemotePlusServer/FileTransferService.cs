@@ -1,77 +1,148 @@
-﻿using System;
+﻿using Logging;
+using RemotePlusLibrary;
+using RemotePlusLibrary.Core;
+using RemotePlusLibrary.Extension.CommandSystem;
+using RemotePlusServer.Core;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.ServiceModel;
+using System.ServiceModel.Channels;
 using System.Text;
 using System.Threading.Tasks;
-using System.ServiceModel;
-using RemotePlusLibrary.FileTransfer.Service;
-using RemotePlusLibrary.FileTransfer;
-using System.IO;
-using RemotePlusLibrary.Core;
 
 namespace RemotePlusServer
 {
-    [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerCall,
-        IncludeExceptionDetailInFaults = true)]
-    [GlobalException(typeof(GlobalErrorHandler))]
-    public class FileTransferService : IFileTransferContract
+    public class FileTransferService : IRemotePlusService<FileTransferServciceInterface>
     {
-        public void DeleteFile(string remoteFile)
+        public ServiceHost Host { get; private set; }
+
+        public RemoteImpl Remote { get; private set; }
+
+        public Dictionary<string, CommandDelegate> Commands { get; set; } = new Dictionary<string, CommandDelegate>();
+        public VariableManager Variables { get; set; }
+        public FileTransferServciceInterface RemoteInterface { get; private set; }
+
+        /// <summary>
+        /// Creates a new instance of the <see cref="FileTransferService"/> class
+        /// </summary>
+        /// <param name="singleTon">The instance of the service implementation.</param>
+        /// <param name="portNumber">The port number to use for listening.</param>
+        /// <param name="setupCallback">The function to call when setting up the service implementation.</param>
+        protected FileTransferService(Type contractType, RemoteImpl singleTon, Binding binding, string address, Action<RemoteImpl> setupCallback)
         {
-            File.Delete(remoteFile);
+            Commands = new Dictionary<string, CommandDelegate>();
+            Remote = singleTon;
+            setupCallback?.Invoke(Remote);
+            Host = new ServiceHost(Remote);
+            Host.AddServiceEndpoint(contractType, binding, address);
+        }
+        protected FileTransferService(Binding b, RemoteImpl singleTon, Action<RemoteImpl> setupCallback)
+        {
+            Commands = new Dictionary<string, CommandDelegate>();
+            Remote = singleTon;
+            setupCallback?.Invoke(Remote);
+            Host = new ServiceHost(Remote);
+        }
+        private FileTransferService(Type contractType, Binding binding, string address)
+        {
+            Commands = new Dictionary<string, CommandDelegate>();
+            Host = new ServiceHost(typeof(FileTransferServiceImpl));
+            Host.AddServiceEndpoint(contractType, binding, address);
         }
 
-        public RemoteFileInfo DownloadFile(DownloadRequest request)
+        public event EventHandler HostClosed
         {
-            RemoteFileInfo result = new RemoteFileInfo();
-            string filePath = request.DownloadFileName;
-            try
-            {
-                FileInfo fileInfo = new FileInfo(filePath);
-                if(!fileInfo.Exists)
-                {
-                    throw new FileNotFoundException("File Not Found", filePath);
-                }
-                FileStream stream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
-                result.FileName = Path.GetFileName(request.DownloadFileName);
-                result.Length = fileInfo.Length;
-                result.FileByteStream = stream;
-                result.RemoteFilePath = request.DownloadFileName;
-            }
-            catch
-            {
-                throw;
-            }
-            return result;
+            add { Host.Closed += value; }
+            remove { Host.Closed -= value; }
+        }
+        public event EventHandler HostClosing
+        {
+            add { Host.Closing += value; }
+            remove { Host.Closing -= value; }
+        }
+        public event EventHandler HostFaulted
+        {
+            add { Host.Faulted += value; }
+            remove { Host.Faulted += value; }
+        }
+        public event EventHandler HostOpened
+        {
+            add { Host.Opened += value; }
+            remove { Host.Opened -= value; }
+        }
+        public event EventHandler HostOpening
+        {
+            add { Host.Opening += value; }
+            remove { Host.Opening -= value; }
+        }
+        public event EventHandler<UnknownMessageReceivedEventArgs> HostUnknownMessageReceived
+        {
+            add { Host.UnknownMessageReceived += value; }
+            remove { Host.UnknownMessageReceived -= value; }
         }
 
-        public string[] GetPolicyObjectNames()
+        public void AddEndpoint<TEndpoint>(TEndpoint endpoint, Binding binding, string endpointName, Action<TEndpoint> setupCallback)
         {
-            List<string> l = new List<string>();
-            foreach(string f in Directory.GetFiles("policyObjects", "*.pobj", SearchOption.TopDirectoryOnly))
-            {
-                l.Add(f);
-            }
-            return l.ToArray();
+            setupCallback?.Invoke(endpoint);
+            Host.AddServiceEndpoint(typeof(TEndpoint), binding, endpointName);
         }
-
-        public void UploadFile(RemoteFileInfo request)
+        /// <summary>
+        /// Starts the server.
+        /// </summary>
+        public void Start()
         {
-            FileStream targetStream = null;
-            Stream sourceStream = request.FileByteStream;
-            string filePath = Path.Combine(request.RemoteFilePath, request.FileName);
-            using (targetStream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None))
-            {
-                const int bufferLength = 65000;
-                byte[] buffer = new byte[bufferLength];
-                int count = 0;
-                while ((count = sourceStream.Read(buffer, 0, bufferLength)) > 0)
-                {
-                    targetStream.Write(buffer, 0, count);
-                }
-                targetStream.Close();
-                sourceStream.Close();
-            }
+            Host.Open();
+        }
+        /// <summary>
+        /// Closes the server.
+        /// </summary>
+        public void Close()
+        {
+            Host.Close();
+        }
+        /// <summary>
+        /// Creates a new server object that can be opened.
+        /// </summary>
+        /// <param name="singleTon">The instance of a service implementation</param>
+        /// <param name="port">The port number to use for listening.</param>
+        /// <param name="callback">The callback to use when an event occures for logging.</param>
+        /// <param name="setupCallback">The callback to use when setting up the service implementation.</param>
+        /// <returns></returns>
+        public static IRemotePlusService<FileTransferServciceInterface> CreateNotSingle(Type contractType, int port, string defaultEndpoint, Action<string, OutputLevel> callback)
+        {
+            FileTransferService temp;
+            callback?.Invoke("Building endpoint URL.", OutputLevel.Debug);
+            string url = $"net.tcp://0.0.0.0:{port}/{defaultEndpoint}";
+            callback?.Invoke($"URL built {url}", OutputLevel.Debug);
+            callback?.Invoke("Creating server.", OutputLevel.Debug);
+            callback?.Invoke("Publishing server events.", OutputLevel.Debug);
+            NetTcpBinding binding = _ConnectionFactory.BuildBinding();
+            StringBuilder dataBuilder = new StringBuilder();
+            dataBuilder.AppendLine("Binding configurations:");
+            dataBuilder.AppendLine();
+            dataBuilder.AppendLine($"MaxBufferPoolSize: {binding.MaxBufferPoolSize}");
+            dataBuilder.AppendLine($"MaxBufferSize: {binding.MaxBufferSize}");
+            dataBuilder.AppendLine($"MaxReceivedMessageSize: {binding.MaxReceivedMessageSize}");
+            callback?.Invoke(dataBuilder.ToString(), OutputLevel.Debug);
+            temp = new FileTransferService(contractType, binding, url);
+            return temp;
+        }
+        public static IRemotePlusService<FileTransferServciceInterface> CreateNotSingle(Type contractType, int port, Binding binding, string defaultEndpoint, Action<string, OutputLevel> callback)
+        {
+            FileTransferService temp;
+            callback?.Invoke("Building endpoint URL.", OutputLevel.Debug);
+            string url = $"{binding.Scheme}://0.0.0.0:{port}/{defaultEndpoint}";
+            callback?.Invoke($"URL built {url}", OutputLevel.Debug);
+            callback?.Invoke("Creating server.", OutputLevel.Debug);
+            callback?.Invoke("Publishing server events.", OutputLevel.Debug);
+            StringBuilder dataBuilder = new StringBuilder();
+            dataBuilder.AppendLine("Binding configurations:");
+            dataBuilder.AppendLine();
+            callback?.Invoke(dataBuilder.ToString(), OutputLevel.Debug);
+            temp = new FileTransferService(contractType, binding, url);
+            return temp;
         }
     }
 }
