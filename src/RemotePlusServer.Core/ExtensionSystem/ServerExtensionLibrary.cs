@@ -1,11 +1,11 @@
-﻿using Logging;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.IO;
 using RemotePlusLibrary.Extension;
 using RemotePlusLibrary.Extension.ExtensionLoader;
 using RemotePlusLibrary.Extension.ExtensionLoader.Initialization;
+using BetterLogger;
 
 namespace RemotePlusServer.Core.ExtensionSystem
 {
@@ -18,7 +18,7 @@ namespace RemotePlusServer.Core.ExtensionSystem
         {
         }
 
-        public static ServerExtensionLibrary LoadServerLibrary(string FileName, Action<string, OutputLevel> callback, IInitEnvironment env)
+        public static ServerExtensionLibrary LoadServerLibrary(string FileName, Action<string, LogLevel> callback, IInitEnvironment env)
         {
             ServerExtensionLibrary lib;
             Assembly a = Assembly.LoadFrom(FileName);
@@ -35,7 +35,7 @@ namespace RemotePlusServer.Core.ExtensionSystem
                     catch (FormatException)
                     {
                         guid = Guid.NewGuid();
-                        callback($"Unable to parse GUID. Using random generated GUID. GUID: [{guid.ToString()}]", OutputLevel.Warning);
+                        callback($"Unable to parse GUID. Using random generated GUID. GUID: [{guid.ToString()}]", LogLevel.Warning);
                     }
                     Version version = ParseVersion(ea.Version);
                     var deps = LoadDependencies(a, callback, env);
@@ -46,12 +46,12 @@ namespace RemotePlusServer.Core.ExtensionSystem
                     else
                     {
                         var st = (ILibraryStartup)Activator.CreateInstance(ea.Startup);
-                        callback("Beginning initialization.", Logging.OutputLevel.Info);
+                        callback("Beginning initialization.", LogLevel.Info);
                         ServerLibraryBuilder builder = new ServerLibraryBuilder(ea.Name, ea.FriendlyName, ea.Version, ea.LibraryType);
                         st.Init(builder, env);
-                        callback("finished initalization.", Logging.OutputLevel.Info);
+                        callback("finished initalization.", LogLevel.Info);
                         lib = new ServerExtensionLibrary(ea.FriendlyName, ea.Name, ea.LibraryType, guid, deps, version);
-                        callback("Registiring server hooks.", OutputLevel.Info);
+                        callback("Registiring server hooks.", LogLevel.Info);
                         lib.Hooks = builder.Hooks;
                     }
                 }
@@ -66,15 +66,15 @@ namespace RemotePlusServer.Core.ExtensionSystem
             }
             return lib;
         }
-        private static RequiresDependencyAttribute[] LoadDependencies(Assembly a, Action<string, OutputLevel> callback, IInitEnvironment env)
+        private static RequiresDependencyAttribute[] LoadDependencies(Assembly a, Action<string, LogLevel> callback, IInitEnvironment env)
         {
-            callback($"Searching dependencies for {a.GetName().Name}", OutputLevel.Info);
+            callback($"Searching dependencies for {a.GetName().Name}", LogLevel.Info);
             RequiresDependencyAttribute[] deps = ExtensionLibraryBase<ServerExtensionLibrary>.FindDependencies(a);
             foreach (RequiresDependencyAttribute d in deps)
             {
                 if(File.Exists(d.DependencyName))
                 {
-                    callback($"Found dependency {d.DependencyName}", OutputLevel.Info);
+                    callback($"Found dependency {d.DependencyName}", LogLevel.Info);
                     if (d.DependencyType != DependencyType.Resource)
                     {
                         try
@@ -88,7 +88,7 @@ namespace RemotePlusServer.Core.ExtensionSystem
                             {
                                 if(d.LoadIfNotLoaded && d.DependencyType == DependencyType.RemotePlusLib)
                                 {
-                                    callback($"Loading dependency {d.DependencyName}", OutputLevel.Info);
+                                    callback($"Loading dependency {d.DependencyName}", LogLevel.Info);
                                     ServerExtensionLibrary.LoadServerLibrary(d.DependencyName, callback, env);
                                 }
                             }

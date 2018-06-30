@@ -1,4 +1,5 @@
-﻿using RemotePlusClient.CommonUI;
+﻿using BetterLogger;
+using RemotePlusClient.CommonUI;
 using RemotePlusClient.CommonUI.Controls.FileBrowserHelpers;
 using RemotePlusLibrary.Extension.Gui;
 using RemotePlusLibrary.FileTransfer;
@@ -51,7 +52,7 @@ namespace RemotePlusClient.UIForms
             associations.Load();
             SetupAssociation();
             Counter = 0;
-            MainF.ConsoleObj.Logger.AddOutput("Downloading file data from server. This may take a while.", Logging.OutputLevel.Info);
+            MainF.ConsoleObj.Logger.Log("Downloading file data from server. This may take a while.", LogLevel.Info);
             progressWorker.DoWork += ProgressWorker_DoWork;
             progressWorker.RunWorkerAsync();
         }

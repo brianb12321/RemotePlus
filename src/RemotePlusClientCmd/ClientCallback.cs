@@ -1,6 +1,5 @@
 ﻿using System;
 using RemotePlusLibrary;
-using Logging;
 using System.ServiceModel;
 using RemotePlusClient.CommonUI;
 using System.Windows.Forms;
@@ -14,6 +13,7 @@ using RemotePlusLibrary.Contracts;
 using RemotePlusLibrary.RequestSystem;
 using RemotePlusLibrary.Security.Authentication;
 using RemotePlusLibrary.Client;
+using BetterLogger;
 
 namespace RemotePlusClientCmd
 {
@@ -36,7 +36,7 @@ namespace RemotePlusClientCmd
         {
             //ClientCmdManager.WaitFlag = true;
             ClientCmdManager.Remote.Close();
-            ClientCmdManager.Logger.AddOutput(new LogItem(OutputLevel.Error, $"Server [{guid}] disconnected. " + Reason, "CLient") { Color = ConsoleColor.Red });
+            ClientCmdManager.Logger.Log($"Server [{guid}] disconnected. " + Reason, LogLevel.Info, "CLient");
             //ClientCmdManager.WaitFlag = false;
         }
 
@@ -127,120 +127,10 @@ namespace RemotePlusClientCmd
             ss.Speak(Message);
         }
 
-        public void TellMessage(Guid guid, string Message, OutputLevel o)
+        public void TellMessage(Guid guid, string Message, LogLevel o)
         {
             //ClientCmdManager.WaitFlag = true;
-            LogItem li = new LogItem(o, Message, $"Server Host ({guid})");
-            if (o == OutputLevel.Warning)
-            {
-                li.Color = ClientCmdManager.Logger.ConsoleForegroundWarning;
-            }
-            else if (o == OutputLevel.Info)
-            {
-                li.Color = ClientCmdManager.Logger.ConsoleForegroundInfo;
-            }
-            else if (o == OutputLevel.Error)
-            {
-                li.Color = ClientCmdManager.Logger.ConsoleForegroundError;
-            }
-            else if(o == OutputLevel.Debug)
-            {
-                li.Color = ClientCmdManager.Logger.ConsoleForegroundDebug;
-            }
-            ClientCmdManager.Logger.AddOutput(li);
-            //ClientCmdManager.WaitFlag = false;
-        }
-
-        public void TellMessage(Guid guid, UILogItem li)
-        {
-            //ClientCmdManager.WaitFlag = true;
-            if (ClientCmdManager.Logger.OverrideLogItemObjectColorValue)
-            {
-                if (li.Level == OutputLevel.Warning)
-                {
-                    li.Color = ClientCmdManager.Logger.ConsoleForegroundWarning;
-                }
-                else if(li.Level == OutputLevel.Info)
-                {
-                    li.Color = ClientCmdManager.Logger.ConsoleForegroundInfo;
-                }
-                else if (li.Level == OutputLevel.Error)
-                {
-                    li.Color = ClientCmdManager.Logger.ConsoleForegroundError;
-                }
-                else if(li.Level == OutputLevel.Debug)
-                {
-                    li.Color = ClientCmdManager.Logger.ConsoleForegroundDebug;
-                }
-            }
-            li.From += $" ({guid})";
-            ClientCmdManager.Logger.AddOutput(new LogItem(li.Level, li.Message, li.From) { Color = li.Color });
-            //ClientCmdManager.WaitFlag = false;
-        }
-
-        public void TellMessage(Guid guid, UILogItem[] Logs)
-        {
-            //ClientCmdManager.WaitFlag = true;
-            foreach (UILogItem l in Logs)
-            {
-                if (ClientCmdManager.Logger.OverrideLogItemObjectColorValue)
-                {
-                    if (l.Level == OutputLevel.Warning)
-                    {
-                        l.Color = ClientCmdManager.Logger.ConsoleForegroundWarning;
-                    }
-                    else if (l.Level == OutputLevel.Info)
-                    {
-                        l.Color = ClientCmdManager.Logger.ConsoleForegroundInfo;
-                    }
-                    else if (l.Level == OutputLevel.Error)
-                    {
-                        l.Color = ClientCmdManager.Logger.ConsoleForegroundError;
-                    }
-                    else if(l.Level == OutputLevel.Debug)
-                    {
-                        l.Color = ClientCmdManager.Logger.ConsoleForegroundDebug;
-                    }
-                }
-                l.From += $" ({guid})";
-                ClientCmdManager.Logger.AddOutput(new LogItem(l.Level, l.Message, l.From) { Color = l.Color });
-                //ClientCmdManager.WaitFlag = false;
-            }
-        }
-
-        public void TellMessageToServerConsole(Guid guid, UILogItem li)
-        {
-            //ClientCmdManager.WaitFlag = true;
-            string f = "";
-            if (string.IsNullOrEmpty(li.From))
-            {
-                f = "Server Console " + "Server Host" + $" ({guid})";
-            }
-            else
-            {
-                f = "Server Console " + li.From + $" ({guid})";
-            }
-            li.From = f;
-            if (ClientCmdManager.Logger.OverrideLogItemObjectColorValue)
-            {
-                if (li.Level == OutputLevel.Warning)
-                {
-                    li.Color = ClientCmdManager.Logger.ConsoleForegroundWarning;
-                }
-                else if (li.Level == OutputLevel.Info)
-                {
-                    li.Color = ClientCmdManager.Logger.ConsoleForegroundInfo;
-                }
-                else if (li.Level == OutputLevel.Error)
-                {
-                    li.Color = ClientCmdManager.Logger.ConsoleForegroundError;
-                }
-                else if(li.Level == OutputLevel.Debug)
-                {
-                    li.Color = ClientCmdManager.Logger.ConsoleForegroundDebug;
-                }
-            }
-            ClientCmdManager.Logger.AddOutput(new LogItem(li.Level, li.Message, li.From) { Color = li.Color });
+            ClientCmdManager.Logger.Log(Message, o, "Server Host", guid.ToString());
             //ClientCmdManager.WaitFlag = false;
         }
 
@@ -256,6 +146,16 @@ namespace RemotePlusClientCmd
             Colorful.Console.ForegroundColor = text.TextColor;
             Colorful.Console.Write(text.Text);
             Colorful.Console.ResetColor();
+        }
+
+        public void TellMessageToServerConsole(Guid serverGuid, string Message, LogLevel level)
+        {
+            ClientCmdManager.Logger.Log(Message, level, "Server Console", serverGuid.ToString());
+        }
+
+        public void TellMessageToServerConsole(Guid serverGuid, string Message, LogLevel level, string from)
+        {
+            ClientCmdManager.Logger.Log(Message, level, $"Server Console {from}", serverGuid.ToString());
         }
     }
 }

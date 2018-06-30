@@ -35,6 +35,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BetterLogger">
+      <HintPath>..\..\Libs\BetterLogger.dll</HintPath>
+    </Reference>
     <Reference Include="Logging">
       <HintPath>..\..\Libs\Logging.dll</HintPath>
     </Reference>
@@ -48,6 +51,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Design" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Numerics" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
     <Reference Include="System.ServiceModel" />
@@ -60,6 +64,7 @@
   <ItemGroup>
     <Compile Include="IOC\IOCContainer.cs" />
     <Compile Include="IRemotePlusService.cs" />
+    <Compile Include="RemotePlusServiceOptions.cs" />
     <Compile Include="RequestSystem\AcquisitionMode.cs" />
     <Compile Include="Client\Client.cs" />
     <Compile Include="Client\ClientBuilder.cs" />

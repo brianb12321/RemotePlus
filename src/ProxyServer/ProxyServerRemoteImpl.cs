@@ -24,6 +24,7 @@ using RemotePlusLibrary.Core.Faults;
 using RemotePlusLibrary.RequestSystem;
 using RemotePlusLibrary.Security.Authentication;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing;
+using BetterLogger;
 
 namespace ProxyServer
 {
@@ -137,11 +138,11 @@ namespace ProxyServer
 
         public void ProxyDisconnect()
         {
-            ProxyManager.Logger.AddOutput($"Client [{ProxyClient.UniqueID}] disconnected from proxy server. Proxy server notifying connected servers that the client has disconnected.", OutputLevel.Info);
+            ProxyManager.Logger.Log($"Client [{ProxyClient.UniqueID}] disconnected from proxy server. Proxy server notifying connected servers that the client has disconnected.", LogLevel.Info);
             foreach(Client<IRemoteWithProxy> client in ConnectedServers)
             {
                 client.ClientCallback.Disconnect();
-                ProxyManager.Logger.AddOutput($"Server [{client.UniqueID}] notified of client disconnection.", OutputLevel.Info);
+                ProxyManager.Logger.Log($"Server [{client.UniqueID}] notified of client disconnection.", LogLevel.Info);
             }
         }
 
@@ -180,10 +181,10 @@ namespace ProxyServer
                 ProxyClient.Channel = OperationContext.Current.Channel;
                 ProxyClient.Channel.Faulted += (sender, e) =>
                 {
-                    ProxyManager.Logger.AddOutput($"Client [{ProxyClient.UniqueID}] is now in the faulted state.", OutputLevel.Error);
+                    ProxyManager.Logger.Log($"Client [{ProxyClient.UniqueID}] is now in the faulted state.", LogLevel.Error);
                     ProxyClient = null;
                 };
-                ProxyManager.Logger.AddOutput($"Client [{ProxyClient.UniqueID}] is now registered.", OutputLevel.Info);
+                ProxyManager.Logger.Log($"Client [{ProxyClient.UniqueID}] is now registered.", LogLevel.Info);
                 ProxyClient.ClientCallback.RegistirationComplete(ProxyManager.ProxyGuid);
             }
         }
@@ -207,7 +208,7 @@ namespace ProxyServer
             tempClient.Channel.Faulted += (sender, e) =>
             {
                 var closedClient = ConnectedServers.First(s => s.Channel == tempClient.Channel);
-                ProxyManager.Logger.AddOutput($"Server [{closedClient.UniqueID}] closed without proper shutdown.", OutputLevel.Info);
+                ProxyManager.Logger.Log($"Server [{closedClient.UniqueID}] closed without proper shutdown.", LogLevel.Info);
                 ConnectedServers.Remove(closedClient);
                 if (SelectedClient == closedClient)
                 {
@@ -215,7 +216,7 @@ namespace ProxyServer
                 }
             };
             tempClient.ClientCallback.ServerRegistered(tempClient.UniqueID);
-            ProxyManager.Logger.AddOutput($"Server [{tempClient.UniqueID}] joined the proxy cluster.", Logging.OutputLevel.Info);
+            ProxyManager.Logger.Log($"Server [{tempClient.UniqueID}] joined the proxy cluster.", LogLevel.Info);
         }
 
         public void Register(RegisterationObject Settings)
@@ -245,7 +246,7 @@ namespace ProxyServer
                 SelectedClient = ConnectedServers[serverPosition];
                 if (ProxyClient.ClientType == ClientType.CommandLine)
                 {
-                    ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyManager.ProxyGuid, new UILogItem(OutputLevel.Info, $"Server {serverPosition} is now active.", "Proxy Server"));
+                    ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyManager.ProxyGuid, $"Server {serverPosition} is now active.", LogLevel.Info, "Proxy Server");
                     ProxyClient.ClientCallback.ChangePrompt(ProxyManager.ProxyGuid, new RemotePlusLibrary.Extension.CommandSystem.PromptBuilder()
                     {
                         AdditionalData = $"Server {serverPosition}"
@@ -270,7 +271,7 @@ namespace ProxyServer
                 if (ProxyClient.ClientType == ClientType.CommandLine)
                 {
                     SelectedClient.ClientCallback.Register(new RegisterationObject());
-                    ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyManager.ProxyGuid, new UILogItem(OutputLevel.Info, $"Server {guid} is now active.", "Proxy Server"));
+                    ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyManager.ProxyGuid, $"Server {guid} is now active.", LogLevel.Info, "Proxy Server");
                     ProxyClient.ClientCallback.ChangePrompt(ProxyManager.ProxyGuid, new RemotePlusLibrary.Extension.CommandSystem.PromptBuilder()
                     {
                         AdditionalData = $"Server {guid}"
@@ -326,24 +327,9 @@ namespace ProxyServer
         {
             return ProxyClient.ClientCallback.RequestInformation(SelectedClient.UniqueID, builder);
         }
-        public void TellMessage(Guid guid, string Message, OutputLevel o)
+        public void TellMessage(Guid guid, string Message, LogLevel o)
         {
             ProxyClient.ClientCallback.TellMessage(SelectedClient.UniqueID, Message, o);
-        }
-
-        public void TellMessage(Guid guid, UILogItem li)
-        {
-            ProxyClient.ClientCallback.TellMessage(SelectedClient.UniqueID, li);
-        }
-
-        public void TellMessage(Guid guid, UILogItem[] Logs)
-        {
-            ProxyClient.ClientCallback.TellMessage(SelectedClient.UniqueID, Logs);
-        }
-
-        public void TellMessageToServerConsole(Guid guid, UILogItem li)
-        {
-            ProxyClient.ClientCallback.TellMessageToServerConsole(SelectedClient.UniqueID, li);
         }
 
         public void TellMessageToServerConsole(Guid guid, string Message)
@@ -435,16 +421,15 @@ namespace ProxyServer
                 }
                 catch (ParserException e)
                 {
-                    UILogItem parseMessage = new UILogItem(OutputLevel.Error, $"Unable to parse command: {e.Message}");
-                    parseMessage.From = "Server Host";
-                    ProxyManager.Logger.AddOutput(parseMessage.Message, parseMessage.Level, parseMessage.From);
-                    ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyManager.ProxyGuid, parseMessage);
+                    string parseErrorMessage = $"Unable to parse command: {e.Message}";
+                    ProxyManager.Logger.Log(parseErrorMessage, LogLevel.Error, "Server Host");
+                    ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyManager.ProxyGuid, parseErrorMessage, LogLevel.Error);
                     return pipe;
                 }
             }
             catch (Exception ex)
             {
-                ProxyClient.ClientCallback.TellMessageToServerConsole(SelectedClient.UniqueID, new UILogItem(OutputLevel.Error, $"There was an error in the command: {ex.Message}", "Proxy Server"));
+                ProxyClient.ClientCallback.TellMessageToServerConsole(SelectedClient.UniqueID, $"There was an error in the command: {ex.Message}", LogLevel.Error, "Proxy Server");
                 return pipe;
             }
             return pipe;
@@ -467,7 +452,7 @@ namespace ProxyServer
                 }
                 else
                 {
-                    ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyManager.ProxyGuid, new UILogItem(OutputLevel.Error, $"Variable {variablename} does not exist", "Proxy Server"));
+                    ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyManager.ProxyGuid, $"Variable {variablename} does not exist", LogLevel.Error, "Proxy Server");
                     success = false;
                 }
             }
@@ -490,7 +475,7 @@ namespace ProxyServer
                 }
                 else
                 {
-                    ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyManager.ProxyGuid, new UILogItem(OutputLevel.Error, $"Variable {variablename} does not exist", "Proxy Server"));
+                    ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyManager.ProxyGuid, $"Variable {variablename} does not exist", LogLevel.Error, "Proxy Server");
                     success = false;
                 }
             }
@@ -626,7 +611,7 @@ namespace ProxyServer
             var foundServer = ConnectedServers.First(s => s.UniqueID == serverGuid);
             if(foundServer != null)
             {
-                ProxyManager.Logger.AddOutput($"Server [{foundServer.UniqueID}] disconnected gracefully.", OutputLevel.Info);
+                ProxyManager.Logger.Log($"Server [{foundServer.UniqueID}] disconnected gracefully.", LogLevel.Info);
                 ConnectedServers.Remove(foundServer);
                 //Notify client that the active server has disconnected gracefully.
                 if(SelectedClient == foundServer)
@@ -634,6 +619,16 @@ namespace ProxyServer
                     Task.Run(() => ProxyClient.ClientCallback.RequestInformation(ProxyManager.ProxyGuid, RequestBuilder.RequestMessageBox($"Server [{SelectedClient.UniqueID}] has disconnected gracefully. Please select another server to be the active server.", "Proxy Server", MessageBoxButtons.OK, MessageBoxIcon.Information)));
                 }
             }
+        }
+
+        public void TellMessageToServerConsole(Guid serverGuid, string Message, LogLevel level)
+        {
+            ProxyClient.ClientCallback.TellMessageToServerConsole(serverGuid, Message, level);
+        }
+
+        public void TellMessageToServerConsole(Guid serverGuid, string Message, LogLevel level, string from)
+        {
+            ProxyClient.ClientCallback.TellMessageToServerConsole(serverGuid, Message, level, from);
         }
     }
 }

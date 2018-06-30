@@ -11,6 +11,7 @@ using System.Linq;
 using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
+using BetterLogger;
 
 namespace RemotePlusLibrary.Discovery
 {
@@ -23,19 +24,16 @@ namespace RemotePlusLibrary.Discovery
         [OperationContract(IsInitiating = true)]
         void Register();
         [OperationContract(IsOneWay = true)]
-        void TellMessage(Guid serverGuid, string Message, Logging.OutputLevel o);
-        [OperationContract(Name = "TellMessageToServerConsole")]
-        void TellMessageToServerConsole(Guid serverGuid, UILogItem li);
-        [OperationContract(Name = "TellMessageToServerConsoleUsingString")]
+        void TellMessage(Guid serverGuid, string Message, LogLevel o);
         void TellMessageToServerConsole(Guid serverGuid, string Message);
-        [OperationContract(Name = "TellMessageToServerConsoleConsoleText")]
+        [OperationContract(Name = "TellMessageToServerConsoleWithLogLevel")]
+        void TellMessageToServerConsole(Guid serverGuid, string Message, LogLevel level);
+        [OperationContract(Name = "TellMessageToServerConsoleWithConsoleText")]
         void TellMessageToServerConsole(Guid serverGuid, ConsoleText text);
+        [OperationContract(Name = "TellMessageToServerConsoleWithFrom")]
+        void TellMessageToServerConsole(Guid serverGuid, string Message, LogLevel level, string from);
         [OperationContract]
         ClientBuilder RegisterClient();
-        [OperationContract(Name = "TellMessageWithLogItem", IsOneWay = true)]
-        void TellMessage(Guid serverGuid, UILogItem li);
-        [OperationContract(Name = "TellMessageWithLogs", IsOneWay = true)]
-        void TellMessage(Guid serverGuid, UILogItem[] Logs);
         [OperationContract(IsOneWay = true)]
         void Disconnect(Guid serverGuid, string Reason);
         [OperationContract]

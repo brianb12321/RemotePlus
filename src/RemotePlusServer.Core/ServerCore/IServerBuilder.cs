@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace RemotePlusServer.Core.ServerCore
 {
     /// <summary>
-    /// Provides a way to plug in services and perform setup during server initialization.
+    /// Provides a way to plug in initialization steps when the server starts.
     /// </summary>
     public interface IServerBuilder
     {

@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using IronPython;
 using RemotePlusLibrary.Extension.ExtensionLoader.Initialization;
 using RemotePlusServer.Core;
+using BetterLogger;
 
 namespace WindowsTools
 {
@@ -17,12 +18,12 @@ namespace WindowsTools
     {
         public void Init(ILibraryBuilder builder, IInitEnvironment env)
         {
-            ServerManager.Logger.AddOutput($"Init position {env.InitPosition}", Logging.OutputLevel.Debug, "WindowsTools");
-            ServerManager.Logger.AddOutput("Adding OS commands", Logging.OutputLevel.Info, "WindowsTools");
+            ServerManager.Logger.Log($"Init position {env.InitPosition}", LogLevel.Debug, "WindowsTools");
+            ServerManager.Logger.Log("Adding OS commands", LogLevel.Info, "WindowsTools");
             ServerManager.ServerRemoteService.Commands.Add("sendKey", OSCommands.sendKey);
-            ServerManager.Logger.AddOutput("Adding dskClean command", Logging.OutputLevel.Info, "WindowsTools");
+            ServerManager.Logger.Log("Adding dskClean command", LogLevel.Info, "WindowsTools");
             ServerManager.ServerRemoteService.Commands.Add("dskClean", dskClean.dskCleanCommand);
-            ServerManager.Logger.AddOutput("Adding filem command", Logging.OutputLevel.Info, "WindowsTools");
+            ServerManager.Logger.Log("Adding filem command", LogLevel.Info, "WindowsTools");
             ServerManager.ServerRemoteService.Commands.Add("fileM", Filem.filem_command);
             ServerManager.ServerRemoteService.Commands.Add("openDiskDrive", OSCommands.openDiskDrive);
             ServerManager.ServerRemoteService.Commands.Add("drives", OSCommands.drives);

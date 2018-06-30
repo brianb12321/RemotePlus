@@ -1,12 +1,6 @@
 ﻿using RemotePlusLibrary.Extension.CommandSystem;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Net;
-using RemotePlusServer;
-using Logging;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
 using RemotePlusServer.Core;
 
@@ -25,7 +19,7 @@ namespace CommonWebCommands
             }
             catch (Exception ex)
             {
-                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(OutputLevel.Error, $"Unable to download file: {ex.Message}", "WebCommands"));
+                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole($"Unable to download file: {ex.Message}", BetterLogger.LogLevel.Error, "WebCommands");
                 return new CommandResponse((int)CommandStatus.Fail);
             }
         }

@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace RemotePlusServer.Core.ServerCore
 {
-    public interface IServerCoreStartup
+    public interface IServiceCollection
     {
-        void InitializeServer(IServerBuilder builder);
-        void AddServices(IServiceCollection services);
+        IServiceCollection AddSingleton<TService>(TService service);
     }
 }

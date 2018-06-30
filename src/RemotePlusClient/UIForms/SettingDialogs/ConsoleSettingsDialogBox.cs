@@ -1,4 +1,5 @@
-﻿using RemotePlusClient.Settings;
+﻿using BetterLogger;
+using RemotePlusClient.Settings;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -83,7 +84,7 @@ namespace RemotePlusClient.UIForms.SettingDialogs
         {
             settings.Save();
             MessageBox.Show("Saved", "RemotePlusClient");
-            MainF.ConsoleObj.Logger.AddOutput("Saved console config file.", Logging.OutputLevel.Info);
+            MainF.ConsoleObj.Logger.Log("Saved console config file.", LogLevel.Info);
         }
 
         private void btn_selectFont_Click(object sender, EventArgs e)

@@ -14,6 +14,7 @@ using System.Threading;
 using System.Windows.Forms;
 using RemotePlusLibrary.Extension.ExtensionLoader.Initialization;
 using RemotePlusServer.Core;
+using BetterLogger;
 
 namespace ReleaseExtensions
 {
@@ -21,8 +22,8 @@ namespace ReleaseExtensions
     {
         void ILibraryStartup.Init(ILibraryBuilder builder, IInitEnvironment env)
         {
-            ServerManager.Logger.AddOutput($"Init position {env.InitPosition}", Logging.OutputLevel.Debug, "ReleaseExtensions");
-            ServerManager.Logger.AddOutput(new Logging.LogItem(Logging.OutputLevel.Info, "Welcome to \"ReleaseExtension.\" This library contains some useful tools that demonstrates the powers of \"RemotePlus\"", "ReleaseExtensions") { Color = Console.ForegroundColor });
+            ServerManager.Logger.Log($"Init position {env.InitPosition}", LogLevel.Debug, "ReleaseExtensions");
+            ServerManager.Logger.Log("Welcome to \"ReleaseExtension.\" This library contains some useful tools that demonstrates the powers of \"RemotePlus\"", LogLevel.Info, "ReleaseExtensions");
             ServerManager.ServerRemoteService.Commands.Add("releaseExtensionAbout", releaseExtensionAbout);
             //Test Code
             ServerManager.ServerRemoteService.Commands.Add("textBoxTest", cmdTextBox);
@@ -36,7 +37,7 @@ namespace ReleaseExtensions
         [CommandHelp("Describes about the ReleaseExtensionsLibrary.")]
         CommandResponse releaseExtensionAbout(CommandRequest args, CommandPipeline pipe)
         {
-            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(Logging.OutputLevel.Info, "ReleaseExtension is a test of the extension system."));
+            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("ReleaseExtension is a test of the extension system.", LogLevel.Info);
             return new CommandResponse((int)CommandStatus.Success);
         }
         [CommandHelp("Tests the client cmd text box.")]
@@ -46,12 +47,12 @@ namespace ReleaseExtensions
             if(ServerManager.ServerRemoteService.RemoteInterface.Client.ClientType == RemotePlusLibrary.Client.ClientType.CommandLine)
             {
                 var result = ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(new RemotePlusLibrary.RequestSystem.RequestBuilder("rcmd_textBox", "What's your favorite beach?", null));
-                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(Logging.OutputLevel.Info, $"Your favorite beach is {result.Data}", "ReleaseExtensions"));
+                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole($"Your favorite beach is {result.Data}", LogLevel.Info, "ReleaseExtensions");
                 return new CommandResponse((int)CommandStatus.Success);
             }
             else
             {
-                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(Logging.OutputLevel.Error, "You must be on a command line based client.", "ReleaseExtensions"));
+                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("You must be on a command line based client.", LogLevel.Error, "ReleaseExtensions");
                 return new CommandResponse((int)CommandStatus.Fail);
             }
         }

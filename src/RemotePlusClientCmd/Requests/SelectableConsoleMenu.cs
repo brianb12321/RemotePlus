@@ -8,6 +8,7 @@ using ConsoLovers.ConsoleToolkit.Menu;
 using System.Drawing;
 using ConsoLovers.ConsoleToolkit.Console;
 using RemotePlusLibrary.RequestSystem;
+using BetterLogger;
 
 namespace RemotePlusClientCmd.Requests
 {
@@ -105,7 +106,7 @@ namespace RemotePlusClientCmd.Requests
             }
             catch (Exception ex)
             {
-                ClientCmdManager.Logger.AddOutput($"Unable to open menu: {ex.ToString()}", Logging.OutputLevel.Error);
+                ClientCmdManager.Logger.Log($"Unable to open menu: {ex.ToString()}", LogLevel.Error);
                 return RawDataRequest.Cancel();
             }
         }

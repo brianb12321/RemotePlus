@@ -1,4 +1,4 @@
-﻿using Logging;
+﻿using BetterLogger;
 using RemotePlusLibrary;
 using RemotePlusLibrary.Client;
 using RemotePlusLibrary.Contracts;
@@ -8,12 +8,7 @@ using RemotePlusLibrary.RequestSystem;
 using RemotePlusLibrary.Security.AccountSystem;
 using RemotePlusLibrary.Security.Authentication;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.ServiceModel;
 using System.Speech.Synthesis;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace RemotePlusServer
@@ -210,7 +205,7 @@ namespace RemotePlusServer
             }
         }
 
-        public void TellMessage(string Message, OutputLevel o)
+        public void TellMessage(string Message, LogLevel o)
         {
             if (useProxy)
             {
@@ -221,43 +216,6 @@ namespace RemotePlusServer
                 c.TellMessage(Server, Message, o);
             }
         }
-
-        public void TellMessage(UILogItem li)
-        {
-            if (useProxy)
-            {
-                proxyChannel.TellMessage(Server, li);
-            }
-            else
-            {
-                c.TellMessage(Server, li);
-            }
-        }
-
-        public void TellMessage(UILogItem[] Logs)
-        {
-            if (useProxy)
-            {
-                proxyChannel.TellMessage(Server, Logs);
-            }
-            else
-            {
-                c.TellMessage(Server, Logs);
-            }
-        }
-
-        public void TellMessageToServerConsole(UILogItem li)
-        {
-            if (useProxy)
-            {
-                proxyChannel.TellMessageToServerConsole(Server, li);
-            }
-            else
-            {
-                c.TellMessageToServerConsole(Server, li);
-            }
-        }
-
         public void TellMessageToServerConsole(string Message)
         {
             if (useProxy)
@@ -269,7 +227,28 @@ namespace RemotePlusServer
                 c.TellMessageToServerConsole(Server, Message);
             }
         }
-
+        public void TellMessageToServerConsole(string message, LogLevel level)
+        {
+            if (useProxy)
+            {
+                proxyChannel.TellMessageToServerConsole(Server, message, level);
+            }
+            else
+            {
+                c.TellMessageToServerConsole(Server, message, level);
+            }
+        }
+        public void TellMessageToServerConsole(string message, LogLevel level, string from)
+        {
+            if (useProxy)
+            {
+                proxyChannel.TellMessageToServerConsole(Server, message, level, from);
+            }
+            else
+            {
+                c.TellMessageToServerConsole(Server, message, level, from);
+            }
+        }
         public void TellMessageToServerConsole(ConsoleText text)
         {
             if (useProxy)

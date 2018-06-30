@@ -254,7 +254,7 @@ namespace RemotePlusClient.CommonUI
             int number = subDirs.Length;
             foreach (RemoteDirectory subDir in subDirs)
             {
-                //MainF.ConsoleObj.Logger.AddOutput($"Adding {subDir.FullName}.", Logging.OutputLevel.Info);
+                //MainF.ConsoleObj.Logger.Log($"Adding {subDir.FullName}.", Logging.LogLevel.Info);
                 callback();
                 aNode = new TreeNode(subDir.Name, 0, 0);
                 aNode.Tag = subDir;

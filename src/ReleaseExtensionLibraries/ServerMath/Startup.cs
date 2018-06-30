@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BetterLogger;
 using RemotePlusLibrary.Extension;
 using RemotePlusLibrary.Extension.ExtensionLoader.Initialization;
 using RemotePlusServer;
@@ -14,7 +15,7 @@ namespace ServerMath
     {
         public void Init(ILibraryBuilder builder, IInitEnvironment env)
         {
-            ServerManager.Logger.AddOutput("Registering math commands.", Logging.OutputLevel.Info, builder.FriendlyName);
+            ServerManager.Logger.Log("Registering math commands.", LogLevel.Info, builder.FriendlyName);
             ServerManager.ServerRemoteService.Commands.Add("abs", MathCommands.abs);
             ServerManager.ServerRemoteService.Commands.Add("pow", MathCommands.pow);
         }

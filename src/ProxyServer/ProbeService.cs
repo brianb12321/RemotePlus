@@ -1,4 +1,5 @@
-﻿using Logging;
+﻿using BetterLogger;
+using Logging;
 using ProxyServer;
 using RemotePlusLibrary;
 using RemotePlusLibrary.Core;
@@ -85,15 +86,15 @@ namespace ProxyServer
             Host.AddServiceEndpoint(typeof(IProxyServerRemote), _ConnectionFactory.BuildBinding(), proxyAddress);
             ClientEndpoint = Host.AddServiceEndpoint(typeof(IProxyRemote), _ConnectionFactory.BuildBinding(), proxyClientAddress);
         }
-        public static IRemotePlusService<ProxyServerRemoteImpl> CreateProxyService(Type serviceType, ProxyServerRemoteImpl singleTon, int port, string proxyEndpoint, string proxyClientEndpoint, Action<string, OutputLevel> callback, Action<ProxyServerRemoteImpl> setupCallback)
+        public static IRemotePlusService<ProxyServerRemoteImpl> CreateProxyService(Type serviceType, ProxyServerRemoteImpl singleTon, int port, string proxyEndpoint, string proxyClientEndpoint, Action<string, LogLevel> callback, Action<ProxyServerRemoteImpl> setupCallback)
         {
             ProbeService temp;
-            callback?.Invoke("Building endpoint URL.", OutputLevel.Debug);
+            callback?.Invoke("Building endpoint URL.", LogLevel.Debug);
             string url = $"net.tcp://{Dns.GetHostName()}:{port}/{proxyEndpoint}";
             string curl = $"net.tcp://{Dns.GetHostName()}:{port}/{proxyClientEndpoint}";
-            callback?.Invoke($"URL built {url}", OutputLevel.Debug);
+            callback?.Invoke($"URL built {url}", LogLevel.Debug);
             StringBuilder dataBuilder = new StringBuilder();
-            callback?.Invoke(dataBuilder.ToString(), OutputLevel.Debug);
+            callback?.Invoke(dataBuilder.ToString(), LogLevel.Debug);
             temp = new ProbeService(serviceType, singleTon, url, curl, setupCallback);
             return temp;
         }
