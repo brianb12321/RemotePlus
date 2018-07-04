@@ -373,6 +373,18 @@ namespace ProxyServer
                     ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyManager.ProxyGuid, $"Could not execute script file: {ex.Message}", LogLevel.Error, ScriptBuilder.SCRIPT_LOG_CONSTANT);
                 }
             }
+            //Sends a script command to the selected server.
+            else if(Command.StartsWith("=>::"))
+            {
+                try
+                {
+                    return SelectedClient.ClientCallback.RunServerCommand(Command.Remove(0, 3), CommandExecutionMode.Client);
+                }
+                catch (Exception ex)
+                {
+                    ProxyClient.ClientCallback.TellMessageToServerConsole(SelectedClient.UniqueID, $"Could not execute script file: {ex.Message}", LogLevel.Error, ScriptBuilder.SCRIPT_LOG_CONSTANT);
+                }
+            }
             else
             {
                 try
