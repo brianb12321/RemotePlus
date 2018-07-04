@@ -25,6 +25,7 @@ using RemotePlusLibrary.RequestSystem;
 using RemotePlusLibrary.Security.Authentication;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing;
 using BetterLogger;
+using RemotePlusLibrary.IOC;
 
 namespace ProxyServer
 {
@@ -138,11 +139,11 @@ namespace ProxyServer
 
         public void ProxyDisconnect()
         {
-            ProxyManager.Logger.Log($"Client [{ProxyClient.UniqueID}] disconnected from proxy server. Proxy server notifying connected servers that the client has disconnected.", LogLevel.Info);
+            GlobalServices.Logger.Log($"Client [{ProxyClient.UniqueID}] disconnected from proxy server. Proxy server notifying connected servers that the client has disconnected.", LogLevel.Info);
             foreach(Client<IRemoteWithProxy> client in ConnectedServers)
             {
                 client.ClientCallback.Disconnect();
-                ProxyManager.Logger.Log($"Server [{client.UniqueID}] notified of client disconnection.", LogLevel.Info);
+                GlobalServices.Logger.Log($"Server [{client.UniqueID}] notified of client disconnection.", LogLevel.Info);
             }
         }
 
@@ -181,10 +182,10 @@ namespace ProxyServer
                 ProxyClient.Channel = OperationContext.Current.Channel;
                 ProxyClient.Channel.Faulted += (sender, e) =>
                 {
-                    ProxyManager.Logger.Log($"Client [{ProxyClient.UniqueID}] is now in the faulted state.", LogLevel.Error);
+                    GlobalServices.Logger.Log($"Client [{ProxyClient.UniqueID}] is now in the faulted state.", LogLevel.Error);
                     ProxyClient = null;
                 };
-                ProxyManager.Logger.Log($"Client [{ProxyClient.UniqueID}] is now registered.", LogLevel.Info);
+                GlobalServices.Logger.Log($"Client [{ProxyClient.UniqueID}] is now registered.", LogLevel.Info);
                 ProxyClient.ClientCallback.RegistirationComplete(ProxyManager.ProxyGuid);
             }
         }
@@ -208,7 +209,7 @@ namespace ProxyServer
             tempClient.Channel.Faulted += (sender, e) =>
             {
                 var closedClient = ConnectedServers.First(s => s.Channel == tempClient.Channel);
-                ProxyManager.Logger.Log($"Server [{closedClient.UniqueID}] closed without proper shutdown.", LogLevel.Info);
+                GlobalServices.Logger.Log($"Server [{closedClient.UniqueID}] closed without proper shutdown.", LogLevel.Info);
                 ConnectedServers.Remove(closedClient);
                 if (SelectedClient == closedClient)
                 {
@@ -216,7 +217,7 @@ namespace ProxyServer
                 }
             };
             tempClient.ClientCallback.ServerRegistered(tempClient.UniqueID);
-            ProxyManager.Logger.Log($"Server [{tempClient.UniqueID}] joined the proxy cluster.", LogLevel.Info);
+            GlobalServices.Logger.Log($"Server [{tempClient.UniqueID}] joined the proxy cluster.", LogLevel.Info);
         }
 
         public void Register(RegisterationObject Settings)
@@ -361,76 +362,90 @@ namespace ProxyServer
         {
             CommandPipeline pipe = new CommandPipeline();
             int pos = 0;
-            try
+            if (Command.StartsWith("::"))
             {
-                IParser parser = new CommandParser(Command);
                 try
                 {
-                    var tokens = parser.Parse(true);
-                    var newTokens = RunSubRoutines(parser, pipe, pos);
-                    foreach (CommandToken token in newTokens)
-                    {
-                        foreach (List<CommandToken> allTokens in parser.ParsedTokens)
-                        {
-                            var index = allTokens.IndexOf(token);
-                            if (index != -1)
-                            {
-                                parser.ParsedTokens[parser.ParsedTokens.IndexOf(allTokens)][index] = token;
-                            }
-                        }
-                    }
-                    var newVariableTokens = RunVariableReplacement(parser, out bool success);
-                    if (success != true)
-                    {
-                        return pipe;
-                    }
-                    foreach (CommandToken token in newVariableTokens)
-                    {
-                        foreach (List<CommandToken> allTokens in parser.ParsedTokens)
-                        {
-                            var index = allTokens.IndexOf(token);
-                            if (index != -1)
-                            {
-                                parser.ParsedTokens[parser.ParsedTokens.IndexOf(allTokens)][index] = token;
-                            }
-                        }
-                    }
-                    var newQouteTokens = ParseOutQoutes(parser);
-                    foreach (CommandToken token in newQouteTokens)
-                    {
-                        foreach (List<CommandToken> allTokens in parser.ParsedTokens)
-                        {
-                            var index = allTokens.IndexOf(token);
-                            if (index != -1)
-                            {
-                                parser.ParsedTokens[parser.ParsedTokens.IndexOf(allTokens)][index] = token;
-                            }
-                        }
-                    }
-                    //Run the commands
-                    foreach (List<CommandToken> commands in parser.ParsedTokens)
-                    {
-                        var request = new CommandRequest(commands.ToArray());
-                        var routine = new CommandRoutine(request, ProxyManager.Execute(request, mode, pipe));
-                        if(routine.Output.ResponseCode == 3131)
-                        {
-                            RunServerCommand(Command, CommandExecutionMode.Client);
-                        }
-                        pipe.Add(pos++, routine);
-                    }
+                    ProxyManager.ScriptBuilder.ExecuteStringUsingSameScriptScope(Command.TrimStart(':'));
                 }
-                catch (ParserException e)
+                catch (Exception ex)
                 {
-                    string parseErrorMessage = $"Unable to parse command: {e.Message}";
-                    ProxyManager.Logger.Log(parseErrorMessage, LogLevel.Error, "Server Host");
-                    ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyManager.ProxyGuid, parseErrorMessage, LogLevel.Error);
-                    return pipe;
+                    ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyManager.ProxyGuid, $"Could not execute script file: {ex.Message}", LogLevel.Error, ScriptBuilder.SCRIPT_LOG_CONSTANT);
                 }
             }
-            catch (Exception ex)
+            else
             {
-                ProxyClient.ClientCallback.TellMessageToServerConsole(SelectedClient.UniqueID, $"There was an error in the command: {ex.Message}", LogLevel.Error, "Proxy Server");
-                return pipe;
+                try
+                {
+                    IParser parser = new CommandParser(Command);
+                    try
+                    {
+                        var tokens = parser.Parse(true);
+                        var newTokens = RunSubRoutines(parser, pipe, pos);
+                        foreach (CommandToken token in newTokens)
+                        {
+                            foreach (List<CommandToken> allTokens in parser.ParsedTokens)
+                            {
+                                var index = allTokens.IndexOf(token);
+                                if (index != -1)
+                                {
+                                    parser.ParsedTokens[parser.ParsedTokens.IndexOf(allTokens)][index] = token;
+                                }
+                            }
+                        }
+                        var newVariableTokens = RunVariableReplacement(parser, out bool success);
+                        if (success != true)
+                        {
+                            return pipe;
+                        }
+                        foreach (CommandToken token in newVariableTokens)
+                        {
+                            foreach (List<CommandToken> allTokens in parser.ParsedTokens)
+                            {
+                                var index = allTokens.IndexOf(token);
+                                if (index != -1)
+                                {
+                                    parser.ParsedTokens[parser.ParsedTokens.IndexOf(allTokens)][index] = token;
+                                }
+                            }
+                        }
+                        var newQouteTokens = ParseOutQoutes(parser);
+                        foreach (CommandToken token in newQouteTokens)
+                        {
+                            foreach (List<CommandToken> allTokens in parser.ParsedTokens)
+                            {
+                                var index = allTokens.IndexOf(token);
+                                if (index != -1)
+                                {
+                                    parser.ParsedTokens[parser.ParsedTokens.IndexOf(allTokens)][index] = token;
+                                }
+                            }
+                        }
+                        //Run the commands
+                        foreach (List<CommandToken> commands in parser.ParsedTokens)
+                        {
+                            var request = new CommandRequest(commands.ToArray());
+                            var routine = new CommandRoutine(request, ProxyManager.Execute(request, mode, pipe));
+                            if (routine.Output.ResponseCode == 3131)
+                            {
+                                RunServerCommand(Command, CommandExecutionMode.Client);
+                            }
+                            pipe.Add(pos++, routine);
+                        }
+                    }
+                    catch (ParserException e)
+                    {
+                        string parseErrorMessage = $"Unable to parse command: {e.Message}";
+                        GlobalServices.Logger.Log(parseErrorMessage, LogLevel.Error, "Server Host");
+                        ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyManager.ProxyGuid, parseErrorMessage, LogLevel.Error);
+                        return pipe;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    ProxyClient.ClientCallback.TellMessageToServerConsole(SelectedClient.UniqueID, $"There was an error in the command: {ex.Message}", LogLevel.Error, "Proxy Server");
+                    return pipe;
+                }
             }
             return pipe;
         }
@@ -611,7 +626,7 @@ namespace ProxyServer
             var foundServer = ConnectedServers.First(s => s.UniqueID == serverGuid);
             if(foundServer != null)
             {
-                ProxyManager.Logger.Log($"Server [{foundServer.UniqueID}] disconnected gracefully.", LogLevel.Info);
+                GlobalServices.Logger.Log($"Server [{foundServer.UniqueID}] disconnected gracefully.", LogLevel.Info);
                 ConnectedServers.Remove(foundServer);
                 //Notify client that the active server has disconnected gracefully.
                 if(SelectedClient == foundServer)

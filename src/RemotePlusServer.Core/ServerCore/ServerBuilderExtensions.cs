@@ -4,6 +4,7 @@ using RemotePlusLibrary.Configuration.ServerSettings;
 using RemotePlusLibrary.Core;
 using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
+using RemotePlusLibrary.IOC;
 using RemotePlusLibrary.RequestSystem;
 using RemotePlusLibrary.Scripting;
 using RemotePlusLibrary.Security.AccountSystem;
@@ -59,9 +60,9 @@ namespace RemotePlusServer.Core.ServerCore
         {
             return builder.AddTask(() =>
             {
-                ServerManager.Logger.Log("Adding default known types.", LogLevel.Info);
+                GlobalServices.Logger.Log("Adding default known types.", LogLevel.Info);
                 DefaultKnownTypeManager.LoadDefaultTypes();
-                ServerManager.Logger.Log("Adding UserAccount to known type list.", LogLevel.Debug);
+                GlobalServices.Logger.Log("Adding UserAccount to known type list.", LogLevel.Debug);
                 DefaultKnownTypeManager.AddType(typeof(UserAccount));
             });
         }
@@ -74,7 +75,7 @@ namespace RemotePlusServer.Core.ServerCore
         {
             return builder.AddTask(() =>
             {
-                ServerManager.Logger.Log("Initializing functions and variables.", LogLevel.Info, "Scripting Engine");
+                GlobalServices.Logger.Log("Initializing functions and variables.", LogLevel.Info, "Scripting Engine");
                 InitializeGlobals();
             });
         }
@@ -105,13 +106,13 @@ namespace RemotePlusServer.Core.ServerCore
         {
             return builder.AddTask(() =>
             {
-                ServerManager.Logger.Log("Starting scripting engine.", LogLevel.Info);
+                GlobalServices.Logger.Log("Starting scripting engine.", LogLevel.Info);
                 ServerManager.ScriptBuilder.InitializeEngine();
-                ServerManager.Logger.Log($"Engine started. IronPython version {ServerManager.ScriptBuilder.ScriptingEngine.LanguageVersion.ToString()}", LogLevel.Info, "Scripting Engine");
-                ServerManager.Logger.Log("Redirecting STDOUT to duplex channel.", LogLevel.Debug, "Scripting Engine");
+                GlobalServices.Logger.Log($"Engine started. IronPython version {ServerManager.ScriptBuilder.ScriptingEngine.LanguageVersion.ToString()}", LogLevel.Info, "Scripting Engine");
+                GlobalServices.Logger.Log("Redirecting STDOUT to duplex channel.", LogLevel.Debug, "Scripting Engine");
                 ServerManager.ScriptBuilder.ScriptingEngine.Runtime.IO.SetOutput(new MemoryStream(), new Internal._ClientTextWriter());
                 //ServerManager.ScriptBuilder.ScriptingEngine.Runtime.IO.SetInput(new MemoryStream(), new Internal._ClientTextReader(), Encoding.ASCII);
-                ServerManager.Logger.Log("Finished starting scripting engine.", LogLevel.Info);
+                GlobalServices.Logger.Log("Finished starting scripting engine.", LogLevel.Info);
             });
         }
         /// <summary>
@@ -125,15 +126,15 @@ namespace RemotePlusServer.Core.ServerCore
             {
                 if (File.Exists("Variables.xml"))
                 {
-                    ServerManager.Logger.Log("Loading variables.", LogLevel.Info);
+                    GlobalServices.Logger.Log("Loading variables.", LogLevel.Info);
                     ServerManager.ServerRemoteService.Variables = VariableManager.Load();
                 }
                 else
                 {
-                    ServerManager.Logger.Log("There is no variable file. Beginning variable initialization.", LogLevel.Warning);
+                    GlobalServices.Logger.Log("There is no variable file. Beginning variable initialization.", LogLevel.Warning);
                     ServerManager.ServerRemoteService.Variables = VariableManager.New();
                     ServerManager.ServerRemoteService.Variables.Add("Name", "RemotePlusServer");
-                    ServerManager.Logger.Log("Saving file.", LogLevel.Info);
+                    GlobalServices.Logger.Log("Saving file.", LogLevel.Info);
                     ServerManager.ServerRemoteService.Variables.Save();
                 }
             });
@@ -162,18 +163,18 @@ namespace RemotePlusServer.Core.ServerCore
             return builder.AddTask(() =>
             {
                 List<string> excludedFiles = new List<string>();
-                ServerManager.Logger.Log("Loading extensions...", LogLevel.Info);
+                GlobalServices.Logger.Log("Loading extensions...", LogLevel.Info);
                 if (Directory.Exists("extensions"))
                 {
                     if (File.Exists("extensions\\excludes.txt"))
                     {
-                        ServerManager.Logger.Log("Found an excludes.txt file. Reading file...", LogLevel.Info);
+                        GlobalServices.Logger.Log("Found an excludes.txt file. Reading file...", LogLevel.Info);
                         foreach (string excludedFile in File.ReadLines("extensions\\excludes.txt"))
                         {
-                            ServerManager.Logger.Log($"{excludedFile} is excluded from the extension search.", LogLevel.Info);
+                            GlobalServices.Logger.Log($"{excludedFile} is excluded from the extension search.", LogLevel.Info);
                             excludedFiles.Add("extensions\\" + excludedFile);
                         }
-                        ServerManager.Logger.Log("Finished reading extension exclusion file.", LogLevel.Info);
+                        GlobalServices.Logger.Log("Finished reading extension exclusion file.", LogLevel.Info);
                     }
                     ServerInitEnvironment env = new ServerInitEnvironment(false);
                     foreach (string files in Directory.GetFiles("extensions"))
@@ -182,23 +183,23 @@ namespace RemotePlusServer.Core.ServerCore
                         {
                             try
                             {
-                                ServerManager.Logger.Log($"Found extension file ({Path.GetFileName(files)})", LogLevel.Info);
-                                env.PreviousError = ServerManager.Logger.ErrorCount > 0 ? true : false;
-                                var lib = ServerExtensionLibrary.LoadServerLibrary(files, (m, o) => ServerManager.Logger.Log(m, o), env);
+                                GlobalServices.Logger.Log($"Found extension file ({Path.GetFileName(files)})", LogLevel.Info);
+                                env.PreviousError = GlobalServices.Logger.ErrorCount > 0 ? true : false;
+                                var lib = ServerExtensionLibrary.LoadServerLibrary(files, (m, o) => GlobalServices.Logger.Log(m, o), env);
                                 ServerManager.DefaultCollection.Libraries.Add(lib.Name, lib);
                             }
                             catch (Exception ex)
                             {
-                                ServerManager.Logger.Log($"Could not load \"{files}\" because of a load error or initialization error. Error: {ex.Message}", LogLevel.Warning);
+                                GlobalServices.Logger.Log($"Could not load \"{files}\" because of a load error or initialization error. Error: {ex.Message}", LogLevel.Warning);
                             }
                             env.InitPosition++;
                         }
                     }
-                    ServerManager.Logger.Log($"{ServerManager.DefaultCollection.Libraries.Count} extension libraries loaded.", LogLevel.Info);
+                    GlobalServices.Logger.Log($"{ServerManager.DefaultCollection.Libraries.Count} extension libraries loaded.", LogLevel.Info);
                 }
                 else
                 {
-                    ServerManager.Logger.Log("The extensions folder does not exist.", LogLevel.Info);
+                    GlobalServices.Logger.Log("The extensions folder does not exist.", LogLevel.Info);
                 }
             });
         }
@@ -215,7 +216,7 @@ namespace RemotePlusServer.Core.ServerCore
                 {
                     buildAdminPolicyObject();
                     Role.InitializeRolePool();
-                    ServerManager.Logger.Log("The server roles file does not exist. Creating server roles settings file.", LogLevel.Warning);
+                    GlobalServices.Logger.Log("The server roles file does not exist. Creating server roles settings file.", LogLevel.Warning);
                     var r = Role.CreateRole("Administrators");
                     Role.GlobalPool.Roles.Add(r);
                     DefaultKnownTypeManager.AddType(typeof(OperationPolicies));
@@ -224,7 +225,7 @@ namespace RemotePlusServer.Core.ServerCore
                 }
                 else
                 {
-                    ServerManager.Logger.Log("Loading server roles file.", LogLevel.Info);
+                    GlobalServices.Logger.Log("Loading server roles file.", LogLevel.Info);
                     try
                     {
                         DefaultKnownTypeManager.AddType(typeof(OperationPolicies));
@@ -234,15 +235,15 @@ namespace RemotePlusServer.Core.ServerCore
                     catch (Exception ex)
                     {
 #if DEBUG
-                        ServerManager.Logger.Log("Unable to load server settings. " + ex.ToString(), LogLevel.Error);
+                        GlobalServices.Logger.Log("Unable to load server settings. " + ex.ToString(), LogLevel.Error);
 #else
-                    ServerManager.Logger.Log("Unable to load server settings. " + ex.Message, LogLevel.Error);
+                    GlobalServices.Logger.Log("Unable to load server settings. " + ex.Message, LogLevel.Error);
 #endif
                     }
                 }
                 if (!Directory.Exists("Users"))
                 {
-                    ServerManager.Logger.Log("The Users folder does not exist. Creating folder.", LogLevel.Warning);
+                    GlobalServices.Logger.Log("The Users folder does not exist. Creating folder.", LogLevel.Warning);
                     Directory.CreateDirectory("Users");
                     AccountManager.CreateAccount(new UserCredentials("admin", "password"), "Administrators");
                 }
@@ -253,12 +254,12 @@ namespace RemotePlusServer.Core.ServerCore
                 ServerManager.DefaultSettings = new ServerSettings();
                 if (!File.Exists("Configurations\\Server\\GlobalServerSettings.config"))
                 {
-                    ServerManager.Logger.Log("The server settings file does not exist. Creating server settings file.", LogLevel.Warning);
+                    GlobalServices.Logger.Log("The server settings file does not exist. Creating server settings file.", LogLevel.Warning);
                     ServerManager.DefaultSettings.Save();
                 }
                 else
                 {
-                    ServerManager.Logger.Log("Loading server settings file.", LogLevel.Info);
+                    GlobalServices.Logger.Log("Loading server settings file.", LogLevel.Info);
                     try
                     {
                         ServerManager.DefaultSettings.Load();
@@ -266,9 +267,9 @@ namespace RemotePlusServer.Core.ServerCore
                     catch (Exception ex)
                     {
 #if DEBUG
-                        ServerManager.Logger.Log("Unable to load server settings. " + ex.ToString(), LogLevel.Error);
+                        GlobalServices.Logger.Log("Unable to load server settings. " + ex.ToString(), LogLevel.Error);
 #else
-                    ServerManager.Logger.Log("Unable to load server settings. " + ex.Message, LogLevel.Error);
+                    GlobalServices.Logger.Log("Unable to load server settings. " + ex.Message, LogLevel.Error);
 #endif
                     }
                 }
@@ -280,7 +281,7 @@ namespace RemotePlusServer.Core.ServerCore
             {
                 if (ServerManager.DefaultSettings.EnableMetadataExchange)
                 {
-                    ServerManager.Logger.Log("NOTE: Metadata exchange is enabled on the server.", LogLevel.Info, "Server Host");
+                    GlobalServices.Logger.Log("NOTE: Metadata exchange is enabled on the server.", LogLevel.Info, "Server Host");
                     System.ServiceModel.Channels.Binding mexBinding = MetadataExchangeBindings.CreateMexHttpBinding();
                     ServiceMetadataBehavior smb = new ServiceMetadataBehavior();
                     smb.HttpGetEnabled = true;

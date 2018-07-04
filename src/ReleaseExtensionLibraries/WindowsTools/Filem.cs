@@ -16,6 +16,7 @@ using System.Drawing;
 using RemotePlusLibrary.RequestSystem;
 using RemotePlusServer.Core;
 using BetterLogger;
+using RemotePlusLibrary.IOC;
 
 namespace WindowsTools
 {
@@ -28,7 +29,7 @@ namespace WindowsTools
         static void SendMessage(string message, LogLevel level)
         {
             ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(message, level, "FileM");
-            ServerManager.Logger.Log(message, level, "FileM");
+            GlobalServices.Logger.Log(message, level, "FileM");
         }
         [CommandHelp("Allows you to manage files on the remote file system.")]
         [CommandBehavior(SupportClients = RemotePlusLibrary.Extension.ClientSupportedTypes.CommandLine,

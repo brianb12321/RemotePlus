@@ -14,6 +14,8 @@ using RemotePlusLibrary.Configuration.ServerSettings;
 using RemotePlusLibrary.Contracts;
 using RemotePlusServer.Core;
 using RemotePlusServer.Core.ServerCore;
+using Ninject;
+using RemotePlusLibrary.IOC;
 
 namespace RemotePlusServer
 {
@@ -28,43 +30,38 @@ namespace RemotePlusServer
         [STAThread]
         static void Main(string[] args)
         {
-            //try
-            //{
+            try
+            {
                 var a = Assembly.GetExecutingAssembly().GetName();
                 Console.WriteLine($"Welcome to {a.Name}, version: {a.Version.ToString()}\n\n");
-                LoadServerCoreExtension();
-                ServerManager.Logger.Log("Starting stop watch.", LogLevel.Debug);
-                ServerManager.Logger.Log("NOTE: Tracing may be enabled on the server.", LogLevel.Info);
                 sw = new Stopwatch();
                 sw.Start();
-                ServerManager.Logger.Log("Starting server core to setup server.", LogLevel.Info);
+                Console.WriteLine("Starting server core to setup and initialize services.");
+                LoadServerCoreExtension();
                 if (CheckPrerequisites())
                 {
-                    bool autoStart = false;
-                    if (args.Length == 1)
-                    {
-                        autoStart = true;
-                    }
                     Application.EnableVisualStyles();
                     Application.SetCompatibleTextRenderingDefault(false);
-                    Application.Run(new ServerControls(autoStart));
+                    //BUG: if no form is injected, it will display a blank screen to the user.
+                    Form serverControl = IOCContainer.Provider.Get<Form>();
+                    Application.Run(serverControl);
                 }
-            //}
-//            catch (Exception ex)
-//            {
-//                if (Debugger.IsAttached)
-//                {
-//                    //throw;
-//                }
-//#if !COGNITO
-//                ServerManager.Logger.Log("Internal server error: " + ex.Message, LogLevel.Error);
-//                Console.Write("Press any key to exit.");
-//                Console.ReadKey();
-//#else
-//                MessageBox.Show("Internal server error: " + ex.Message);
-//#endif
+            }
+            catch (Exception ex)
+            {
+                if (Debugger.IsAttached)
+                {
+                    //throw;
+                }
+#if !INCOGNITO
+                GlobalServices.Logger.Log("Internal server error: " + ex.Message, LogLevel.Error);
+                Console.Write("Press any key to exit.");
+                Console.ReadKey();
+#else
+                MessageBox.Show("Internal server error: " + ex.Message);
+#endif
 
-//            }
+            }
         }
 
         private static void LoadServerCoreExtension()
@@ -81,61 +78,64 @@ namespace RemotePlusServer
                         core.AddServices(new ServiceCollection());
                         ServerBuilder sb = new ServerBuilder();
                         core.InitializeServer(sb);
-                        sb.Run();
+                        var serverInit = sb.Build();
+                        serverInit.RunTasks();
                         break;
                     }
                 }
             }
             if(foundCore == false)
             {
-                ServerManager.Logger.Log("A server core is not present. Cannot start server.", LogLevel.Error);
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("FATAL ERROR: A server core is not present. Cannot start server.");
+                Console.ResetColor();
                 Environment.Exit(-1);
             }
         }
 
         private static void ProxyService_HostFaulted(object sender, EventArgs e)
         {
-            ServerManager.Logger.Log("The proxy server state has been transferred to the faulted state.", LogLevel.Error);
+            GlobalServices.Logger.Log("The proxy server state has been transferred to the faulted state.", LogLevel.Error);
         }
 
         private static void ProxyService_HostClosed(object sender, EventArgs e)
         {
-            ServerManager.Logger.Log("Proxy server closed.", LogLevel.Info);
+            GlobalServices.Logger.Log("Proxy server closed.", LogLevel.Info);
         }
 
         private static void ProxyService_HostOpened(object sender, EventArgs e)
         {
-            ServerManager.Logger.Log($"Proxy server opened on port {ServerManager.DefaultSettings.DiscoverySettings.Setup.DiscoveryPort}", LogLevel.Info);
+            GlobalServices.Logger.Log($"Proxy server opened on port {ServerManager.DefaultSettings.DiscoverySettings.Setup.DiscoveryPort}", LogLevel.Info);
         }
 
         static bool CheckPrerequisites()
         {
-            ServerManager.Logger.Log("Checking prerequisites.", LogLevel.Info);
+            GlobalServices.Logger.Log("Checking prerequisites.", LogLevel.Info);
             //Check for prerequisites
             ServerPrerequisites.CheckPrivilleges();
             ServerPrerequisites.CheckNetworkInterfaces();
             ServerPrerequisites.CheckSettings();
-            ServerManager.Logger.Log("Stopping stop watch.", LogLevel.Debug);
+            GlobalServices.Logger.Log("Stopping stop watch.", LogLevel.Debug);
             sw.Stop();
             // Check results
-            if(ServerManager.Logger.ErrorCount >= 1 && ServerManager.Logger.WarningCount == 0)
+            if(GlobalServices.Logger.ErrorCount >= 1 && GlobalServices.Logger.WarningCount == 0)
             {
-                ServerManager.Logger.Log($"Unable to start server. ({ServerManager.Logger.ErrorCount} errors) Elapsed time: {sw.Elapsed.ToString()}", LogLevel.Error);
+                GlobalServices.Logger.Log($"Unable to start server. ({GlobalServices.Logger.ErrorCount} errors) Elapsed time: {sw.Elapsed.ToString()}", LogLevel.Error);
                 return false;
             }
-            else if(ServerManager.Logger.ErrorCount >= 1 && ServerManager.Logger.WarningCount >= 1)
+            else if(GlobalServices.Logger.ErrorCount >= 1 && GlobalServices.Logger.WarningCount >= 1)
             {
-                ServerManager.Logger.Log($"Unable to start server. ({ServerManager.Logger.ErrorCount} errors, {ServerManager.Logger.WarningCount} warnings) Elapsed time: {sw.Elapsed.ToString()}", LogLevel.Error);
+                GlobalServices.Logger.Log($"Unable to start server. ({GlobalServices.Logger.ErrorCount} errors, {GlobalServices.Logger.WarningCount} warnings) Elapsed time: {sw.Elapsed.ToString()}", LogLevel.Error);
                 return false;
             }
-            else if(ServerManager.Logger.ErrorCount == 0 && ServerManager.Logger.WarningCount >= 1)
+            else if(GlobalServices.Logger.ErrorCount == 0 && GlobalServices.Logger.WarningCount >= 1)
             {
-                ServerManager.Logger.Log($"The server can start, but with warnings. ({ServerManager.Logger.WarningCount} warnings) Elapsed time: {sw.Elapsed.ToString()}", LogLevel.Warning);
+                GlobalServices.Logger.Log($"The server can start, but with warnings. ({GlobalServices.Logger.WarningCount} warnings) Elapsed time: {sw.Elapsed.ToString()}", LogLevel.Warning);
                 return true;
             }
             else
             {
-                ServerManager.Logger.Log($"Validation passed. Elapsed time: {sw.Elapsed.ToString()}", LogLevel.Info);
+                GlobalServices.Logger.Log($"Validation passed. Elapsed time: {sw.Elapsed.ToString()}", LogLevel.Info);
                 return true;
             }
         }
@@ -145,7 +145,7 @@ namespace RemotePlusServer
         {
             if (ServerManager.DefaultSettings.DiscoverySettings.DiscoveryBehavior == ProxyConnectionMode.Connect)
             {
-                ServerManager.Logger.Log("The server will be part of a proxy cluster. Please use the proxy server to connect to this server.", LogLevel.Info);
+                GlobalServices.Logger.Log("The server will be part of a proxy cluster. Please use the proxy server to connect to this server.", LogLevel.Info);
                 proxyChannelFactory = new DuplexChannelFactory<IProxyServerRemote>(_remote, _ConnectionFactory.BuildBinding(), new EndpointAddress(ServerManager.DefaultSettings.DiscoverySettings.Connection.ProxyServerURL));
                 proxyChannel = proxyChannelFactory.CreateChannel();
                 proxyChannel.Register();

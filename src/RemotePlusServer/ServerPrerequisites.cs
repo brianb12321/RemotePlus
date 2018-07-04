@@ -1,4 +1,6 @@
 ﻿using BetterLogger;
+using RemotePlusLibrary;
+using RemotePlusLibrary.IOC;
 using RemotePlusServer.Core;
 using System;
 using System.IO;
@@ -15,7 +17,7 @@ namespace RemotePlusServer
             WindowsPrincipal p = new WindowsPrincipal(wi);
             if (!p.IsInRole(WindowsBuiltInRole.Administrator))
             {
-                ServerManager.Logger.Log("The current logged in user is not part of the group \"Administrator\". This may cause certain operations to fail.", LogLevel.Warning);
+                GlobalServices.Logger.Log("The current logged in user is not part of the group \"Administrator\". This may cause certain operations to fail.", LogLevel.Warning);
             }
         }
         public static void CheckNetworkInterfaces()
@@ -24,7 +26,7 @@ namespace RemotePlusServer
             NetworkInterface[] adapt = NetworkInterface.GetAllNetworkInterfaces();
             if (adapt.Length == 0)
             {
-                ServerManager.Logger.Log("Unable to find a network adapter. The server requires at least one adapter.", LogLevel.Error);
+                GlobalServices.Logger.Log("Unable to find a network adapter. The server requires at least one adapter.", LogLevel.Error);
             }
             else
             {
@@ -41,7 +43,7 @@ namespace RemotePlusServer
                 }
                 if (!foundFlag)
                 {
-                    ServerManager.Logger.Log("You should have at least one network adapter that has a static IP. This could cause the client fail to connect to the server.", LogLevel.Info);
+                    GlobalServices.Logger.Log("You should have at least one network adapter that has a static IP. This could cause the client fail to connect to the server.", LogLevel.Info);
                 }
             }
         }
@@ -50,11 +52,11 @@ namespace RemotePlusServer
         {
             if (ServerManager.DefaultSettings.LoggingSettings.LogOnShutdown)
             {
-                ServerManager.Logger.Log("NOTE: Logging is enabled for this application.", LogLevel.Info);
+                GlobalServices.Logger.Log("NOTE: Logging is enabled for this application.", LogLevel.Info);
             }
             if (ServerManager.DefaultSettings.LoggingSettings.CleanLogFolder)
             {
-                ServerManager.Logger.Log($"NOTE: Logs will be cleaned out when there are {ServerManager.DefaultSettings.LoggingSettings.LogFileCountThreashold} logs in the logs foleder.", LogLevel.Info);
+                GlobalServices.Logger.Log($"NOTE: Logs will be cleaned out when there are {ServerManager.DefaultSettings.LoggingSettings.LogFileCountThreashold} logs in the logs foleder.", LogLevel.Info);
                 CheckLogCount();
             }
         }
@@ -62,12 +64,12 @@ namespace RemotePlusServer
         {
             if (Directory.GetFiles("ServerLogs").Length >= ServerManager.DefaultSettings.LoggingSettings.LogFileCountThreashold)
             {
-                ServerManager.Logger.Log("IMPORTANT ACTION: The server logs threashold has been reached. The server logs folder will be cleared.", LogLevel.Info);
+                GlobalServices.Logger.Log("IMPORTANT ACTION: The server logs threashold has been reached. The server logs folder will be cleared.", LogLevel.Info);
                 foreach (string fileToBeDeleted in Directory.GetFiles("ServerLogs"))
                 {
                     File.Delete(fileToBeDeleted);
                 }
-                ServerManager.Logger.Log("IMPORTANT ACTION COMPLETE: The ServerLogs folder has been purged.", LogLevel.Info);
+                GlobalServices.Logger.Log("IMPORTANT ACTION COMPLETE: The ServerLogs folder has been purged.", LogLevel.Info);
             }
         }
     }

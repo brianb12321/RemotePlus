@@ -22,6 +22,7 @@ using RemotePlusLibrary.Client;
 using RemotePlusServer.Core;
 using RemotePlusServer.Core.ExtensionSystem;
 using BetterLogger;
+using RemotePlusLibrary.IOC;
 
 namespace RemotePlusServer
 {
@@ -54,10 +55,10 @@ namespace RemotePlusServer
         bool CheckRegisteration(string Action)
         {
             var l = $"Checking registiration for action {Action}.";
-            ServerManager.Logger.Log(l, LogLevel.Info);
+            GlobalServices.Logger.Log(l, LogLevel.Info);
             if (_interface.Registered != true)
             {
-                ServerManager.Logger.Log("The client is not registired to the server.", LogLevel.Error);
+                GlobalServices.Logger.Log("The client is not registired to the server.", LogLevel.Error);
                 if (ServerStartup.proxyChannelFactory.State == CommunicationState.Opened)
                 {
                     ServerStartup.proxyChannel.TellMessage(Guid.NewGuid(), "You must be registered.", LogLevel.Error);
@@ -144,9 +145,9 @@ namespace RemotePlusServer
         public void Register(RegisterationObject Settings)
         {
             const string REG_FAILED = "Registiration failed. The most likely cause is invalid credentials or this account has been blocked. Make sure that the provided credentials are correct and also make sure the account was not blocked. If you still receive this error message, please check the server logs for more details.";
-            ServerManager.Logger.Log("A new client is awaiting registiration.", LogLevel.Info);
-            ServerManager.Logger.Log("Instanitiating callback object.", LogLevel.Debug);
-            ServerManager.Logger.Log("Getting ClientBuilder from client.", LogLevel.Debug);
+            GlobalServices.Logger.Log("A new client is awaiting registiration.", LogLevel.Info);
+            GlobalServices.Logger.Log("Instanitiating callback object.", LogLevel.Debug);
+            GlobalServices.Logger.Log("Getting ClientBuilder from client.", LogLevel.Debug);
 
             if (ServerManager.DefaultSettings.DiscoverySettings.DiscoveryBehavior == RemotePlusLibrary.Configuration.ServerSettings.ProxyConnectionMode.Connect)
             {
@@ -157,17 +158,17 @@ namespace RemotePlusServer
                 var callback = OperationContext.Current.GetCallbackChannel<IRemoteClient>();
                 _interface.Client = Client<RemoteClient>.Build(callback.RegisterClient(), new RemoteClient(callback, false, null));
             }
-            ServerManager.Logger.Log("Received registiration object from client.", LogLevel.Info);
+            GlobalServices.Logger.Log("Received registiration object from client.", LogLevel.Info);
             this._interface.Settings = Settings;
             var l = "Processing registiration object.";
-            ServerManager.Logger.Log(l, LogLevel.Debug);
+            GlobalServices.Logger.Log(l, LogLevel.Debug);
             _interface.Client.ClientCallback.TellMessage(l, LogLevel.Debug);
             if (Settings.LoginRightAway)
             {
                 var account = LogIn(Settings.Credentials);
                 if (account == null)
                 {
-                    ServerManager.Logger.Log($"Client {_interface.Client.FriendlyName} [{_interface.Client.UniqueID.ToString()}] disconnected. Failed to register to the server. Authentication failed.", LogLevel.Info);
+                    GlobalServices.Logger.Log($"Client {_interface.Client.FriendlyName} [{_interface.Client.UniqueID.ToString()}] disconnected. Failed to register to the server. Authentication failed.", LogLevel.Info);
                     throw new FaultException(REG_FAILED + $" Provded username: {Settings.Credentials.Username}");
                 }
                 else
@@ -180,13 +181,13 @@ namespace RemotePlusServer
             else
             {
                 var l3 = "Awaiting credentials from the client.";
-                ServerManager.Logger.Log(l3, LogLevel.Info);
+                GlobalServices.Logger.Log(l3, LogLevel.Info);
                 _interface.Client.ClientCallback.TellMessage(l3, LogLevel.Info);
                 UserCredentials upp = _interface.Client.ClientCallback.RequestAuthentication(new AuthenticationRequest(AuthenticationSeverity.Normal) { Reason = "The server requires credentials to register." });
                 var account = LogIn(upp);
                 if (account == null)
                 {
-                    ServerManager.Logger.Log($"Client {_interface.Client.FriendlyName} [{_interface.Client.UniqueID.ToString()}] disconnected. Failed to register to the server. Authentication failed.", LogLevel.Info);
+                    GlobalServices.Logger.Log($"Client {_interface.Client.FriendlyName} [{_interface.Client.UniqueID.ToString()}] disconnected. Failed to register to the server. Authentication failed.", LogLevel.Info);
                     throw new FaultException(REG_FAILED + $" Provded username: {upp.Username}");
                 }
                 else
@@ -216,7 +217,7 @@ namespace RemotePlusServer
 
         private void RegisterComplete()
         {
-            ServerManager.Logger.Log($"Client \"{_interface.Client.FriendlyName}\" [{_interface.Client.UniqueID}] Type: {_interface.Client.ClientType} registired.", LogLevel.Info);
+            GlobalServices.Logger.Log($"Client \"{_interface.Client.FriendlyName}\" [{_interface.Client.UniqueID}] Type: {_interface.Client.ClientType} registired.", LogLevel.Info);
             _interface.Registered = true;
             _interface.Client.ClientCallback.TellMessage("Registiration complete.",LogLevel.Info);
             _interface.Client.ClientCallback.RegistirationComplete();
@@ -232,7 +233,7 @@ namespace RemotePlusServer
                 }
                 else
                 {
-                    
+                    _interface.RunProgram(Program, Argument);
                 }
             }
             // OperationContext.Current.OperationCompleted += (sender, e) => _interface.Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
@@ -306,12 +307,12 @@ namespace RemotePlusServer
                 }
                 else
                 {
-                    ServerManager.Logger.Log("Updating server settings.", LogLevel.Info);
+                    GlobalServices.Logger.Log("Updating server settings.", LogLevel.Info);
                     ServerManager.DefaultSettings = Settings;
                     _interface.Client.ClientCallback.TellMessage("Saving settings.", LogLevel.Info);
                     ServerManager.DefaultSettings.Save();
                     _interface.Client.ClientCallback.TellMessage("Settings saved.", LogLevel.Info);
-                    ServerManager.Logger.Log("Settings saved.", LogLevel.Info);
+                    GlobalServices.Logger.Log("Settings saved.", LogLevel.Info);
                 }
             }
             // OperationContext.Current.OperationCompleted += (sender, e) => _interface.Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
@@ -329,7 +330,7 @@ namespace RemotePlusServer
                 }
                 else
                 {
-                    ServerManager.Logger.Log("Retreiving server settings.", LogLevel.Info);
+                    GlobalServices.Logger.Log("Retreiving server settings.", LogLevel.Info);
                     return ServerManager.DefaultSettings;
                 }
             }
@@ -362,7 +363,7 @@ namespace RemotePlusServer
             {
                 // OperationContext.Current.OperationCompleted += (sender, e) => _interface.Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
                 List<CommandDescription> rc = new List<CommandDescription>();
-                ServerManager.Logger.Log("Requesting commands list.", LogLevel.Info);
+                GlobalServices.Logger.Log("Requesting commands list.", LogLevel.Info);
                 _interface.Client.ClientCallback.TellMessage("Returning commands list.", LogLevel.Info);
                 foreach (KeyValuePair<string, CommandDelegate> currentCommand in ServerManager.ServerRemoteService.Commands)
                 {
@@ -393,7 +394,7 @@ namespace RemotePlusServer
         {
             // OperationContext.Current.OperationCompleted += (sender, e) => _interface.Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
             LogOff();
-            ServerManager.Logger.Log("Logging in.", LogLevel.Info ,"Server Host");
+            GlobalServices.Logger.Log("Logging in.", LogLevel.Info ,"Server Host");
             _interface.Client.ClientCallback.TellMessage("Logging in.", LogLevel.Info);
             var cred = _interface.Client.ClientCallback.RequestAuthentication(new AuthenticationRequest(AuthenticationSeverity.Normal) { Reason = "Please provide a username and password to switch to." });
             LogIn(cred);
@@ -403,7 +404,7 @@ namespace RemotePlusServer
             _interface.Registered = false;
             string username = _interface.LoggedInUser.Credentials.Username;
             _interface.LoggedInUser = null;
-            ServerManager.Logger.Log($"User {username} logged off.", LogLevel.Info, "Server Host");
+            GlobalServices.Logger.Log($"User {username} logged off.", LogLevel.Info, "Server Host");
             _interface.Client.ClientCallback.TellMessage($"user {username} logged off.", LogLevel.Info);
         }
         private UserAccount LogIn(UserCredentials cred)
@@ -411,7 +412,7 @@ namespace RemotePlusServer
             // OperationContext.Current.OperationCompleted += (sender, e) => _interface.Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
             if (cred == null)
             {
-                ServerManager.Logger.Log("The user did not pass in any credentials. Authentication failed.", LogLevel.Info);
+                GlobalServices.Logger.Log("The user did not pass in any credentials. Authentication failed.", LogLevel.Info);
                 _interface.Client.ClientCallback.TellMessage("Can't you at least provide a username and password?", LogLevel.Info);
                 _interface.Client.ClientCallback.Disconnect("Authentication failed.");
                 return null;
@@ -419,7 +420,7 @@ namespace RemotePlusServer
             else
             {
                 var l4 = "Authenticating your user credentials.";
-                ServerManager.Logger.Log(l4, LogLevel.Info);
+                GlobalServices.Logger.Log(l4, LogLevel.Info);
                 _interface.Client.ClientCallback.TellMessage(l4, LogLevel.Info);
                 var tryUser = AccountManager.AttemptLogin(cred);
                 if (tryUser != null)
@@ -436,7 +437,7 @@ namespace RemotePlusServer
 
         public void Disconnect()
         {
-            ServerManager.Logger.Log($"Client \"{_interface.Client.FriendlyName ?? "\"\""}\" [{_interface.Client.UniqueID}] disconectted.", LogLevel.Info);
+            GlobalServices.Logger.Log($"Client \"{_interface.Client.FriendlyName ?? "\"\""}\" [{_interface.Client.UniqueID}] disconectted.", LogLevel.Info);
         }
 
         public void EncryptFile(string fileName, string password)
@@ -517,7 +518,7 @@ namespace RemotePlusServer
         {
             try
             {
-                ServerManager.Logger.Log("Running script file.", LogLevel.Info, "Server Host");
+                GlobalServices.Logger.Log("Running script file.", LogLevel.Info, "Server Host");
                 bool success = ServerManager.ScriptBuilder.ExecuteString(script);
                 return success;
             }

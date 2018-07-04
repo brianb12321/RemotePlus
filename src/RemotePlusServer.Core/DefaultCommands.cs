@@ -15,6 +15,8 @@ using RemotePlusLibrary.RequestSystem;
 using RemotePlusLibrary.Scripting.ScriptPackageEngine;
 using System.Drawing;
 using BetterLogger;
+using RemotePlusLibrary;
+using RemotePlusLibrary.IOC;
 
 namespace RemotePlusServer.Core
 {
@@ -443,7 +445,7 @@ namespace RemotePlusServer.Core
                 }
                 var lib = ServerExtensionLibrary.LoadServerLibrary(path, (m, o) =>
                 {
-                    ServerManager.Logger.Log(m, o);
+                    GlobalServices.Logger.Log(m, o);
                     ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(m, o);
                 }, new ServerInitEnvironment(false));
                 ServerManager.DefaultCollection.Libraries.Add(lib.Name, lib);
@@ -451,7 +453,7 @@ namespace RemotePlusServer.Core
             }
             catch (Exception ex)
             {
-                ServerManager.Logger.Log($"Unable to load extension library: {ex.Message}", LogLevel.Error);
+                GlobalServices.Logger.Log($"Unable to load extension library: {ex.Message}", LogLevel.Error);
                 ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole( $"Unable to load extension library: {ex.Message}", LogLevel.Error);
                 return new CommandResponse((int)CommandStatus.Fail);
             }

@@ -15,26 +15,60 @@ using RemotePlusLibrary.Extension;
 using RemotePlusLibrary.Client;
 using BetterLogger;
 using BetterLogger.Loggers;
+using System.IO;
+using RemotePlusLibrary.IOC;
+using Ninject;
+using RemotePlusLibrary.Scripting;
 
 namespace ProxyServer
 {
-    class ProxyManager
+    public static class ProxyManager
     {
-        public static ILogFactory Logger { get; } = new BaseLogFactory();
         public static Guid ProxyGuid { get; } = Guid.NewGuid();
-        public static IRemotePlusService<ProxyServerRemoteImpl> ProxyService { get; set; }
+        public static IRemotePlusService<ProxyServerRemoteImpl> ProxyService => IOCContainer.Provider.Get<IRemotePlusService<ProxyServerRemoteImpl>>();
+        public static ScriptBuilder ScriptBuilder => IOCContainer.Provider.Get<ScriptBuilder>();
         [STAThread]
         static void Main(string[] args)
         {
-            Logger.AddLogger(new ConsoleLogger());
             var a = Assembly.GetExecutingAssembly().GetName();
             Console.WriteLine($"Welcome to {a.Name}, version: {a.Version.ToString()}\n\n");
-            CreateProxyServer();
-            InitializeCommands();
+            InitializeServerCore();
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new ServerControls(false));
+            //BUG: if no form is injected, it will display a blank screen to the user.
+            Form f = IOCContainer.Provider.Get<Form>();
+            Application.Run(f);
         }
+
+        private static void InitializeServerCore()
+        {
+            bool foundCore = false;
+            foreach (string coreFile in Directory.GetFiles(Environment.CurrentDirectory))
+            {
+                if (Path.GetExtension(coreFile) == ".dll")
+                {
+                    var core = ServerCoreLoader.LoadServerCoreLibrary(coreFile);
+                    if (core != null)
+                    {
+                        foundCore = true;
+                        core.AddServices(new ServiceCollection());
+                        ServerBuilder sb = new ServerBuilder();
+                        core.InitializeServer(sb);
+                        var serverInit = sb.Build();
+                        serverInit.RunTasks();
+                        break;
+                    }
+                }
+            }
+            if (foundCore == false)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("FATAL ERROR: A server core is not present. Cannot start server.");
+                Console.ResetColor();
+                Environment.Exit(-1);
+            }
+        }
+
         [CommandHelp("Switches the specified server into the active server.")]
         static CommandResponse switchServer(CommandRequest req, CommandPipeline pipe)
         {
@@ -74,7 +108,10 @@ namespace ProxyServer
             ProxyService.RemoteInterface.Register(new RegisterationObject());
             return new CommandResponse((int)CommandStatus.Success);
         }
-
+        public static IServerBuilder AddDefaultProxyCommands(this IServerBuilder builder)
+        {
+            return builder.AddTask(InitializeCommands);
+        }
         private static void InitializeCommands()
         {
             ProxyService.Commands.Add("proxySwitchServer", switchServer);
@@ -90,15 +127,7 @@ namespace ProxyServer
 
         private static void CreateProxyServer()
         {
-            Logger.Log("Opening proxy server.", LogLevel.Info);
-            ProxyService = ProbeService.CreateProxyService(typeof(IProxyServerRemote), new ProxyServerRemoteImpl(),
-                9001,
-                "Proxy",
-                "ProxyClient",
-                (m, o) => Logger.Log(m, o), null);
-            ProxyService.HostOpened += ProxyService_HostOpened;
-            ProxyService.HostClosed += ProxyService_HostClosed;
-            ProxyService.HostFaulted += ProxyService_HostFaulted;
+            
         }
 
         internal static void Close()
@@ -106,28 +135,13 @@ namespace ProxyServer
             ProxyService.Close();
             Environment.Exit(0);
         }
-
-        private static void ProxyService_HostFaulted(object sender, EventArgs e)
-        {
-            Logger.Log("The proxy server state has been transferred to the faulted state.", LogLevel.Error);
-        }
-
-        private static void ProxyService_HostClosed(object sender, EventArgs e)
-        {
-            Logger.Log("Proxy server closed.", LogLevel.Info);
-        }
-
-        private static void ProxyService_HostOpened(object sender, EventArgs e)
-        {
-            Logger.Log($"Proxy server opened on port 9001", LogLevel.Info);
-        }
         public static CommandResponse Execute(CommandRequest c, CommandExecutionMode commandMode, CommandPipeline pipe)
         {
             bool throwFlag = false;
             StatusCodeDeliveryMethod scdm = StatusCodeDeliveryMethod.DoNotDeliver;
             try
             {
-                Logger.Log($"Executing server command {c.Arguments[0]}", LogLevel.Info);
+                GlobalServices.Logger.Log($"Executing server command {c.Arguments[0]}", LogLevel.Info);
                 try
                 {
                     var command = ProxyService.Commands[c.Arguments[0].Value];
@@ -136,13 +150,13 @@ namespace ProxyServer
                     {
                         if (ba.TopChainCommand && pipe.Count > 0)
                         {
-                            Logger.Log($"This is a top-level command.", LogLevel.Error);
+                            GlobalServices.Logger.Log($"This is a top-level command.", LogLevel.Error);
                             ProxyService.RemoteInterface.ProxyClient.ClientCallback.TellMessage(ProxyGuid, $"This is a top-level command.", LogLevel.Error);
                             return new CommandResponse((int)CommandStatus.AccessDenied);
                         }
                         if (commandMode != ba.ExecutionType)
                         {
-                            Logger.Log($"The command requires you to be in {ba.ExecutionType} mode.", LogLevel.Error);
+                            GlobalServices.Logger.Log($"The command requires you to be in {ba.ExecutionType} mode.", LogLevel.Error);
                             ProxyService.RemoteInterface.ProxyClient.ClientCallback.TellMessage(ProxyGuid, $"The command requires you to be in {ba.ExecutionType} mode.", LogLevel.Error);
                             return new CommandResponse((int)CommandStatus.AccessDenied);
                         }
@@ -150,13 +164,13 @@ namespace ProxyServer
                         {
                             if (string.IsNullOrEmpty(ba.ClientRejectionMessage))
                             {
-                                Logger.Log($"Your client must be a {ba.SupportClients.ToString()} client.", LogLevel.Error);
+                                GlobalServices.Logger.Log($"Your client must be a {ba.SupportClients.ToString()} client.", LogLevel.Error);
                                 ProxyService.RemoteInterface.ProxyClient.ClientCallback.TellMessage(ProxyGuid, $"Your client must be a {ba.SupportClients.ToString()} client.", LogLevel.Error);
                                 return new CommandResponse((int)CommandStatus.UnsupportedClient);
                             }
                             else
                             {
-                                Logger.Log(ba.ClientRejectionMessage, LogLevel.Error);
+                                GlobalServices.Logger.Log(ba.ClientRejectionMessage, LogLevel.Error);
                                 ProxyService.RemoteInterface.ProxyClient.ClientCallback.TellMessage(ProxyGuid, ba.ClientRejectionMessage, LogLevel.Error);
                                 return new CommandResponse((int)CommandStatus.UnsupportedClient);
                             }
@@ -170,7 +184,7 @@ namespace ProxyServer
                             scdm = ba.StatusCodeDeliveryMethod;
                         }
                     }
-                    Logger.Log("Found command, and executing.", LogLevel.Debug);
+                    GlobalServices.Logger.Log("Found command, and executing.", LogLevel.Debug);
                     var sc = command(c, pipe);
                     if (scdm == StatusCodeDeliveryMethod.TellMessage)
                     {
@@ -184,7 +198,7 @@ namespace ProxyServer
                 }
                 catch (KeyNotFoundException)
                 {
-                    Logger.Log($"Failed to find the command. Passing command to selected server [{ProxyService.RemoteInterface.SelectedClient.UniqueID}]", LogLevel.Debug);
+                    GlobalServices.Logger.Log($"Failed to find the command. Passing command to selected server [{ProxyService.RemoteInterface.SelectedClient.UniqueID}]", LogLevel.Debug);
                     return new CommandResponse(3131);
                 }
             }
@@ -196,7 +210,7 @@ namespace ProxyServer
                 }
                 else
                 {
-                    Logger.Log("command failed: " + ex.Message, LogLevel.Info);
+                    GlobalServices.Logger.Log("command failed: " + ex.Message, LogLevel.Info);
                     ProxyService.RemoteInterface.ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyGuid, "Error whie executing command: " + ex.Message, LogLevel.Error);
                     return new CommandResponse((int)CommandStatus.Fail);
                 }

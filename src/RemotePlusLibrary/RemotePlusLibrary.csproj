@@ -63,6 +63,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IOC\IOCContainer.cs" />
+    <Compile Include="IOC\IServerBuilder.cs" />
+    <Compile Include="IOC\IServerCoreStartup.cs" />
+    <Compile Include="IOC\IServerInitilizer.cs" />
+    <Compile Include="IOC\IServiceCollection.cs" />
+    <Compile Include="IOC\ServerCoreLibraryAttribute.cs" />
+    <Compile Include="IOC\ServerCoreLoader.cs" />
+    <Compile Include="IOC\ServiceCollectionExtensions.cs" />
     <Compile Include="IRemotePlusService.cs" />
     <Compile Include="RemotePlusServiceOptions.cs" />
     <Compile Include="RequestSystem\AcquisitionMode.cs" />

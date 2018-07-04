@@ -1,20 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using RemotePlusLibrary.Extension;
-using RemotePlusServer;
 using RemotePlusLibrary.Extension.CommandSystem;
-using System.IO;
-using System.Reflection;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
-using System.Drawing;
-using System.Threading;
 using System.Windows.Forms;
 using RemotePlusLibrary.Extension.ExtensionLoader.Initialization;
 using RemotePlusServer.Core;
 using BetterLogger;
+using RemotePlusLibrary.IOC;
 
 namespace ReleaseExtensions
 {
@@ -22,8 +13,8 @@ namespace ReleaseExtensions
     {
         void ILibraryStartup.Init(ILibraryBuilder builder, IInitEnvironment env)
         {
-            ServerManager.Logger.Log($"Init position {env.InitPosition}", LogLevel.Debug, "ReleaseExtensions");
-            ServerManager.Logger.Log("Welcome to \"ReleaseExtension.\" This library contains some useful tools that demonstrates the powers of \"RemotePlus\"", LogLevel.Info, "ReleaseExtensions");
+            GlobalServices.Logger.Log($"Init position {env.InitPosition}", LogLevel.Debug, "ReleaseExtensions");
+            GlobalServices.Logger.Log("Welcome to \"ReleaseExtension.\" This library contains some useful tools that demonstrates the powers of \"RemotePlus\"", LogLevel.Info, "ReleaseExtensions");
             ServerManager.ServerRemoteService.Commands.Add("releaseExtensionAbout", releaseExtensionAbout);
             //Test Code
             ServerManager.ServerRemoteService.Commands.Add("textBoxTest", cmdTextBox);

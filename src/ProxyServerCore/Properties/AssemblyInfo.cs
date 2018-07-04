@@ -1,21 +1,22 @@
 ﻿using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using DefaultServerCore;
 using RemotePlusLibrary.IOC;
+using ProxyServerCore;
 
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("DefaultServerCore")]
+[assembly: AssemblyTitle("ProxyServerCore")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("DefaultServerCore")]
+[assembly: AssemblyProduct("ProxyServerCore")]
 [assembly: AssemblyCopyright("Copyright ©  2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
-[assembly: ServerCoreLibrary(typeof(Startup), "DefaultCore",
-    FriendlyName = "Default Core",
+[assembly: ServerCoreLibrary(typeof(Startup), "ProxyServerCore",
+    FriendlyName = "Proxy Server Core",
     LibraryType = RemotePlusLibrary.Extension.ExtensionLoader.ExtensionLibraryType.Server)]
 
 // Setting ComVisible to false makes the types in this assembly not visible
@@ -24,7 +25,7 @@ using RemotePlusLibrary.IOC;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("97fbbc51-9569-4128-b1bc-989cc832d00f")]
+[assembly: Guid("c98754d7-9a6d-4d2f-b322-4cc1ac5d98b8")]
 
 // Version information for an assembly consists of the following four values:
 //

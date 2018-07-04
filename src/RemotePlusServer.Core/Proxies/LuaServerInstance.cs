@@ -2,6 +2,8 @@
 using System.ServiceModel;
 using System.Text;
 using BetterLogger;
+using RemotePlusLibrary;
+using RemotePlusLibrary.IOC;
 using RemotePlusLibrary.Scripting;
 
 namespace RemotePlusServer.Core.Proxies
@@ -37,7 +39,7 @@ namespace RemotePlusServer.Core.Proxies
         [IndexScriptObject]
         public void logToServerConsole(string message, LogLevel LogLevel)
         {
-            ServerManager.Logger.Log(message, LogLevel, ScriptBuilder.SCRIPT_LOG_CONSTANT);
+            GlobalServices.Logger.Log(message, LogLevel, ScriptBuilder.SCRIPT_LOG_CONSTANT);
         }
         [IndexScriptObject]
         public void createFault(string message)

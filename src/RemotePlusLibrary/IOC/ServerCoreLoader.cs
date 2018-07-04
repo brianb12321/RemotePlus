@@ -1,7 +1,8 @@
-﻿using System;
+﻿using RemotePlusLibrary.IOC;
+using System;
 using System.Reflection;
 
-namespace RemotePlusServer.Core.ServerCore
+namespace RemotePlusLibrary.IOC
 {
     public static class ServerCoreLoader
     {

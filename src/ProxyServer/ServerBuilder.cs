@@ -1,8 +1,8 @@
-﻿using RemotePlusLibrary.IOC;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using RemotePlusLibrary.IOC;
 
-namespace RemotePlusServer
+namespace ProxyServer
 {
     public class ServerBuilder : IServerBuilder, IServerInitilizer
     {

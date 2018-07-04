@@ -67,7 +67,7 @@ namespace RemotePlusClientCmd
         {
             ClientBuilder cb = new ClientBuilder(ClientType.CommandLine);
             cb.FriendlyName = "RemotePlus Client Command Line";
-            cb.ExtraData.Add("ps_appendNewLine", "false");
+            //cb.ExtraData.Add("ps_appendNewLine", "true");
             return cb;
         }
 

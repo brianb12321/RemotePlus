@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using RemotePlusLibrary.Extension.ExtensionLoader;
 
-namespace RemotePlusServer.Core.ServerCore
+namespace RemotePlusLibrary.IOC
 {
     /// <summary>
     /// speicifes that the extension library is a server core extension.

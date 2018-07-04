@@ -5,17 +5,13 @@ using RemotePlusLibrary.Scripting;
 using RemotePlusServer.Core.ExtensionSystem;
 using System;
 using Ninject;
+using RemotePlusLibrary.IOC;
 
 namespace RemotePlusServer.Core
 {
     public static class ServerManager
     {
         public static IRemotePlusService<ServerRemoteInterface> ServerRemoteService => (IRemotePlusService<ServerRemoteInterface>)IOCContainer.Provider.GetService(typeof(IRemotePlusService<ServerRemoteInterface>));
-        /// <summary>
-        /// The global logger for the server.
-        /// TODO: Create ILogger and add it to the IOC container.
-        /// </summary>
-        public static ILogFactory Logger => IOCContainer.Provider.Get<ILogFactory>();
         /// <summary>
         /// The main server configuration. Provides settings for the main server.
         /// </summary>
@@ -25,7 +21,7 @@ namespace RemotePlusServer.Core
         /// </summary>
         public static ServerExtensionLibraryCollection DefaultCollection { get; } = new ServerExtensionLibraryCollection();
         public static Guid ServerGuid { get; set; }
-        public static ScriptBuilder ScriptBuilder { get; } = new ScriptBuilder();
+        public static ScriptBuilder ScriptBuilder => IOCContainer.Provider.Get<ScriptBuilder>();
         public static IRemotePlusService<FileTransferServciceInterface> FileTransferService => (IRemotePlusService<FileTransferServciceInterface>)IOCContainer.Provider.GetService(typeof(IRemotePlusService<FileTransferServciceInterface>));
     }
 }
