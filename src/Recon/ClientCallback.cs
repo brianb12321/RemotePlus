@@ -69,7 +69,7 @@ namespace Recon
         public void Disconnect(Guid guid, string Reason)
         {
             ReconManager.Icon.ShowBalloonTip(5000, "Disconnected", $"You have been disconnected by the server: {Reason}", ToolTipIcon.Error);
-            ReconManager.Logger.AddOutput($"Disconnected: {Reason}", OutputLevel.Info);
+            ReconManager.Logger.Log($"Disconnected: {Reason}", LogLevel.Info);
             ReconManager.Client.Close();
         }
 
@@ -120,28 +120,28 @@ namespace Recon
             }
         }
 
-        public void TellMessage(Guid guid, string Message, OutputLevel o)
+        public void TellMessage(Guid guid, string Message, LogLevel o)
         {
-            ReconManager.Logger.AddOutput(Message, o);
+            ReconManager.Logger.Log(Message, o);
         }
 
         public void TellMessage(Guid guid, UILogItem li)
         {
-            ReconManager.Logger.AddOutput(li);
+            ReconManager.Logger.Log(li);
         }
 
         public void TellMessage(Guid guid, UILogItem[] Logs)
         {
             foreach (LogItem li in Logs)
             {
-                ReconManager.Logger.AddOutput(li);
+                ReconManager.Logger.Log(li);
             }
         }
 
         public void TellMessageToServerConsole(Guid guid, UILogItem li)
         {
             li.From = "Server Console " + li.From;
-            ReconManager.Logger.AddOutput(li);
+            ReconManager.Logger.Log(li);
         }
 
         public void TellMessageToServerConsole(Guid guid, string Message)

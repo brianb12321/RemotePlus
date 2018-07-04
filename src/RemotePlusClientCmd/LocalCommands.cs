@@ -1,4 +1,4 @@
-﻿using Logging;
+﻿using BetterLogger;
 using RemotePlusClientCmd.ClientCommandSystem;
 using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
@@ -22,7 +22,7 @@ namespace RemotePlusClientCmd
         [CommandHelp("Shows help for local commands.")]
         static CommandResponse Help(CommandRequest args, CommandPipeline pipe)
         {
-            Logger.AddOutput(RemotePlusConsole.ShowHelp(LocalCommands, args.Arguments.Select(f => f.ToString()).ToArray()), OutputLevel.Info);
+            Logger.Log(RemotePlusConsole.ShowHelp(LocalCommands, args.Arguments.Select(f => f.ToString()).ToArray()), LogLevel.Info);
             return new CommandResponse((int)CommandStatus.Success);
         }
         [CommandHelp("Clears the console screen.")]
@@ -57,14 +57,14 @@ namespace RemotePlusClientCmd
         {
             try
             {
-                Logger.AddOutput($"Loading command file. {args.Arguments[1]}", OutputLevel.Info);
+                Logger.Log($"Loading command file. {args.Arguments[1]}", LogLevel.Info);
                 ClientCommandLibraryLoader.LoadCommandLibrary(args.Arguments[1].Value);
-                Logger.AddOutput("Finished.", OutputLevel.Info);
+                Logger.Log("Finished.", LogLevel.Info);
                 return new CommandResponse((int)CommandStatus.Success);
             }
             catch (Exception ex)
             {
-                Logger.AddOutput($"Unable to load command file: {ex.Message}", OutputLevel.Error);
+                Logger.Log($"Unable to load command file: {ex.Message}", LogLevel.Error);
                 return new CommandResponse((int)CommandStatus.Success);
             }
         }

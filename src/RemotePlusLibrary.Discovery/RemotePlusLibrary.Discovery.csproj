@@ -31,6 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BetterLogger">
+      <HintPath>..\..\Libs\BetterLogger.dll</HintPath>
+    </Reference>
     <Reference Include="Logging">
       <HintPath>..\..\Libs\Logging.dll</HintPath>
     </Reference>

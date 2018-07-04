@@ -1,5 +1,4 @@
-﻿using Logging;
-using RemotePlusLibrary.Extension.Gui;
+﻿using RemotePlusLibrary.Extension.Gui;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -9,12 +8,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using BetterLogger;
 
 namespace RemotePlusClient.UIForms.Consoles
 {
     public partial class ConsoleDialog : ThemedForm
     {
-        public RichTextBoxLoggingMethod Logger = new RichTextBoxLoggingMethod();
+        public ILogFactory Logger = null;
         public ConsoleDialog()
         {
             InitializeComponent();
@@ -22,13 +22,9 @@ namespace RemotePlusClient.UIForms.Consoles
 
         private void ConsoleDialog_Load(object sender, EventArgs e)
         {
-            Logger = new RichTextBoxLoggingMethod()
-            {
-                DefaultFrom = "Client",
-                Output = richTextBox1,
-                OverrideLogItemObjectColorValue = true
-            };
-            Logger.AddOutput("Console opened.", OutputLevel.Info);
+            Logger = new BaseLogFactory();
+            Logger.AddLogger(new TextBoxLogger(richTextBox1));
+            Logger.Log("Console opened.", LogLevel.Info);
         }
 
         internal void AppendText(string message)

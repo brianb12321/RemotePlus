@@ -14,6 +14,7 @@ using System.Windows.Forms;
 using RemotePlusLibrary.Scripting;
 using RemotePlusLibrary.RequestSystem;
 using RemotePlusServer.Core;
+using BetterLogger;
 
 namespace WindowsTools
 {
@@ -24,7 +25,7 @@ namespace WindowsTools
         {
             if (ServerManager.ServerRemoteService.RemoteInterface.Client.ClientType != RemotePlusLibrary.Client.ClientType.CommandLine)
             {
-                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(Logging.OutputLevel.Error, "dskClean does not work on a GUI yet.", "dskClean"));
+                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("dskClean does not work on a GUI yet.", BetterLogger.LogLevel.Error, "dskClean");
                 return new CommandResponse(-3);
             }
             Dictionary<string, string> cleanOptions = new Dictionary<string, string>();
@@ -79,30 +80,30 @@ namespace WindowsTools
                     cleanRecycleBin();
                     break;
                 case '9':
-                    ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(Logging.OutputLevel.Info, "Operation aborted.", "dskClean"));
+                    ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Operation aborted.", BetterLogger.LogLevel.Info, "dskClean");
                     break;
             }
             return new CommandResponse((int)CommandStatus.Success);
         }
         public static void cleanWindowsTempFolder()
         {
-            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(Logging.OutputLevel.Info, "Cleaning Windows Temp Folder.", "dskClean"));
+            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Cleaning Windows Temp Folder.", BetterLogger.LogLevel.Info, "dskClean");
             foreach (string file in Directory.GetFiles(@"C:\Windows\Temp", "*", SearchOption.AllDirectories))
             {
                 try
                 {
                     File.Delete(file);
-                    ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(Logging.OutputLevel.Info, $"File deleted: {file}", "dskClean"));
+                    ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole($"File deleted: {file}", BetterLogger.LogLevel.Info, "dskClean");
                 }
                 catch (Exception ex)
                 {
-                    ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(Logging.OutputLevel.Warning, $"Could not delete file {Path.GetFileName(file)}: {ex.Message}", "dskClean"));
+                    ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole($"Could not delete file {Path.GetFileName(file)}: {ex.Message}", BetterLogger.LogLevel.Warning, "dskClean");
                 }
             }
         }
         public static void cleanAppDataTempFolder()
         {
-            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(Logging.OutputLevel.Info, "Cleaning AppData Temp Folder.", "dskClean"));
+            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Cleaning AppData Temp Folder.", BetterLogger.LogLevel.Info, "dskClean");
             foreach (string profile in Directory.GetDirectories(@"C:\Users"))
             {
                 try
@@ -112,23 +113,23 @@ namespace WindowsTools
                         try
                         {
                             File.Delete(file);
-                            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(Logging.OutputLevel.Info, $"File deleted: {file}", "dskClean"));
+                            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole($"File deleted: {file}", BetterLogger.LogLevel.Info, "dskClean");
                         }
                         catch (Exception ex)
                         {
-                            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(Logging.OutputLevel.Warning, $"Could not delete file {Path.GetFileName(file)}: {ex.Message}", "dskClean"));
+                            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole($"Could not delete file {Path.GetFileName(file)}: {ex.Message}", BetterLogger.LogLevel.Warning, "dskClean");
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(Logging.OutputLevel.Warning, $"Could not find directory {Path.GetFileName(profile)}: {ex.Message}", "dskClean"));
+                    ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole($"Could not find directory {Path.GetFileName(profile)}: {ex.Message}", BetterLogger.LogLevel.Warning, "dskClean");
                 }
             }
         }
         public static void cleanInternetExplorerCache()
         {
-            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(Logging.OutputLevel.Info, "Cleaning Internet Explorer Cache.", "dskClean"));
+            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Cleaning Internet Explorer Cache.", BetterLogger.LogLevel.Info, "dskClean");
             foreach (string profile in Directory.GetDirectories(@"C:\Users"))
             {
                 try
@@ -138,17 +139,17 @@ namespace WindowsTools
                         try
                         {
                             File.Delete(file);
-                            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(Logging.OutputLevel.Info, $"File deleted: {file}", "dskClean"));
+                            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole($"File deleted: {file}", BetterLogger.LogLevel.Info, "dskClean");
                         }
                         catch (Exception ex)
                         {
-                            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(Logging.OutputLevel.Warning, $"Could not delete file {Path.GetFileName(file)}: {ex.Message}", "dskClean"));
+                            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole($"Could not delete file {Path.GetFileName(file)}: {ex.Message}", BetterLogger.LogLevel.Warning, "dskClean");
                         }
                     }
                 }
                 catch(Exception ex)
                 {
-                    ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(Logging.OutputLevel.Warning, $"Could not find directory {Path.GetFileName(profile)}: {ex.Message}", "dskClean"));
+                    ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole($"Could not find directory {Path.GetFileName(profile)}: {ex.Message}", BetterLogger.LogLevel.Warning, "dskClean");
                 }
             }
         }
@@ -157,23 +158,23 @@ namespace WindowsTools
         {
             try
             {
-                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(Logging.OutputLevel.Info, "Cleaning Recycle Bin", "dskClean"));
+                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Cleaning Recycle Bin", BetterLogger.LogLevel.Info, "dskClean");
                 foreach (string file in Directory.GetFiles(@"C:\$Recycle.Bin\Recycle Bin", "*", SearchOption.AllDirectories))
                 {
                     try
                     {
                         File.Delete(file);
-                        ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(Logging.OutputLevel.Info, $"File deleted: {file}", "dskClean"));
+                        ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole($"File deleted: {file}", BetterLogger.LogLevel.Info, "dskClean");
                     }
                     catch (Exception ex)
                     {
-                        ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(Logging.OutputLevel.Warning, $"Could not delete file {Path.GetFileName(file)}: {ex.Message}", "dskClean"));
+                        ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole($"Could not delete file {Path.GetFileName(file)}: {ex.Message}", BetterLogger.LogLevel.Warning, "dskClean");
                     }
                 }
             }
             catch (DirectoryNotFoundException)
             {
-                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(Logging.OutputLevel.Warning, $"Could not find Recycle Bin. Skipping clean.", "dskClean"));
+                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole($"Could not find Recycle Bin. Skipping clean.", BetterLogger.LogLevel.Warning, "dskClean");
             }
         }
         [IronPython.Runtime.PythonHidden]
@@ -182,10 +183,10 @@ namespace WindowsTools
             var result = (DialogResult)Enum.Parse(typeof(DialogResult), ((string)ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(RequestBuilder.RequestMessageBox($"WARNING: Continuing will override ownership of each user's AppData\\Temp Folder. All AppData\\Temp files will be owned by {Environment.UserName}. Do you want to proceed?", "File Ownership warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)).Data));
             if(result != DialogResult.Yes)
             {
-                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(Logging.OutputLevel.Info, "Operation aborted.", "dskClean"));
+                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Operation aborted.", BetterLogger.LogLevel.Info, "dskClean");
                 return;
             }
-            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(Logging.OutputLevel.Info, "Owning AppData Temp Folder.", "dskClean"));
+            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Owning AppData Temp Folder.", BetterLogger.LogLevel.Info, "dskClean");
             foreach (string profile in Directory.GetDirectories(@"C:\Users"))
             {
                 try
@@ -197,17 +198,17 @@ namespace WindowsTools
                             var fs = File.GetAccessControl(file);
                             fs.SetOwner(new NTAccount(Environment.UserDomainName, Environment.UserName));
                             File.SetAccessControl(file, fs);
-                            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(Logging.OutputLevel.Info, $"File owned: {file}", "dskClean"));
+                            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole($"File owned: {file}", BetterLogger.LogLevel.Info, "dskClean");
                         }
                         catch (Exception ex)
                         {
-                            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(Logging.OutputLevel.Warning, $"Could not own file {Path.GetFileName(file)}: {ex.Message}", "dskClean"));
+                            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole($"Could not own file {Path.GetFileName(file)}: {ex.Message}", BetterLogger.LogLevel.Warning, "dskClean");
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(Logging.OutputLevel.Warning, $"Could not find directory {Path.GetFileName(profile)}: {ex.Message}", "dskClean"));
+                    ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole($"Could not find directory {Path.GetFileName(profile)}: {ex.Message}", BetterLogger.LogLevel.Warning, "dskClean");
                 }
             }
         }
@@ -217,10 +218,10 @@ namespace WindowsTools
             var result = (DialogResult)Enum.Parse(typeof(DialogResult), ((string)ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(RequestBuilder.RequestMessageBox($"WARNING: Continuing will override ownership of each user's IE Cache Folder. All IE Cache files will be owned by {Environment.UserName}. Do you want to proceed?", "File Ownership warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)).Data));
             if (result != DialogResult.Yes)
             {
-                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(Logging.OutputLevel.Info, "Operation aborted.", "dskClean"));
+                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Operation aborted.", LogLevel.Info, "dskClean");
                 return;
             }
-            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(Logging.OutputLevel.Info, "Owning IE Cache Folder.", "dskClean"));
+            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Owning IE Cache Folder.", LogLevel.Info, "dskClean");
             foreach (string profile in Directory.GetDirectories(@"C:\Users"))
             {
                 try
@@ -232,24 +233,24 @@ namespace WindowsTools
                             var fs = File.GetAccessControl(file);
                             fs.SetOwner(new NTAccount(Environment.UserDomainName, Environment.UserName));
                             File.SetAccessControl(file, fs);
-                            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(Logging.OutputLevel.Info, $"File owned: {file}", "dskClean"));
+                            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole($"File owned: {file}", LogLevel.Info, "dskClean");
                         }
                         catch (Exception ex)
                         {
-                            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(Logging.OutputLevel.Warning, $"Could not own file {Path.GetFileName(file)}: {ex.Message}", "dskClean"));
+                            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole($"Could not own file {Path.GetFileName(file)}: {ex.Message}", LogLevel.Warning, "dskClean");
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(Logging.OutputLevel.Warning, $"Could not find directory {Path.GetFileName(profile)}: {ex.Message}", "dskClean"));
+                    ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole($"Could not find directory {Path.GetFileName(profile)}: {ex.Message}", LogLevel.Warning, "dskClean");
                 }
             }
         }
         [IronPython.Runtime.PythonHidden]
         public static void ownWindowsTempFolder()
         {
-            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(Logging.OutputLevel.Info, "Owning Windows Temp Folder.", "dskClean"));
+            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Owning Windows Temp Folder.", LogLevel.Info, "dskClean");
             foreach (string file in Directory.GetFiles(@"C:\Windows\Temp", "*", SearchOption.AllDirectories))
             {
                 try
@@ -257,11 +258,11 @@ namespace WindowsTools
                     var fs = File.GetAccessControl(file);
                     fs.SetOwner(new NTAccount(Environment.UserDomainName, Environment.UserName));
                     File.SetAccessControl(file, fs);
-                    ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(Logging.OutputLevel.Info, $"File owned: {file}", "dskClean"));
+                    ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole($"File owned: {file}", LogLevel.Info, "dskClean");
                 }
                 catch (Exception ex)
                 {
-                    ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(Logging.OutputLevel.Warning, $"Could not own file {Path.GetFileName(file)}: {ex.Message}", "dskClean"));
+                    ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole($"Could not own file {Path.GetFileName(file)}: {ex.Message}", LogLevel.Warning, "dskClean");
                 }
             }
         }

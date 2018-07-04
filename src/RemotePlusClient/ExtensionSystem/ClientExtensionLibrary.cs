@@ -4,11 +4,11 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using Logging;
 using System.IO;
 using RemotePlusLibrary.Extension;
 using RemotePlusLibrary.Extension.ExtensionLoader;
 using RemotePlusLibrary.Extension.ExtensionLoader.Initialization;
+using BetterLogger;
 
 namespace RemotePlusClient.ExtensionSystem
 {
@@ -17,7 +17,7 @@ namespace RemotePlusClient.ExtensionSystem
         private ClientExtensionLibrary(string friendlyName, string name, ExtensionLibraryType type, Guid g, RequiresDependencyAttribute[] deps, Version v) : base(friendlyName, name, type, g, deps, v)
         {
         }
-        public static ClientExtensionLibrary LoadClientLibrary(string fileName, Action<IClientExtension> callback, Action<string, OutputLevel> logCallback, IInitEnvironment env)
+        public static ClientExtensionLibrary LoadClientLibrary(string fileName, Action<IClientExtension> callback, Action<string, LogLevel> logCallback, IInitEnvironment env)
         {
             Assembly a = Assembly.LoadFrom(fileName);
             ClientExtensionLibrary lib;
@@ -68,15 +68,15 @@ namespace RemotePlusClient.ExtensionSystem
             }
             return lib;
         }
-        private static RequiresDependencyAttribute[] LoadClientDependencies(Assembly a, Action<string, OutputLevel> logCallback, Action<IClientExtension> callback, IInitEnvironment env)
+        private static RequiresDependencyAttribute[] LoadClientDependencies(Assembly a, Action<string, LogLevel> logCallback, Action<IClientExtension> callback, IInitEnvironment env)
         {
-            logCallback($"Searching dependencies for {a.GetName().Name}", OutputLevel.Info);
+            logCallback($"Searching dependencies for {a.GetName().Name}", LogLevel.Info);
             RequiresDependencyAttribute[] deps = ExtensionLibraryBase<ClientExtensionLibrary>.FindDependencies(a);
             foreach (RequiresDependencyAttribute d in deps)
             {
                 if (File.Exists(d.DependencyName))
                 {
-                    logCallback($"Found dependency {d.DependencyName}", OutputLevel.Info);
+                    logCallback($"Found dependency {d.DependencyName}", LogLevel.Info);
                     if (d.DependencyType != DependencyType.Resource)
                     {
                         try
@@ -90,7 +90,7 @@ namespace RemotePlusClient.ExtensionSystem
                             {
                                 if (d.LoadIfNotLoaded && d.DependencyType == DependencyType.RemotePlusLib)
                                 {
-                                    logCallback($"Loading dependency {d.DependencyName}", OutputLevel.Info);
+                                    logCallback($"Loading dependency {d.DependencyName}", LogLevel.Info);
                                     ClientExtensionLibrary.LoadClientLibrary(d.DependencyName, callback, logCallback, env);
                                 }
                             }

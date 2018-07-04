@@ -12,16 +12,14 @@ namespace RemotePlusServer
 {
     public partial class ServerControls : Form
     {
-        bool startFlag;
-        public ServerControls(bool flag)
+        public ServerControls()
         {
-            startFlag = flag;
             InitializeComponent();
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-#if COGNITO
+#if INCOGNITO
             ServerManager.RunInServerMode();
             button2.Enabled = true;
             button1.Enabled = false;
@@ -40,11 +38,7 @@ namespace RemotePlusServer
 
         private void ServerControls_Load(object sender, EventArgs e)
         {
-            if (startFlag)
-            {
-                button1_Click(this, new EventArgs());
-            }
-#if COGNITO
+#if INCOGNITO
             this.ShowInTaskbar = false;
 #endif
 

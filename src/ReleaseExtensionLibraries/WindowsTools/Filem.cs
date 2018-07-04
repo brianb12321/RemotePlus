@@ -7,7 +7,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
-using Logging;
 using System.Threading;
 using System.Security.Principal;
 using RemotePlusServer;
@@ -16,6 +15,8 @@ using System.Windows.Forms;
 using System.Drawing;
 using RemotePlusLibrary.RequestSystem;
 using RemotePlusServer.Core;
+using BetterLogger;
+using RemotePlusLibrary.IOC;
 
 namespace WindowsTools
 {
@@ -25,10 +26,10 @@ namespace WindowsTools
     public static class Filem
     {
         const int DELAY_TIMER = 3000;
-        static void SendMessage(string message, OutputLevel level)
+        static void SendMessage(string message, LogLevel level)
         {
-            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(level, message, "FileM"));
-            ServerManager.Logger.AddOutput(message, level, "FileM");
+            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(message, level, "FileM");
+            GlobalServices.Logger.Log(message, level, "FileM");
         }
         [CommandHelp("Allows you to manage files on the remote file system.")]
         [CommandBehavior(SupportClients = RemotePlusLibrary.Extension.ClientSupportedTypes.CommandLine,
@@ -38,7 +39,7 @@ namespace WindowsTools
         {
             //if(ServerManager.ServerRemoteService.RemoteInterface.Client.ClientType != ClientType.CommandLine)
             //{
-            //    SendMessage("FileM is currently only availible to command line users.", OutputLevel.Error);
+            //    SendMessage("FileM is currently only availible to command line users.", LogLevel.Error);
             //    return new CommandResponse(-999); // Random Error Code
             //}
             SMenuBuilder menu = new SMenuBuilder("Please select a file operation below.");
@@ -73,7 +74,7 @@ namespace WindowsTools
             }
             catch(FileNotFoundException)
             {
-                SendMessage($"The file {file} cannot be opened. It does not exist.", OutputLevel.Error);
+                SendMessage($"The file {file} cannot be opened. It does not exist.", LogLevel.Error);
             }
         }
         static void showFIleMenu(FileInfo file)
@@ -117,13 +118,13 @@ namespace WindowsTools
         {
             string message = (string)ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(new RequestBuilder("rcmd_multitextBox", "Please enter text to append to the file. When finished, hit {ENTER}", null)).Data;
             File.AppendAllText(fullName, message);
-            SendMessage($"File {fullName} appended.", OutputLevel.Info);
+            SendMessage($"File {fullName} appended.", LogLevel.Info);
         }
         private static void OverrideFile(string file)
         {
             string message = (string)ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(new RequestBuilder("rcmd_multitextBox", "Please enter text to override. When finished, hit {ENTER}", null)).Data;
             File.WriteAllText(file, message);
-            SendMessage($"File {file} overwritten.", OutputLevel.Info);
+            SendMessage($"File {file} overwritten.", LogLevel.Info);
         }
 
         static void DeleteFile(string file)
@@ -131,13 +132,13 @@ namespace WindowsTools
             var result = (DialogResult)Enum.Parse(typeof(DialogResult), (string)ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(RequestBuilder.RequestMessageBox($"Are you sure that you want to delete {Path.GetFileName(file)}? You cannot revert once completed.", "File Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)).Data);
             if(result == DialogResult.Yes)
             {
-                SendMessage($"Deleting {file}.", OutputLevel.Info);
+                SendMessage($"Deleting {file}.", LogLevel.Info);
                 File.Delete(file);
-                SendMessage("File deleted.", OutputLevel.Info);
+                SendMessage("File deleted.", LogLevel.Info);
             }
             else
             {
-                SendMessage($"The deletion of {Path.GetFileName(file)} was canceled.", OutputLevel.Info);
+                SendMessage($"The deletion of {Path.GetFileName(file)} was canceled.", LogLevel.Info);
             }
         }
     }

@@ -1,15 +1,13 @@
 ﻿
-using RemotePlusLibrary.Core;
+using BetterLogger;
 using RemotePlusLibrary.Core.Faults;
+using RemotePlusLibrary.IOC;
 using RemotePlusServer.Core;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Dispatcher;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RemotePlusServer
 {
@@ -18,10 +16,10 @@ namespace RemotePlusServer
         public bool HandleError(Exception error)
         {
 #if DEBUG
-            ServerManager.Logger.AddOutput("Fault error: " + error.ToString(), Logging.OutputLevel.Error);
+            GlobalServices.Logger.Log("Fault error: " + error.ToString(), LogLevel.Error);
             return true;
 #else
-            ServerManager.Logger.AddOutput("Fault error: " + error.Message, Logging.OutputLevel.Error);
+            GlobalServices.Logger.Log("Fault error: " + error.Message, LogLevel.Error);
             return true;
 #endif
         }

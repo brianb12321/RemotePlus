@@ -10,25 +10,24 @@ using RemotePlusLibrary.Security.AccountSystem;
 using RemotePlusLibrary.Client;
 using RemotePlusLibrary.RequestSystem;
 using RemotePlusLibrary.Security.Authentication;
+using BetterLogger;
 
 namespace RemotePlusLibrary.Contracts
 {
     public interface IRemoteClient : IClient, IBidirectionalContract
     {
         [OperationContract(IsOneWay = true)]
-        void TellMessage(Guid serverGuid, string Message, Logging.OutputLevel o);
-        [OperationContract(Name = "TellMessageToServerConsole")]
-        void TellMessageToServerConsole(Guid serverGuid, UILogItem li);
+        void TellMessage(Guid serverGuid, string Message, LogLevel o);
         [OperationContract(Name = "TellMessageToServerConsoleUsingString")]
         void TellMessageToServerConsole(Guid serverGuid, string Message);
-        [OperationContract(Name = "TellMessageToServerConsoleConsoleText")]
+        [OperationContract(Name = "TellMessageToServerConsoleWithLogLevel")]
+        void TellMessageToServerConsole(Guid serverGuid, string Message, LogLevel level);
+        [OperationContract(Name = "TellMessageToServerConsoleWithConsoleText")]
         void TellMessageToServerConsole(Guid serverGuid, ConsoleText text);
+        [OperationContract(Name = "TellMessageToServerConsoleWithFrom")]
+        void TellMessageToServerConsole(Guid serverGuid, string Message, LogLevel level, string from);
         [OperationContract]
         ClientBuilder RegisterClient();
-        [OperationContract(Name = "TellMessageWithLogItem", IsOneWay = true)]
-        void TellMessage(Guid serverGuid, UILogItem li);
-        [OperationContract(Name = "TellMessageWithLogs", IsOneWay = true)]
-        void TellMessage(Guid serverGuid, UILogItem[] Logs);
         [OperationContract(IsOneWay = true)]
         void Disconnect(Guid serverGuid, string Reason);
         [OperationContract]

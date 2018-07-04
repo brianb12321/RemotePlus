@@ -52,6 +52,9 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BetterLogger">
+      <HintPath>..\..\Libs\BetterLogger.dll</HintPath>
+    </Reference>
     <Reference Include="Colorful.Console, Version=1.2.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Colorful.Console.1.2.1\lib\net461\Colorful.Console.dll</HintPath>
     </Reference>
@@ -60,9 +63,6 @@
     </Reference>
     <Reference Include="ConsoLovers.ConsoleToolkit, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\ConsoLovers.ConsoleToolkit.3.0.0\lib\net461\ConsoLovers.ConsoleToolkit.dll</HintPath>
-    </Reference>
-    <Reference Include="Logging">
-      <HintPath>..\..\Libs\Logging.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

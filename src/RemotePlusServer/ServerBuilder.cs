@@ -1,13 +1,10 @@
-﻿using RemotePlusServer.Core.ServerCore;
+﻿using RemotePlusLibrary.IOC;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RemotePlusServer
 {
-    public class ServerBuilder : IServerBuilder
+    public class ServerBuilder : IServerBuilder, IServerInitilizer
     {
         List<Action> _tasks = new List<Action>();
         public IServerBuilder AddTask(Action task)
@@ -15,9 +12,15 @@ namespace RemotePlusServer
             _tasks.Add(task);
             return this;
         }
-        public void Run()
+
+        public IServerInitilizer Build()
         {
-            foreach(Action task in _tasks)
+            return this;
+        }
+
+        void IServerInitilizer.RunTasks()
+        {
+            foreach (Action task in _tasks)
             {
                 task?.Invoke();
             }

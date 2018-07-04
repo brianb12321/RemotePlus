@@ -35,8 +35,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemotePlusClientCmd.Request
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerMath", "src\ReleaseExtensionLibraries\ServerMath\ServerMath.csproj", "{AA84438D-E7A1-4805-8862-53FA6D0A2EB6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Recon", "src\Recon\Recon.csproj", "{0E62814F-F665-44D3-B97E-62DC75809741}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemotePlusLibrary.Scripting", "src\RemotePlusLibrary.Scripting\RemotePlusLibrary.Scripting.csproj", "{5C399F78-C133-4F9B-9758-C36A4B7FAE98}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PolicyEditor", "src\PolicyEditor\PolicyEditor.csproj", "{9547740D-CF2C-4B9A-808C-F760FD593FE4}"
@@ -50,6 +48,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemotePlusServer.Core", "src\RemotePlusServer.Core\RemotePlusServer.Core.csproj", "{5669A80C-19D9-4DBE-BF5A-BBFCBF947634}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DefaultServerCore", "src\DefaultServerCore\DefaultServerCore.csproj", "{97FBBC51-9569-4128-B1BC-989CC832D00F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Server Cores", "Server Cores", "{FF88BAC9-59D9-47C1-BC0B-34A3FBE13B87}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProxyServerCore", "src\ProxyServerCore\ProxyServerCore.csproj", "{C98754D7-9A6D-4D2F-B322-4CC1AC5D98B8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -113,10 +115,6 @@ Global
 		{AA84438D-E7A1-4805-8862-53FA6D0A2EB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AA84438D-E7A1-4805-8862-53FA6D0A2EB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AA84438D-E7A1-4805-8862-53FA6D0A2EB6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0E62814F-F665-44D3-B97E-62DC75809741}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0E62814F-F665-44D3-B97E-62DC75809741}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0E62814F-F665-44D3-B97E-62DC75809741}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0E62814F-F665-44D3-B97E-62DC75809741}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5C399F78-C133-4F9B-9758-C36A4B7FAE98}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5C399F78-C133-4F9B-9758-C36A4B7FAE98}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5C399F78-C133-4F9B-9758-C36A4B7FAE98}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -145,6 +143,10 @@ Global
 		{97FBBC51-9569-4128-B1BC-989CC832D00F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{97FBBC51-9569-4128-B1BC-989CC832D00F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{97FBBC51-9569-4128-B1BC-989CC832D00F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C98754D7-9A6D-4D2F-B322-4CC1AC5D98B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C98754D7-9A6D-4D2F-B322-4CC1AC5D98B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C98754D7-9A6D-4D2F-B322-4CC1AC5D98B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C98754D7-9A6D-4D2F-B322-4CC1AC5D98B8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -156,6 +158,8 @@ Global
 		{EF18A56F-EFE1-4F51-85A0-BC16AD09D534} = {F1A31AC8-6688-4F6C-A0BB-7A02998BB3BA}
 		{4F29FED8-1EDF-44F6-93CB-9000415802B1} = {226F51EE-BDDE-4542-8E89-9CCBA27DE5D7}
 		{AA84438D-E7A1-4805-8862-53FA6D0A2EB6} = {F1A31AC8-6688-4F6C-A0BB-7A02998BB3BA}
+		{97FBBC51-9569-4128-B1BC-989CC832D00F} = {FF88BAC9-59D9-47C1-BC0B-34A3FBE13B87}
+		{C98754D7-9A6D-4D2F-B322-4CC1AC5D98B8} = {FF88BAC9-59D9-47C1-BC0B-34A3FBE13B87}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9F01F222-18F6-4F4E-8767-A858D379C71E}

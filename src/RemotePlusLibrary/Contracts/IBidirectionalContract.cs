@@ -1,6 +1,8 @@
-﻿using System.Runtime.Serialization.Formatters;
+﻿using System;
+using System.Runtime.Serialization.Formatters;
 using System.ServiceModel;
 using System.Speech.Synthesis;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace RemotePlusLibrary.Contracts

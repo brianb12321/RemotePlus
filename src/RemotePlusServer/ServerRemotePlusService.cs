@@ -1,4 +1,4 @@
-﻿using Logging;
+﻿using BetterLogger;
 using RemotePlusLibrary;
 using RemotePlusLibrary.Core;
 using RemotePlusLibrary.Extension.CommandSystem;
@@ -51,13 +51,16 @@ namespace RemotePlusLibrary
             setupCallback?.Invoke(Remote);
             Host = new ServiceHost(Remote);
         }
-        private ServerRemotePlusService(Type contractType, Binding binding, string address)
+        protected ServerRemotePlusService(Type contractType, Binding binding, string address)
         {
             Commands = new Dictionary<string, CommandDelegate>();
             Host = new ServiceHost(typeof(RemoteImpl));
             Host.AddServiceEndpoint(contractType, binding, address);
         }
-
+        public ServerRemotePlusService()
+        {
+            Commands = new Dictionary<string, CommandDelegate>();
+        }
         public event EventHandler HostClosed
         {
             add { Host.Closed += value; }
@@ -116,14 +119,14 @@ namespace RemotePlusLibrary
         /// <param name="callback">The callback to use when an event occures for logging.</param>
         /// <param name="setupCallback">The callback to use when setting up the service implementation.</param>
         /// <returns></returns>
-        public static IRemotePlusService<ServerRemoteInterface> Create(Type contractType, RemoteImpl singleTon, int port, string defaultEndpoint, Action<string, OutputLevel> callback, Action<RemoteImpl> setupCallback)
+        public static IRemotePlusService<ServerRemoteInterface> Create(Type contractType, RemoteImpl singleTon, int port, string defaultEndpoint, Action<string, LogLevel> callback, Action<RemoteImpl> setupCallback)
         {
             ServerRemotePlusService temp;
-            callback?.Invoke("Building endpoint URL.", OutputLevel.Debug);
+            callback?.Invoke("Building endpoint URL.", LogLevel.Debug);
             string url = $"net.tcp://{Dns.GetHostName()}:{port}/{defaultEndpoint}";
-            callback?.Invoke($"URL built {url}", OutputLevel.Debug);
-            callback?.Invoke("Creating server.", OutputLevel.Debug);
-            callback?.Invoke("Publishing server events.", OutputLevel.Debug);
+            callback?.Invoke($"URL built {url}", LogLevel.Debug);
+            callback?.Invoke("Creating server.", LogLevel.Debug);
+            callback?.Invoke("Publishing server events.", LogLevel.Debug);
             NetTcpBinding binding = _ConnectionFactory.BuildBinding();
             StringBuilder dataBuilder = new StringBuilder();
             dataBuilder.AppendLine("Binding configurations:");
@@ -131,19 +134,19 @@ namespace RemotePlusLibrary
             dataBuilder.AppendLine($"MaxBufferPoolSize: {binding.MaxBufferPoolSize}");
             dataBuilder.AppendLine($"MaxBufferSize: {binding.MaxBufferSize}");
             dataBuilder.AppendLine($"MaxReceivedMessageSize: {binding.MaxReceivedMessageSize}");
-            callback?.Invoke(dataBuilder.ToString(), OutputLevel.Debug);
+            callback?.Invoke(dataBuilder.ToString(), LogLevel.Debug);
             temp = new ServerRemotePlusService(contractType, singleTon, binding, url, setupCallback);
             singleTon.SetRemoteInterface(temp.RemoteInterface);
             return temp;
         }
-        public static IRemotePlusService<ServerRemoteInterface> CreateNotSingle(Type contractType, int port, string defaultEndpoint, Action<string, OutputLevel> callback)
+        public static IRemotePlusService<ServerRemoteInterface> CreateNotSingle(Type contractType, int port, string defaultEndpoint, Action<string, LogLevel> callback)
         {
             ServerRemotePlusService temp;
-            callback?.Invoke("Building endpoint URL.", OutputLevel.Debug);
+            callback?.Invoke("Building endpoint URL.", LogLevel.Debug);
             string url = $"net.tcp://0.0.0.0:{port}/{defaultEndpoint}";
-            callback?.Invoke($"URL built {url}", OutputLevel.Debug);
-            callback?.Invoke("Creating server.", OutputLevel.Debug);
-            callback?.Invoke("Publishing server events.", OutputLevel.Debug);
+            callback?.Invoke($"URL built {url}", LogLevel.Debug);
+            callback?.Invoke("Creating server.", LogLevel.Debug);
+            callback?.Invoke("Publishing server events.", LogLevel.Debug);
             NetTcpBinding binding = _ConnectionFactory.BuildBinding();
             StringBuilder dataBuilder = new StringBuilder();
             dataBuilder.AppendLine("Binding configurations:");
@@ -151,22 +154,22 @@ namespace RemotePlusLibrary
             dataBuilder.AppendLine($"MaxBufferPoolSize: {binding.MaxBufferPoolSize}");
             dataBuilder.AppendLine($"MaxBufferSize: {binding.MaxBufferSize}");
             dataBuilder.AppendLine($"MaxReceivedMessageSize: {binding.MaxReceivedMessageSize}");
-            callback?.Invoke(dataBuilder.ToString(), OutputLevel.Debug);
+            callback?.Invoke(dataBuilder.ToString(), LogLevel.Debug);
             temp = new ServerRemotePlusService(contractType, binding, url);
             return temp;
         }
-        public static IRemotePlusService<ServerRemoteInterface> CreateNotSingle(Type contractType, int port, Binding binding, string defaultEndpoint, Action<string, OutputLevel> callback)
+        public static IRemotePlusService<ServerRemoteInterface> CreateNotSingle(Type contractType, int port, Binding binding, string defaultEndpoint, Action<string, LogLevel> callback)
         {
             ServerRemotePlusService temp;
-            callback?.Invoke("Building endpoint URL.", OutputLevel.Debug);
+            callback?.Invoke("Building endpoint URL.", LogLevel.Debug);
             string url = $"{binding.Scheme}://0.0.0.0:{port}/{defaultEndpoint}";
-            callback?.Invoke($"URL built {url}", OutputLevel.Debug);
-            callback?.Invoke("Creating server.", OutputLevel.Debug);
-            callback?.Invoke("Publishing server events.", OutputLevel.Debug);
+            callback?.Invoke($"URL built {url}", LogLevel.Debug);
+            callback?.Invoke("Creating server.", LogLevel.Debug);
+            callback?.Invoke("Publishing server events.", LogLevel.Debug);
             StringBuilder dataBuilder = new StringBuilder();
             dataBuilder.AppendLine("Binding configurations:");
             dataBuilder.AppendLine();
-            callback?.Invoke(dataBuilder.ToString(), OutputLevel.Debug);
+            callback?.Invoke(dataBuilder.ToString(), LogLevel.Debug);
             temp = new ServerRemotePlusService(contractType, binding, url);
             return temp;
         }

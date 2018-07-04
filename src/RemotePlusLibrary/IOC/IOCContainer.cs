@@ -1,21 +1,22 @@
-﻿using Ninject;
+﻿using BetterLogger;
+using Ninject;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RemotePlusLibrary
+namespace RemotePlusLibrary.IOC
 {
     public static class IOCContainer
     {
-        public static IKernel Kernel { get; set; } = new StandardKernel();
+        public static IKernel Provider { get; set; } = new StandardKernel();
+    }
+    public static class GlobalServices
+    {
         /// <summary>
-        /// Sets up all the necessary services that aren't WCF service specific. example: What kind of server to use.
+        /// The global logger for the server.
         /// </summary>
-        public static void Setup()
-        {
-            
-        }
+        public static ILogFactory Logger => IOCContainer.Provider.Get<ILogFactory>();
     }
 }

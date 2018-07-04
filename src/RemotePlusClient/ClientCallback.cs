@@ -1,7 +1,6 @@
 ﻿using RemotePlusLibrary;
 using System.ServiceModel;
 using System.Windows.Forms;
-using Logging;
 using System;
 using System.Net;
 using System.Drawing;
@@ -17,6 +16,7 @@ using RemotePlusClient.UIForms;
 using RemotePlusLibrary.Client;
 using RemotePlusLibrary.Security.Authentication;
 using RemotePlusLibrary.Contracts;
+using BetterLogger;
 
 namespace RemotePlusClient
 {
@@ -28,12 +28,12 @@ namespace RemotePlusClient
         public int ServerPosition { get; private set; }
         public bool SwapFlag { get; private set; }
         public bool ConsoleStreamEnabled { get; private set; } = true;
-        Logger consoleStream = null;
+        ILogFactory consoleStream = null;
         /// <summary>
         /// Tells the client which textbox to use for the server output
         /// </summary>
         /// <param name="logger"></param>
-        public void SwapConsoleStream(Logger logger)
+        public void SwapConsoleStream(ILogFactory logger)
         {
             consoleStream = logger;
             SwapFlag = true;
@@ -91,8 +91,7 @@ namespace RemotePlusClient
         }
         public void Disconnect(Guid serverGuid, string Reason)
         {
-            LogItem l = new LogItem(Logging.OutputLevel.Error, $"The server {ServerPosition} disconnected from the client. Reason: " + Reason, $"Server Host ({serverGuid})");
-            MainF.ConsoleObj.Logger.AddOutput(l);
+            MainF.ConsoleObj.Logger.Log($"The server {serverGuid} disconnected from the client. Reason {Reason}", BetterLogger.LogLevel.Info, "Server host", serverGuid.ToString());
             MainF.Disconnect();
         }
 
@@ -109,71 +108,22 @@ namespace RemotePlusClient
             }
         }
 
-        public void TellMessage(Guid serverGuid, string Message, Logging.OutputLevel o)
+        public void TellMessage(Guid serverGuid, string Message, LogLevel o)
         {
             if (ConsoleStreamEnabled)
             {
                 if (!SwapFlag)
                 {
-                    ClientApp.Logger.AddOutput(Message, o, $"Server Host ({serverGuid}");
+                    ClientApp.Logger.Log(Message, o, $"Server Host", $"({serverGuid}");
                 }
                 else
                 {
-                    consoleStream.AddOutput(Message, o, $"Server Host ({serverGuid})");
+                    consoleStream.Log(Message, o, $"Server Host", $"({serverGuid})");
                 }
-                MainF.ConsoleObj.Logger.AddOutput(Message, o, $"Server Host ({serverGuid})");
+                MainF.ConsoleObj.Logger.Log(Message, o, $"Server Host",  $"({serverGuid})");
             }
         }
 
-        public void TellMessage(Guid serverGuid, UILogItem li)
-        {
-            li.From += $" ({serverGuid})";
-            if (ConsoleStreamEnabled)
-            {
-                if (!SwapFlag)
-                {
-                    ClientApp.Logger.AddOutput(new LogItem(li.Level, li.Message, li.From));
-                }
-                else
-                {
-                    consoleStream.AddOutput(new LogItem(li.Level, li.Message, li.From));
-                }
-                MainF.ConsoleObj.Logger.AddOutput(li);
-            }
-        }
-
-        public void TellMessage(Guid serverGuid, UILogItem[] Logs)
-        {
-            if (ConsoleStreamEnabled)
-            {
-                foreach (LogItem li in Logs)
-                {
-                    li.From += $" ({serverGuid})";
-                    if (!SwapFlag)
-                    {
-                        ClientApp.Logger.AddOutput(new LogItem(li.Level, li.Message, li.From));
-                    }
-                    else
-                    {
-                        consoleStream.AddOutput(new LogItem(li.Level, li.Message, li.From));
-                    }
-                    MainF.ConsoleObj.Logger.AddOutput(li);
-                }
-            }
-        }
-
-        public void TellMessageToServerConsole(Guid serverGuid, UILogItem li)
-        {
-            if (MainF.ServerConsoleObj == null)
-            {
-                li.From = $"Server Console ({serverGuid}";
-                MainF.ConsoleObj.Logger.AddOutput(li);
-            }
-            else
-            {
-                MainF.ServerConsoleObj.Logger.AddOutput(li);
-            }
-        }
 
         public ClientBuilder RegisterClient()
         {
@@ -242,6 +192,16 @@ namespace RemotePlusClient
             MainF.ConsoleObj.ForeColor = text.TextColor;
             MainF.ConsoleObj.AppendText(text.Text);
             MainF.ConsoleObj.ForeColor = originalColor;
+        }
+
+        public void TellMessageToServerConsole(Guid serverGuid, string Message, LogLevel level)
+        {
+            MainF.ServerConsoleObj.Logger.Log(Message, level, "Server Console");
+        }
+
+        public void TellMessageToServerConsole(Guid serverGuid, string Message, LogLevel level, string from)
+        {
+            MainF.ServerConsoleObj.Logger.Log(Message, level, from);
         }
         #endregion
 

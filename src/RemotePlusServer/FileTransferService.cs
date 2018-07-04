@@ -1,4 +1,4 @@
-﻿using Logging;
+﻿using BetterLogger;
 using RemotePlusLibrary;
 using RemotePlusLibrary.Core;
 using RemotePlusLibrary.Extension.CommandSystem;
@@ -110,14 +110,14 @@ namespace RemotePlusServer
         /// <param name="callback">The callback to use when an event occures for logging.</param>
         /// <param name="setupCallback">The callback to use when setting up the service implementation.</param>
         /// <returns></returns>
-        public static IRemotePlusService<FileTransferServciceInterface> CreateNotSingle(Type contractType, int port, string defaultEndpoint, Action<string, OutputLevel> callback)
+        public static IRemotePlusService<FileTransferServciceInterface> CreateNotSingle(Type contractType, int port, string defaultEndpoint, Action<string, LogLevel> callback)
         {
             FileTransferService temp;
-            callback?.Invoke("Building endpoint URL.", OutputLevel.Debug);
+            callback?.Invoke("Building endpoint URL.", LogLevel.Debug);
             string url = $"net.tcp://0.0.0.0:{port}/{defaultEndpoint}";
-            callback?.Invoke($"URL built {url}", OutputLevel.Debug);
-            callback?.Invoke("Creating server.", OutputLevel.Debug);
-            callback?.Invoke("Publishing server events.", OutputLevel.Debug);
+            callback?.Invoke($"URL built {url}", LogLevel.Debug);
+            callback?.Invoke("Creating server.", LogLevel.Debug);
+            callback?.Invoke("Publishing server events.", LogLevel.Debug);
             NetTcpBinding binding = _ConnectionFactory.BuildBinding();
             StringBuilder dataBuilder = new StringBuilder();
             dataBuilder.AppendLine("Binding configurations:");
@@ -125,22 +125,22 @@ namespace RemotePlusServer
             dataBuilder.AppendLine($"MaxBufferPoolSize: {binding.MaxBufferPoolSize}");
             dataBuilder.AppendLine($"MaxBufferSize: {binding.MaxBufferSize}");
             dataBuilder.AppendLine($"MaxReceivedMessageSize: {binding.MaxReceivedMessageSize}");
-            callback?.Invoke(dataBuilder.ToString(), OutputLevel.Debug);
+            callback?.Invoke(dataBuilder.ToString(), LogLevel.Debug);
             temp = new FileTransferService(contractType, binding, url);
             return temp;
         }
-        public static IRemotePlusService<FileTransferServciceInterface> CreateNotSingle(Type contractType, int port, Binding binding, string defaultEndpoint, Action<string, OutputLevel> callback)
+        public static IRemotePlusService<FileTransferServciceInterface> CreateNotSingle(Type contractType, int port, Binding binding, string defaultEndpoint, Action<string, LogLevel> callback)
         {
             FileTransferService temp;
-            callback?.Invoke("Building endpoint URL.", OutputLevel.Debug);
+            callback?.Invoke("Building endpoint URL.", LogLevel.Debug);
             string url = $"{binding.Scheme}://0.0.0.0:{port}/{defaultEndpoint}";
-            callback?.Invoke($"URL built {url}", OutputLevel.Debug);
-            callback?.Invoke("Creating server.", OutputLevel.Debug);
-            callback?.Invoke("Publishing server events.", OutputLevel.Debug);
+            callback?.Invoke($"URL built {url}", LogLevel.Debug);
+            callback?.Invoke("Creating server.", LogLevel.Debug);
+            callback?.Invoke("Publishing server events.", LogLevel.Debug);
             StringBuilder dataBuilder = new StringBuilder();
             dataBuilder.AppendLine("Binding configurations:");
             dataBuilder.AppendLine();
-            callback?.Invoke(dataBuilder.ToString(), OutputLevel.Debug);
+            callback?.Invoke(dataBuilder.ToString(), LogLevel.Debug);
             temp = new FileTransferService(contractType, binding, url);
             return temp;
         }

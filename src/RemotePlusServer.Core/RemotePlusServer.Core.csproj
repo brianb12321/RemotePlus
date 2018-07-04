@@ -30,12 +30,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BetterLogger">
+      <HintPath>..\..\Libs\BetterLogger.dll</HintPath>
+    </Reference>
     <Reference Include="GameclubCryptoServices">
       <HintPath>..\..\Libs\GameclubCryptoServices.dll</HintPath>
     </Reference>
-    <Reference Include="Ionic.Zip, Version=1.9.1.8, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c" />
-    <Reference Include="Logging">
-      <HintPath>..\..\Libs\Logging.dll</HintPath>
+    <Reference Include="Ionic.Zip, Version=1.9.1.8, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Ionic.Zip.1.9.1.8\lib\Ionic.Zip.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Scripting, Version=1.2.0.0, Culture=neutral, PublicKeyToken=7f709c5b713576e1" />
     <Reference Include="Ninject, Version=3.3.4.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
@@ -44,6 +46,7 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Numerics" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Speech" />
     <Reference Include="System.Windows.Forms" />
@@ -70,12 +73,8 @@
     <Compile Include="Proxies\StaticRemoteFunctions.cs" />
     <Compile Include="Remote.cs" />
     <Compile Include="ScriptPackageExtensions.cs" />
-    <Compile Include="ServerCore\IServerBuilder.cs" />
-    <Compile Include="ServerCore\IServerCoreStartup.cs" />
     <Compile Include="ServerCore\ScriptingEngineOptions.cs" />
     <Compile Include="ServerCore\ServerBuilderExtensions.cs" />
-    <Compile Include="ServerCore\ServerCoreLibraryAttribute.cs" />
-    <Compile Include="ServerCore\ServerCoreLoader.cs" />
     <Compile Include="ServerCore\ServerInitiliazationPipeline.cs" />
     <Compile Include="ServerManager.cs" />
     <Compile Include="ServerRemoteInterface.cs" />

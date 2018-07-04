@@ -54,6 +54,9 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BetterLogger">
+      <HintPath>..\..\Libs\BetterLogger.dll</HintPath>
+    </Reference>
     <Reference Include="GameclubCryptoServices">
       <HintPath>..\..\Libs\GameclubCryptoServices.dll</HintPath>
     </Reference>
@@ -73,9 +76,6 @@
     </Reference>
     <Reference Include="IronPython.Wpf, Version=2.7.8.0, Culture=neutral, PublicKeyToken=7f709c5b713576e1, processorArchitecture=MSIL">
       <HintPath>..\..\packages\IronPython.2.7.8.1\lib\net45\IronPython.Wpf.dll</HintPath>
-    </Reference>
-    <Reference Include="Logging">
-      <HintPath>..\..\Libs\Logging.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Scripting, Version=1.2.0.0, Culture=neutral, PublicKeyToken=7f709c5b713576e1, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.VisualStudio.CodeCoverage.Shim, Version=15.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
@@ -124,6 +124,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RemoteImpl.cs" />
     <Compile Include="ServerPrerequisites.cs" />
+    <Compile Include="ServiceCollection.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\RemotePlusLibrary.Configuration\RemotePlusLibrary.Configuration.csproj">

@@ -1,5 +1,4 @@
-﻿using Logging;
-using RemotePlusClient.CommonUI;
+﻿using RemotePlusClient.CommonUI;
 using RemotePlusLibrary;
 using RemotePlusLibrary.Core;
 using RemotePlusLibrary.Extension.Gui;
@@ -14,13 +13,15 @@ using RemotePlusLibrary.Security.AccountSystem;
 using RemotePlusLibrary.Security.AccountSystem.Policies;
 using System.Diagnostics;
 using RemotePlusClient.Settings;
+using BetterLogger;
+using BetterLogger.Loggers;
 
 namespace RemotePlusClient
 {
     public class ClientApp
     {
         public static MainF MainWindow;
-        public static CMDLogging Logger { get; private set; }
+        public static ILogFactory Logger { get; private set; }
         public static ClientSettings ClientSettings { get; } = new ClientSettings();
         [STAThread]
         static void Main(string[] args)
@@ -31,19 +32,16 @@ namespace RemotePlusClient
             {
                 Control.CheckForIllegalCrossThreadCalls = false;
             }
-            Logger = new CMDLogging()
-            {
-                DefaultFrom = "Client",
-                OverrideLogItemObjectColorValue = true
-            };
-            Logger.AddOutput("Loading client settings.", OutputLevel.Info);
+            Logger = new BaseLogFactory();
+            Logger.AddLogger(new ConsoleLogger());
+            Logger.Log("Loading client settings.", LogLevel.Info);
             if(File.Exists(ClientSettings.CLIENT_SETTING_PATH))
             {
                 ClientSettings.Load();
             }
             else
             {
-                Logger.AddOutput("No config file exists. Creating new config file.", OutputLevel.Warning);
+                Logger.Log("No config file exists. Creating new config file.", LogLevel.Warning);
                 ClientSettings.DefaultTheme = Theme.AwesomeWhite;
                 ClientSettings.DefaultTheme.ThemeEnabled = false;
                 ClientSettings.Save();
@@ -57,7 +55,7 @@ namespace RemotePlusClient
 
         static void InitializeDefaultKnownTypes()
         {
-            Logger.AddOutput("Initializing default known types.", OutputLevel.Info);
+            Logger.Log("Initializing default known types.", LogLevel.Info);
             DefaultKnownTypeManager.LoadDefaultTypes();
             DefaultKnownTypeManager.AddType(typeof(UserAccount));
             DefaultKnownTypeManager.AddType(typeof(OperationPolicies));

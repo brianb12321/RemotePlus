@@ -6,7 +6,6 @@ using System.Linq;
 using System.ServiceModel;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Logging;
 using RemotePlusLibrary.Extension.Gui;
 using RemotePlusClient.ExtensionSystem;
 using RemotePlusLibrary.Core;
@@ -19,6 +18,7 @@ using RemotePlusLibrary.Core.Faults;
 using RemotePlusClient.UIForms.SettingDialogs;
 using RemotePlusClient.UIForms.CommandSystem;
 using RemotePlusClient.UIForms.Scripting;
+using BetterLogger;
 
 namespace RemotePlusClient
 {
@@ -50,8 +50,7 @@ namespace RemotePlusClient
             {
                 Remote.Disconnect();
                 Remote.Close();
-                ConsoleObj.Logger.DefaultFrom = "Client";
-                ConsoleObj.Logger.AddOutput("Closed", Logging.OutputLevel.Info);
+                ConsoleObj.Logger.Log("Closed", LogLevel.Info);
             }
             else if(FoundServers != null)
             {
@@ -105,14 +104,14 @@ namespace RemotePlusClient
                 LocalCallback = new ClientCallback(0);
                 Remote = new ServiceClient(LocalCallback, _ConnectionFactory.BuildBinding(), new EndpointAddress(Address));
                 Remote.Open();
-                ConsoleObj.Logger.AddOutput("Registering...", Logging.OutputLevel.Info);
+                ConsoleObj.Logger.Log("Registering...", LogLevel.Info);
                 Remote.Register(Settings);
                 EnableMenuItems();
                 cmb_servers.Items.Add(Remote);
             }
             catch (Exception ex)
             {
-                ConsoleObj.Logger.AddOutput("Error connecting to server. " + ex.Message, OutputLevel.Error);
+                ConsoleObj.Logger.Log("Error connecting to server. " + ex.Message, LogLevel.Error);
                 MessageBox.Show("Error connecting to server. " + ex.Message, "Connection error.", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -123,7 +122,7 @@ namespace RemotePlusClient
             FoundServers = new ProxyClient(LocalCallback, _ConnectionFactory.BuildBinding(), new EndpointAddress(proxyEndpointAddress));
             FoundServers.Connect();
             FoundServers.ProxyRegister();
-            ConsoleObj.Logger.AddOutput($"Found {FoundServers.GetServers().Count()} servers joined to the proxy server.", OutputLevel.Info);
+            ConsoleObj.Logger.Log($"Found {FoundServers.GetServers().Count()} servers joined to the proxy server.", LogLevel.Info);
             AddTabToSideControl("Server Explorer", new ServerExplorer());
             string[] servers = FoundServers.GetServers().Select(g => g.ToString()).ToArray();
             cmb_servers.Items.AddRange(servers);
@@ -193,9 +192,9 @@ namespace RemotePlusClient
         private void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)
         {
 #if DEBUG
-            ConsoleObj.Logger.AddOutput("Unknown error: " + e.Exception.ToString(), Logging.OutputLevel.Error);
+            ConsoleObj.Logger.Log("Unknown error: " + e.Exception.ToString(), LogLevel.Error);
 #else
-            ConsoleObj.Logger.AddOutput("Unknown error: " + e.Exception.Message, Logging.OutputLevel.Error);
+            ConsoleObj.Logger.Log("Unknown error: " + e.Exception.Message, LogLevel.Error);
 #endif
         }
 
@@ -293,21 +292,21 @@ namespace RemotePlusClient
             if (e.ExceptionObject is FaultException<ServerFault>)
             {
                 var exception = (FaultException<ServerFault>)e.ExceptionObject;
-                ConsoleObj.Logger.AddOutput("Unkown error: " + exception.ToString() + Environment.NewLine + exception.Detail.ToString(), OutputLevel.Error);
+                ConsoleObj.Logger.Log("Unkown error: " + exception.ToString() + Environment.NewLine + exception.Detail.ToString(), LogLevel.Error);
             }
             else
             {
-                ConsoleObj.Logger.AddOutput("Unkown error: " + ((Exception)e.ExceptionObject).ToString(), OutputLevel.Error);
+                ConsoleObj.Logger.Log("Unkown error: " + ((Exception)e.ExceptionObject).ToString(), LogLevel.Error);
             }
 #else
             if (e.ExceptionObject is FaultException<ServerFault>)
             {
                 var fault = e.ExceptionObject as FaultException<ServerFault>;
-                ConsoleObj.Logger.AddOutput("Unkown error: " + fault.Message, OutputLevel.Error);
+                ConsoleObj.Logger.Log("Unkown error: " + fault.Message, LogLevel.Error);
             }
             else
             {
-                ConsoleObj.Logger.AddOutput("Unkown error: " + ((Exception)e.ExceptionObject).Message, OutputLevel.Error);
+                ConsoleObj.Logger.Log("Unkown error: " + ((Exception)e.ExceptionObject).Message, LogLevel.Error);
             }
 #endif
         }
@@ -342,10 +341,10 @@ namespace RemotePlusClient
             };
             if (ofd.ShowDialog() == DialogResult.OK)
             {
-                ClientInitEnvironment env = new ClientInitEnvironment((ConsoleObj.Logger.errorcount > 0) ? true : false);
+                ClientInitEnvironment env = new ClientInitEnvironment((ConsoleObj.Logger.ErrorCount > 0) ? true : false);
                 var lib = ClientExtensionLibrary.LoadClientLibrary(ofd.FileName,
-                    (f) => MainF.ConsoleObj.Logger.AddOutput($"Form load: {f.ExtensionName}", OutputLevel.Info),
-                    (m, o) => ConsoleObj.Logger.AddOutput(new UILogItem(o, m, "Extension Loader")),
+                    (f) => MainF.ConsoleObj.Logger.Log($"Form load: {f.ExtensionName}", LogLevel.Info),
+                    (m, o) => ConsoleObj.Logger.Log(m, o, "Extension Loader"),
                     env);
                 DefaultCollection.Libraries.Add(lib.Name, lib);
                 Task.Factory.StartNew(() =>
@@ -359,7 +358,7 @@ namespace RemotePlusClient
                         };
                         this.Invoke(new MethodInvoker(() => ((ExtensionView)emi_Left.TabPages[0].Controls[0]).treeView1.Nodes.Add(tn)));
                     }
-                    this.Invoke(new MethodInvoker(() => MainF.ConsoleObj.Logger.AddOutput("Extension loaded.", Logging.OutputLevel.Info)));
+                    this.Invoke(new MethodInvoker(() => MainF.ConsoleObj.Logger.Log("Extension loaded.", LogLevel.Info)));
                 });
             }
         }

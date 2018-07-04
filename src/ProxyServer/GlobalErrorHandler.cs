@@ -1,7 +1,9 @@
 ﻿
+using BetterLogger;
 using RemotePlusLibrary.Core;
 using RemotePlusLibrary.Core.Faults;
 using RemotePlusLibrary.Discovery;
+using RemotePlusLibrary.IOC;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,10 +20,10 @@ namespace ProxyServer
         public bool HandleError(Exception error)
         {
 #if DEBUG
-            ProxyManager.Logger.AddOutput("Fault error: " + error.ToString(), Logging.OutputLevel.Error);
+            GlobalServices.Logger.Log("Fault error: " + error.ToString(), LogLevel.Error);
             return true;
 #else
-            ProxyManager.Logger.AddOutput("Fault error: " + error.Message, Logging.OutputLevel.Error);
+            ProxyManager.Logger.Log("Fault error: " + error.Message, LogLevel.Error);
             return true;
 #endif
         }

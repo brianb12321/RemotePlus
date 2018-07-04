@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.ServiceModel;
 using System.Text;
-using System.Threading.Tasks;
-using Logging;
+using BetterLogger;
+using RemotePlusLibrary;
+using RemotePlusLibrary.IOC;
 using RemotePlusLibrary.Scripting;
-using RemotePlusServer.Core;
 
 namespace RemotePlusServer.Core.Proxies
 {
@@ -31,7 +29,7 @@ namespace RemotePlusServer.Core.Proxies
             StringBuilder builder = new StringBuilder();
             builder.AppendLine("ServerName: RemotePlus");
             builder.AppendLine($"ServerVersion: {ServerManager.DefaultSettings.ServerVersion}");
-            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(Logging.OutputLevel.Info, builder.ToString()));
+            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(builder.ToString(), LogLevel.Info);
         }
         [IndexScriptObject]
         public void printToServerConsole(string message)
@@ -39,27 +37,9 @@ namespace RemotePlusServer.Core.Proxies
             Console.WriteLine(message);
         }
         [IndexScriptObject]
-        public void logToServerConsole(string message, int outputLevel)
+        public void logToServerConsole(string message, LogLevel LogLevel)
         {
-            Logging.OutputLevel level = Logging.OutputLevel.Info;
-            switch(outputLevel)
-            {
-                case 0:
-                    level = Logging.OutputLevel.Info;
-                    break;
-                case 1:
-                    level = Logging.OutputLevel.Warning;
-                    break;
-                case 2:
-                    level = Logging.OutputLevel.Error;
-                    break;
-                case 3:
-                    level = Logging.OutputLevel.Debug;
-                    break;
-                default:
-                    throw new Exception("Invalid OutputLevel. Please select a level in the range of 0 through 3");
-            }
-            ServerManager.Logger.AddOutput(message, level, ScriptBuilder.SCRIPT_LOG_CONSTANT);
+            GlobalServices.Logger.Log(message, LogLevel, ScriptBuilder.SCRIPT_LOG_CONSTANT);
         }
         [IndexScriptObject]
         public void createFault(string message)
@@ -69,12 +49,7 @@ namespace RemotePlusServer.Core.Proxies
         [IndexScriptObject]
         public string getServerLog()
         {
-            StringBuilder sb = new StringBuilder();
-            foreach(LogItem li in ServerManager.Logger.buffer)
-            {
-                sb.AppendLine(li.ToString());
-            }
-            return sb.ToString();
+            return Console.In.ReadToEnd();
         }
     }
 }

@@ -20,12 +20,12 @@ namespace WindowsTools
             try
             {
                 SendKeys.SendWait(args.Arguments[1].Value);
-                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(Logging.OutputLevel.Info, $"Key {args.Arguments[0]} sent to server."));
+                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole($"Key {args.Arguments[1]} sent to server.", BetterLogger.LogLevel.Info);
                 return new CommandResponse((int)CommandStatus.Success);
             }   
             catch (Exception ex)
             {
-                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new Logging.UILogItem(Logging.OutputLevel.Error, $"Unable to send key {args.Arguments[0]} to the server. Error: {ex.Message}"));
+                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole($"Unable to send key {args.Arguments[1]} to the server. Error: {ex.Message}", BetterLogger.LogLevel.Error);
                 return new CommandResponse((int)CommandStatus.Fail);
             }
         }

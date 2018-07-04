@@ -31,8 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Logging">
-      <HintPath>..\..\..\Libs\Logging.dll</HintPath>
+    <Reference Include="BetterLogger, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Libs\BetterLogger.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
@@ -75,6 +76,7 @@
     <ProjectReference Include="..\..\RemotePlusServer.Core\RemotePlusServer.Core.csproj">
       <Project>{5669A80C-19D9-4DBE-BF5A-BBFCBF947634}</Project>
       <Name>RemotePlusServer.Core</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

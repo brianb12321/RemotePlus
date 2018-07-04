@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using RemotePlusLibrary;
-using Logging;
 using System.ServiceModel;
 using RemotePlusLibrary.Core;
 using System.Windows.Forms;
@@ -12,12 +8,13 @@ using System.Drawing;
 using RemotePlusClient.CommonUI;
 using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
-using RemotePlusLibrary.Extension;
 using System.Text.RegularExpressions;
 using RemotePlusLibrary.Security.AccountSystem;
 using RemotePlusClient.CommonUI.ConnectionClients;
 using RemotePlusLibrary.Core.Faults;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing;
+using BetterLogger;
+using BetterLogger.Loggers;
 
 namespace RemotePlusClientCmd
 {
@@ -25,7 +22,7 @@ namespace RemotePlusClientCmd
     {
         public static Dictionary<string, CommandDelegate> LocalCommands = new Dictionary<string, CommandDelegate>();
         public static ServiceClient Remote = null;
-        public static CMDLogging Logger = null;
+        public static ILogFactory Logger = null;
         public static PromptBuilder prompt = new PromptBuilder();
         public static ProxyClient Proxy = null;
         public static string BaseURL;
@@ -57,11 +54,8 @@ namespace RemotePlusClientCmd
             InitCommands();
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Logger = new CMDLogging()
-            {
-                DefaultFrom = "CLient CMD",
-                OverrideLogItemObjectColorValue = true
-            };
+            Logger = new BaseLogFactory();
+            Logger.AddLogger(new ConsoleLogger());
             InitializeDefaultKnownTypes();
             RequestStore.Init();
             RequestStore.Add("rcmd_menu", new Requests.ConsoleMenuRequest());
@@ -227,7 +221,7 @@ namespace RemotePlusClientCmd
         //        }
         //        else
         //        {
-        //            Logger.AddOutput(new UILogItem(OutputLevel.Error, $"Variable {variablename} does not exist", "Server Host"));
+        //            Logger.Log(new UILogItem(LogLevel.Error, $"Variable {variablename} does not exist", "Server Host"));
         //            success = false;
         //        }
         //    }
@@ -352,12 +346,12 @@ namespace RemotePlusClientCmd
                         {
                             if (ba.TopChainCommand && pipe.Count > 0)
                             {
-                                Logger.AddOutput($"This is a top-level command.", OutputLevel.Error);
+                                Logger.Log($"This is a top-level command.", LogLevel.Error);
                                 return new CommandResponse((int)CommandStatus.AccessDenied);
                             }
                             if (commandMode != ba.ExecutionType)
                             {
-                                Logger.AddOutput($"The command requires you to be in {ba.ExecutionType} mode.", OutputLevel.Error);
+                                Logger.Log($"The command requires you to be in {ba.ExecutionType} mode.", LogLevel.Error);
                                 return new CommandResponse((int)CommandStatus.AccessDenied);
                             }
                             if (ba.DoNotCatchExceptions)
@@ -373,18 +367,18 @@ namespace RemotePlusClientCmd
                         var sc = k.Value(request, pipe);
                         if (scdm == StatusCodeDeliveryMethod.TellMessage)
                         {
-                            Logger.AddOutput($"Command {k.Key} finished with status code {sc.ToString()}", OutputLevel.Info);
+                            Logger.Log($"Command {k.Key} finished with status code {sc.ToString()}", LogLevel.Info);
                         }
                         else if (scdm == StatusCodeDeliveryMethod.TellMessageToServerConsole)
                         {
-                            Logger.AddOutput($"Command {k.Key} finished with status code {sc.ToString()}", OutputLevel.Info);
+                            Logger.Log($"Command {k.Key} finished with status code {sc.ToString()}", LogLevel.Info);
                         }
                         return sc;
                     }
                 }
                 if (!FoundCommand)
                 {
-                    Logger.AddOutput("Unknown local command. Please type {#help} for a list of commands.", OutputLevel.Error);
+                    Logger.Log("Unknown local command. Please type {#help} for a list of commands.", LogLevel.Error);
                     return new CommandResponse((int)CommandStatus.Fail);
                 }
                 return new CommandResponse(-2);
@@ -397,14 +391,14 @@ namespace RemotePlusClientCmd
                 }
                 else
                 {
-                    Logger.AddOutput("Error whie executing local command: " + ex.Message, OutputLevel.Error);
+                    Logger.Log("Error whie executing local command: " + ex.Message, LogLevel.Error);
                     return new CommandResponse((int)CommandStatus.Fail);
                 }
             }
         }
         static void InitializeDefaultKnownTypes()
         {
-            Logger.AddOutput("Initializing default known types.", OutputLevel.Info);
+            Logger.Log("Initializing default known types.", LogLevel.Info);
             DefaultKnownTypeManager.LoadDefaultTypes();
             DefaultKnownTypeManager.AddType(typeof(UserAccount));
         }

@@ -58,7 +58,7 @@ namespace Recon
 
         private static void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)
         {
-            //Logger.AddOutput($"Thread Error: {e.Exception.Message}", OutputLevel.Error);
+            //Logger.Log($"Thread Error: {e.Exception.Message}", LogLevel.Error);
             Icon.ShowBalloonTip(5000, "Error", "There was an unkown error. Please check the console for more details", ToolTipIcon.Error);
         }
 

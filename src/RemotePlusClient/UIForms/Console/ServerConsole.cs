@@ -1,5 +1,4 @@
-﻿using Logging;
-using RemotePlusLibrary.Extension.CommandSystem;
+﻿using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusLibrary.Extension.Gui;
 using System;
 using System.ComponentModel;
@@ -13,12 +12,13 @@ using RemotePlusClient.Settings;
 using RemotePlusLibrary.Contracts;
 using RemotePlusClient.UIForms.SettingDialogs;
 using RemotePlusClient.UIForms.CommandSystem;
+using BetterLogger;
 
 namespace RemotePlusClient.UIForms.Consoles
 {
     public partial class ServerConsole : ThemedForm
     {
-        public RichTextBoxLoggingMethod Logger { get; set; }
+        public ILogFactory Logger { get; set; }
         public ConsoleSettings settings = null;
         IRemote currentClient = null;
         public bool InputEnabled { get; set; } = true;
@@ -55,20 +55,16 @@ namespace RemotePlusClient.UIForms.Consoles
             }
             catch (FileNotFoundException)
             {
-                MainF.ConsoleObj.Logger.AddOutput("Created new console config file.", OutputLevel.Info, "ServerConsole");
+                MainF.ConsoleObj.Logger.Log("Created new console config file.", LogLevel.Info, "ServerConsole");
                 settings.Save();
             }
             #endregion Initialize Settings
-            Logger = new RichTextBoxLoggingMethod()
-            {
-                Output = richTextBox1,
-                DefaultInfoColor = Color.White,
-                OverrideLogItemObjectColorValue = true,
-            };
-            Logger.DefaultInfoColor = settings.DefaultInfoColor;
-            Logger.DefaultErrorColor = settings.DefaultErrorColor;
-            Logger.DefaultWarningColor = settings.DefaultWarningColor;
-            Logger.DefaultDebugColor = settings.DefaultDebugColor;
+            Logger = new BaseLogFactory();
+            Logger.AddLogger(new TextBoxLogger(richTextBox1));
+            //Logger.DefaultInfoColor = settings.DefaultInfoColor;
+            //Logger.DefaultErrorColor = settings.DefaultErrorColor;
+            //Logger.DefaultWarningColor = settings.DefaultWarningColor;
+            //Logger.DefaultDebugColor = settings.DefaultDebugColor;
             richTextBox1.Font = (Font)TypeDescriptor.GetConverter(typeof(Font)).ConvertFromString(settings.DefaultFont);
             textBox1.AutoCompleteSource = AutoCompleteSource.CustomSource;
             textBox1.AutoCompleteMode = AutoCompleteMode.SuggestAppend;

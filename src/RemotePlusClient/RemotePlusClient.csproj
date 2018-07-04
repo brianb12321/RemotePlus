@@ -36,11 +36,11 @@
     <Reference Include="AutocompleteMenu">
       <HintPath>..\..\Libs\AutocompleteMenu.dll</HintPath>
     </Reference>
+    <Reference Include="BetterLogger">
+      <HintPath>..\..\Libs\BetterLogger.dll</HintPath>
+    </Reference>
     <Reference Include="FastColoredTextBox, Version=2.16.21.0, Culture=neutral, PublicKeyToken=fb8aa12b994ef61b, processorArchitecture=MSIL">
       <HintPath>..\..\packages\FCTB.2.16.21.0\lib\FastColoredTextBox.dll</HintPath>
-    </Reference>
-    <Reference Include="Logging">
-      <HintPath>..\..\Libs\Logging.dll</HintPath>
     </Reference>
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
@@ -169,6 +169,7 @@
     <Compile Include="UIForms\SettingDialogs\ServerSettingsDialog.Designer.cs">
       <DependentUpon>ServerSettingsDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="UIForms\TextBoxLogger.cs" />
     <Compile Include="UINodeType.cs" />
     <Compile Include="UIForms\ViewRequestDialogBox.cs">
       <SubType>Form</SubType>

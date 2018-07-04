@@ -9,6 +9,9 @@ using System.ServiceModel;
 using RemotePlusLibrary.Extension.ExtensionLoader.Initialization;
 using RemotePlusServer.Core;
 using RemotePlusServer.Core.ExtensionSystem;
+using BetterLogger;
+using RemotePlusLibrary;
+using RemotePlusLibrary.IOC;
 
 namespace RemotePlusServer.Internal
 {
@@ -19,14 +22,14 @@ namespace RemotePlusServer.Internal
     {
         public static void RunHooks(string hookCategory, HookArguments args)
         {
-            ServerManager.Logger.AddOutput($"Calling hooks. Event: {hookCategory}", Logging.OutputLevel.Info);
+            GlobalServices.Logger.Log($"Calling hooks. Event: {hookCategory}", LogLevel.Info);
             foreach(ServerExtensionLibrary lib in ServerManager.DefaultCollection.Libraries.Values)
             {
                 if (lib.Hooks.ContainsKey(hookCategory))
                 {
                     foreach(ServerHook hook in lib.Hooks[hookCategory])
                     {
-                        ServerManager.Logger.AddOutput($"Calling hook. Library: {lib.FriendlyName}", Logging.OutputLevel.Info);
+                        GlobalServices.Logger.Log($"Calling hook. Library: {lib.FriendlyName}", LogLevel.Info);
                         hook(args);
                     }
                 }

@@ -1,22 +1,19 @@
-﻿using Logging;
+﻿using BetterLogger;
 using RemotePlusLibrary;
 using RemotePlusLibrary.Client;
-using RemotePlusLibrary.Contracts;
 using RemotePlusLibrary.Extension;
 using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing;
+using RemotePlusLibrary.IOC;
 using RemotePlusLibrary.Scripting;
 using RemotePlusLibrary.Security.AccountSystem;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Speech.Synthesis;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace RemotePlusServer.Core
@@ -38,17 +35,17 @@ namespace RemotePlusServer.Core
         }
         public void RunProgram(string Program, string Argument)
         {
-            ServerManager.Logger.AddOutput("Creating process component.", OutputLevel.Debug);
+            GlobalServices.Logger.Log("Creating process component.", LogLevel.Debug);
             Process p = new Process();
-            ServerManager.Logger.AddOutput($"File to execute: {Program}", OutputLevel.Debug);
+            GlobalServices.Logger.Log($"File to execute: {Program}", LogLevel.Debug);
             p.StartInfo.FileName = Program;
-            ServerManager.Logger.AddOutput($"File arguments: {Argument}", OutputLevel.Debug);
+            GlobalServices.Logger.Log($"File arguments: {Argument}", LogLevel.Debug);
             p.StartInfo.Arguments = Argument;
-            ServerManager.Logger.AddOutput($"Shell execution is disabled.", OutputLevel.Debug);
+            GlobalServices.Logger.Log($"Shell execution is disabled.", LogLevel.Debug);
             p.StartInfo.UseShellExecute = false;
-            ServerManager.Logger.AddOutput($"Error stream will be redirected.", OutputLevel.Debug);
+            GlobalServices.Logger.Log($"Error stream will be redirected.", LogLevel.Debug);
             p.StartInfo.RedirectStandardError = true;
-            ServerManager.Logger.AddOutput($"Standord stream will be redirected.", OutputLevel.Debug);
+            GlobalServices.Logger.Log($"Standord output stream will be redirected.", LogLevel.Debug);
             p.StartInfo.RedirectStandardOutput = true;
             p.ErrorDataReceived += (sender, e) =>
             {
@@ -62,10 +59,10 @@ namespace RemotePlusServer.Core
                         }
                         else
                         {
-                            Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, $"Extra data for appendText is invalid. Value: {val}", "Server Host"));
+                            Client.ClientCallback.TellMessageToServerConsole($"Extra data for appendText is invalid. Value: {val}", BetterLogger.LogLevel.Error, "Server Host");
                         }
                     }
-                    else
+                    else if (val != "true" && val != "false")
                     {
                         Client.ClientCallback.TellMessageToServerConsole(e.Data + "\n");
                     }
@@ -81,9 +78,9 @@ namespace RemotePlusServer.Core
                         {
                             Client.ClientCallback.TellMessageToServerConsole(e.Data);
                         }
-                        else
+                        else if(val != "true" && val != "false")
                         {
-                            Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, $"Extra data for appendText is invalid. Value: {val}", "Server Host"));
+                            Client.ClientCallback.TellMessageToServerConsole($"Extra data for appendText is invalid. Value: {val}", BetterLogger.LogLevel.Error, "Server Host");
                         }
                     }
                     else
@@ -92,39 +89,40 @@ namespace RemotePlusServer.Core
                     }
                 }
             };
-            ServerManager.Logger.AddOutput("Starting process component.", OutputLevel.Info);
+            GlobalServices.Logger.Log("Starting process component.", LogLevel.Info);
             p.Start();
-            ServerManager.Logger.AddOutput("Beginning error stream read line.", OutputLevel.Debug);
+            GlobalServices.Logger.Log("Beginning error stream read line.", LogLevel.Debug);
             p.BeginErrorReadLine();
-            ServerManager.Logger.AddOutput("Beginning standord stream reade line.", OutputLevel.Debug);
+            GlobalServices.Logger.Log("Beginning standord output stream reade line.", LogLevel.Debug);
             p.BeginOutputReadLine();
+            p.WaitForExit();
         }
         public void EncryptFile(string fileName, string password)
         {
-            ServerManager.Logger.AddOutput($"Encrypting file. file name: {fileName}", OutputLevel.Info);
+            GlobalServices.Logger.Log($"Encrypting file. file name: {fileName}", LogLevel.Info);
             GameclubCryptoServices.CryptoService.EncryptFile(password, fileName, Path.ChangeExtension(fileName, ".ec"));
-            ServerManager.Logger.AddOutput("File encrypted.", OutputLevel.Info);
-            Client.ClientCallback.TellMessage(new UILogItem(OutputLevel.Info, $"File encrypted. File: {fileName}", "Server Host"));
+            GlobalServices.Logger.Log("File encrypted.", LogLevel.Info);
+            Client.ClientCallback.TellMessage($"File encrypted. File: {fileName}", LogLevel.Info);
         }
         public void Speak(string Message, VoiceGender Gender, VoiceAge Age)
         {
             SpeechSynthesizer ss = new System.Speech.Synthesis.SpeechSynthesizer();
             ss.SelectVoiceByHints(Gender, Age);
             ss.Speak(Message);
-            Client.ClientCallback.TellMessage($"Server spoke. Message: {Message}, gender: {Gender.ToString()}, age: {Age.ToString()}", OutputLevel.Info);
+            Client.ClientCallback.TellMessage($"Server spoke. Message: {Message}, gender: {Gender.ToString()}, age: {Age.ToString()}", LogLevel.Info);
         }
         public DialogResult ShowMessageBox(string Message, string Caption, System.Windows.Forms.MessageBoxIcon Icon, System.Windows.Forms.MessageBoxButtons Buttons)
         {
             var dr = MessageBox.Show(Message, Caption, Buttons, Icon);
-            Client.ClientCallback.TellMessage(new UILogItem(OutputLevel.Info, $"The user responded to the message box. Response: {dr.ToString()}", "Server Host"));
+            Client.ClientCallback.TellMessage($"The user responded to the message box. Response: {dr.ToString()}", LogLevel.Info);
             return dr;
         }
         public void DecryptFile(string fileName, string password)
         {
-            ServerManager.Logger.AddOutput($"Decrypting file. file name: {fileName}", OutputLevel.Info);
+            GlobalServices.Logger.Log($"Decrypting file. file name: {fileName}", LogLevel.Info);
             GameclubCryptoServices.CryptoService.DecrypttFile(password, fileName, Path.ChangeExtension(fileName, ".uc"));
-            ServerManager.Logger.AddOutput("File decrypted.", OutputLevel.Info);
-            Client.ClientCallback.TellMessage(new UILogItem(OutputLevel.Info, $"File decrypted. File: {fileName}", "Server Host"));
+            GlobalServices.Logger.Log("File decrypted.", LogLevel.Info);
+            Client.ClientCallback.TellMessage($"File decrypted. File: {fileName}", LogLevel.Info);
         }
         public CommandPipeline RunServerCommand(string Command, CommandExecutionMode commandMode)
         {
@@ -139,7 +137,7 @@ namespace RemotePlusServer.Core
                 }
                 catch (Exception ex)
                 {
-                    Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, $"Could not execute script file: {ex.Message}", ScriptBuilder.SCRIPT_LOG_CONSTANT));
+                    Client.ClientCallback.TellMessageToServerConsole($"Could not execute script file: {ex.Message}", LogLevel.Error, ScriptBuilder.SCRIPT_LOG_CONSTANT);
                 }
             }
             else
@@ -198,10 +196,9 @@ namespace RemotePlusServer.Core
                 }
                 catch (ParserException e)
                 {
-                    UILogItem parseMessage = new UILogItem(OutputLevel.Error, $"Unable to parse command: {e.Message}");
-                    parseMessage.From = "Server Host";
-                    ServerManager.Logger.AddOutput(parseMessage.Message, parseMessage.Level, parseMessage.From);
-                    Client.ClientCallback.TellMessageToServerConsole(parseMessage);
+                    string parseErrorMessage = $"Unable to parse command: {e.Message}";
+                    GlobalServices.Logger.Log(parseErrorMessage, LogLevel.Error, "Server Host");
+                    Client.ClientCallback.TellMessageToServerConsole(parseErrorMessage, LogLevel.Error, "Server Host");
                     return pipe;
                 }
             }
@@ -225,7 +222,7 @@ namespace RemotePlusServer.Core
                 }
                 else
                 {
-                    Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, $"Variable {variablename} does not exist", "Server Host"));
+                    Client.ClientCallback.TellMessageToServerConsole($"Variable {variablename} does not exist", LogLevel.Error, "Server Host");
                     success = false;
                 }
             }
@@ -248,7 +245,7 @@ namespace RemotePlusServer.Core
                 }
                 else
                 {
-                    Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, $"Variable {variablename} does not exist", "Server Host"));
+                    Client.ClientCallback.TellMessageToServerConsole($"Variable {variablename} does not exist", LogLevel.Error, "Server Host");
                     success = false;
                 }
             }
@@ -384,7 +381,7 @@ namespace RemotePlusServer.Core
             StatusCodeDeliveryMethod scdm = StatusCodeDeliveryMethod.DoNotDeliver;
             try
             {
-                ServerManager.Logger.AddOutput($"Executing server command {c.Arguments[0]}", OutputLevel.Info);
+                GlobalServices.Logger.Log($"Executing server command {c.Arguments[0]}", LogLevel.Info);
                 try
                 {
                     var command = ServerManager.ServerRemoteService.Commands[c.Arguments[0].Value];
@@ -393,28 +390,28 @@ namespace RemotePlusServer.Core
                     {
                         if (ba.TopChainCommand && pipe.Count > 0)
                         {
-                            ServerManager.Logger.AddOutput($"This is a top-level command.", OutputLevel.Error);
-                            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessage($"This is a top-level command.", OutputLevel.Error);
+                            GlobalServices.Logger.Log($"This is a top-level command.", LogLevel.Error);
+                            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessage($"This is a top-level command.", LogLevel.Error);
                             return new CommandResponse((int)CommandStatus.AccessDenied);
                         }
                         if (commandMode != ba.ExecutionType)
                         {
-                            ServerManager.Logger.AddOutput($"The command requires you to be in {ba.ExecutionType} mode.", OutputLevel.Error);
-                            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessage($"The command requires you to be in {ba.ExecutionType} mode.", OutputLevel.Error);
+                            GlobalServices.Logger.Log($"The command requires you to be in {ba.ExecutionType} mode.", LogLevel.Error);
+                            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessage($"The command requires you to be in {ba.ExecutionType} mode.", LogLevel.Error);
                             return new CommandResponse((int)CommandStatus.AccessDenied);
                         }
                         if (ba.SupportClients != ClientSupportedTypes.Both && ((ServerManager.ServerRemoteService.RemoteInterface.Client.ClientType == ClientType.GUI && ba.SupportClients != ClientSupportedTypes.GUI) || (ServerManager.ServerRemoteService.RemoteInterface.Client.ClientType == ClientType.CommandLine && ba.SupportClients != ClientSupportedTypes.CommandLine)))
                         {
                             if (string.IsNullOrEmpty(ba.ClientRejectionMessage))
                             {
-                                ServerManager.Logger.AddOutput($"Your client must be a {ba.SupportClients.ToString()} client.", OutputLevel.Error);
-                                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessage($"Your client must be a {ba.SupportClients.ToString()} client.", OutputLevel.Error);
+                                GlobalServices.Logger.Log($"Your client must be a {ba.SupportClients.ToString()} client.", LogLevel.Error);
+                                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessage($"Your client must be a {ba.SupportClients.ToString()} client.", LogLevel.Error);
                                 return new CommandResponse((int)CommandStatus.UnsupportedClient);
                             }
                             else
                             {
-                                ServerManager.Logger.AddOutput(ba.ClientRejectionMessage, OutputLevel.Error);
-                                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessage(ba.ClientRejectionMessage, OutputLevel.Error);
+                                GlobalServices.Logger.Log(ba.ClientRejectionMessage, LogLevel.Error);
+                                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessage(ba.ClientRejectionMessage, LogLevel.Error);
                                 return new CommandResponse((int)CommandStatus.UnsupportedClient);
                             }
                         }
@@ -427,22 +424,22 @@ namespace RemotePlusServer.Core
                             scdm = ba.StatusCodeDeliveryMethod;
                         }
                     }
-                    ServerManager.Logger.AddOutput("Found command, and executing.", OutputLevel.Debug);
+                    GlobalServices.Logger.Log("Found command, and executing.", LogLevel.Debug);
                     var sc = command(c, pipe);
                     if (scdm == StatusCodeDeliveryMethod.TellMessage)
                     {
-                        ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessage($"Command {c.Arguments[0]} finished with status code {sc.ToString()}", OutputLevel.Info);
+                        ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessage($"Command {c.Arguments[0]} finished with status code {sc.ToString()}", LogLevel.Info);
                     }
                     else if (scdm == StatusCodeDeliveryMethod.TellMessageToServerConsole)
                     {
-                        ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Info, $"Command {c.Arguments[0]} finished with status code {sc.ToString()}"));
+                        ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole($"Command {c.Arguments[0]} finished with status code {sc.ToString()}", LogLevel.Info);
                     }
                     return sc;
                 }
                 catch (KeyNotFoundException)
                 {
-                    ServerManager.Logger.AddOutput("Failed to find the command.", OutputLevel.Debug);
-                    ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, "Unknown command. Please type {help} for a list of commands", "Server Host"));
+                    GlobalServices.Logger.Log("Failed to find the command.", LogLevel.Debug);
+                    ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Unknown command. Please type {help} for a list of commands", LogLevel.Error, "Server Host");
                     return new CommandResponse((int)CommandStatus.Fail);
                 }
             }
@@ -454,8 +451,8 @@ namespace RemotePlusServer.Core
                 }
                 else
                 {
-                    ServerManager.Logger.AddOutput("command failed: " + ex.Message, OutputLevel.Info);
-                    ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new UILogItem(OutputLevel.Error, "Error whie executing command: " + ex.Message, "Server Host"));
+                    GlobalServices.Logger.Log("command failed: " + ex.Message, LogLevel.Info);
+                    ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Error whie executing command: " + ex.Message, LogLevel.Error, "Server Host");
                     return new CommandResponse((int)CommandStatus.Fail);
                 }
             }
