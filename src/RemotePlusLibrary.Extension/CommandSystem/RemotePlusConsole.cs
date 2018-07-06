@@ -40,7 +40,7 @@ namespace RemotePlusLibrary.Extension.CommandSystem
                                 if(index == true)
                                 {
                                     CommandHelpAttribute cha = (CommandHelpAttribute)o;
-                                    t += $"\n{c.Key}\t{cha.HelpMessage}";
+                                    t += $"{c.Key}\t{cha.HelpMessage}\n";
                                 }
                             }
                         }
@@ -49,7 +49,7 @@ namespace RemotePlusLibrary.Extension.CommandSystem
                     {
                         if (index == true)
                         {
-                            t += $"\n{c.Key}";
+                            t += $"{c.Key}\n";
                         }
                     }
                 }

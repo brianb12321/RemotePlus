@@ -378,7 +378,7 @@ namespace ProxyServer
             {
                 try
                 {
-                    return SelectedClient.ClientCallback.RunServerCommand(Command.Remove(0, 3), CommandExecutionMode.Client);
+                    return SelectedClient.ClientCallback.RunServerCommand(Command.Remove(0, 2), CommandExecutionMode.Client);
                 }
                 catch (Exception ex)
                 {

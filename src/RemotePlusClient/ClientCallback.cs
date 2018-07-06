@@ -140,11 +140,11 @@ namespace RemotePlusClient
         {
             if (MainF.ServerConsoleObj == null)
             {
-                MainF.ConsoleObj.AppendText(Message);
+                MainF.ConsoleObj.AppendText(Message + Environment.NewLine);
             }
             else
             {
-                MainF.ServerConsoleObj.AppendText(Message);
+                MainF.ServerConsoleObj.AppendText(Message + Environment.NewLine);
             }
         }
 
@@ -190,7 +190,7 @@ namespace RemotePlusClient
         {
             Color originalColor = MainF.ConsoleObj.ForeColor;
             MainF.ConsoleObj.ForeColor = text.TextColor;
-            MainF.ConsoleObj.AppendText(text.Text);
+            MainF.ConsoleObj.AppendText(text.Text + Environment.NewLine);
             MainF.ConsoleObj.ForeColor = originalColor;
         }
 
