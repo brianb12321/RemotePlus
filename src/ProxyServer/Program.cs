@@ -2,19 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using RemotePlusLibrary;
-using Logging;
 using System.Reflection;
-using RemotePlusLibrary.Discovery;
 using System.Windows.Forms;
-using System.ServiceModel.Dispatcher;
 using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
 using RemotePlusLibrary.Extension;
 using RemotePlusLibrary.Client;
 using BetterLogger;
-using BetterLogger.Loggers;
 using System.IO;
 using RemotePlusLibrary.IOC;
 using Ninject;
@@ -123,11 +118,6 @@ namespace ProxyServer
         internal static void RunInServerMode()
         {
             ProxyService.Start();
-        }
-
-        private static void CreateProxyServer()
-        {
-            
         }
 
         internal static void Close()

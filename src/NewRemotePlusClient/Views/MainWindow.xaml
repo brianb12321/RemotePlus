@@ -1,0 +1,60 @@
+﻿<Window x:Class="NewRemotePlusClient.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:NewRemotePlusClient"
+        xmlns:pagesVM="clr-namespace:NewRemotePlusClient.ViewModels.Pages"
+        xmlns:pages="clr-namespace:NewRemotePlusClient.Views.Pages"
+        mc:Ignorable="d"
+        Title="New RemotePlus" Height="450" Width="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="20" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="25" />
+        </Grid.RowDefinitions>
+        <Menu Grid.Row="0">
+            <MenuItem Header="File">
+                <MenuItem Header="Exit" Command="{Binding ExitCommand}"/>
+                <MenuItem Header="Version" Command="{Binding VersionCommand}" />
+            </MenuItem>
+            <MenuItem Header="Server">
+                <MenuItem Header="Connect" Command="{Binding ConnectCommand}"/>
+                <MenuItem Header="Open Console" Command="{Binding OpenConsoleCommand}" />
+            </MenuItem>
+        </Menu>
+        <DockPanel Grid.Row="1">
+            <TabControl DockPanel.Dock="Left" Width="300" TabStripPlacement="Left">
+                <TabItem Header="Extensions">
+                </TabItem>
+            </TabControl>
+            <TabControl ItemsSource="{Binding TabPagesLoaded}">
+                <TabControl.ItemTemplate>
+                    <DataTemplate DataType="{x:Type local:ITabPage}">
+                        <TextBlock>
+                            <Run Text="{Binding Name}" />
+                            <Hyperlink Command="{Binding CloseCommand}">X</Hyperlink>
+                        </TextBlock>
+                    </DataTemplate>
+                </TabControl.ItemTemplate>
+                <TabControl.Resources>
+                    <DataTemplate DataType="{x:Type pagesVM:ConsoleViewModel}">
+                        <pages:ConsolePage />
+                    </DataTemplate>
+                </TabControl.Resources>
+            </TabControl>
+        </DockPanel>
+        <TabControl Grid.Row="2" TabStripPlacement="Bottom">
+            <TabItem Header="Console">
+                <TextBox IsReadOnly="True" x:Name="consoleTextBox" />
+            </TabItem>
+        </TabControl>
+        <StatusBar Grid.Row="3">
+            <TextBlock Text="{Binding Status}"/>
+            <TextBlock Text="Connection State: "/>
+            <TextBlock Text="{Binding ConnectionState}"/>
+        </StatusBar>
+    </Grid>
+</Window>
