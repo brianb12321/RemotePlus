@@ -1,0 +1,19 @@
+﻿<Window x:Class="NewRemotePlusClient.Views.ConnectView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:NewRemotePlusClient.Views"
+        mc:Ignorable="d"
+        x:Name="ConnectWindow"
+        Title="Connect To Server" Height="450" Width="800">
+    <StackPanel>
+        <StackPanel Orientation="Horizontal">
+            <TextBlock>Address</TextBlock>
+            <TextBox Width="400" Text="{Binding Address.Address, UpdateSourceTrigger=PropertyChanged}"/>
+        </StackPanel>
+        <Button Content="Connect" Command="{Binding ConnectNowCommand}" CommandParameter="{Binding ElementName=ConnectWindow}"/>
+        <Button Content="Cancel" Command="{Binding CancelCommand}" CommandParameter="{Binding ElementName=ConnectWindow}"/>
+        <Button Content="Edit Registiration Object" Command="{Binding EditRegObjectCommand}"/>
+    </StackPanel>
+</Window>
