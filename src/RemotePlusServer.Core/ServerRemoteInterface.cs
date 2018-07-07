@@ -11,6 +11,7 @@ using RemotePlusLibrary.Security.AccountSystem;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Speech.Synthesis;
 using System.Text.RegularExpressions;
@@ -198,7 +199,7 @@ namespace RemotePlusServer.Core
                 {
                     string parseErrorMessage = $"Unable to parse command: {e.Message}";
                     GlobalServices.Logger.Log(parseErrorMessage, LogLevel.Error, "Server Host");
-                    Client.ClientCallback.TellMessageToServerConsole(parseErrorMessage, LogLevel.Error, "Server Host");
+                    Client.ClientCallback.TellMessageToServerConsole(new ConsoleText(parseErrorMessage) { TextColor = Color.Red });
                     return pipe;
                 }
             }
@@ -439,7 +440,7 @@ namespace RemotePlusServer.Core
                 catch (KeyNotFoundException)
                 {
                     GlobalServices.Logger.Log("Failed to find the command.", LogLevel.Debug);
-                    ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Unknown command. Please type {help} for a list of commands", LogLevel.Error, "Server Host");
+                    ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText("Unknown command. Please type {help} for a list of commands") { TextColor = Color.Red });
                     return new CommandResponse((int)CommandStatus.Fail);
                 }
             }
@@ -452,7 +453,7 @@ namespace RemotePlusServer.Core
                 else
                 {
                     GlobalServices.Logger.Log("command failed: " + ex.Message, LogLevel.Info);
-                    ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Error whie executing command: " + ex.Message, LogLevel.Error, "Server Host");
+                    ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText("Error whie executing command: " + ex.Message) { TextColor = Color.Red });
                     return new CommandResponse((int)CommandStatus.Fail);
                 }
             }

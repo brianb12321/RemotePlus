@@ -137,14 +137,14 @@ namespace RemotePlusClientCmd
         public void TellMessageToServerConsole(Guid guid, string Message)
         {
             //ClientCmdManager.WaitFlag = true;
-            Console.Write(Message);
+            Console.WriteLine(Message);
             //ClientCmdManager.WaitFlag = false;
         }
 
         public void TellMessageToServerConsole(Guid guid, ConsoleText text)
         {
             Colorful.Console.ForegroundColor = text.TextColor;
-            Colorful.Console.Write(text.Text);
+            Colorful.Console.WriteLine(text.Text);
             Colorful.Console.ResetColor();
         }
 
