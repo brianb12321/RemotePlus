@@ -25,5 +25,10 @@ namespace NewRemotePlusClient.Views
             InitializeComponent();
             DataContext = new ViewModels.ConnectViewModel();
         }
+
+        void IWindow.ShowDialog()
+        {
+            ShowDialog();
+        }
     }
 }

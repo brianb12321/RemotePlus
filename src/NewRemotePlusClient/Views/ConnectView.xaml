@@ -14,6 +14,5 @@
         </StackPanel>
         <Button Content="Connect" Command="{Binding ConnectNowCommand}" CommandParameter="{Binding ElementName=ConnectWindow}"/>
         <Button Content="Cancel" Command="{Binding CancelCommand}" CommandParameter="{Binding ElementName=ConnectWindow}"/>
-        <Button Content="Edit Registiration Object" Command="{Binding EditRegObjectCommand}"/>
     </StackPanel>
 </Window>

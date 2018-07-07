@@ -28,7 +28,7 @@ namespace NewRemotePlusClient.Views
             DataContext = IOCHelper.MainWindow;
             Messenger.Default.Register<LogMessage>(this, (message) =>
             {
-                consoleTextBox.AppendText(message.Message);
+                Application.Current.Dispatcher.InvokeAsync(() => consoleTextBox.AppendText(message.Message));
             });
         }
     }

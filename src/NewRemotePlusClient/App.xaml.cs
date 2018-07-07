@@ -17,6 +17,7 @@ namespace NewRemotePlusClient
     /// </summary>
     public partial class App : Application
     {
+        [STAThread]
         protected override void OnStartup(StartupEventArgs e)
         {
             BaseLogFactory blf = new BaseLogFactory();
@@ -26,6 +27,20 @@ namespace NewRemotePlusClient
             ViewModels.MainWindowViewModel viewModel = new ViewModels.MainWindowViewModel();
             IOCContainer.Provider.Bind<ViewModels.MainWindowViewModel>().ToConstant(viewModel);
             IOCContainer.Provider.Bind<IUIManager>().ToConstant(new UIManager());
+            IOCContainer.Provider.Bind<ILoginManager>().ToConstant(new LoginManager());
+        }
+        protected override void OnExit(ExitEventArgs e)
+        {
+            try
+            {
+                IOCHelper.Client.Disconnect();
+                IOCHelper.Client.Close();
+                base.OnExit(e);
+            }
+            catch
+            {
+                base.OnExit(e);
+            }
         }
     }
 }

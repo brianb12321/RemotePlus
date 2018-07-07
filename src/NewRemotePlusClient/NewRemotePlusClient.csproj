@@ -55,6 +55,9 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Speech" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\MvvmLightLibs.5.4.1\lib\net45\System.Windows.Interactivity.dll</HintPath>
     </Reference>
@@ -70,17 +73,50 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="Xceed.Wpf.AvalonDock, Version=3.4.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Extended.Wpf.Toolkit.3.4.0\lib\net40\Xceed.Wpf.AvalonDock.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.Aero, Version=3.4.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Extended.Wpf.Toolkit.3.4.0\lib\net40\Xceed.Wpf.AvalonDock.Themes.Aero.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.Metro, Version=3.4.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Extended.Wpf.Toolkit.3.4.0\lib\net40\Xceed.Wpf.AvalonDock.Themes.Metro.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.VS2010, Version=3.4.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Extended.Wpf.Toolkit.3.4.0\lib\net40\Xceed.Wpf.AvalonDock.Themes.VS2010.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.DataGrid, Version=3.4.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Extended.Wpf.Toolkit.3.4.0\lib\net40\Xceed.Wpf.DataGrid.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.Toolkit, Version=3.4.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Extended.Wpf.Toolkit.3.4.0\lib\net40\Xceed.Wpf.Toolkit.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="IOC\ILoginManager.cs" />
+    <Compile Include="LoginManager.cs" />
+    <Compile Include="MessageButtons.cs" />
+    <Compile Include="MessageResult.cs" />
+    <Compile Include="MessageType.cs" />
+    <Compile Include="Models\ConsoleLogMessage.cs" />
+    <Compile Include="ServerConsoleLogger.cs" />
+    <Compile Include="ViewModels\LoginViewModel.cs" />
+    <Compile Include="ViewModels\Pages\ConsoleViewModel.cs" />
+    <Compile Include="Views\LoginView.xaml.cs">
+      <DependentUpon>LoginView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Pages\ConsolePage.xaml.cs">
+      <DependentUpon>ConsolePage.xaml</DependentUpon>
+    </Compile>
     <Page Include="Views\ConnectView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\EditRegistirationObjectView.xaml">
+    <Page Include="Views\LoginView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -92,8 +128,9 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="BasePage.cs" />
+    <Compile Include="ITabPage.cs" />
     <Compile Include="BaseViewModel.cs" />
+    <Compile Include="ClientCallback.cs" />
     <Compile Include="IOCHelper.cs" />
     <Compile Include="IOC\IUIManager.cs" />
     <Compile Include="IOC\IWindow.cs" />
@@ -104,18 +141,18 @@
     <Compile Include="TextBoxLogger.cs" />
     <Compile Include="UIManager.cs" />
     <Compile Include="ViewModels\ConnectViewModel.cs" />
-    <Compile Include="ViewModels\EditRegistirationObjectViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="Views\ConnectView.xaml.cs">
       <DependentUpon>ConnectView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\EditRegistirationObjectView.xaml.cs">
-      <DependentUpon>EditRegistirationObjectView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Views\Pages\ConsolePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -145,6 +182,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\RemotePlusClient.CommonUI\RemotePlusClient.CommonUI.csproj">
+      <Project>{9ef00d4b-27f4-4c2a-bda7-fc47246b2064}</Project>
+      <Name>RemotePlusClient.CommonUI</Name>
+    </ProjectReference>
     <ProjectReference Include="..\RemotePlusLibrary.Configuration\RemotePlusLibrary.Configuration.csproj">
       <Project>{8a8a5888-1ce7-46ed-b8de-1ac7671f3426}</Project>
       <Name>RemotePlusLibrary.Configuration</Name>

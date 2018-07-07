@@ -15,8 +15,6 @@ namespace NewRemotePlusClient.ViewModels
     {
         public Connection Address { get; set; } = new Connection();
         public ICommand ConnectNowCommand { get; private set; }
-        public ICommand CancelCommand { get; private set; }
-        public ICommand EditRegObjectCommand { get; private set; }
         public ConnectViewModel()
         {
             ConnectNowCommand = new RelayCommand(param =>
@@ -35,11 +33,6 @@ namespace NewRemotePlusClient.ViewModels
                 ((Window)param).Close();
             });
             CancelCommand = new RelayCommand(param => true, param => ((Window)param).Close());
-            EditRegObjectCommand = new RelayCommand(param => true, param =>
-            {
-                Messenger.Default.Register<RegisterationObject>(this, regObj => Address.RegisterObject = regObj);
-                IOCHelper.UI.Show<Views.EditRegistirationObject>();
-            });
         }
     }
 }

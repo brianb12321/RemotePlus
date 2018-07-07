@@ -2,6 +2,6 @@
 {
     public interface IWindow
     {
-        void Show();
+        void ShowDialog();
     }
 }

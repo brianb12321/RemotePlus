@@ -16,14 +16,19 @@ using System.Windows.Shapes;
 namespace NewRemotePlusClient.Views
 {
     /// <summary>
-    /// Interaction logic for EditRegistirationObject.xaml
+    /// Interaction logic for LoginView.xaml
     /// </summary>
-    public partial class EditRegistirationObject : Window, IWindow
+    public partial class LoginView : Window, IWindow
     {
-        public EditRegistirationObject()
+        public LoginView()
         {
             InitializeComponent();
-            DataContext = new ViewModels.EditRegistirationObjectViewModel();
+            DataContext = new ViewModels.LoginViewModel();
+        }
+
+        void IWindow.ShowDialog()
+        {
+            ShowDialog();
         }
     }
 }
