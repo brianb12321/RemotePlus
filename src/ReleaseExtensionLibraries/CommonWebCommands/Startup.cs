@@ -4,7 +4,7 @@ using RemotePlusLibrary.Extension.ExtensionLoader.Initialization;
 using RemotePlusLibrary.RequestSystem;
 using RemotePlusServer.Core;
 using BetterLogger;
-using RemotePlusLibrary.IOC;
+using RemotePlusLibrary;
 
 namespace CommonWebCommands
 {

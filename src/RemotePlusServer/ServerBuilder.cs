@@ -1,4 +1,4 @@
-﻿using RemotePlusLibrary.IOC;
+﻿using RemotePlusLibrary.Core.IOC;
 using System;
 using System.Collections.Generic;
 

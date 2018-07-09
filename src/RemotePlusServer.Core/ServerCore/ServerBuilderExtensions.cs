@@ -4,7 +4,7 @@ using RemotePlusLibrary.Configuration.ServerSettings;
 using RemotePlusLibrary.Core;
 using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
-using RemotePlusLibrary.IOC;
+using RemotePlusLibrary.Core.IOC;
 using RemotePlusLibrary.RequestSystem;
 using RemotePlusLibrary.Scripting;
 using RemotePlusLibrary.Security.AccountSystem;
@@ -15,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.ServiceModel.Description;
+using Ninject;
 
 namespace RemotePlusServer.Core.ServerCore
 {
@@ -221,7 +222,7 @@ namespace RemotePlusServer.Core.ServerCore
                     Role.GlobalPool.Roles.Add(r);
                     DefaultKnownTypeManager.AddType(typeof(OperationPolicies));
                     DefaultKnownTypeManager.AddType(typeof(DefaultPolicy));
-                    Role.GlobalPool.Save();
+                    GlobalServices.DataAccess.SaveConfig(Role.GlobalPool, RolePool.ROLES_CONFIG_PATH);
                 }
                 else
                 {
@@ -230,7 +231,7 @@ namespace RemotePlusServer.Core.ServerCore
                     {
                         DefaultKnownTypeManager.AddType(typeof(OperationPolicies));
                         DefaultKnownTypeManager.AddType(typeof(DefaultPolicy));
-                        Role.GlobalPool.Load();
+                        Role.GlobalPool = GlobalServices.DataAccess.LoadConfig<RolePool>(RolePool.ROLES_CONFIG_PATH);
                     }
                     catch (Exception ex)
                     {
@@ -245,24 +246,24 @@ namespace RemotePlusServer.Core.ServerCore
                 {
                     GlobalServices.Logger.Log("The Users folder does not exist. Creating folder.", LogLevel.Warning);
                     Directory.CreateDirectory("Users");
-                    AccountManager.CreateAccount(new UserCredentials("admin", "password"), "Administrators");
+                    AccountManager.CreateAccount(new UserCredentials("admin", "password"), "Administrators", IOCContainer.Provider.Get<RemotePlusLibrary.Configuration.IConfigurationDataAccess>("BinaryDataAccess"));
                 }
                 else
                 {
-                    AccountManager.RefreshAccountList();
+                    AccountManager.RefreshAccountList(IOCContainer.Provider.Get<RemotePlusLibrary.Configuration.IConfigurationDataAccess>("BinaryDataAccess"));
                 }
                 ServerManager.DefaultSettings = new ServerSettings();
                 if (!File.Exists("Configurations\\Server\\GlobalServerSettings.config"))
                 {
                     GlobalServices.Logger.Log("The server settings file does not exist. Creating server settings file.", LogLevel.Warning);
-                    ServerManager.DefaultSettings.Save();
+                    GlobalServices.DataAccess.SaveConfig(ServerManager.DefaultSettings, ServerSettings.SERVER_SETTINGS_FILE_PATH);
                 }
                 else
                 {
                     GlobalServices.Logger.Log("Loading server settings file.", LogLevel.Info);
                     try
                     {
-                        ServerManager.DefaultSettings.Load();
+                        ServerManager.DefaultSettings = GlobalServices.DataAccess.LoadConfig<ServerSettings>(ServerSettings.SERVER_SETTINGS_FILE_PATH);
                     }
                     catch (Exception ex)
                     {
@@ -309,7 +310,8 @@ namespace RemotePlusServer.Core.ServerCore
             policies.EnableConsole = true;
             PolicyObject adminObject = new PolicyObject("Admin");
             adminObject.Policies.Folders.Add(policies);
-            adminObject.Save();
+            var da = IOCContainer.Provider.Get<RemotePlusLibrary.Configuration.IConfigurationDataAccess>("BinaryDataAccess");
+            da.SaveConfig(adminObject, $"policyObjects\\{adminObject.ObjectName}.pobj");
         }
     }
 }

@@ -6,7 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using BetterLogger;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
-using RemotePlusLibrary.IOC;
+using RemotePlusLibrary.Core.IOC;
+using RemotePlusLibrary;
 
 namespace ProxyServer
 {

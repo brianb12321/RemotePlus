@@ -7,7 +7,7 @@
         xmlns:pagesVM="clr-namespace:NewRemotePlusClient.ViewModels.Pages"
         xmlns:pages="clr-namespace:NewRemotePlusClient.Views.Pages"
         mc:Ignorable="d"
-        Title="New RemotePlus" Height="450" Width="800">
+        Title="New RemotePlus" Height="450" Width="800" Background="{DynamicResource BackgroundBrush}">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="20" />
@@ -24,9 +24,28 @@
                 <MenuItem Header="Connect" Command="{Binding ConnectCommand}"/>
                 <MenuItem Header="Open Console" Command="{Binding OpenConsoleCommand}" />
             </MenuItem>
+            <MenuItem Header="Scripting">
+                <MenuItem Header="Load scripting editor" Command="{Binding LoadScriptEditorCommand}"/>
+            </MenuItem>
         </Menu>
         <DockPanel Grid.Row="1">
             <TabControl DockPanel.Dock="Left" Width="300" TabStripPlacement="Left">
+                <TabControl.Resources>
+                    <Style TargetType="{x:Type TabItem}">
+                        <Setter Property="HeaderTemplate">
+                            <Setter.Value>
+                                <DataTemplate>
+                                    <ContentPresenter Content="{TemplateBinding Content}">
+                                        <ContentPresenter.LayoutTransform>
+                                            <RotateTransform Angle="270" />
+                                        </ContentPresenter.LayoutTransform>
+                                    </ContentPresenter>
+                                </DataTemplate>
+                            </Setter.Value>
+                        </Setter>
+                        <Setter Property="Padding" Value="3" />
+                    </Style>
+                </TabControl.Resources>
                 <TabItem Header="Extensions">
                 </TabItem>
             </TabControl>
@@ -43,18 +62,21 @@
                     <DataTemplate DataType="{x:Type pagesVM:ConsoleViewModel}">
                         <pages:ConsolePage />
                     </DataTemplate>
+                    <DataTemplate DataType="{x:Type pagesVM:ScriptingEditorViewModel}">
+                        <pages:ScriptingEditorView />
+                    </DataTemplate>
                 </TabControl.Resources>
             </TabControl>
         </DockPanel>
         <TabControl Grid.Row="2" TabStripPlacement="Bottom">
             <TabItem Header="Console">
-                <TextBox IsReadOnly="True" x:Name="consoleTextBox" />
+                <TextBox IsReadOnly="True" x:Name="consoleTextBox" Foreground="{DynamicResource TextBrush}"/>
             </TabItem>
         </TabControl>
-        <StatusBar Grid.Row="3">
-            <TextBlock Text="{Binding Status}"/>
-            <TextBlock Text="Connection State: "/>
-            <TextBlock Text="{Binding ConnectionState}"/>
+        <StatusBar Grid.Row="3" Background="{DynamicResource BackgroundBrush}">
+            <TextBlock Text="{Binding Status}" Foreground="{DynamicResource TextBrush}"/>
+            <TextBlock Text="Connection State: " Foreground="{DynamicResource TextBrush}"/>
+            <TextBlock Text="{Binding ConnectionState}" Foreground="{DynamicResource TextBrush}"/>
         </StatusBar>
     </Grid>
 </Window>

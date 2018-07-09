@@ -1,7 +1,7 @@
 ﻿using RemotePlusLibrary.Extension.ExtensionLoader.Initialization;
 using RemotePlusServer.Core;
 using BetterLogger;
-using RemotePlusLibrary.IOC;
+using RemotePlusLibrary;
 
 namespace WindowsTools
 {

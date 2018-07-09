@@ -1,19 +1,15 @@
 ﻿using BetterLogger;
 using RemotePlusClient.CommonUI;
 using RemotePlusClient.CommonUI.Controls.FileBrowserHelpers;
+using RemotePlusLibrary;
 using RemotePlusLibrary.Extension.Gui;
-using RemotePlusLibrary.FileTransfer;
 using RemotePlusLibrary.FileTransfer.BrowserClasses;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.ServiceModel;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace RemotePlusClient.UIForms
@@ -49,7 +45,10 @@ namespace RemotePlusClient.UIForms
         private void RemoteFileBrowser_Load(object sender, EventArgs e)
         {
             associations = new FileAssociationSettings();
-            associations.Load();
+            if (File.Exists(FileAssociationSettings.FILE_PATH))
+            {
+                associations = GlobalServices.DataAccess.LoadConfig<FileAssociationSettings>(FileAssociationSettings.FILE_PATH);
+            }
             SetupAssociation();
             Counter = 0;
             MainF.ConsoleObj.Logger.Log("Downloading file data from server. This may take a while.", LogLevel.Info);

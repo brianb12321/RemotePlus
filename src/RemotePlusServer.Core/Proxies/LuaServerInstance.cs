@@ -3,7 +3,6 @@ using System.ServiceModel;
 using System.Text;
 using BetterLogger;
 using RemotePlusLibrary;
-using RemotePlusLibrary.IOC;
 using RemotePlusLibrary.Scripting;
 
 namespace RemotePlusServer.Core.Proxies

@@ -7,15 +7,12 @@ using RemotePlusLibrary.Core;
 using System.Diagnostics;
 using System.Reflection;
 using System.Windows.Forms;
-using RemotePlusLibrary.FileTransfer.Service;
-using System.ServiceModel.Description;
 using RemotePlusLibrary.Discovery;
 using RemotePlusLibrary.Configuration.ServerSettings;
-using RemotePlusLibrary.Contracts;
 using RemotePlusServer.Core;
-using RemotePlusServer.Core.ServerCore;
 using Ninject;
-using RemotePlusLibrary.IOC;
+using RemotePlusLibrary.Core.IOC;
+using RemotePlusLibrary.Extension.ExtensionLoader;
 
 namespace RemotePlusServer
 {

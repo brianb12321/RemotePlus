@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BetterLogger.Loggers;
-using RemotePlusLibrary.IOC;
+using RemotePlusLibrary.Core.IOC;
 using ProxyServer;
 using BetterLogger;
 using RemotePlusLibrary.Discovery;
+using RemotePlusLibrary;
 
 namespace ProxyServerCore
 {
@@ -30,7 +31,8 @@ namespace ProxyServerCore
                 return proxyService;
             })
             .UseScriptingEngine()
-            .UseServerControlPage<ServerControls>();
+            .UseServerControlPage<ServerControls>()
+            .UseConfigurationDataAccess<RemotePlusLibrary.Configuration.StandordDataAccess.ConfigurationHelper>();
         }
         public void InitializeServer(IServerBuilder builder)
         {

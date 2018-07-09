@@ -50,8 +50,23 @@
     <Reference Include="GalaSoft.MvvmLight.Platform, Version=5.4.1.0, Culture=neutral, PublicKeyToken=5f873c45e98af8a1, processorArchitecture=MSIL">
       <HintPath>..\..\packages\MvvmLightLibs.5.4.1\lib\net45\GalaSoft.MvvmLight.Platform.dll</HintPath>
     </Reference>
+    <Reference Include="ICSharpCode.AvalonEdit, Version=5.0.3.0, Culture=neutral, PublicKeyToken=9cc39be672370310, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\AvalonEdit.5.0.4\lib\Net40\ICSharpCode.AvalonEdit.dll</HintPath>
+    </Reference>
     <Reference Include="Ninject, Version=3.3.4.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Ninject.3.3.4\lib\net45\Ninject.dll</HintPath>
+    </Reference>
+    <Reference Include="Selen.Wpf.Core">
+      <HintPath>..\..\Libs\Selen.Wpf.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Selen.Wpf.GenericAppTree">
+      <HintPath>..\..\Libs\Selen.Wpf.GenericAppTree.dll</HintPath>
+    </Reference>
+    <Reference Include="Selen.Wpf.GenericAppTree.Contracts">
+      <HintPath>..\..\Libs\Selen.Wpf.GenericAppTree.Contracts.dll</HintPath>
+    </Reference>
+    <Reference Include="Selen.Wpf.SystemStyles">
+      <HintPath>..\..\Libs\Selen.Wpf.SystemStyles.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -102,15 +117,20 @@
     <Compile Include="MessageButtons.cs" />
     <Compile Include="MessageResult.cs" />
     <Compile Include="MessageType.cs" />
+    <Compile Include="Models\AutoCompleteData.cs" />
     <Compile Include="Models\ConsoleLogMessage.cs" />
     <Compile Include="ServerConsoleLogger.cs" />
     <Compile Include="ViewModels\LoginViewModel.cs" />
     <Compile Include="ViewModels\Pages\ConsoleViewModel.cs" />
+    <Compile Include="ViewModels\Pages\ScriptingEditorViewModel.cs" />
     <Compile Include="Views\LoginView.xaml.cs">
       <DependentUpon>LoginView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Pages\ConsolePage.xaml.cs">
       <DependentUpon>ConsolePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Pages\ScriptingEditorView.xaml.cs">
+      <DependentUpon>ScriptingEditorView.xaml</DependentUpon>
     </Compile>
     <Page Include="Views\ConnectView.xaml">
       <SubType>Designer</SubType>
@@ -153,6 +173,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Pages\ScriptingEditorView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -176,6 +200,9 @@
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="Resources\Python.xshd">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -211,6 +238,8 @@
       <Name>RemotePlusLibrary</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Resources\runScript.ico" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

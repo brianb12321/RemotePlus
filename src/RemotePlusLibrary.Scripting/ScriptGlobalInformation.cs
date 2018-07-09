@@ -18,5 +18,9 @@ namespace RemotePlusLibrary.Scripting
         public ScriptGlobalType Type { get; set; }
         [DataMember]
         public List<ScriptGlobalInformation> Members { get; set; } = new List<ScriptGlobalInformation>();
+        public ScriptGlobalInformation GoDown(string symboleName)
+        {
+            return Members.First((member) => member.Name == symboleName);
+        }
     }
 }

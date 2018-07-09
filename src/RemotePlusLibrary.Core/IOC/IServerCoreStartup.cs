@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RemotePlusLibrary.IOC
+namespace RemotePlusLibrary.Core.IOC
 {
     public interface IServerCoreStartup
     {

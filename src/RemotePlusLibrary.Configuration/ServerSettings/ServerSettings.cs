@@ -20,7 +20,7 @@ namespace RemotePlusLibrary.Configuration.ServerSettings
     /// </summary>
     [Serializable]
     [DataContract]
-    public class ServerSettings : IFileConfig
+    public class ServerSettings
     {
         #region Constants
         /// <summary>
@@ -104,31 +104,6 @@ namespace RemotePlusLibrary.Configuration.ServerSettings
         [TypeConverter(typeof(ExpandableObjectConverter))]
         public LoggingSettings LoggingSettings { get; set; }
         #endregion Logging Settings
-        #region Methods
-        public void Save()
-        {
-            ConfigurationHelper<ServerSettings>.SaveConfig(this, SERVER_SETTINGS_FILE_PATH, DefaultKnownTypeManager.GetKnownTypes(null));
-        }
-        public void Load()
-        {
-            var ss = ConfigurationHelper<ServerSettings>.LoadConfig(SERVER_SETTINGS_FILE_PATH, DefaultKnownTypeManager.GetKnownTypes(null));
-            this.BannedIPs = ss.BannedIPs;
-            this.PortNumber = ss.PortNumber;
-            this.LoggingSettings = ss.LoggingSettings;
-            this.EnableMetadataExchange = ss.EnableMetadataExchange;
-            this.DiscoverySettings = ss.DiscoverySettings;
-        }
-
-        public void Save(string fileName)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Load(string fileName)
-        {
-            throw new NotImplementedException();
-        }
-        #endregion
         #region Optimization Settings
 
         #endregion

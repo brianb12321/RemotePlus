@@ -1,13 +1,9 @@
 ﻿using BetterLogger;
 using RemotePlusClient.Settings;
+using RemotePlusLibrary;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace RemotePlusClient.UIForms.SettingDialogs
@@ -82,7 +78,7 @@ namespace RemotePlusClient.UIForms.SettingDialogs
 
         private void button1_Click(object sender, EventArgs e)
         {
-            settings.Save();
+            GlobalServices.DataAccess.SaveConfig(settings, ConsoleSettings.CONSOLE_SETTINGS_PATH);
             MessageBox.Show("Saved", "RemotePlusClient");
             MainF.ConsoleObj.Logger.Log("Saved console config file.", LogLevel.Info);
         }

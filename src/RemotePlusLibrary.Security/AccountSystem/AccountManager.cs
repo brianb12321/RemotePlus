@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Ninject;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -20,11 +21,11 @@ namespace RemotePlusLibrary.Security.AccountSystem
         /// </summary>
         /// <param name="cred">The username and password for the account.</param>
         /// <param name="role">The string to a role that is loaded on the server.</param>
-        public static void CreateAccount(UserCredentials cred, string role)
+        public static void CreateAccount(UserCredentials cred, string role, Configuration.IConfigurationDataAccess da)
         {
             UserAccount account = new UserAccount(cred, role);
             _accounts.Add(account.AID, account);
-            account.Save();
+            da.SaveConfig(account, $"Users\\{account.AID}.uao");
         }
         /// <summary>
         /// Gets an account object associated with the account's AID.
@@ -45,14 +46,14 @@ namespace RemotePlusLibrary.Security.AccountSystem
         /// <summary>
         /// Refreshes the currently loaded accounts on the system by enumerating the folder with the account objects.
         /// </summary>
-        public static void RefreshAccountList()
+        public static void RefreshAccountList(Configuration.IConfigurationDataAccess da)
         {
             _accounts.Clear();
             foreach (string file in Directory.GetFiles("Users"))
             {
                 if (Path.GetExtension(file) == ".uao")
                 {
-                    UserAccount account = UserAccount.Load(file);
+                    UserAccount account = da.LoadConfig<UserAccount>(file);
                     _accounts.Add(account.AID, account);
                 }
             }

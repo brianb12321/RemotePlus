@@ -12,7 +12,17 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="25" />
         </Grid.RowDefinitions>
-        <RichTextBox Grid.Row="0" Background="Black" Foreground="White" IsReadOnly="True" x:Name="console"/>
+        <RichTextBox Grid.Row="0"
+                     Background="Black"
+                     Foreground="White"
+                     IsReadOnly="True"
+                     x:Name="console">
+            <RichTextBox.Resources>
+                <Style TargetType="{x:Type Paragraph}">
+                    <Setter Property="Margin" Value="0"/>
+                </Style>
+            </RichTextBox.Resources>
+        </RichTextBox>
         <TextBox x:Name="input" Grid.Row="1" KeyDown="input_KeyDown" />
     </Grid>
 </UserControl>

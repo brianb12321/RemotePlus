@@ -1,19 +1,13 @@
 ﻿using RemotePlusClient.CommonUI.Controls.FileBrowserHelpers;
 using RemotePlusLibrary;
 using RemotePlusLibrary.Contracts;
-using RemotePlusLibrary.FileTransfer;
 using RemotePlusLibrary.FileTransfer.BrowserClasses;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Security;
 using System.ServiceModel;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace RemotePlusClient.CommonUI
@@ -76,7 +70,10 @@ namespace RemotePlusClient.CommonUI
         private void FindRemoteFileDialog_Load(object sender, EventArgs e)
         {
             associations = new FileAssociationSettings();
-            associations.Load();
+            if (File.Exists(FileAssociationSettings.FILE_PATH))
+            {
+                associations = GlobalServices.DataAccess.LoadConfig<FileAssociationSettings>(FileAssociationSettings.FILE_PATH);
+            }
             SetupAssociation();
             Counter = 0;
             progressWorker.DoWork += ProgressWorker_DoWork;

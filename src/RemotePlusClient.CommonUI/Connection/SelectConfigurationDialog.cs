@@ -1,12 +1,7 @@
-﻿using System;
+﻿using RemotePlusLibrary;
+using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace RemotePlusClient.CommonUI.Connection
@@ -45,7 +40,7 @@ namespace RemotePlusClient.CommonUI.Connection
                 foreach(string file in Directory.GetFiles(ConnectionConfiguration.CONFIGURATION_NAME, "*.ccf", SearchOption.AllDirectories))
                 {
                     ConnectionConfiguration cc = new ConnectionConfiguration("");
-                    cc.Load(file);
+                    cc = GlobalServices.DataAccess.LoadConfig<ConnectionConfiguration>(file);
                     _connections.Add(cc);
                 }
             }

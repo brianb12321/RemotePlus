@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using RemotePlusLibrary.IOC;
+using RemotePlusLibrary.Extension.ExtensionLoader;
 using ProxyServerCore;
 
 // General Information about an assembly is controlled through the following
@@ -17,7 +17,7 @@ using ProxyServerCore;
 [assembly: AssemblyCulture("")]
 [assembly: ServerCoreLibrary(typeof(Startup), "ProxyServerCore",
     FriendlyName = "Proxy Server Core",
-    LibraryType = RemotePlusLibrary.Extension.ExtensionLoader.ExtensionLibraryType.Server)]
+    LibraryType = ExtensionLibraryType.Server)]
 
 // Setting ComVisible to false makes the types in this assembly not visible
 // to COM components.  If you need to access a type in this assembly from

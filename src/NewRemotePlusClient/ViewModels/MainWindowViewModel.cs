@@ -3,7 +3,7 @@ using GalaSoft.MvvmLight.Messaging;
 using NewRemotePlusClient.Models;
 using RemotePlusClient.CommonUI.ConnectionClients;
 using RemotePlusLibrary.Core;
-using RemotePlusLibrary.IOC;
+using RemotePlusLibrary.Core.IOC;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -52,6 +52,20 @@ namespace NewRemotePlusClient.ViewModels
             MainServerLogger.AddLogger(new TextBoxLogger());
             TabPagesLoaded = new ObservableCollection<ITabPage>();
             TabPagesLoaded.CollectionChanged += TabPagesLoaded_CollectionChanged;
+            LoadScriptEditorCommand = new RelayCommand(param =>
+            {
+                if (ConnectionState == CommunicationState.Opened)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }, param =>
+            {
+                TabPagesLoaded.Add(new Pages.ScriptingEditorViewModel());
+            });
         }
 
         private void TabPagesLoaded_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -126,6 +140,7 @@ namespace NewRemotePlusClient.ViewModels
             });
             IOCHelper.UI.Show<Views.ConnectView>();
         });
+        public ICommand LoadScriptEditorCommand { get; private set; }
         #endregion
     }
 }

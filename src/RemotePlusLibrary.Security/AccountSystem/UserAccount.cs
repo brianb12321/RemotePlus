@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using Ninject;
 
 namespace RemotePlusLibrary.Security.AccountSystem
 {
@@ -39,7 +40,7 @@ namespace RemotePlusLibrary.Security.AccountSystem
             {
                 throw new RoleException("You must first leave the current role before joining a new role.");
             }
-            var r = Security.AccountSystem.Role.GetRole(roleName);
+            var r = Role.GetRole(roleName);
             r.Members.Add(AID);
             this.Role = r;
         }
@@ -58,17 +59,6 @@ namespace RemotePlusLibrary.Security.AccountSystem
             {
                 return false;
             }
-        }
-
-        public void Save()
-        {
-            BinarySerializationHelper<UserAccount>.SaveObject($"Users\\{AID}.uao", this);
-        }
-
-        public static UserAccount Load(string fileName)
-        {
-            var obj = BinarySerializationHelper<UserAccount>.OpenObject(fileName);
-            return obj;
         }
     }
 }

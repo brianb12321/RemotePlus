@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:NewRemotePlusClient.Views"
         mc:Ignorable="d"
         Name="LoginWindow"
-        Title="LoginView" Height="450" Width="800">
+        Title="LoginView" Height="450" Width="800" Background="{DynamicResource BackgroundBrush}">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="30" />
@@ -18,9 +18,9 @@
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
-        <TextBlock Grid.Row="1" Grid.Column="0" Text="Username"/>
+        <TextBlock Grid.Row="1" Grid.Column="0" Text="Username" Foreground="{DynamicResource TextBrush}"/>
         <TextBox Grid.Row="1" Grid.Column="1" Margin="0,0,15,0" Text="{Binding UserName}"/>
-        <TextBlock Grid.Row="2" Grid.Column="0" Text="Password"/>
+        <TextBlock Grid.Row="2" Grid.Column="0" Text="Password" Foreground="{DynamicResource TextBrush}"/>
         <TextBox Grid.Row="2" Grid.Column="2" Margin="0,0,15,0" Text="{Binding Password}"/>
         <Button Grid.Row="3" Grid.Column="0" Content="Login" Command="{Binding LoginCommand}" CommandParameter="{Binding ElementName=LoginWindow}"/>
         <Button Grid.Row="3" Grid.Column="1" Content="Cancel" Command="{Binding CancelCommand}" CommandParameter="{Binding ElementName=LoginWindow}"/>

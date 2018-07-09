@@ -1,4 +1,4 @@
-﻿using RemotePlusLibrary.IOC;
+﻿using RemotePlusLibrary.Core.IOC;
 using Ninject;
 
 namespace ProxyServer
@@ -13,6 +13,12 @@ namespace ProxyServer
         public IServiceCollection AddSingleton<TService>()
         {
             IOCContainer.Provider.Bind<TService>().ToSelf().InSingletonScope();
+            return this;
+        }
+
+        public IServiceCollection AddSingletonNamed<TService, TServiceImpl>(string name)
+        {
+            IOCContainer.Provider.Bind<TService>().To(typeof(TServiceImpl)).Named(name);
             return this;
         }
 

@@ -13,6 +13,7 @@ using RemotePlusLibrary.Contracts;
 using RemotePlusClient.UIForms.SettingDialogs;
 using RemotePlusClient.UIForms.CommandSystem;
 using BetterLogger;
+using RemotePlusLibrary;
 
 namespace RemotePlusClient.UIForms.Consoles
 {
@@ -51,12 +52,12 @@ namespace RemotePlusClient.UIForms.Consoles
             #region Initialize Settings
             try
             {
-                settings.Load();
+                settings = GlobalServices.DataAccess.LoadConfig<ConsoleSettings>(ConsoleSettings.CONSOLE_SETTINGS_PATH);
             }
             catch (FileNotFoundException)
             {
                 MainF.ConsoleObj.Logger.Log("Created new console config file.", LogLevel.Info, "ServerConsole");
-                settings.Save();
+                GlobalServices.DataAccess.SaveConfig(settings, ConsoleSettings.CONSOLE_SETTINGS_PATH);
             }
             #endregion Initialize Settings
             Logger = new BaseLogFactory();

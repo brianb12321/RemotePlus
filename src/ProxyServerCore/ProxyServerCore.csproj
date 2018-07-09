@@ -53,6 +53,14 @@
       <Project>{449ddc0e-aba7-41c6-b815-690272ea0329}</Project>
       <Name>ProxyServer</Name>
     </ProjectReference>
+    <ProjectReference Include="..\RemotePlusLibrary.Configuration\RemotePlusLibrary.Configuration.csproj">
+      <Project>{8a8a5888-1ce7-46ed-b8de-1ac7671f3426}</Project>
+      <Name>RemotePlusLibrary.Configuration</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RemotePlusLibrary.Core\RemotePlusLibrary.Core.csproj">
+      <Project>{0334629B-6302-42A8-B159-F8646B4D8650}</Project>
+      <Name>RemotePlusLibrary.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\RemotePlusLibrary.Discovery\RemotePlusLibrary.Discovery.csproj">
       <Project>{FC3EB84C-D1B0-4B5C-9406-DFFA9BC5A5FC}</Project>
       <Name>RemotePlusLibrary.Discovery</Name>

@@ -19,7 +19,7 @@ namespace RemotePlusLibrary.Scripting.ScriptPackageEngine
     {
         public static void GenerateManifestToFile(this ScriptPackageManifest manifest, string fileName)
         {
-            Configuration.ConfigurationHelper<ScriptPackageManifest>.SaveConfig(manifest, fileName, null);
+            new Configuration.StandordDataAccess.ConfigurationHelper().SaveConfig(manifest, fileName);
         }
     }
 }

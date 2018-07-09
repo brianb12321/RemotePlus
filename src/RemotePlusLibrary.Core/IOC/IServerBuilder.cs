@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RemotePlusLibrary.IOC
+namespace RemotePlusLibrary.Core.IOC
 {
     /// <summary>
     /// Provides a way to plug in initialization steps when the server starts.

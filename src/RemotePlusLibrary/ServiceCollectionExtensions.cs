@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 using RemotePlusLibrary;
 using BetterLogger;
 using System.Windows.Forms;
-using RemotePlusLibrary.IOC;
+using RemotePlusLibrary.Core.IOC;
 
-namespace RemotePlusLibrary.IOC
+namespace RemotePlusLibrary
 {
     public static class ServiceCollectionExtensions
     {
@@ -43,6 +43,10 @@ namespace RemotePlusLibrary.IOC
         public static IServiceCollection UseScriptingEngine(this IServiceCollection services)
         {
             return services.AddSingleton<Scripting.ScriptBuilder>();
+        }
+        public static IServiceCollection UseConfigurationDataAccess<TDataAccessImpl>(this IServiceCollection services)
+        {
+            return services.AddSingletonNamed<Configuration.IConfigurationDataAccess, TDataAccessImpl>("DefaultConfigDataAccess");
         }
     }
 }

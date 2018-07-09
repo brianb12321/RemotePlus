@@ -6,16 +6,17 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using RemotePlusLibrary.Core;
 
-namespace RemotePlusLibrary.Configuration
+namespace RemotePlusLibrary.Configuration.StandordDataAccess
 {
-    public static class ConfigurationHelper<T>
+    public class ConfigurationHelper : IConfigurationDataAccess
     {
         public const string SERVER_CONFIGURATION_PATH = "Configurations\\Server";
         public const string CLIENT_CONFIGURATION_PATH = "Configurations\\Client";
-        public static void SaveConfig(T configType, string file, IEnumerable<Type> knownTypes)
+        public void SaveConfig<TConfigModel>(TConfigModel configType, string file)
         {
-            DataContractSerializer xsSubmit = new DataContractSerializer(typeof(T), knownTypes);
+            DataContractSerializer xsSubmit = new DataContractSerializer(typeof(TConfigModel), DefaultKnownTypeManager.GetKnownTypes(null));
             var subReq = configType;
             XmlWriterSettings settings = new XmlWriterSettings()
             {
@@ -28,11 +29,11 @@ namespace RemotePlusLibrary.Configuration
                 xsSubmit.WriteObject(writer, subReq);
             }
         }
-        public static T LoadConfig(string file, IEnumerable<Type> knownTypes)
+        public TConfigModel LoadConfig<TConfigModel>(string file)
         {
-            DataContractSerializer ser = new DataContractSerializer(typeof(T), knownTypes);
+            DataContractSerializer ser = new DataContractSerializer(typeof(TConfigModel), DefaultKnownTypeManager.GetKnownTypes(null));
             XmlReader reader = XmlReader.Create(file);
-            var ss = (T)ser.ReadObject(reader);
+            var ss = (TConfigModel)ser.ReadObject(reader);
             reader.Close();
             return ss;
         }

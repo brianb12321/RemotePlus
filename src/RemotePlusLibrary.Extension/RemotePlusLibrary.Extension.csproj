@@ -66,6 +66,8 @@
     <Compile Include="ExtensionLoader\DependencyException.cs" />
     <Compile Include="ExtensionLoader\DependencyType.cs" />
     <Compile Include="ExtensionDevelopmentState.cs" />
+    <Compile Include="ExtensionLoader\ServerCoreLibraryAttribute.cs" />
+    <Compile Include="ExtensionLoader\ServerCoreLoader.cs" />
     <Compile Include="HookSystem\HookArguments.cs" />
     <Compile Include="ExtensionLoader\Initialization\IInitEnvironment.cs" />
     <Compile Include="ExtensionLoader\Initialization\ILibraryBuilder.cs" />
@@ -94,6 +96,10 @@
     <ProjectReference Include="..\RemotePlusLibrary.Configuration\RemotePlusLibrary.Configuration.csproj">
       <Project>{8A8A5888-1CE7-46ED-B8DE-1AC7671F3426}</Project>
       <Name>RemotePlusLibrary.Configuration</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RemotePlusLibrary.Core\RemotePlusLibrary.Core.csproj">
+      <Project>{0334629B-6302-42A8-B159-F8646B4D8650}</Project>
+      <Name>RemotePlusLibrary.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

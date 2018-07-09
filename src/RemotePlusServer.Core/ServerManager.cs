@@ -5,7 +5,7 @@ using RemotePlusLibrary.Scripting;
 using RemotePlusServer.Core.ExtensionSystem;
 using System;
 using Ninject;
-using RemotePlusLibrary.IOC;
+using RemotePlusLibrary.Core.IOC;
 
 namespace RemotePlusServer.Core
 {

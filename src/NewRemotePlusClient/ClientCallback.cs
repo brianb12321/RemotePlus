@@ -117,18 +117,17 @@ namespace NewRemotePlusClient
 
         public void TellMessageToServerConsole(Guid serverGuid, string Message)
         {
-            Messenger.Default.Send(new LogMessage()
-            {
-                Message = Message
-            });
+            Messenger.Default.Send(new ConsoleText(Message));
         }
 
         public void TellMessageToServerConsole(Guid serverGuid, string Message, LogLevel level)
         {
-            Messenger.Default.Send(new LogMessage()
+            Messenger.Default.Send(new ConsoleLogMessage()
             {
                 Message = Message,
-                Level = level
+                Level = level,
+                From = "Server Console",
+                Extra = serverGuid.ToString()
             });
         }
 

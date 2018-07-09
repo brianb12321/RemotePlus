@@ -8,7 +8,9 @@ using RemotePlusLibrary;
 using RemotePlusLibrary.Contracts;
 using BetterLogger.Loggers;
 using static RemotePlusServer.Core.DefaultCommands;
-using RemotePlusLibrary.IOC;
+using RemotePlusLibrary.Configuration;
+using RemotePlusLibrary.Configuration.StandordDataAccess;
+using RemotePlusLibrary.Core.IOC;
 
 namespace DefaultServerCore
 {
@@ -56,7 +58,9 @@ namespace DefaultServerCore
                 return fts;
             })
             .UseServerControlPage<ServerControls>()
-            .UseScriptingEngine();
+            .UseScriptingEngine()
+            .UseConfigurationDataAccess<ConfigurationHelper>()
+            .AddSingletonNamed<IConfigurationDataAccess, BinarySerializationHelper>("BinaryDataAccess");
         }
 
         void IServerCoreStartup.InitializeServer(IServerBuilder builder)

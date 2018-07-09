@@ -1,17 +1,11 @@
 ﻿
 using BetterLogger;
-using RemotePlusLibrary.Core;
+using RemotePlusLibrary;
 using RemotePlusLibrary.Core.Faults;
-using RemotePlusLibrary.Discovery;
-using RemotePlusLibrary.IOC;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Dispatcher;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ProxyServer
 {

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using RemotePlusLibrary.IOC;
+using RemotePlusLibrary.Core.IOC;
 
 namespace ProxyServer
 {

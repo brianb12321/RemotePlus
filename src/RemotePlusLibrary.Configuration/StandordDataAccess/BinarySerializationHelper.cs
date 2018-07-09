@@ -5,15 +5,16 @@ using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
+using RemotePlusLibrary.Core;
 
-namespace RemotePlusLibrary.Configuration
+namespace RemotePlusLibrary.Configuration.StandordDataAccess
 {
     /// <summary>
     /// Provides helper methods for serializing objects to a binary file.
     /// </summary>
-    public class BinarySerializationHelper<T>
+    public class BinarySerializationHelper : IConfigurationDataAccess
     {
-        public static void SaveObject(string filePath, T obj)
+        public void SaveConfig<TConfigModel>(TConfigModel obj, string filePath)
         {
             FileStream fs = new FileStream(filePath, FileMode.Create, FileAccess.ReadWrite);
             BinaryFormatter bf = new BinaryFormatter();
@@ -21,11 +22,11 @@ namespace RemotePlusLibrary.Configuration
             fs.Flush();
             fs.Close();
         }
-        public static T OpenObject(string filePath)
+        public TConfigModel LoadConfig<TConfigModel>(string filePath)
         {
             FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read);
             BinaryFormatter bf = new BinaryFormatter();
-            var obj = (T)bf.Deserialize(fs);
+            var obj = (TConfigModel)bf.Deserialize(fs);
             fs.Flush();
             fs.Close();
             return obj;

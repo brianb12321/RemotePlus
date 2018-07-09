@@ -22,7 +22,8 @@ using RemotePlusLibrary.Client;
 using RemotePlusServer.Core;
 using RemotePlusServer.Core.ExtensionSystem;
 using BetterLogger;
-using RemotePlusLibrary.IOC;
+using Ninject;
+using RemotePlusLibrary.Core.IOC;
 
 namespace RemotePlusServer
 {
@@ -212,7 +213,7 @@ namespace RemotePlusServer
 
         private void UpdateAccountPolicy()
         {
-            _interface.LoggedInUser.Role.BuildPolicyObject();
+            _interface.LoggedInUser.Role.BuildPolicyObject(IOCContainer.Provider.Get<RemotePlusLibrary.Configuration.IConfigurationDataAccess>("BinaryDataAccess"));
         }
 
         private void RegisterComplete()
@@ -310,7 +311,7 @@ namespace RemotePlusServer
                     GlobalServices.Logger.Log("Updating server settings.", LogLevel.Info);
                     ServerManager.DefaultSettings = Settings;
                     _interface.Client.ClientCallback.TellMessage("Saving settings.", LogLevel.Info);
-                    ServerManager.DefaultSettings.Save();
+                    GlobalServices.DataAccess.SaveConfig(ServerManager.DefaultSettings, ServerSettings.SERVER_SETTINGS_FILE_PATH);
                     _interface.Client.ClientCallback.TellMessage("Settings saved.", LogLevel.Info);
                     GlobalServices.Logger.Log("Settings saved.", LogLevel.Info);
                 }

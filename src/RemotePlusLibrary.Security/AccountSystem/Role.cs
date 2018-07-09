@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Ninject;
+using RemotePlusLibrary.Core.IOC;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -39,10 +41,10 @@ namespace RemotePlusLibrary.Security.AccountSystem
             this.PolicyObjectName = priv;
         }
 
-        public void BuildPolicyObject()
+        public void BuildPolicyObject(Configuration.IConfigurationDataAccess da)
         {
             PolicyObject po = new PolicyObject(PolicyObjectName);
-            po.Load();
+            po = da.LoadConfig<PolicyObject>($"policyObjects\\{po.ObjectName}.pobj");
             AttachedPolicyObject = po;
         }
 
@@ -51,7 +53,7 @@ namespace RemotePlusLibrary.Security.AccountSystem
             try
             {
                 var role = GlobalPool.Roles.First(t => t.RoleName.ToLower() == roleName.ToLower());
-                role.BuildPolicyObject();
+                role.BuildPolicyObject(IOCContainer.Provider.Get<Configuration.IConfigurationDataAccess>("BinaryDataAccess"));
                 return role;
             }
             catch (ArgumentNullException)

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Ninject;
-using RemotePlusLibrary.IOC;
+using RemotePlusLibrary.Core.IOC;
 
 namespace RemotePlusServer
 {
@@ -21,6 +21,12 @@ namespace RemotePlusServer
         public IServiceCollection AddSingleton<TService>()
         {
             IOCContainer.Provider.Bind<TService>().ToSelf().InSingletonScope();
+            return this;
+        }
+
+        public IServiceCollection AddSingletonNamed<TService, TServiceImpl>(string name)
+        {
+            IOCContainer.Provider.Bind<TService>().To(typeof(TServiceImpl)).Named(name);
             return this;
         }
 

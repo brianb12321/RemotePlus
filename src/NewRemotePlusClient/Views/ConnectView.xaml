@@ -6,10 +6,10 @@
         xmlns:local="clr-namespace:NewRemotePlusClient.Views"
         mc:Ignorable="d"
         x:Name="ConnectWindow"
-        Title="Connect To Server" Height="450" Width="800">
+        Title="Connect To Server" Height="450" Width="800" Background="{DynamicResource BackgroundBrush}">
     <StackPanel>
         <StackPanel Orientation="Horizontal">
-            <TextBlock>Address</TextBlock>
+            <TextBlock Foreground="{DynamicResource TextBrush}">Address</TextBlock>
             <TextBox Width="400" Text="{Binding Address.Address, UpdateSourceTrigger=PropertyChanged}"/>
         </StackPanel>
         <Button Content="Connect" Command="{Binding ConnectNowCommand}" CommandParameter="{Binding ElementName=ConnectWindow}"/>

@@ -1,17 +1,9 @@
 ﻿using RemotePlusLibrary.Extension.HookSystem;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using RemotePlusLibrary.Extension;
-using System.ServiceModel;
 using RemotePlusLibrary.Extension.ExtensionLoader.Initialization;
 using RemotePlusServer.Core;
 using RemotePlusServer.Core.ExtensionSystem;
 using BetterLogger;
 using RemotePlusLibrary;
-using RemotePlusLibrary.IOC;
 
 namespace RemotePlusServer.Internal
 {

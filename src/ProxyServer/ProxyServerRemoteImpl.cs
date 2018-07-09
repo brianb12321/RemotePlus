@@ -12,7 +12,6 @@ using RemotePlusLibrary.Scripting;
 using RemotePlusLibrary.Security.AccountSystem;
 using System.Speech.Synthesis;
 using System.Windows.Forms;
-using Logging;
 using RemotePlusLibrary.Core;
 using System.Text.RegularExpressions;
 using System.Reflection;
@@ -25,7 +24,6 @@ using RemotePlusLibrary.RequestSystem;
 using RemotePlusLibrary.Security.Authentication;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing;
 using BetterLogger;
-using RemotePlusLibrary.IOC;
 
 namespace ProxyServer
 {

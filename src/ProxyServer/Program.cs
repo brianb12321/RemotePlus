@@ -11,9 +11,10 @@ using RemotePlusLibrary.Extension;
 using RemotePlusLibrary.Client;
 using BetterLogger;
 using System.IO;
-using RemotePlusLibrary.IOC;
+using RemotePlusLibrary.Core.IOC;
 using Ninject;
 using RemotePlusLibrary.Scripting;
+using RemotePlusLibrary.Extension.ExtensionLoader;
 
 namespace ProxyServer
 {

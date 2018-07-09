@@ -4,6 +4,13 @@
              xmlns:local="clr-namespace:NewRemotePlusClient"
              StartupUri="Views/MainWindow.xaml">
     <Application.Resources>
-
+        <ResourceDictionary>
+            <!--<ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary 
+                Source="pack://application:,,,/Selen.Wpf.SystemStyles;component/Styles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>-->
+            <SolidColorBrush x:Key="BackgroundBrush" Color="White"/>
+            <SolidColorBrush x:Key="TextBrush" Color="Black"/>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>

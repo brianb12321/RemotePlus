@@ -1,4 +1,4 @@
-﻿namespace RemotePlusLibrary.IOC
+﻿namespace RemotePlusLibrary.Core.IOC
 {
     public interface IServerInitilizer
     {
