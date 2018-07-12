@@ -1,5 +1,0 @@
-﻿
-Allows the user to manage variables stored on the server.
-Variables are key-valule resources that other extensions can use. It can also provide static information about the server.
-WARNING: Pre-defined variables can be changed in the variables.xml file.
-Format: vars <option> [argument] | <argument>

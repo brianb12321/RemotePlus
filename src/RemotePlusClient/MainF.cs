@@ -19,6 +19,9 @@ using RemotePlusClient.UIForms.SettingDialogs;
 using RemotePlusClient.UIForms.CommandSystem;
 using RemotePlusClient.UIForms.Scripting;
 using BetterLogger;
+using RemotePlusClient.CommonUI.Connection;
+using RemotePlusLibrary.Core.IOC;
+using Ninject;
 
 namespace RemotePlusClient
 {
@@ -31,13 +34,13 @@ namespace RemotePlusClient
         public static ConsoleDialog ConsoleObj = null;
         public static ClientCallback LocalCallback = null;
         public static ProxyClient FoundServers = null;
-        public static string BaseAddress { get; private set; }
-        public static int Port { get; set; }
+        public static Connection CurrentConnectionData => IOCContainer.Provider.Get<Connection>();
         public static ClientLibraryCollection DefaultCollection { get; private set; }
         string Address { get; set; }
         public MainF()
         {
             DefaultCollection = new ClientLibraryCollection();
+            IOCContainer.Provider.Bind<Connection>().ToSelf().InSingletonScope();
             InitializeComponent();
             if (ClientApp.ClientSettings.DefaultTheme.ThemeEnabled)
             {
@@ -64,8 +67,8 @@ namespace RemotePlusClient
             if (d.ShowDialog() == DialogResult.OK)
             {
                 Address = d.Address.ToString();
-                BaseAddress = d.Address.Uri.Host;
-                Port = d.Address.Uri.Port;
+                CurrentConnectionData.BaseAddress = d.Address.Uri.Host;
+                CurrentConnectionData.Port = d.Address.Uri.Port;
                 if (d.UseProxy)
                 {
                     ConnectToProxyServer();

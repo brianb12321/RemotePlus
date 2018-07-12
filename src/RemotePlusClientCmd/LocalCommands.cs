@@ -1,5 +1,6 @@
 ﻿using BetterLogger;
-using RemotePlusClientCmd.ClientCommandSystem;
+using RemotePlusClientCmd.ClientExtensionSystem;
+using RemotePlusLibrary;
 using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
 using System;
@@ -22,7 +23,7 @@ namespace RemotePlusClientCmd
         [CommandHelp("Shows help for local commands.")]
         static CommandResponse Help(CommandRequest args, CommandPipeline pipe)
         {
-            Logger.Log(RemotePlusConsole.ShowHelp(LocalCommands, args.Arguments.Select(f => f.ToString()).ToArray()), LogLevel.Info);
+            GlobalServices.Logger.Log(RemotePlusConsole.ShowHelp(LocalCommands, args.Arguments.Select(f => f.ToString()).ToArray()), LogLevel.Info);
             return new CommandResponse((int)CommandStatus.Success);
         }
         [CommandHelp("Clears the console screen.")]
@@ -57,14 +58,15 @@ namespace RemotePlusClientCmd
         {
             try
             {
-                Logger.Log($"Loading command file. {args.Arguments[1]}", LogLevel.Info);
-                ClientCommandLibraryLoader.LoadCommandLibrary(args.Arguments[1].Value);
-                Logger.Log("Finished.", LogLevel.Info);
+                GlobalServices.Logger.Log($"Loading extension library. {args.Arguments[1]}", LogLevel.Info);
+                var library = ClientExtensionLibrary.LoadClientLibrary(args.Arguments[1].Value, (m, o) => GlobalServices.Logger.Log(m, o), new ClientInitEnvironment(false));
+                ClientCmdManager.ExtensionLibraries.Libraries.Add(library.Name, library);
+                GlobalServices.Logger.Log("Finished.", LogLevel.Info);
                 return new CommandResponse((int)CommandStatus.Success);
             }
             catch (Exception ex)
             {
-                Logger.Log($"Unable to load command file: {ex.Message}", LogLevel.Error);
+                GlobalServices.Logger.Log($"Unable to load command file: {ex.Message}", LogLevel.Error);
                 return new CommandResponse((int)CommandStatus.Success);
             }
         }

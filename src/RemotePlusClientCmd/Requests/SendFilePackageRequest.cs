@@ -1,33 +1,29 @@
 ﻿using RemotePlusClient.CommonUI;
-using RemotePlusClient.CommonUI.Controls.FileBrowserHelpers;
-using RemotePlusLibrary;
 using RemotePlusLibrary.RequestSystem;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 
-namespace RemotePlusClient
+namespace RemotePlusClientCmd.Requests
 {
-    public class SelectFileRequest : IDataRequest
+    public class SendFilePackageRequest : IDataRequest
     {
         public bool ShowProperties => false;
 
-        public string FriendlyName => "Select File Data Request";
+        public string FriendlyName => "Send File Package Request";
 
-        public string Description => "Stuff";
+        public string Description => "Asks the client for a specific file package.";
 
         public RawDataRequest RequestData(RequestBuilder builder)
         {
-            FindRemoteFileDialog fd = new FindRemoteFileDialog(FilterMode.File, MainF.Remote, MainF.CurrentConnectionData.BaseAddress, MainF.CurrentConnectionData.Port);
-            
-            if (fd.ShowDialog() == DialogResult.OK)
+            try
             {
-                return RawDataRequest.Success(fd.FilePath);
+                new FileTransfer(ClientCmdManager.CurrentConnectionData.BaseAddress, ClientCmdManager.CurrentConnectionData.Port).SendFile(builder.Message);
+                return RawDataRequest.Success(null);
             }
-            else
+            catch
             {
                 return RawDataRequest.Cancel();
             }
