@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ServiceModel;
-using Logging;
 using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusLibrary.Security.AccountSystem;
 using RemotePlusLibrary.Client;

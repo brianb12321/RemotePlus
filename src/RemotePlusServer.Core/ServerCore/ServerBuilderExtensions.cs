@@ -283,7 +283,7 @@ namespace RemotePlusServer.Core.ServerCore
                 if (ServerManager.DefaultSettings.EnableMetadataExchange)
                 {
                     GlobalServices.Logger.Log("NOTE: Metadata exchange is enabled on the server.", LogLevel.Info, "Server Host");
-                    System.ServiceModel.Channels.Binding mexBinding = MetadataExchangeBindings.CreateMexHttpBinding();
+                    System.ServiceModel.Channels.Binding mexBinding = MetadataExchangeBindings.CreateMexTcpBinding();
                     ServiceMetadataBehavior smb = new ServiceMetadataBehavior();
                     smb.HttpGetEnabled = true;
                     smb.HttpGetUrl = new Uri("http://0.0.0.0:9001/Mex");
@@ -296,12 +296,15 @@ namespace RemotePlusServer.Core.ServerCore
         {
             return builder.AddTask(() =>
             {
-                System.ServiceModel.Channels.Binding mexBinding = MetadataExchangeBindings.CreateMexHttpBinding();
-                ServiceMetadataBehavior smb2 = new ServiceMetadataBehavior();
-                smb2.HttpGetEnabled = true;
-                smb2.HttpGetUrl = new Uri("http://0.0.0.0:9001/Mex2");
-                ServerManager.FileTransferService.Host.Description.Behaviors.Add(smb2);
-                ServerManager.FileTransferService.Host.AddServiceEndpoint(typeof(IMetadataExchange), mexBinding, "http://0.0.0.0:9001/Mex2");
+                if (ServerManager.DefaultSettings.EnableMetadataExchange)
+                {
+                    System.ServiceModel.Channels.Binding mexBinding = MetadataExchangeBindings.CreateMexTcpBinding();
+                    ServiceMetadataBehavior smb2 = new ServiceMetadataBehavior();
+                    smb2.HttpGetEnabled = true;
+                    smb2.HttpGetUrl = new Uri("http://0.0.0.0:9001/Mex2");
+                    ServerManager.FileTransferService.Host.Description.Behaviors.Add(smb2);
+                    ServerManager.FileTransferService.Host.AddServiceEndpoint(typeof(IMetadataExchange), mexBinding, "http://0.0.0.0:9001/Mex2");
+                }
             });
         }
         private static void buildAdminPolicyObject()

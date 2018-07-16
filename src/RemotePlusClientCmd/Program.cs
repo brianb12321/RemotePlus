@@ -37,6 +37,7 @@ namespace RemotePlusClientCmd
         static void Main(string[] args)
         {
             IOCContainer.Provider.Bind<Connection>().ToSelf().InSingletonScope();
+            IOCContainer.Provider.Bind<RemotePlusLibrary.Configuration.IConfigurationDataAccess>().To(typeof(RemotePlusLibrary.Configuration.StandordDataAccess.ConfigurationHelper)).InSingletonScope().Named("DefaultConfigDataAccess");
             var blf = new BaseLogFactory();
             blf.AddLogger(new ConsoleLogger());
             IOCContainer.Provider.Bind<ILogFactory>().ToConstant(blf);

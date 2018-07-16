@@ -1,5 +1,4 @@
 ﻿using BetterLogger;
-using Logging;
 using ProxyServer;
 using RemotePlusLibrary;
 using RemotePlusLibrary.Core;

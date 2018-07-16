@@ -20,7 +20,7 @@ namespace RemotePlusServer
         private void button1_Click(object sender, EventArgs e)
         {
 #if INCOGNITO
-            ServerManager.RunInServerMode();
+            ServerStartup.RunInServerMode();
             button2.Enabled = true;
             button1.Enabled = false;
             Hide();

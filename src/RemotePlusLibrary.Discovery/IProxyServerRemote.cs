@@ -1,5 +1,4 @@
-﻿using Logging;
-using RemotePlusLibrary.Client;
+﻿using RemotePlusLibrary.Client;
 using RemotePlusLibrary.Contracts;
 using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusLibrary.RequestSystem;

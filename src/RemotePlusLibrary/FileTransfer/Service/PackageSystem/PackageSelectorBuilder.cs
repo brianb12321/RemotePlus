@@ -13,10 +13,11 @@ namespace RemotePlusLibrary.FileTransfer.Service.PackageSystem
     /// </summary>
     public class PackageSelectorBuilder
     {
-        public void AddPackageInventory<TPackage, TPackageInventory>(string inventoryName) where TPackage : Package
+        public PackageSelectorBuilder AddPackageInventory<TPackage, TPackageInventory>(string inventoryName) where TPackage : Package
             where TPackageInventory : IPackageInventory<TPackage>
         {
             IOCContainer.Provider.Bind<IPackageInventory<TPackage>>().To(typeof(TPackageInventory)).InSingletonScope().Named(inventoryName);
+            return this;
         }
     }
 }
