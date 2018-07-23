@@ -246,11 +246,11 @@ namespace RemotePlusServer.Core.ServerCore
                 {
                     GlobalServices.Logger.Log("The Users folder does not exist. Creating folder.", LogLevel.Warning);
                     Directory.CreateDirectory("Users");
-                    AccountManager.CreateAccount(new UserCredentials("admin", "password"), "Administrators", IOCContainer.Provider.Get<RemotePlusLibrary.Configuration.IConfigurationDataAccess>("BinaryDataAccess"));
+                    ServerManager.AccountManager.CreateAccount(new UserCredentials("admin", "password"), "Administrators", IOCContainer.Provider.Get<RemotePlusLibrary.Configuration.IConfigurationDataAccess>("BinaryDataAccess"));
                 }
                 else
                 {
-                    AccountManager.RefreshAccountList(IOCContainer.Provider.Get<RemotePlusLibrary.Configuration.IConfigurationDataAccess>("BinaryDataAccess"));
+                    ServerManager.AccountManager.RefreshAccountList(IOCContainer.Provider.Get<RemotePlusLibrary.Configuration.IConfigurationDataAccess>("BinaryDataAccess"));
                 }
                 ServerManager.DefaultSettings = new ServerSettings();
                 if (!File.Exists("Configurations\\Server\\GlobalServerSettings.config"))

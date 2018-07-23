@@ -1,22 +1,21 @@
-﻿using System;
-using BetterLogger;
-using RemotePlusServer.Core;
-using RemotePlusServer.Core.ServerCore;
-using RemotePlusServer;
-using System.ServiceModel.Description;
+﻿using BetterLogger.Loggers;
 using RemotePlusLibrary;
-using RemotePlusLibrary.Contracts;
-using BetterLogger.Loggers;
-using static RemotePlusServer.Core.DefaultCommands;
-using RemotePlusLibrary.Configuration;
-using RemotePlusLibrary.Configuration.StandordDataAccess;
 using RemotePlusLibrary.Core.IOC;
-using RemotePlusLibrary.FileTransfer.Service.PackageSystem;
+using RemotePlusServer.Core;
+using System.ServiceModel.Description;
+using RemotePlusLibrary.Contracts;
+using static RemotePlusServer.Core.DefaultCommands;
+using System;
+using BetterLogger;
 using RemotePlusLibrary.Security.AccountSystem;
+using RemotePlusLibrary.Configuration.StandordDataAccess;
+using RemotePlusLibrary.Configuration;
+using RemotePlusLibrary.FileTransfer.Service.PackageSystem;
+using RemotePlusServer.Core.ServerCore;
 
-namespace DefaultServerCore
+namespace RemotePlusServer
 {
-    public class Startup : IServerCoreStartup
+    public class DefaultServerCore : IServerCoreStartup
     {
         public void AddServices(IServiceCollection services)
         {
@@ -68,10 +67,10 @@ namespace DefaultServerCore
             .AddSingletonNamed<IConfigurationDataAccess, BinarySerializationHelper>("BinaryDataAccess")
             .UseAuthentication<AccountManager>()
             .UsePackageInventorySelector<StandordPackageInventorySelector>(builder =>
-                builder.AddPackageInventory<FilePackage, StandordPackageInventory>("DefaultFileInventory"));            
+                builder.AddPackageInventory<FilePackage, StandordPackageInventory>("DefaultFileInventory"));
         }
 
-        void IServerCoreStartup.InitializeServer(IServerBuilder builder)
+        public void InitializeServer(IServerBuilder builder)
         {
             builder.InitializeKnownTypes()
                 .LoadServerConfig()

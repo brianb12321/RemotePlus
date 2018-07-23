@@ -1,0 +1,10 @@
+﻿
+Starts a new process on the server.
+Syntex: <Name> [args]
+
+Name: The file to execute. If no path was specified, The system32 folder will be used to find the file. The file's respective default program will be used.
+args: Arguments that will be passed to the file. If the file is a executable, it will be passed as an argument.
+
+Examples:
+	cmd.exe /c "dir"
+	notepad test.txt
