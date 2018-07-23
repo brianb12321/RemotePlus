@@ -13,6 +13,8 @@ using RemotePlusServer.Core;
 using Ninject;
 using RemotePlusLibrary.Core.IOC;
 using RemotePlusLibrary.Extension.ExtensionLoader;
+using System.ServiceProcess;
+using System.Runtime.InteropServices;
 
 namespace RemotePlusServer
 {
@@ -27,6 +29,7 @@ namespace RemotePlusServer
         [STAThread]
         static void Main(string[] args)
         {
+#if !SERVICE
             try
             {
                 var a = Assembly.GetExecutingAssembly().GetName();
@@ -57,10 +60,13 @@ namespace RemotePlusServer
 #else
                 MessageBox.Show("Internal server error: " + ex.Message);
 #endif
-
             }
+#else
+            ServerManager.IsService = true;
+            ServiceBase.Run(new RemotePlusWindowsService());
+            //new RemotePlusWindowsService().StartforDebugging();
+#endif
         }
-
         private static void LoadServerCoreExtension()
         {
             bool foundCore = false;
@@ -88,21 +94,6 @@ namespace RemotePlusServer
                 Console.ResetColor();
                 Environment.Exit(-1);
             }
-        }
-
-        private static void ProxyService_HostFaulted(object sender, EventArgs e)
-        {
-            GlobalServices.Logger.Log("The proxy server state has been transferred to the faulted state.", LogLevel.Error);
-        }
-
-        private static void ProxyService_HostClosed(object sender, EventArgs e)
-        {
-            GlobalServices.Logger.Log("Proxy server closed.", LogLevel.Info);
-        }
-
-        private static void ProxyService_HostOpened(object sender, EventArgs e)
-        {
-            GlobalServices.Logger.Log($"Proxy server opened on port {ServerManager.DefaultSettings.DiscoverySettings.Setup.DiscoveryPort}", LogLevel.Info);
         }
 
         static bool CheckPrerequisites()

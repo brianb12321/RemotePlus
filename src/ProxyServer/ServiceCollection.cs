@@ -16,6 +16,12 @@ namespace ProxyServer
             return this;
         }
 
+        public IServiceCollection AddSingleton<TService, TServiceImpl>()
+        {
+            IOCContainer.Provider.Bind<TService>().To(typeof(TServiceImpl)).InSingletonScope();
+            return this;
+        }
+
         public IServiceCollection AddSingletonNamed<TService, TServiceImpl>(string name)
         {
             IOCContainer.Provider.Bind<TService>().To(typeof(TServiceImpl)).Named(name);

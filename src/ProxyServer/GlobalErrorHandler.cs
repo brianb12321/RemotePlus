@@ -17,7 +17,7 @@ namespace ProxyServer
             GlobalServices.Logger.Log("Fault error: " + error.ToString(), LogLevel.Error);
             return true;
 #else
-            ProxyManager.Logger.Log("Fault error: " + error.Message, LogLevel.Error);
+            GlobalServices.Logger.Log("Fault error: " + error.Message, LogLevel.Error);
             return true;
 #endif
         }

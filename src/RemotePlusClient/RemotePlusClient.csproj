@@ -66,6 +66,7 @@
     <Compile Include="ClientApp.cs" />
     <Compile Include="ClientCallback.cs" />
     <Compile Include="ExtensionSystem\ClientLibraryBuilder.cs" />
+    <Compile Include="SendFilePackageRequest.cs" />
     <Compile Include="Settings\ConsoleSettings.cs" />
     <Compile Include="UIForms\Scripting\ScriptIcons.Designer.cs">
       <AutoGen>True</AutoGen>

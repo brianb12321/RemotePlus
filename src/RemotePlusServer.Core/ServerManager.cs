@@ -6,6 +6,8 @@ using RemotePlusServer.Core.ExtensionSystem;
 using System;
 using Ninject;
 using RemotePlusLibrary.Core.IOC;
+using RemotePlusLibrary.FileTransfer.Service.PackageSystem;
+using RemotePlusLibrary.Security.AccountSystem;
 
 namespace RemotePlusServer.Core
 {
@@ -20,8 +22,11 @@ namespace RemotePlusServer.Core
         /// The global container that all house the libraries that are loaded into the system.
         /// </summary>
         public static ServerExtensionLibraryCollection DefaultCollection { get; } = new ServerExtensionLibraryCollection();
+        public static IAccountManager AccountManager => IOCContainer.Provider.Get<IAccountManager>();
         public static Guid ServerGuid { get; set; }
         public static ScriptBuilder ScriptBuilder => IOCContainer.Provider.Get<ScriptBuilder>();
+        public static IPackageInventorySelector DefaultPackageInventorySelector => IOCContainer.Provider.Get<IPackageInventorySelector>();
+        public static bool IsService { get; set; }
         public static IRemotePlusService<FileTransferServciceInterface> FileTransferService => (IRemotePlusService<FileTransferServciceInterface>)IOCContainer.Provider.GetService(typeof(IRemotePlusService<FileTransferServciceInterface>));
     }
 }

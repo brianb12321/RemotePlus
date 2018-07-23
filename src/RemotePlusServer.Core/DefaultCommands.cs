@@ -16,6 +16,8 @@ using System.Drawing;
 using BetterLogger;
 using RemotePlusLibrary.Core.IOC;
 using RemotePlusLibrary;
+using RemotePlusLibrary.FileTransfer.Service.PackageSystem;
+using System.Media;
 
 namespace RemotePlusServer.Core
 {
@@ -569,6 +571,29 @@ namespace RemotePlusServer.Core
         public static CommandResponse requestFile(CommandRequest req, CommandPipeline pipe)
         {
             ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(RequestBuilder.RequestFile());
+            return new CommandResponse((int)CommandStatus.Success);
+        }
+        [CommandHelp("Plays an audio file sent by the client.")]
+        public static CommandResponse playAudio(CommandRequest req, CommandPipeline pipe)
+        {
+            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole($"Going to play audio file.");
+            ServerManager.DefaultPackageInventorySelector.GetInventory<FilePackage>("DefaultFileInventory").Receive(package =>
+            {
+                if(package.FileName.Contains("splash"))
+                {
+                    ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("I like swimming!");
+                }
+                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole($"Now playing audio file. Name {package.FileName}");
+                SoundPlayer sp = new SoundPlayer(package.Data);
+                sp.PlaySync();
+            });
+            RequestBuilder requestPathBuilder = RequestBuilder.RequestFilePath("Select audio file.");
+            requestPathBuilder.Metadata["Filter"] = "Wav File (*.wav)|*.wav";
+            var path = ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(requestPathBuilder);
+            if (path.AcquisitionState ==  RequestState.OK)
+            {
+                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(RequestBuilder.SendFilePackage(path.Data.ToString()));
+            }
             return new CommandResponse((int)CommandStatus.Success);
         }
     }

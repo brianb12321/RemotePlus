@@ -17,7 +17,7 @@ using BetterLogger;
 
 namespace RemotePlusClientCmd
 {
-    [CallbackBehavior(ConcurrencyMode = ConcurrencyMode.Reentrant,
+    [CallbackBehavior(ConcurrencyMode = ConcurrencyMode.Multiple,
         IncludeExceptionDetailInFaults = true,
         UseSynchronizationContext = false)]
     class ClientCallback : IRemoteClient
@@ -36,7 +36,7 @@ namespace RemotePlusClientCmd
         {
             //ClientCmdManager.WaitFlag = true;
             ClientCmdManager.Remote.Close();
-            ClientCmdManager.Logger.Log($"Server [{guid}] disconnected. " + Reason, LogLevel.Info, "CLient");
+            GlobalServices.Logger.Log($"Server [{guid}] disconnected. " + Reason, LogLevel.Info, "CLient");
             //ClientCmdManager.WaitFlag = false;
         }
 
@@ -130,7 +130,7 @@ namespace RemotePlusClientCmd
         public void TellMessage(Guid guid, string Message, LogLevel o)
         {
             //ClientCmdManager.WaitFlag = true;
-            ClientCmdManager.Logger.Log(Message, o, "Server Host", guid.ToString());
+            GlobalServices.Logger.Log(Message, o, "Server Host", guid.ToString());
             //ClientCmdManager.WaitFlag = false;
         }
 
@@ -150,12 +150,12 @@ namespace RemotePlusClientCmd
 
         public void TellMessageToServerConsole(Guid serverGuid, string Message, LogLevel level)
         {
-            ClientCmdManager.Logger.Log(Message, level, "Server Console", serverGuid.ToString());
+            GlobalServices.Logger.Log(Message, level, "Server Console", serverGuid.ToString());
         }
 
         public void TellMessageToServerConsole(Guid serverGuid, string Message, LogLevel level, string from)
         {
-            ClientCmdManager.Logger.Log(Message, level, $"Server Console {from}", serverGuid.ToString());
+            GlobalServices.Logger.Log(Message, level, $"Server Console {from}", serverGuid.ToString());
         }
     }
 }

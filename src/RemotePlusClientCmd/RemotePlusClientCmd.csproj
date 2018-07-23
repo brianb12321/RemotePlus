@@ -64,6 +64,9 @@
     <Reference Include="ConsoLovers.ConsoleToolkit, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\ConsoLovers.ConsoleToolkit.3.0.0\lib\net461\ConsoLovers.ConsoleToolkit.dll</HintPath>
     </Reference>
+    <Reference Include="Ninject, Version=3.3.4.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Ninject.3.3.4\lib\net45\Ninject.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -79,8 +82,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClientCallback.cs" />
-    <Compile Include="ClientCommandSystem\ClientCommandLibraryLoader.cs" />
-    <Compile Include="ClientCommandSystem\IClientModuleLibraryStartup.cs" />
+    <Compile Include="ClientExtensionSystem\ClientExtensionLibrary.cs" />
+    <Compile Include="ClientExtensionSystem\ClientExtensionLibraryCollection.cs" />
+    <Compile Include="ClientExtensionSystem\ClientInitEnvironment.cs" />
+    <Compile Include="ClientExtensionSystem\ClientLibraryBuilder.cs" />
     <Compile Include="CommandLineOptions.cs" />
     <Compile Include="ErrorDialog.cs">
       <SubType>Form</SubType>
@@ -102,6 +107,7 @@
     <Compile Include="Requests\RCmdTextBox.cs" />
     <Compile Include="Requests\SelectableConsoleMenu.cs" />
     <Compile Include="Requests\SelectFileRequest.cs" />
+    <Compile Include="Requests\SendFilePackageRequest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -111,6 +117,10 @@
     <ProjectReference Include="..\RemotePlusClient.CommonUI\RemotePlusClient.CommonUI.csproj">
       <Project>{9EF00D4B-27F4-4C2A-BDA7-FC47246B2064}</Project>
       <Name>RemotePlusClient.CommonUI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RemotePlusLibrary.Configuration\RemotePlusLibrary.Configuration.csproj">
+      <Project>{8a8a5888-1ce7-46ed-b8de-1ac7671f3426}</Project>
+      <Name>RemotePlusLibrary.Configuration</Name>
     </ProjectReference>
     <ProjectReference Include="..\RemotePlusLibrary.Core\RemotePlusLibrary.Core.csproj">
       <Project>{0334629b-6302-42a8-b159-f8646b4d8650}</Project>

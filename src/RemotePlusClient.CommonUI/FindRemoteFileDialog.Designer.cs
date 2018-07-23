@@ -32,11 +32,9 @@ namespace RemotePlusClient.CommonUI
         /// </summary>
         private void InitializeComponent()
         {
-            _base = "";
-            port = 0;
+            this.fileBrowser1 = new FileBrowser("", 1000);
             this.progressWorker = new System.ComponentModel.BackgroundWorker();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.fileBrowser1 = new RemotePlusClient.CommonUI.Controls.FileBrowser(_base, port);
             this.btn_Cancel = new System.Windows.Forms.Button();
             this.btn_OK = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
@@ -75,12 +73,14 @@ namespace RemotePlusClient.CommonUI
             // 
             // fileBrowser1
             // 
+            this.fileBrowser1.BaseURL = "";
             this.fileBrowser1.CountLabel = 0;
             this.fileBrowser1.CurrentPath = "";
             this.fileBrowser1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.fileBrowser1.Filter = RemotePlusClient.CommonUI.Controls.FileBrowserHelpers.FilterMode.File;
             this.fileBrowser1.Location = new System.Drawing.Point(0, 0);
             this.fileBrowser1.Name = "fileBrowser1";
+            this.fileBrowser1.Port = 0;
             this.fileBrowser1.Size = new System.Drawing.Size(751, 271);
             this.fileBrowser1.StatusMessage = "Idle";
             this.fileBrowser1.TabIndex = 0;

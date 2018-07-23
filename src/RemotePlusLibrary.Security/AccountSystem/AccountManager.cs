@@ -13,26 +13,27 @@ namespace RemotePlusLibrary.Security.AccountSystem
     /// Manages all the accounts stored in the system. You can call methods to retrieve accounts, create accounts, etc.
     /// </summary>
     [Serializable]
-    public static class AccountManager
+    public class AccountManager : IAccountManager
     {
-        static UserCollection _accounts = new UserCollection();
+        UserCollection _accounts = new UserCollection();
         /// <summary>
         /// Creates a new account and saves its account object file.
         /// </summary>
         /// <param name="cred">The username and password for the account.</param>
         /// <param name="role">The string to a role that is loaded on the server.</param>
-        public static void CreateAccount(UserCredentials cred, string role, Configuration.IConfigurationDataAccess da)
+        public UserAccount CreateAccount(UserCredentials cred, string role, Configuration.IConfigurationDataAccess da)
         {
             UserAccount account = new UserAccount(cred, role);
             _accounts.Add(account.AID, account);
             da.SaveConfig(account, $"Users\\{account.AID}.uao");
+            return account;
         }
         /// <summary>
         /// Gets an account object associated with the account's AID.
         /// </summary>
         /// <param name="AID">The account identification number used to identify unique accounts.</param>
         /// <returns>The UserAccount object that the AID points to. You must have the account be registered into the system.</returns>
-        public static UserAccount GetAccount(Guid AID)
+        public UserAccount GetAccount(Guid AID)
         {
             try
             {
@@ -46,7 +47,7 @@ namespace RemotePlusLibrary.Security.AccountSystem
         /// <summary>
         /// Refreshes the currently loaded accounts on the system by enumerating the folder with the account objects.
         /// </summary>
-        public static void RefreshAccountList(Configuration.IConfigurationDataAccess da)
+        public void RefreshAccountList(Configuration.IConfigurationDataAccess da)
         {
             _accounts.Clear();
             foreach (string file in Directory.GetFiles("Users"))
@@ -58,7 +59,7 @@ namespace RemotePlusLibrary.Security.AccountSystem
                 }
             }
         }
-        public static UserAccount AttemptLogin(UserCredentials cred)
+        public UserAccount AttemptLogin(UserCredentials cred)
         {
             foreach (UserAccount Account in _accounts.Values)
             {

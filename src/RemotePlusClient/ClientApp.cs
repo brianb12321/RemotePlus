@@ -47,6 +47,7 @@ namespace RemotePlusClient
             InitializeDefaultKnownTypes();
             RequestStore.Init();
             RequestStore.Add("global_selectFile", new SelectFileRequest());
+            RequestStore.Add("global_sendFilePackage", new SendFilePackageRequest());
             MainWindow = new MainF();
             Application.Run(MainWindow);
         }

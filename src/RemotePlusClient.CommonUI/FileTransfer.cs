@@ -1,6 +1,7 @@
 ﻿using RemotePlusLibrary.Core;
 using RemotePlusLibrary.FileTransfer;
 using RemotePlusLibrary.FileTransfer.Service;
+using RemotePlusLibrary.FileTransfer.Service.PackageSystem;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -75,6 +76,37 @@ namespace RemotePlusClient.CommonUI
         {
             var connection = EstablishConnection();
             return connection.GetPolicyObjectNames();
+        }
+        public void SendFile(string localFilePath)
+        {
+            RemoteFileInfo uploadRequest = new RemoteFileInfo();
+            var connection = EstablishConnection();
+            FileInfo file = new FileInfo(localFilePath);
+            using (FileStream stream = new FileStream(localFilePath, FileMode.Open, FileAccess.Read))
+            {
+                string fileName = Path.GetFileName(localFilePath);
+                long length = file.Length;
+                uploadRequest.FileName = fileName;
+                uploadRequest.Length = length;
+                uploadRequest.FileByteStream = stream;
+                connection.SendFile(uploadRequest);
+            }
+        }
+        public void SendFileWithoutRoute(string localFilePath, string packageHeader)
+        {
+            RemoteFileInfo uploadRequest = new RemoteFileInfo();
+            var connection = EstablishConnection();
+            FileInfo file = new FileInfo(localFilePath);
+            using (FileStream stream = new FileStream(localFilePath, FileMode.Open, FileAccess.Read))
+            {
+                string fileName = Path.GetFileName(localFilePath);
+                long length = file.Length;
+                uploadRequest.FileName = fileName;
+                uploadRequest.Length = length;
+                uploadRequest.FileByteStream = stream;
+                uploadRequest.FileHeader = packageHeader;
+                connection.SendFileUnrouted(uploadRequest);
+            }
         }
     }
 }

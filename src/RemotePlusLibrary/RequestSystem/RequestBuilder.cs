@@ -67,5 +67,9 @@ namespace RemotePlusLibrary.RequestSystem
         {
             return new RequestBuilder("global_selectFile", null, null);
         }
+        public static RequestBuilder SendFilePackage(string localFilePath)
+        {
+            return new RequestBuilder("global_sendFilePackage", localFilePath, null);
+        }
     }
 }

@@ -49,6 +49,8 @@
     <Compile Include="AccountSystem\AccountManager.cs" />
     <Compile Include="AccountSystem\DefaultPolicy.cs" />
     <Compile Include="AccountSystem\Design\Converters\UserAccountCollectionDescriptor.cs" />
+    <Compile Include="AccountSystem\IAccountManager.cs" />
+    <Compile Include="AccountSystem\IServiceCollectionExtensions.cs" />
     <Compile Include="AccountSystem\Policies\OperationPolicies.cs" />
     <Compile Include="AccountSystem\PolicyObject.cs" />
     <Compile Include="AccountSystem\Role.cs" />

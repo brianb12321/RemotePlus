@@ -15,6 +15,7 @@ namespace RemotePlusClient.CommonUI
             requestForms.Add("r_color", new ColorRequest());
             requestForms.Add("r_messageBox", new MessageBoxRequest());
             requestForms.Add("a_speak", new SpeechRequest());
+            requestForms.Add("r_filePath", new SelectLocalFileRequest());
         }
         public static void Add(string name, IDataRequest requestForm)
         {

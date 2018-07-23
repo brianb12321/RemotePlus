@@ -106,7 +106,7 @@ namespace RemotePlusClientCmd.Requests
             }
             catch (Exception ex)
             {
-                ClientCmdManager.Logger.Log($"Unable to open menu: {ex.ToString()}", LogLevel.Error);
+                GlobalServices.Logger.Log($"Unable to open menu: {ex.ToString()}", LogLevel.Error);
                 return RawDataRequest.Cancel();
             }
         }

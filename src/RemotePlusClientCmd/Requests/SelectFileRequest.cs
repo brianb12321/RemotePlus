@@ -24,11 +24,11 @@ namespace RemotePlusClientCmd.Requests
         {
             if (ClientCmdManager.ProxyEnabled)
             {
-                fd = new FindRemoteFileDialog(FilterMode.File, ClientCmdManager.Proxy, ClientCmdManager.BaseURL, ClientCmdManager.Port);
+                fd = new FindRemoteFileDialog(FilterMode.File, ClientCmdManager.Proxy, ClientCmdManager.CurrentConnectionData.BaseAddress, ClientCmdManager.CurrentConnectionData.Port);
             }
             else
             {
-                fd = new FindRemoteFileDialog(FilterMode.File, ClientCmdManager.Remote, ClientCmdManager.BaseURL, ClientCmdManager.Port);
+                fd = new FindRemoteFileDialog(FilterMode.File, ClientCmdManager.Remote, ClientCmdManager.CurrentConnectionData.BaseAddress, ClientCmdManager.CurrentConnectionData.Port);
             }
             if (fd.ShowDialog() == DialogResult.OK)
             {
