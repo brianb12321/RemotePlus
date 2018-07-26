@@ -26,6 +26,8 @@ namespace RemotePlusLibrary.Discovery
         void TellMessage(Guid serverGuid, string Message, LogLevel o);
         [OperationContract(Name = "TellMessageToServerConsoleUsingString")]
         void TellMessageToServerConsole(Guid serverGuid, string Message);
+        [OperationContract(Name = "TellMessageToServerConsoleUsingStringNoNewLine")]
+        void TellMessageToServerConsoleNoNewLine(Guid serverGuid, string Message);
         [OperationContract(Name = "TellMessageToServerConsoleWithLogLevel")]
         void TellMessageToServerConsole(Guid serverGuid, string Message, LogLevel level);
         [OperationContract(Name = "TellMessageToServerConsoleWithConsoleText")]

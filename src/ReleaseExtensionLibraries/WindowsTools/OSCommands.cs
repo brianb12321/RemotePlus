@@ -9,6 +9,8 @@ using System.Windows.Forms;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
 using System.IO;
 using RemotePlusServer.Core;
+using AudioSwitcher.AudioApi.CoreAudio;
+using System.Drawing;
 
 namespace WindowsTools
 {
@@ -58,6 +60,29 @@ namespace WindowsTools
         {
             Win32Wrapper.BlockInputForInterval(int.Parse(args.Arguments[1].Value));
             return new CommandResponse((int)CommandStatus.Success);
+        }
+        [CommandHelp("Sets the server audio to a psecific percentage.")]
+        public static CommandResponse setVolume(CommandRequest args, CommandPipeline pipe)
+        {
+            if (args.Arguments.Count < 2)
+            {
+                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText("You must specify a percentage.") { TextColor = Color.Red });
+                return new CommandResponse((int)CommandStatus.Fail);
+            }
+            else
+            {
+                if(int.TryParse(args.Arguments[1].Value, out int percent))
+                {
+                    CoreAudioDevice defaultPlaybackDevice = new CoreAudioController().DefaultPlaybackDevice;
+                    defaultPlaybackDevice.Volume = percent;
+                    return new CommandResponse((int)CommandStatus.Success);
+                }
+                else
+                {
+                    ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText("Given value is invalid.") { TextColor = Color.Red });
+                    return new CommandResponse((int)CommandStatus.Fail);
+                }
+            }
         }
     }
 }

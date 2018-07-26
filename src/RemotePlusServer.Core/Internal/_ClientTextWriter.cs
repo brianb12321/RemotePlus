@@ -12,12 +12,12 @@ namespace RemotePlusServer.Internal
     {
         public override void Write(char value)
         {
-            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(value.ToString());
+            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsoleNoNewLine(value.ToString());
         }
 
         public override void Write(string value)
         {
-            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(value);
+            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsoleNoNewLine(value);
         }
 
         public override Encoding Encoding

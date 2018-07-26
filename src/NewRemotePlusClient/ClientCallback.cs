@@ -146,5 +146,10 @@ namespace NewRemotePlusClient
                 Extra = serverGuid.ToString()
             });
         }
+
+        public void TellMessageToServerConsoleNoNewLine(Guid serverGuid, string Message)
+        {
+            
+        }
     }
 }

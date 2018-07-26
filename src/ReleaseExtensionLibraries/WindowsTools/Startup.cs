@@ -20,6 +20,7 @@ namespace WindowsTools
             ServerManager.ServerRemoteService.Commands.Add("drives", OSCommands.drives);
             ServerManager.ServerRemoteService.Commands.Add("setMousePos", OSCommands.setMousePos);
             ServerManager.ServerRemoteService.Commands.Add("blockInputI", OSCommands.blockInputI);
+            ServerManager.ServerRemoteService.Commands.Add("setVolume", OSCommands.setVolume);
             //RemotePlusServer.ScriptingEngine.ScriptBuilder.AddFunction<Action>("runFileM", () => ServerManager.ServerRemoteService.RemoteInterface.RunServerCommand("fileM", CommandExecutionMode.Script));
         }
     }

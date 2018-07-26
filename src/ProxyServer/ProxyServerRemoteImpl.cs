@@ -655,5 +655,10 @@ namespace ProxyServer
         {
             ProxyClient.ClientCallback.TellMessageToServerConsole(serverGuid, Message, level, from);
         }
+
+        public void TellMessageToServerConsoleNoNewLine(Guid serverGuid, string Message)
+        {
+            ProxyClient.ClientCallback.TellMessageToServerConsoleNoNewLine(serverGuid, Message);
+        }
     }
 }

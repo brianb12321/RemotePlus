@@ -13,12 +13,18 @@ namespace RemotePlusLibrary.FileTransfer.Service.PackageSystem
 
         List<Action<Package>> _routes = new List<Action<Package>>();
 
+        public IKernel PackageInventoryProvider { get; private set; }
+        public StandordPackageInventorySelector()
+        {
+            PackageInventoryProvider = new StandardKernel();
+        }
+
         public void AddPackageInventory<TPackage, TInventoryImpl>(string name)
             where TPackage : Package
             where TInventoryImpl : IPackageInventory<TPackage>
         {
             GlobalServices.Logger.Log($"Adding package inventory of type: {nameof(TPackage)}, name: {name}", BetterLogger.LogLevel.Info);
-            IOCContainer.Provider.Bind<IPackageInventory<TPackage>>().To(typeof(TInventoryImpl)).InSingletonScope().Named(name);
+            PackageInventoryProvider.Bind<IPackageInventory<TPackage>>().To(typeof(TInventoryImpl)).InSingletonScope().Named(name);
         }
 
         public void AddRoute(Action<Package> router)
@@ -28,7 +34,7 @@ namespace RemotePlusLibrary.FileTransfer.Service.PackageSystem
 
         public IPackageInventory<TPackage> GetInventory<TPackage>(string name) where TPackage : Package
         {
-            var inv = IOCContainer.Provider.Get<IPackageInventory<TPackage>>(name);
+            var inv = PackageInventoryProvider.Get<IPackageInventory<TPackage>>(name);
             return inv;
         }
 
