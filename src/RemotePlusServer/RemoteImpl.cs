@@ -423,7 +423,7 @@ namespace RemotePlusServer
                 var l4 = "Authenticating your user credentials.";
                 GlobalServices.Logger.Log(l4, LogLevel.Info);
                 _interface.Client.ClientCallback.TellMessage(l4, LogLevel.Info);
-                var tryUser = AccountManager.AttemptLogin(cred);
+                var tryUser = ServerManager.AccountManager.AttemptLogin(cred);
                 if (tryUser != null)
                 {
                     return tryUser;

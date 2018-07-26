@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ServiceModel;
-using Logging;
 using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusLibrary.Security.AccountSystem;
 using RemotePlusLibrary.Client;
@@ -20,6 +19,8 @@ namespace RemotePlusLibrary.Contracts
         void TellMessage(Guid serverGuid, string Message, LogLevel o);
         [OperationContract(Name = "TellMessageToServerConsoleUsingString")]
         void TellMessageToServerConsole(Guid serverGuid, string Message);
+        [OperationContract(Name = "TellMessageToServerConsoleUsingStringNoNewLine")]
+        void TellMessageToServerConsoleNoNewLine(Guid serverGuid, string Message);
         [OperationContract(Name = "TellMessageToServerConsoleWithLogLevel")]
         void TellMessageToServerConsole(Guid serverGuid, string Message, LogLevel level);
         [OperationContract(Name = "TellMessageToServerConsoleWithConsoleText")]

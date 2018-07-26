@@ -246,11 +246,11 @@ namespace RemotePlusServer.Core.ServerCore
                 {
                     GlobalServices.Logger.Log("The Users folder does not exist. Creating folder.", LogLevel.Warning);
                     Directory.CreateDirectory("Users");
-                    AccountManager.CreateAccount(new UserCredentials("admin", "password"), "Administrators", IOCContainer.Provider.Get<RemotePlusLibrary.Configuration.IConfigurationDataAccess>("BinaryDataAccess"));
+                    ServerManager.AccountManager.CreateAccount(new UserCredentials("admin", "password"), "Administrators", IOCContainer.Provider.Get<RemotePlusLibrary.Configuration.IConfigurationDataAccess>("BinaryDataAccess"));
                 }
                 else
                 {
-                    AccountManager.RefreshAccountList(IOCContainer.Provider.Get<RemotePlusLibrary.Configuration.IConfigurationDataAccess>("BinaryDataAccess"));
+                    ServerManager.AccountManager.RefreshAccountList(IOCContainer.Provider.Get<RemotePlusLibrary.Configuration.IConfigurationDataAccess>("BinaryDataAccess"));
                 }
                 ServerManager.DefaultSettings = new ServerSettings();
                 if (!File.Exists("Configurations\\Server\\GlobalServerSettings.config"))
@@ -283,7 +283,7 @@ namespace RemotePlusServer.Core.ServerCore
                 if (ServerManager.DefaultSettings.EnableMetadataExchange)
                 {
                     GlobalServices.Logger.Log("NOTE: Metadata exchange is enabled on the server.", LogLevel.Info, "Server Host");
-                    System.ServiceModel.Channels.Binding mexBinding = MetadataExchangeBindings.CreateMexHttpBinding();
+                    System.ServiceModel.Channels.Binding mexBinding = MetadataExchangeBindings.CreateMexTcpBinding();
                     ServiceMetadataBehavior smb = new ServiceMetadataBehavior();
                     smb.HttpGetEnabled = true;
                     smb.HttpGetUrl = new Uri("http://0.0.0.0:9001/Mex");
@@ -296,12 +296,15 @@ namespace RemotePlusServer.Core.ServerCore
         {
             return builder.AddTask(() =>
             {
-                System.ServiceModel.Channels.Binding mexBinding = MetadataExchangeBindings.CreateMexHttpBinding();
-                ServiceMetadataBehavior smb2 = new ServiceMetadataBehavior();
-                smb2.HttpGetEnabled = true;
-                smb2.HttpGetUrl = new Uri("http://0.0.0.0:9001/Mex2");
-                ServerManager.FileTransferService.Host.Description.Behaviors.Add(smb2);
-                ServerManager.FileTransferService.Host.AddServiceEndpoint(typeof(IMetadataExchange), mexBinding, "http://0.0.0.0:9001/Mex2");
+                if (ServerManager.DefaultSettings.EnableMetadataExchange)
+                {
+                    System.ServiceModel.Channels.Binding mexBinding = MetadataExchangeBindings.CreateMexTcpBinding();
+                    ServiceMetadataBehavior smb2 = new ServiceMetadataBehavior();
+                    smb2.HttpGetEnabled = true;
+                    smb2.HttpGetUrl = new Uri("http://0.0.0.0:9001/Mex2");
+                    ServerManager.FileTransferService.Host.Description.Behaviors.Add(smb2);
+                    ServerManager.FileTransferService.Host.AddServiceEndpoint(typeof(IMetadataExchange), mexBinding, "http://0.0.0.0:9001/Mex2");
+                }
             });
         }
         private static void buildAdminPolicyObject()

@@ -9,8 +9,10 @@ using System.Threading.Tasks;
 namespace RemotePlusLibrary.FileTransfer.Service
 {
     [MessageContract]
-    public sealed class RemoteFileInfo : IDisposable
+    public sealed class RemoteFileInfo : IFile
     {
+        [MessageHeader]
+        public string FileHeader { get; set; }
         [MessageHeader(MustUnderstand = true)]
         public string FileName { get; set; }
         [MessageHeader(MustUnderstand = true)]

@@ -86,18 +86,21 @@ namespace RemotePlusClient.CommonUI
             TreeNode rootNode = null;
             foreach(DriveInfo drive in DriveInfo.GetDrives())
             {
-                RemoteDrive info = (RemoteDrive)remote.GetRemoteFiles($@"{drive.RootDirectory}", true);
-                Invoke((Action)(() => fileBrowser1.StatusMessage = $"Populating Tree View for {drive.Name}"));
-                rootNode = new TreeNode(drive.Name) { ImageKey = "drive.ico", Tag = info };
-                //foreach(RemoteDirectory dir in info.Directories)
-                //{
-                //    TreeNode newNode = new TreeNode(dir.Name);
-                //    newNode.Tag = dir;
-                //    rootNode.Nodes.Add(newNode);s
-                //}
-                PopulateTree(rootNode);
-                //GetDirectories(info.GetDirectories(), rootNode, callback);
-                this.Invoke((Action)(() => fileBrowser1.Directories.Add(rootNode)));
+                if (drive.IsReady)
+                {
+                    RemoteDrive info = (RemoteDrive)remote.GetRemoteFiles($@"{drive.RootDirectory}", true);
+                    Invoke((Action)(() => fileBrowser1.StatusMessage = $"Populating Tree View for {drive.Name}"));
+                    rootNode = new TreeNode(drive.Name) { ImageKey = "drive.ico", Tag = info };
+                    //foreach(RemoteDirectory dir in info.Directories)
+                    //{
+                    //    TreeNode newNode = new TreeNode(dir.Name);
+                    //    newNode.Tag = dir;
+                    //    rootNode.Nodes.Add(newNode);s
+                    //}
+                    PopulateTree(rootNode);
+                    //GetDirectories(info.GetDirectories(), rootNode, callback);
+                    this.Invoke((Action)(() => fileBrowser1.Directories.Add(rootNode)));
+                }
             }
             
             fileBrowser1.StatusMessage = "Finsished";
@@ -126,15 +129,18 @@ namespace RemotePlusClient.CommonUI
                 {
                     RemoteDirectory dir = e.Tag as RemoteDirectory;
                     RemoteDirectory newDir = (RemoteDirectory)remote.GetRemoteFiles(dir.FullName, true);
-                    e.Tag = newDir;
-                    fileBrowser1.StatusMessage = "Getting data";
-                    foreach (RemoteDirectory dirs in newDir.GetDirectories())
+                    if(newDir != null)
                     {
-                        Counter++;
-                        TreeNode node = new TreeNode(dirs.Name);
-                        node.Tag = dirs;
-                        node.ImageKey = "Folder";
-                        e.Nodes.Add(node);
+                        e.Tag = newDir;
+                        fileBrowser1.StatusMessage = "Getting data";
+                        foreach (RemoteDirectory dirs in newDir.GetDirectories())
+                        {
+                            Counter++;
+                            TreeNode node = new TreeNode(dirs.Name);
+                            node.Tag = dirs;
+                            node.ImageKey = "Folder";
+                            e.Nodes.Add(node);
+                        }
                     }
                 }
                 fileBrowser1.StatusMessage = "Finsished";

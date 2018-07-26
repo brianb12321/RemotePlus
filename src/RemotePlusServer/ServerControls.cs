@@ -20,7 +20,7 @@ namespace RemotePlusServer
         private void button1_Click(object sender, EventArgs e)
         {
 #if INCOGNITO
-            ServerManager.RunInServerMode();
+            ServerStartup.RunInServerMode();
             button2.Enabled = true;
             button1.Enabled = false;
             Hide();
@@ -41,7 +41,14 @@ namespace RemotePlusServer
 #if INCOGNITO
             this.ShowInTaskbar = false;
 #endif
-
+            var args = Environment.GetCommandLineArgs();
+            if (args.Length > 1)
+            {
+                if (args[1] == "autoStart")
+                {
+                    button1_Click(this, EventArgs.Empty);
+                }
+            }
         }
     }
 }

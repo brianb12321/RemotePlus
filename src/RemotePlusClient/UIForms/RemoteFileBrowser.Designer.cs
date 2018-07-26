@@ -37,7 +37,7 @@ namespace RemotePlusClient.UIForms
         private void InitializeComponent()
         {
             this.progressWorker = new System.ComponentModel.BackgroundWorker();
-            this.fileBrowser1 = new RemotePlusClient.CommonUI.Controls.FileBrowser(MainF.BaseAddress, MainF.Port);
+            this.fileBrowser1 = new RemotePlusClient.CommonUI.Controls.FileBrowser(MainF.CurrentConnectionData.BaseAddress, MainF.CurrentConnectionData.Port);
             this.SuspendLayout();
             // 
             // fileBrowser1

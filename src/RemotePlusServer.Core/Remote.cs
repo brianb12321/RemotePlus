@@ -227,6 +227,17 @@ namespace RemotePlusServer
                 c.TellMessageToServerConsole(Server, Message);
             }
         }
+        public void TellMessageToServerConsoleNoNewLine(string Message)
+        {
+            if (useProxy)
+            {
+                proxyChannel.TellMessageToServerConsoleNoNewLine(Server, Message);
+            }
+            else
+            {
+                c.TellMessageToServerConsoleNoNewLine(Server, Message);
+            }
+        }
         public void TellMessageToServerConsole(string message, LogLevel level)
         {
             if (useProxy)

@@ -34,9 +34,6 @@
     <Reference Include="BetterLogger">
       <HintPath>..\..\Libs\BetterLogger.dll</HintPath>
     </Reference>
-    <Reference Include="Logging">
-      <HintPath>..\..\Libs\Logging.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Serialization" />

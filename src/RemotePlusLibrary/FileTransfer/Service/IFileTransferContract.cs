@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RemotePlusLibrary.FileTransfer.Service.PackageSystem;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
@@ -18,5 +19,9 @@ namespace RemotePlusLibrary.FileTransfer.Service
         void DeleteFile(string remoteFile);
         [OperationContract]
         string[] GetPolicyObjectNames();
+        [OperationContract]
+        void SendFile(RemoteFileInfo fileRequest);
+        [OperationContract]
+        void SendFileUnrouted(RemoteFileInfo fileRequest);
     }
 }

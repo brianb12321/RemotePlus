@@ -56,6 +56,7 @@
     <Compile Include="AuthenticationDialog.Designer.cs">
       <DependentUpon>AuthenticationDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="Connection\Connection.cs" />
     <Compile Include="Requests\ColorRequest.cs" />
     <Compile Include="Connection\ConnectionConfiguration.cs" />
     <Compile Include="Connection\NewConnectionDialog.cs">
@@ -111,6 +112,7 @@
       <DependentUpon>RequestStringDialogBox.cs</DependentUpon>
     </Compile>
     <Compile Include="ConnectionClients\ServiceClient.cs" />
+    <Compile Include="Requests\SelectLocalFileRequest.cs" />
     <Compile Include="Requests\SpeechRequest.cs" />
   </ItemGroup>
   <ItemGroup>

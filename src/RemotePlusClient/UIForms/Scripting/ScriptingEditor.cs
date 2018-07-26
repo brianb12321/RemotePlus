@@ -83,7 +83,7 @@ namespace RemotePlusClient.UIForms.Scripting
 
         private void toolStripButton1_Click(object sender, EventArgs e)
         {
-            FindRemoteFileDialog dialog = new FindRemoteFileDialog(FilterMode.File, MainF.Remote, MainF.BaseAddress, MainF.Port);
+            FindRemoteFileDialog dialog = new FindRemoteFileDialog(FilterMode.File, MainF.Remote, MainF.CurrentConnectionData.BaseAddress, MainF.CurrentConnectionData.Port);
             if(dialog.ShowDialog() == DialogResult.OK)
             {
                 editor.Text = currentClient.ReadFileAsString(dialog.FilePath);

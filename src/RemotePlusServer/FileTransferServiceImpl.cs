@@ -1,5 +1,7 @@
 ﻿using RemotePlusLibrary.Core;
 using RemotePlusLibrary.FileTransfer.Service;
+using RemotePlusLibrary.FileTransfer.Service.PackageSystem;
+using RemotePlusServer.Core;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -52,6 +54,45 @@ namespace RemotePlusServer
                 l.Add(f);
             }
             return l.ToArray();
+        }
+        Stream CopyData(RemoteFileInfo fileRequest)
+        {
+            Stream targetStream = new MemoryStream();
+            Stream sourceStream = fileRequest.FileByteStream;
+            const int bufferLength = 65000;
+            byte[] buffer = new byte[bufferLength];
+            int count = 0;
+            while ((count = sourceStream.Read(buffer, 0, bufferLength)) > 0)
+            {
+                targetStream.Write(buffer, 0, count);
+            }
+            return targetStream;
+        }
+        public void SendFile(RemoteFileInfo fileRequest)
+        {
+            FilePackage file = new FilePackage();
+            file.FileName = fileRequest.FileName;
+            file.Length = fileRequest.Length;
+            file.Data = CopyData(fileRequest);
+            file.Data.Seek(0, SeekOrigin.Begin);
+            ServerManager.DefaultPackageInventorySelector.AddRoute(package =>
+            {
+                ServerManager.DefaultPackageInventorySelector.GetInventory<FilePackage>("DefaultFileInventory").Dispatch((FilePackage)package);
+            });
+            ServerManager.DefaultPackageInventorySelector.Route(file);
+            fileRequest.Dispose();
+        }
+
+        public void SendFileUnrouted(RemoteFileInfo fileRequest)
+        {
+            FilePackage file = new FilePackage();
+            file.FileName = fileRequest.FileName;
+            file.Length = fileRequest.Length;
+            file.PackageHeader = fileRequest.FileHeader;
+            file.Data = CopyData(fileRequest);
+            file.Data.Seek(0, SeekOrigin.Begin);
+            ServerManager.DefaultPackageInventorySelector.Route(file);
+            fileRequest.Dispose();
         }
 
         public void UploadFile(RemoteFileInfo request)

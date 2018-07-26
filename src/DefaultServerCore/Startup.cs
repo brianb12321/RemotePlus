@@ -11,6 +11,8 @@ using static RemotePlusServer.Core.DefaultCommands;
 using RemotePlusLibrary.Configuration;
 using RemotePlusLibrary.Configuration.StandordDataAccess;
 using RemotePlusLibrary.Core.IOC;
+using RemotePlusLibrary.FileTransfer.Service.PackageSystem;
+using RemotePlusLibrary.Security.AccountSystem;
 
 namespace DefaultServerCore
 {
@@ -23,6 +25,9 @@ namespace DefaultServerCore
                 logFactory.AddLogger(new ConsoleLogger()
                 {
                     Settings = new ConsoleLoggerOptions()
+                    {
+                        VerboseColor = ConsoleColor.DarkMagenta
+                    }
                 });
             })
             .AddServer(() =>
@@ -60,7 +65,10 @@ namespace DefaultServerCore
             .UseServerControlPage<ServerControls>()
             .UseScriptingEngine()
             .UseConfigurationDataAccess<ConfigurationHelper>()
-            .AddSingletonNamed<IConfigurationDataAccess, BinarySerializationHelper>("BinaryDataAccess");
+            .AddSingletonNamed<IConfigurationDataAccess, BinarySerializationHelper>("BinaryDataAccess")
+            .UseAuthentication<AccountManager>()
+            .UsePackageInventorySelector<StandordPackageInventorySelector>(builder =>
+                builder.AddPackageInventory<FilePackage, StandordPackageInventory>("DefaultFileInventory"));            
         }
 
         void IServerCoreStartup.InitializeServer(IServerBuilder builder)
@@ -97,7 +105,8 @@ namespace DefaultServerCore
                 .AddCommand("genMan", genMan)
                 .AddCommand("scp", scp)
                 .AddCommand("resetStaticScript", resetStaticScript)
-                .AddCommand("requestFile", requestFile);
+                .AddCommand("requestFile", requestFile)
+                .AddCommand("playAudio", playAudio);
         }
         #region Server Events
         private void Host_UnknownMessageReceived(object sender, System.ServiceModel.UnknownMessageReceivedEventArgs e)

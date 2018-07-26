@@ -18,7 +18,7 @@ namespace RemotePlusClient.UIForms
     public partial class RemoteFileBrowser : ThemedForm
     {
         private FileAssociationSettings associations;
-        FileTransfer ft = new FileTransfer(MainF.BaseAddress, MainF.Port);
+        FileTransfer ft = new FileTransfer(MainF.CurrentConnectionData.BaseAddress, MainF.CurrentConnectionData.Port);
 
         public int Counter
         {
