@@ -61,7 +61,7 @@ namespace WindowsTools
             Win32Wrapper.BlockInputForInterval(int.Parse(args.Arguments[1].Value));
             return new CommandResponse((int)CommandStatus.Success);
         }
-        [CommandHelp("Sets the server audio to a psecific percentage.")]
+        [CommandHelp("Sets the server audio to a specific percentage.")]
         public static CommandResponse setVolume(CommandRequest args, CommandPipeline pipe)
         {
             if (args.Arguments.Count < 2)
