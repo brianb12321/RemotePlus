@@ -41,7 +41,14 @@ namespace RemotePlusServer
 #if INCOGNITO
             this.ShowInTaskbar = false;
 #endif
-
+            var args = Environment.GetCommandLineArgs();
+            if (args.Length > 1)
+            {
+                if (args[1] == "autoStart")
+                {
+                    button1_Click(this, EventArgs.Empty);
+                }
+            }
         }
     }
 }

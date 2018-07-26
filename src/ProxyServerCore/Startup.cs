@@ -21,7 +21,7 @@ namespace ProxyServerCore
             {
                 GlobalServices.Logger.Log("Opening proxy server.", LogLevel.Info);
                 var proxyService = ProbeService.CreateProxyService(typeof(IProxyServerRemote), new ProxyServerRemoteImpl(),
-                    9001,
+                    8080,
                     "Proxy",
                     "ProxyClient",
                     (m, o) => GlobalServices.Logger.Log(m, o), null);

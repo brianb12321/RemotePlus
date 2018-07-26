@@ -203,6 +203,11 @@ namespace RemotePlusClient
         {
             MainF.ServerConsoleObj.Logger.Log(Message, level, from);
         }
+
+        public void TellMessageToServerConsoleNoNewLine(Guid serverGuid, string Message)
+        {
+            MainF.ConsoleObj.AppendText(Message);
+        }
         #endregion
 
     }

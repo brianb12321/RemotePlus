@@ -24,6 +24,11 @@ namespace RemotePlusServer
             this.CanStop = true;
             this.AutoLog = false;
         }
+        protected override void OnStop()
+        {
+            ServerStartup.Close();
+            base.OnStop();
+        }
         protected override void OnShutdown()
         {
             ServerStartup.Close();

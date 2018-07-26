@@ -157,5 +157,10 @@ namespace RemotePlusClientCmd
         {
             GlobalServices.Logger.Log(Message, level, $"Server Console {from}", serverGuid.ToString());
         }
+
+        public void TellMessageToServerConsoleNoNewLine(Guid serverGuid, string Message)
+        {
+            Console.Write(Message);
+        }
     }
 }
