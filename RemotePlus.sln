@@ -53,6 +53,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProxyServerCore", "src\Prox
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NewRemotePlusClient", "src\NewRemotePlusClient\NewRemotePlusClient.csproj", "{7D989373-A7DF-4AC2-AC63-8C0902293F92}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RSPM", "RSPM\RSPM.csproj", "{D451D8D4-DC69-42A8-BAAC-97363C35F478}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -147,6 +149,10 @@ Global
 		{7D989373-A7DF-4AC2-AC63-8C0902293F92}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7D989373-A7DF-4AC2-AC63-8C0902293F92}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7D989373-A7DF-4AC2-AC63-8C0902293F92}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D451D8D4-DC69-42A8-BAAC-97363C35F478}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D451D8D4-DC69-42A8-BAAC-97363C35F478}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D451D8D4-DC69-42A8-BAAC-97363C35F478}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D451D8D4-DC69-42A8-BAAC-97363C35F478}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

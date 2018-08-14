@@ -4,19 +4,20 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{97FBBC51-9569-4128-B1BC-989CC832D00F}</ProjectGuid>
+    <ProjectGuid>{D451D8D4-DC69-42A8-BAAC-97363C35F478}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DefaultServerCore</RootNamespace>
-    <AssemblyName>DefaultServerCore</AssemblyName>
+    <RootNamespace>RSPM</RootNamespace>
+    <AssemblyName>RSPM</AssemblyName>
     <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\RemotePlusServer\bin\Debug\</OutputPath>
+    <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -31,13 +32,17 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="BetterLogger">
-      <HintPath>..\..\Libs\BetterLogger.dll</HintPath>
+      <HintPath>..\Libs\BetterLogger.dll</HintPath>
+    </Reference>
+    <Reference Include="Ionic.Zip, Version=1.9.1.8, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ionic.Zip.1.9.1.8\lib\Ionic.Zip.dll</HintPath>
+    </Reference>
+    <Reference Include="Ninject, Version=3.3.4.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ninject.3.3.4\lib\net45\Ninject.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Numerics" />
-    <Reference Include="System.ServiceModel" />
-    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -46,51 +51,39 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Startup.cs" />
+    <Compile Include="DefaultPackageManager.cs" />
+    <Compile Include="DefaultPackageReader.cs" />
+    <Compile Include="IPackageManager.cs" />
+    <Compile Include="IPackageReader.cs" />
+    <Compile Include="Package.cs" />
+    <Compile Include="PackageCommands.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ServiceCollectionExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\RSPM\RSPM.csproj">
-      <Project>{d451d8d4-dc69-42a8-baac-97363c35f478}</Project>
-      <Name>RSPM</Name>
-      <Private>True</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\RemotePlusLibrary.Configuration\RemotePlusLibrary.Configuration.csproj">
+    <ProjectReference Include="..\src\RemotePlusLibrary.Configuration\RemotePlusLibrary.Configuration.csproj">
       <Project>{8a8a5888-1ce7-46ed-b8de-1ac7671f3426}</Project>
       <Name>RemotePlusLibrary.Configuration</Name>
     </ProjectReference>
-    <ProjectReference Include="..\RemotePlusLibrary.Core\RemotePlusLibrary.Core.csproj">
+    <ProjectReference Include="..\src\RemotePlusLibrary.Core\RemotePlusLibrary.Core.csproj">
       <Project>{0334629b-6302-42a8-b159-f8646b4d8650}</Project>
       <Name>RemotePlusLibrary.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\RemotePlusLibrary.Discovery\RemotePlusLibrary.Discovery.csproj">
-      <Project>{fc3eb84c-d1b0-4b5c-9406-dffa9bc5a5fc}</Project>
-      <Name>RemotePlusLibrary.Discovery</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\RemotePlusLibrary.Extension\RemotePlusLibrary.Extension.csproj">
-      <Project>{2aa5e768-7e0a-4b0c-a0d1-f79153902df9}</Project>
+    <ProjectReference Include="..\src\RemotePlusLibrary.Extension\RemotePlusLibrary.Extension.csproj">
+      <Project>{2AA5E768-7E0A-4B0C-A0D1-F79153902DF9}</Project>
       <Name>RemotePlusLibrary.Extension</Name>
     </ProjectReference>
-    <ProjectReference Include="..\RemotePlusLibrary.Scripting\RemotePlusLibrary.Scripting.csproj">
-      <Project>{5c399f78-c133-4f9b-9758-c36a4b7fae98}</Project>
-      <Name>RemotePlusLibrary.Scripting</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\RemotePlusLibrary.Security\RemotePlusLibrary.Security.csproj">
-      <Project>{e4e0bb7e-b995-4ebe-8efb-3c09bf64a3a2}</Project>
-      <Name>RemotePlusLibrary.Security</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\RemotePlusLibrary\RemotePlusLibrary.csproj">
+    <ProjectReference Include="..\src\RemotePlusLibrary\RemotePlusLibrary.csproj">
       <Project>{00c22a1f-d3df-4193-aaa8-9907d08e2511}</Project>
       <Name>RemotePlusLibrary</Name>
     </ProjectReference>
-    <ProjectReference Include="..\RemotePlusServer.Core\RemotePlusServer.Core.csproj">
+    <ProjectReference Include="..\src\RemotePlusServer.Core\RemotePlusServer.Core.csproj">
       <Project>{5669a80c-19d9-4dbe-bf5a-bbfcbf947634}</Project>
       <Name>RemotePlusServer.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\RemotePlusServer\RemotePlusServer.csproj">
-      <Project>{4e41f31e-dce5-4b9c-a2d6-20bf6acd9c84}</Project>
-      <Name>RemotePlusServer</Name>
-    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

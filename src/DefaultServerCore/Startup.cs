@@ -1,5 +1,5 @@
 ﻿using System;
-using BetterLogger;
+using BetterLogger;         
 using RemotePlusServer.Core;
 using RemotePlusServer.Core.ServerCore;
 using RemotePlusServer;
@@ -7,12 +7,12 @@ using System.ServiceModel.Description;
 using RemotePlusLibrary;
 using RemotePlusLibrary.Contracts;
 using BetterLogger.Loggers;
-using static RemotePlusServer.Core.DefaultCommands;
 using RemotePlusLibrary.Configuration;
 using RemotePlusLibrary.Configuration.StandordDataAccess;
 using RemotePlusLibrary.Core.IOC;
 using RemotePlusLibrary.FileTransfer.Service.PackageSystem;
 using RemotePlusLibrary.Security.AccountSystem;
+using RSPM;
 
 namespace DefaultServerCore
 {
@@ -67,6 +67,7 @@ namespace DefaultServerCore
             .UseConfigurationDataAccess<ConfigurationHelper>()
             .AddSingletonNamed<IConfigurationDataAccess, BinarySerializationHelper>("BinaryDataAccess")
             .UseAuthentication<AccountManager>()
+            .UsePackageManager<DefaultPackageManager>()
             .UsePackageInventorySelector<StandordPackageInventorySelector>(builder =>
                 builder.AddPackageInventory<FilePackage, StandordPackageInventory>("DefaultFileInventory"));            
         }
@@ -82,31 +83,8 @@ namespace DefaultServerCore
                 .LoadExtensionLibraries()
                 .InitializeVariables()
                 .AddTask(() => GlobalServices.Logger.Log("Loading Commands.", LogLevel.Info))
-                .AddCommand("ps", ProcessStartCommand)
-                .AddCommand("help", Help)
-                .AddCommand("logs", Logs)
-                .AddCommand("vars", vars)
-                .AddCommand("dateTime", dateTime)
-                .AddCommand("processes", processes)
-                .AddCommand("version", version)
-                .AddCommand("encrypt", svm_encyptFile)
-                .AddCommand("decrypt", svm_decryptFile)
-                .AddCommand("beep", svm_beep)
-                .AddCommand("speak", svm_speak)
-                .AddCommand("showMessageBox", svm_showMessageBox)
-                .AddCommand("path", path)
-                .AddCommand("cd", cd)
-                .AddCommand("echo", echo)
-                .AddCommand("load-extensionLibrary", loadExtensionLibrary)
-                .AddCommand("cp", cp)
-                .AddCommand("deleteFile", deleteFile)
-                .AddCommand("echoFile", echoFile)
-                .AddCommand("ls", ls)
-                .AddCommand("genMan", genMan)
-                .AddCommand("scp", scp)
-                .AddCommand("resetStaticScript", resetStaticScript)
-                .AddCommand("requestFile", requestFile)
-                .AddCommand("playAudio", playAudio);
+                .AddDefaultServerCommands()
+                .AddCommand("Install-Package", PackageCommands.InstallPackage);
         }
         #region Server Events
         private void Host_UnknownMessageReceived(object sender, System.ServiceModel.UnknownMessageReceivedEventArgs e)

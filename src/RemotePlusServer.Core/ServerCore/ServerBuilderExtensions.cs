@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.ServiceModel.Description;
 using Ninject;
+using static RemotePlusServer.Core.DefaultCommands;
 
 namespace RemotePlusServer.Core.ServerCore
 {
@@ -315,6 +316,34 @@ namespace RemotePlusServer.Core.ServerCore
             adminObject.Policies.Folders.Add(policies);
             var da = IOCContainer.Provider.Get<RemotePlusLibrary.Configuration.IConfigurationDataAccess>("BinaryDataAccess");
             da.SaveConfig(adminObject, $"policyObjects\\{adminObject.ObjectName}.pobj");
+        }
+        public static IServerBuilder AddDefaultServerCommands(this IServerBuilder builder)
+        {
+                return builder.AddCommand("ps", ProcessStartCommand)
+                .AddCommand("help", Help)
+                .AddCommand("logs", Logs)
+                .AddCommand("vars", vars)
+                .AddCommand("dateTime", dateTime)
+                .AddCommand("processes", processes)
+                .AddCommand("version", version)
+                .AddCommand("encrypt", svm_encyptFile)
+                .AddCommand("decrypt", svm_decryptFile)
+                .AddCommand("beep", svm_beep)
+                .AddCommand("speak", svm_speak)
+                .AddCommand("showMessageBox", svm_showMessageBox)
+                .AddCommand("path", path)
+                .AddCommand("cd", cd)
+                .AddCommand("echo", echo)
+                .AddCommand("load-extensionLibrary", loadExtensionLibrary)
+                .AddCommand("cp", cp)
+                .AddCommand("deleteFile", deleteFile)
+                .AddCommand("echoFile", echoFile)
+                .AddCommand("ls", ls)
+                .AddCommand("genMan", genMan)
+                .AddCommand("scp", scp)
+                .AddCommand("resetStaticScript", resetStaticScript)
+                .AddCommand("requestFile", requestFile)
+                .AddCommand("playAudio", playAudio);
         }
     }
 }
