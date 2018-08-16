@@ -30,46 +30,46 @@ namespace DefaultServerCore
                     }
                 });
             })
-            .AddServer(() =>
-            {
-                string endpointAddress = "Remote";
-                ServerStartup._remote = new RemoteImpl();
-                var service = ServerRemotePlusService.Create(typeof(IRemote), ServerStartup._remote, ServerManager.DefaultSettings.PortNumber, endpointAddress, (m, o) => GlobalServices.Logger.Log(m, o), null);
-                ServiceThrottlingBehavior throt = new ServiceThrottlingBehavior();
-                throt.MaxConcurrentCalls = int.MaxValue;
-                service.Host.Description.Behaviors.Add(throt);
-                GlobalServices.Logger.Log("Attaching server events.", LogLevel.Debug);
-                service.HostClosed += Host_Closed;
-                service.HostClosing += Host_Closing;
-                service.HostFaulted += Host_Faulted;
-                service.HostOpened += Host_Opened;
-                service.HostOpening += Host_Opening;
-                service.HostUnknownMessageReceived += Host_UnknownMessageReceived;
-                return service;
-            })
-            .AddServer(() =>
-            {
-                IRemotePlusService<FileTransferServciceInterface> fts = null;
-                GlobalServices.Logger.Log("Adding file transfer service.", BetterLogger.LogLevel.Info);
-                var binding = RemotePlusLibrary.Core._ConnectionFactory.BuildBinding();
-                binding.TransferMode = System.ServiceModel.TransferMode.Streamed;
-                fts = FileTransferService.CreateNotSingle(typeof(RemotePlusLibrary.FileTransfer.Service.IFileTransferContract), ServerManager.DefaultSettings.PortNumber, binding, "FileTransfer", null);
-                fts.HostClosed += Host_Closed;
-                fts.HostClosing += Host_Closing;
-                fts.HostFaulted += Host_Faulted;
-                fts.HostOpened += Host_Opened;
-                fts.HostOpening += Host_Opening;
-                fts.HostUnknownMessageReceived += Host_UnknownMessageReceived;
-                return fts;
-            })
-            .UseServerControlPage<ServerControls>()
-            .UseScriptingEngine()
-            .UseConfigurationDataAccess<ConfigurationHelper>()
-            .AddSingletonNamed<IConfigurationDataAccess, BinarySerializationHelper>("BinaryDataAccess")
-            .UseAuthentication<AccountManager>()
-            .UsePackageManager<DefaultPackageManager>()
-            .UsePackageInventorySelector<StandordPackageInventorySelector>(builder =>
-                builder.AddPackageInventory<FilePackage, StandordPackageInventory>("DefaultFileInventory"));            
+                .AddServer(() =>
+                {
+                    string endpointAddress = "Remote";
+                    ServerStartup._remote = new RemoteImpl();
+                    var service = ServerRemotePlusService.Create(typeof(IRemote), ServerStartup._remote, ServerManager.DefaultSettings.PortNumber, endpointAddress, (m, o) => GlobalServices.Logger.Log(m, o), null);
+                    ServiceThrottlingBehavior throt = new ServiceThrottlingBehavior();
+                    throt.MaxConcurrentCalls = int.MaxValue;
+                    service.Host.Description.Behaviors.Add(throt);
+                    GlobalServices.Logger.Log("Attaching server events.", LogLevel.Debug);
+                    service.HostClosed += Host_Closed;
+                    service.HostClosing += Host_Closing;
+                    service.HostFaulted += Host_Faulted;
+                    service.HostOpened += Host_Opened;
+                    service.HostOpening += Host_Opening;
+                    service.HostUnknownMessageReceived += Host_UnknownMessageReceived;
+                    return service;
+                })
+                .AddServer(() =>
+                {
+                    IRemotePlusService<FileTransferServciceInterface> fts = null;
+                    GlobalServices.Logger.Log("Adding file transfer service.", BetterLogger.LogLevel.Info);
+                    var binding = RemotePlusLibrary.Core._ConnectionFactory.BuildBinding();
+                    binding.TransferMode = System.ServiceModel.TransferMode.Streamed;
+                    fts = FileTransferService.CreateNotSingle(typeof(RemotePlusLibrary.FileTransfer.Service.IFileTransferContract), ServerManager.DefaultSettings.PortNumber, binding, "FileTransfer", null);
+                    fts.HostClosed += Host_Closed;
+                    fts.HostClosing += Host_Closing;
+                    fts.HostFaulted += Host_Faulted;
+                    fts.HostOpened += Host_Opened;
+                    fts.HostOpening += Host_Opening;
+                    fts.HostUnknownMessageReceived += Host_UnknownMessageReceived;
+                    return fts;
+                })
+                .UseServerControlPage<ServerControls>()
+                .UseScriptingEngine()
+                .UseConfigurationDataAccess<ConfigurationHelper>()
+                .AddSingletonNamed<IConfigurationDataAccess, BinarySerializationHelper>("BinaryDataAccess")
+                .UseAuthentication<AccountManager>()
+                .UsePackageManager<DefaultPackageManager>()
+                .UsePackageInventorySelector<StandordPackageInventorySelector>(builder =>
+                    builder.AddPackageInventory<FilePackage, StandordPackageInventory>("DefaultFileInventory"));            
         }
 
         void IServerCoreStartup.InitializeServer(IServerBuilder builder)
@@ -84,7 +84,8 @@ namespace DefaultServerCore
                 .InitializeVariables()
                 .AddTask(() => GlobalServices.Logger.Log("Loading Commands.", LogLevel.Info))
                 .AddDefaultServerCommands()
-                .AddCommand("Install-Package", PackageCommands.InstallPackage);
+                .AddCommand("Install-Package", PackageCommands.InstallPackage)
+                .AddCommand("Generate-Package-Manifest", PackageCommands.GeneratePackageManifest);
         }
         #region Server Events
         private void Host_UnknownMessageReceived(object sender, System.ServiceModel.UnknownMessageReceivedEventArgs e)

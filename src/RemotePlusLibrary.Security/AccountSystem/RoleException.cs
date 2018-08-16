@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace RemotePlusLibrary.Security.AccountSystem
 {
+    [Serializable]
     public class RoleException : Exception
     {
         public RoleException() : base()

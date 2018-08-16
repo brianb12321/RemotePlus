@@ -6,10 +6,12 @@ namespace RSPM
     {
         public string Path { get; private set; }
         public ZipFile Zip { get; private set; }
-        public Package(string fileName)
+        public PackageDescription Description { get; private set; }
+        public Package(string fileName, PackageDescription desc, ZipFile zip)
         {
             Path = fileName;
-            Zip = ZipFile.Read(fileName);
+            Description = desc;
+            Zip = zip;
         }
     }
 }

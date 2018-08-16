@@ -17,22 +17,22 @@ namespace ProxyServerCore
         public void AddServices(IServiceCollection services)
         {
             services.UseLogger((logFactory) => logFactory.AddLogger(new ConsoleLogger()))
-            .AddServer(() =>
-            {
-                GlobalServices.Logger.Log("Opening proxy server.", LogLevel.Info);
-                var proxyService = ProbeService.CreateProxyService(typeof(IProxyServerRemote), new ProxyServerRemoteImpl(),
-                    8080,
-                    "Proxy",
-                    "ProxyClient",
-                    (m, o) => GlobalServices.Logger.Log(m, o), null);
-                proxyService.HostOpened += ProxyService_HostOpened;
-                proxyService.HostClosed += ProxyService_HostClosed;
-                proxyService.HostFaulted += ProxyService_HostFaulted;
-                return proxyService;
-            })
-            .UseScriptingEngine()
-            .UseServerControlPage<ServerControls>()
-            .UseConfigurationDataAccess<RemotePlusLibrary.Configuration.StandordDataAccess.ConfigurationHelper>();
+                .AddServer(() =>
+                {
+                    GlobalServices.Logger.Log("Opening proxy server.", LogLevel.Info);
+                    var proxyService = ProbeService.CreateProxyService(typeof(IProxyServerRemote), new ProxyServerRemoteImpl(),
+                        8080,
+                        "Proxy",
+                        "ProxyClient",
+                        (m, o) => GlobalServices.Logger.Log(m, o), null);
+                    proxyService.HostOpened += ProxyService_HostOpened;
+                    proxyService.HostClosed += ProxyService_HostClosed;
+                    proxyService.HostFaulted += ProxyService_HostFaulted;
+                    return proxyService;
+                })
+                .UseScriptingEngine()
+                .UseServerControlPage<ServerControls>()
+                .UseConfigurationDataAccess<RemotePlusLibrary.Configuration.StandordDataAccess.ConfigurationHelper>();
         }
         public void InitializeServer(IServerBuilder builder)
         {

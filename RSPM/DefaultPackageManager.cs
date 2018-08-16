@@ -1,13 +1,9 @@
 ﻿using RemotePlusLibrary.Extension.CommandSystem;
-using RemotePlusServer.Core;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Net;
 using System.Text;
-using System.Threading.Tasks;
 using static RemotePlusServer.Core.ServerManager;
 
 namespace RSPM
@@ -15,46 +11,83 @@ namespace RSPM
     public class DefaultPackageManager : IPackageManager
     {
         public List<Uri> Sources { get; private set; } = new List<Uri>();
-
+        IPackageDownloader mainDownloader = null;
+        public DefaultPackageManager(IPackageDownloader downloader)
+        {
+            mainDownloader = downloader;
+        }
         public void InstallPackage(string packageName)
         {
             ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole($"Beginning installation of {packageName}");
-            var package = downloadPackage(packageName);
-            if(package != null)
+            if (mainDownloader.DownlaodPackage(packageName, Sources.ToArray()))
             {
-                ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Extracting package.");
-                package.Zip.ExtractAll("extensions");
-                ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Finished extracting package. Deleting downloaded package.");
-                package.Zip.Dispose();
-                File.Delete($"{packageName}.pkg");
-                ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Finished installing package.");
+                IPackageReader reader = new DefaultPackageReader();
+                ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Reading package file (pkg)");
+                var package = reader.BuildPackage($"{packageName}.pkg");
+                if (package != null)
+                {
+                    if (package.Description != null)
+                    {
+                        if (confirmInstallation(package.Description))
+                        {
+                            ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Extracting package.");
+                            package.Zip.ExtractAll("extensions");
+                            ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Loading extensions.");
+                            DefaultCollection.LoadExtensionsInFolder();
+                            ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Finished extracting package. Deleting downloaded package.");
+                        }
+                        else
+                        {
+                            ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Operation canceled. Deleting downloaded package.");
+                        }
+                    }
+                    else
+                    {
+                        ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText("Invalid package: missing manifest. Deleting downloaded package.") { TextColor = Color.Red });
+                    }
+                    package.Zip.Dispose();
+                    File.Delete($"{packageName}.pkg");
+                    ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Finished installing package.");
+                }
             }
         }
 
-        private Package downloadPackage(string packageName)
+        private bool confirmInstallation(PackageDescription description)
         {
-            WebClient downloader = new WebClient();
-            foreach (Uri addressToCheck in Sources)
+            if(ServerRemoteService.RemoteInterface.Client.ClientType == RemotePlusLibrary.Client.ClientType.CommandLine)
             {
-                ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole($"Package Get: {addressToCheck}");
-                try
+                StringBuilder sb = new StringBuilder();
+                sb.AppendLine($"Package {description.Name} is ready for installation.");
+                sb.AppendLine();
+                sb.AppendLine($"Package Description: {description.Description}");
+                sb.AppendLine();
+                sb.AppendLine("The package will be extracted to the extensions folder of the server.");
+                sb.AppendLine("Once completed, the extension folder will be rescanned for new extensions.");
+                sb.AppendLine("WARNING: The package may contain code that may harm or damage the server/client.");
+                sb.AppendLine("If downloaded from a third-party source, it is YOUR responsibility to make sure that");
+                sb.AppendLine("the package is legit. We are not responsible for any malicious activities.");
+                sb.AppendLine("If the package was downloaded from our package source, please notify us immediately if you suspect that a package is malicious.");
+                sb.AppendLine();
+                ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(sb.ToString());
+                string response = ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(new RemotePlusLibrary.RequestSystem.RequestBuilder("rcmd_textBox", "I acknowledge the warning and are ready to extract and install package [Y/N]", null)).Data.ToString();
+                if(response.ToUpper() == "Y")
                 {
-                    downloader.DownloadFile($"{addressToCheck}/{packageName}.pkg", $"{packageName}.pkg");
-                    IPackageReader reader = new DefaultPackageReader();
-                    ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Reading package file (pkg)");
-                    return reader.BuildPackage($"{packageName}.pkg");
+                    return true;
                 }
-                catch (Exception ex)
+                else
                 {
-                    ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText($"Unable download: {ex.Message}") { TextColor = Color.Red });
+                    return false;
                 }
             }
-            return null;
+            else
+            {
+                throw new NotImplementedException();
+            }
         }
 
         public void LoadPackageSources()
         {
-            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Reading sources.");
+            ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Reading sources.");
             try
             {
                 StreamReader fileReader = new StreamReader("Configurations\\Server\\sources.list");

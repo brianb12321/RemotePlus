@@ -10,11 +10,11 @@ namespace WindowsTools
 {
     public static class Win32Wrapper
     {
-        [DllImport("winmm.dll", EntryPoint = "mciSendString")]
+        [DllImport("winmm.dll", EntryPoint = "mciSendString", CharSet = CharSet.Unicode)]
         private static extern int mciSendStringA(string lpstrCommand, string lpstrReturnString, int uReturnLength, int hwndCallback);
         [DllImportAttribute("user32.dll", EntryPoint = "BlockInput")]
-        [return: System.Runtime.InteropServices.MarshalAsAttribute(System.Runtime.InteropServices.UnmanagedType.Bool)]
-        private static extern bool blockInput([System.Runtime.InteropServices.MarshalAsAttribute(System.Runtime.InteropServices.UnmanagedType.Bool)] bool fBlockIt);
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool blockInput([MarshalAs(UnmanagedType.Bool)] bool fBlockIt);
         public static void OpenDiskDrive(string driveLetter, string returnString)
         {
             mciSendStringA("open " + driveLetter + ": type CDaudio alias drive" + driveLetter, returnString, 0, 0);

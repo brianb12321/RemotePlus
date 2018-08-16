@@ -11,6 +11,13 @@ namespace RSPM
     {
         public static IServiceCollection UsePackageManager<TPackageManagerImpl>(this IServiceCollection services) where TPackageManagerImpl : IPackageManager
         {
+            services.AddTransient<IPackageDownloader, DefaultPackageDownloader>();
+            return services.AddTransient<IPackageManager, TPackageManagerImpl>();
+        }
+        public static IServiceCollection UsePackageManager<TPackageManagerImpl>(this IServiceCollection services, Action<PackageManagerBuilder> builder) where TPackageManagerImpl : IPackageManager
+        {
+            PackageManagerBuilder b = new PackageManagerBuilder();
+            builder?.Invoke(b);
             return services.AddTransient<IPackageManager, TPackageManagerImpl>();
         }
     }

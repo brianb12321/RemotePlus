@@ -16,7 +16,7 @@ namespace RemotePlusServer
         static Stopwatch sw = new Stopwatch();
         static Guid ServerGuid = Guid.NewGuid();
         public static RemoteImpl _remote = null;
-        public RemotePlusWindowsService()
+        public RemotePlusWindowsService() : base()
         {
             this.ServiceName = "RemotePlusServerService";
             this.EventLog.Log = "Application";
