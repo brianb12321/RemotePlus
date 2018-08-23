@@ -19,18 +19,17 @@ using System.IO;
 using RemotePlusClientCmd.ClientExtensionSystem;
 using RemotePlusLibrary.Core.IOC;
 using RemotePlusClient.CommonUI.Connection;
-using Ninject;
 
 namespace RemotePlusClientCmd
 {
     public partial class ClientCmdManager
     {
         public static Dictionary<string, CommandDelegate> LocalCommands = new Dictionary<string, CommandDelegate>();
-        public static ClientExtensionSystem.ClientExtensionLibraryCollection ExtensionLibraries { get; set; } = new ClientExtensionSystem.ClientExtensionLibraryCollection();
+        public static ClientExtensionLibraryCollection ExtensionLibraries { get; set; } = new ClientExtensionLibraryCollection();
         public static ServiceClient Remote = null;
         public static PromptBuilder prompt = new PromptBuilder();
         public static ProxyClient Proxy = null;
-        public static Connection CurrentConnectionData => IOCContainer.Provider.Get<Connection>();
+        public static Connection CurrentConnectionData => IOCContainer.GetService<Connection>();
         public static bool WaitFlag = true;
         public static bool ProxyEnabled { get; private set; }
         [STAThread]
@@ -199,7 +198,8 @@ namespace RemotePlusClientCmd
                     {
                         int pos = 0;
                         CommandPipeline pipe = new CommandPipeline();
-                        CommandParser parser = new CommandParser(c);
+                        CommandParser parser = new CommandParser();
+                        parser.ResetCommand(c);
                         var tokens = parser.Parse(true);
                         var newTokens = RunSubRoutines(parser, pipe, pos);
                         foreach (CommandToken token in newTokens)

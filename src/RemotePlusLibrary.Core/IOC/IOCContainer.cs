@@ -1,15 +1,17 @@
-﻿using BetterLogger;
-using Ninject;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Ninject;
 
 namespace RemotePlusLibrary.Core.IOC
 {
     public static class IOCContainer
     {
         public static IKernel Provider { get; set; } = new StandardKernel();
+        public static TService GetService<TService>()
+        {
+            return Provider.Get<TService>();
+        }
+        public static TService GetService<TService>(string name)
+        {
+            return Provider.Get<TService>(name);
+        }
     }
 }

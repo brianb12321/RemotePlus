@@ -10,11 +10,8 @@ using System.Windows.Forms;
 using RemotePlusLibrary.Discovery;
 using RemotePlusLibrary.Configuration.ServerSettings;
 using RemotePlusServer.Core;
-using Ninject;
 using RemotePlusLibrary.Core.IOC;
 using RemotePlusLibrary.Extension.ExtensionLoader;
-using System.ServiceProcess;
-using System.Runtime.InteropServices;
 
 namespace RemotePlusServer
 {
@@ -43,7 +40,7 @@ namespace RemotePlusServer
                     Application.EnableVisualStyles();
                     Application.SetCompatibleTextRenderingDefault(false);
                     //BUG: if no form is injected, it will display a blank screen to the user.
-                    Form serverControl = IOCContainer.Provider.Get<Form>();
+                    Form serverControl = IOCContainer.GetService<Form>();
                     Application.Run(serverControl);
                 }
             }

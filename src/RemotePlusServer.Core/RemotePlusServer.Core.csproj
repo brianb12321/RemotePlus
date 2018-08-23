@@ -81,6 +81,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CommandExecutor.cs" />
     <Compile Include="DefaultCommands.cs" />
     <Compile Include="ExtensionSystem\ServerExtensionLibrary.cs" />
     <Compile Include="ExtensionSystem\ServerExtensionLibraryCollection.cs" />
@@ -102,6 +103,7 @@
     <Compile Include="ServerManager.cs" />
     <Compile Include="ServerOnlyServiceCollectionExtensions.cs" />
     <Compile Include="ServerRemoteInterface.cs" />
+    <Compile Include="ServiceCollection.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\RemotePlusLibrary.Configuration\RemotePlusLibrary.Configuration.csproj">

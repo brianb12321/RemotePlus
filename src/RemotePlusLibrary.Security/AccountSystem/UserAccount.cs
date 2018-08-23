@@ -24,30 +24,10 @@ namespace RemotePlusLibrary.Security.AccountSystem
         /// </summary>
         [DataMember]
         public Guid AID { get; private set; }
-        [DataMember]
-        [Browsable(true)]
-        [TypeConverter(typeof(ExpandableObjectConverter))]
-        public Role Role { get; set; }
-        public UserAccount(UserCredentials _cred, string _role)
+        public UserAccount(UserCredentials _cred)
         {
             Credentials = _cred;
-            JoinRole(_role);
             AID = Guid.NewGuid();
-        }
-        public void JoinRole(string roleName)
-        {
-            if(Role != null)
-            {
-                throw new RoleException("You must first leave the current role before joining a new role.");
-            }
-            var r = Role.GetRole(roleName);
-            r.Members.Add(AID);
-            this.Role = r;
-        }
-        public void LeaveRole()
-        {
-            Role = null;
-            Role.GlobalPool.DeregisterMember(AID);
         }
         public bool Verify(UserCredentials TestCred)
         {

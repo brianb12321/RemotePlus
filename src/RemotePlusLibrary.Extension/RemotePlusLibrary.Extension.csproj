@@ -49,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClientSupportedTypes.cs" />
+    <Compile Include="CommandSystem\CommandClasses\Parsing\ICommandExecutor.cs" />
     <Compile Include="CommandSystem\CommandClasses\Parsing\CommandParser.cs" />
     <Compile Include="CommandSystem\CommandClasses\CommandPipeline.cs" />
     <Compile Include="CommandSystem\CommandClasses\CommandRequest.cs" />
@@ -56,11 +57,16 @@
     <Compile Include="CommandSystem\CommandClasses\CommandRoutine.cs" />
     <Compile Include="CommandSystem\CommandClasses\Parsing\CommandToken.cs" />
     <Compile Include="CommandSystem\CommandClasses\Parsing\IParser.cs" />
+    <Compile Include="CommandSystem\CommandClasses\Parsing\ITokenProcessor.cs" />
     <Compile Include="CommandSystem\CommandClasses\Parsing\ParserException.cs" />
+    <Compile Include="CommandSystem\CommandClasses\Parsing\TokenProcessor.cs" />
     <Compile Include="CommandSystem\CommandClasses\Parsing\TokenSet.cs" />
     <Compile Include="CommandSystem\CommandClasses\Parsing\TokenType.cs" />
     <Compile Include="CommandSystem\CommandDescription.cs" />
+    <Compile Include="CommandSystem\CommandEnvironment.cs" />
+    <Compile Include="CommandSystem\CommandlineBuilder.cs" />
     <Compile Include="CommandSystem\ConsoleText.cs" />
+    <Compile Include="CommandSystem\ICommandEnvironmnet.cs" />
     <Compile Include="CommandSystem\PromptBuilder.cs" />
     <Compile Include="CommandSystem\StatusCodeDeliveryMethod.cs" />
     <Compile Include="ExtensionLoader\DependencyException.cs" />

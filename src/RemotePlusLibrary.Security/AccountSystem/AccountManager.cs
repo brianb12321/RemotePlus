@@ -10,17 +10,22 @@ namespace RemotePlusLibrary.Security.AccountSystem
     [Serializable]
     public class AccountManager : IAccountManager
     {
+        Configuration.IConfigurationDataAccess _loader;
+        public AccountManager([Ninject.Named("BinaryDataAccess")] Configuration.IConfigurationDataAccess loader)
+        {
+            _loader = loader;
+        }
         UserCollection _accounts = new UserCollection();
         /// <summary>
         /// Creates a new account and saves its account object file.
         /// </summary>
         /// <param name="cred">The username and password for the account.</param>
         /// <param name="role">The string to a role that is loaded on the server.</param>
-        public UserAccount CreateAccount(UserCredentials cred, string role, Configuration.IConfigurationDataAccess da)
+        public UserAccount CreateAccount(UserCredentials cred)
         {
-            UserAccount account = new UserAccount(cred, role);
+            UserAccount account = new UserAccount(cred);
             _accounts.Add(account.AID, account);
-            da.SaveConfig(account, $"Users\\{account.AID}.uao");
+            _loader.SaveConfig(account, $"Users\\{account.AID}.uao");
             return account;
         }
         /// <summary>
@@ -42,14 +47,14 @@ namespace RemotePlusLibrary.Security.AccountSystem
         /// <summary>
         /// Refreshes the currently loaded accounts on the system by enumerating the folder with the account objects.
         /// </summary>
-        public void RefreshAccountList(Configuration.IConfigurationDataAccess da)
+        public void RefreshAccountList()
         {
             _accounts.Clear();
             foreach (string file in Directory.GetFiles("Users"))
             {
                 if (Path.GetExtension(file) == ".uao")
                 {
-                    UserAccount account = da.LoadConfig<UserAccount>(file);
+                    UserAccount account = _loader.LoadConfig<UserAccount>(file);
                     _accounts.Add(account.AID, account);
                 }
             }

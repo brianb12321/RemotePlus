@@ -13,6 +13,8 @@ using RemotePlusLibrary.Core.IOC;
 using RemotePlusLibrary.FileTransfer.Service.PackageSystem;
 using RemotePlusLibrary.Security.AccountSystem;
 using RSPM;
+using RemotePlusLibrary.Extension.CommandSystem;
+using RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing;
 
 namespace DefaultServerCore
 {
@@ -68,6 +70,10 @@ namespace DefaultServerCore
                 .AddSingletonNamed<IConfigurationDataAccess, BinarySerializationHelper>("BinaryDataAccess")
                 .UseAuthentication<AccountManager>()
                 .UsePackageManager<DefaultPackageManager>()
+                .UseCommandline<CommandEnvironment>(builder =>
+                    builder.UseParser<CommandParser>()
+                           .UseProcessor<TokenProcessor>()
+                           .UseExecutor<CommandExecutor>())
                 .UsePackageInventorySelector<StandordPackageInventorySelector>(builder =>
                     builder.AddPackageInventory<FilePackage, StandordPackageInventory>("DefaultFileInventory"));            
         }

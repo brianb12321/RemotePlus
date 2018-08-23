@@ -53,7 +53,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProxyServerCore", "src\Prox
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NewRemotePlusClient", "src\NewRemotePlusClient\NewRemotePlusClient.csproj", "{7D989373-A7DF-4AC2-AC63-8C0902293F92}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RSPM", "RSPM\RSPM.csproj", "{D451D8D4-DC69-42A8-BAAC-97363C35F478}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RSPM", "src\RSPM\RSPM.csproj", "{D451D8D4-DC69-42A8-BAAC-97363C35F478}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

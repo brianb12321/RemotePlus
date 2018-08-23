@@ -50,7 +50,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\RSPM\RSPM.csproj">
+    <ProjectReference Include="..\RSPM\RSPM.csproj">
       <Project>{d451d8d4-dc69-42a8-baac-97363c35f478}</Project>
       <Name>RSPM</Name>
       <Private>True</Private>

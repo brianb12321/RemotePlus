@@ -21,7 +21,6 @@ using RemotePlusClient.UIForms.Scripting;
 using BetterLogger;
 using RemotePlusClient.CommonUI.Connection;
 using RemotePlusLibrary.Core.IOC;
-using Ninject;
 
 namespace RemotePlusClient
 {
@@ -34,7 +33,7 @@ namespace RemotePlusClient
         public static ConsoleDialog ConsoleObj = null;
         public static ClientCallback LocalCallback = null;
         public static ProxyClient FoundServers = null;
-        public static Connection CurrentConnectionData => IOCContainer.Provider.Get<Connection>();
+        public static Connection CurrentConnectionData => IOCContainer.GetService<Connection>();
         public static ClientLibraryCollection DefaultCollection { get; private set; }
         string Address { get; set; }
         public MainF()

@@ -46,10 +46,6 @@ namespace RemotePlusLibrary.Contracts
         [OperationContract]
         [FaultContract(typeof(ServerFault))]
         [FaultContract(typeof(ProxyFault))]
-        List<string> GetServerRoleNames();
-        [OperationContract]
-        [FaultContract(typeof(ServerFault))]
-        [FaultContract(typeof(ProxyFault))]
         IEnumerable<string> GetCommandsAsStrings();
         [OperationContract]
         [FaultContract(typeof(ServerFault))]
