@@ -196,11 +196,6 @@ namespace RemotePlusClient.CommonUI.ConnectionClients
         {
             return Channel.ReadFileAsString(fileName);
         }
-
-        public List<string> GetServerRoleNames()
-        {
-            return Channel.GetServerRoleNames();
-        }
         public override string ToString()
         {
             return ServerPosition.ToString();

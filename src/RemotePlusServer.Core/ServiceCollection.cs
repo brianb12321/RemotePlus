@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using Ninject;
 using RemotePlusLibrary.Core.IOC;
 
-namespace RemotePlusServer
+namespace RemotePlusServer.Core
 {
     public class ServiceCollection : IServiceCollection
     {

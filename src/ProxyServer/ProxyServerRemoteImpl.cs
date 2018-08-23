@@ -24,6 +24,7 @@ using RemotePlusLibrary.RequestSystem;
 using RemotePlusLibrary.Security.Authentication;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing;
 using BetterLogger;
+using RemotePlusLibrary.Core.IOC;
 
 namespace ProxyServer
 {
@@ -103,11 +104,6 @@ namespace ProxyServer
         public ScriptGlobalInformation[] GetScriptGlobals()
         {
             return SelectedClient.ClientCallback.GetScriptGlobals();
-        }
-
-        public List<string> GetServerRoleNames()
-        {
-            return SelectedClient.ClientCallback.GetServerRoleNames();
         }
 
         public Guid[] GetServers()
@@ -360,7 +356,7 @@ namespace ProxyServer
         {
             CommandPipeline pipe = new CommandPipeline();
             int pos = 0;
-            if (Command.StartsWith("::"))
+            if (Command.StartsWith("::") && mode == CommandExecutionMode.Client)
             {
                 try
                 {
@@ -372,7 +368,7 @@ namespace ProxyServer
                 }
             }
             //Sends a script command to the selected server.
-            else if(Command.StartsWith("=>::"))
+            else if(Command.StartsWith("=>::") && mode == CommandExecutionMode.Client)
             {
                 try
                 {
@@ -387,55 +383,30 @@ namespace ProxyServer
             {
                 try
                 {
-                    IParser parser = new CommandParser(Command);
+                    ICommandEnvironmnet env = IOCContainer.GetService<ICommandEnvironmnet>();
+                    IParser parser = env.Parser;
+                    ITokenProcessor processor = env.Processor;
+                    RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing.ICommandExecutor executor = env.Executor;
+                    processor.ConfigureProcessor(ProxyManager.ProxyService.Variables, executor);
                     try
                     {
+                        parser.ResetCommand(Command);
                         var tokens = parser.Parse(true);
-                        var newTokens = RunSubRoutines(parser, pipe, pos);
-                        foreach (CommandToken token in newTokens)
-                        {
-                            foreach (List<CommandToken> allTokens in parser.ParsedTokens)
-                            {
-                                var index = allTokens.IndexOf(token);
-                                if (index != -1)
-                                {
-                                    parser.ParsedTokens[parser.ParsedTokens.IndexOf(allTokens)][index] = token;
-                                }
-                            }
-                        }
-                        var newVariableTokens = RunVariableReplacement(parser, out bool success);
+                        var newTokens = processor.RunSubRoutines(parser, pipe, pos);
+                        ReplaceTokens(newTokens, parser);
+                        var newVariableTokens = processor.RunVariableReplacement(parser, out bool success);
                         if (success != true)
                         {
                             return pipe;
                         }
-                        foreach (CommandToken token in newVariableTokens)
-                        {
-                            foreach (List<CommandToken> allTokens in parser.ParsedTokens)
-                            {
-                                var index = allTokens.IndexOf(token);
-                                if (index != -1)
-                                {
-                                    parser.ParsedTokens[parser.ParsedTokens.IndexOf(allTokens)][index] = token;
-                                }
-                            }
-                        }
-                        var newQouteTokens = ParseOutQoutes(parser);
-                        foreach (CommandToken token in newQouteTokens)
-                        {
-                            foreach (List<CommandToken> allTokens in parser.ParsedTokens)
-                            {
-                                var index = allTokens.IndexOf(token);
-                                if (index != -1)
-                                {
-                                    parser.ParsedTokens[parser.ParsedTokens.IndexOf(allTokens)][index] = token;
-                                }
-                            }
-                        }
+                        ReplaceTokens(newVariableTokens, parser);
+                        var newQouteTokens = processor.ParseOutQoutes(parser);
+                        ReplaceTokens(newQouteTokens, parser);
                         //Run the commands
                         foreach (List<CommandToken> commands in parser.ParsedTokens)
                         {
                             var request = new CommandRequest(commands.ToArray());
-                            var routine = new CommandRoutine(request, ProxyManager.Execute(request, mode, pipe));
+                            var routine = new CommandRoutine(request, executor.Execute(request, mode, pipe));
                             if (routine.Output.ResponseCode == 3131)
                             {
                                 RunServerCommand(Command, CommandExecutionMode.Client);
@@ -459,176 +430,19 @@ namespace ProxyServer
             }
             return pipe;
         }
-        private CommandToken[] RunVariableReplacement(IParser p, out bool success)
+        void ReplaceTokens(IEnumerable<CommandToken> tokens, IParser parser)
         {
-            success = true;
-            List<CommandToken> tokenList = new List<CommandToken>();
-            var variableTokens = p.GetVariables();
-            foreach (CommandToken variableToken in variableTokens)
+            foreach (CommandToken token in tokens)
             {
-                var variablename = variableToken.OriginalValue.Remove(0, 1);
-                if (ProxyManager.ProxyService.Variables.ContainsKey(variablename))
+                foreach (List<CommandToken> allTokens in parser.ParsedTokens)
                 {
-                    var variableValue = ProxyManager.ProxyService.Variables[variablename];
-
-                    variableToken.Value = variableValue;
-                    success = true;
-                    tokenList.Add(variableToken);
-                }
-                else
-                {
-                    ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyManager.ProxyGuid, $"Variable {variablename} does not exist", LogLevel.Error, "Proxy Server");
-                    success = false;
-                }
-            }
-            return tokenList.ToArray();
-        }
-        private CommandToken[] RunVariableReplacement(CommandToken[] tokens, out bool success)
-        {
-            success = true;
-            List<CommandToken> tokenList = new List<CommandToken>();
-            foreach (CommandToken variableToken in tokens)
-            {
-                var variablename = variableToken.OriginalValue.Remove(0, 1);
-                if (ProxyManager.ProxyService.Variables.ContainsKey(variablename))
-                {
-                    var variableValue = ProxyManager.ProxyService.Variables[variablename];
-
-                    variableToken.Value = variableValue;
-                    success = true;
-                    tokenList.Add(variableToken);
-                }
-                else
-                {
-                    ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyManager.ProxyGuid, $"Variable {variablename} does not exist", LogLevel.Error, "Proxy Server");
-                    success = false;
-                }
-            }
-            return tokenList.ToArray();
-        }
-        private IEnumerable<CommandToken> RunSubRoutines(IParser p, CommandPipeline pipe, int position)
-        {
-            foreach (CommandToken routineToken in p.GetSubRoutines())
-            {
-                var commandToExecute = Regex.Match(routineToken.OriginalValue, CommandToken.SUBROUTINE_PATTERN).Groups[1].Value;
-                var parsedCommand = p.Parse(commandToExecute, false);
-                var newTokens = RunSubRoutines(p.GetSubRoutines(parsedCommand), p, pipe, position);
-                foreach (CommandToken token in newTokens)
-                {
-                    foreach (List<CommandToken> allTokens in parsedCommand)
+                    var index = allTokens.IndexOf(token);
+                    if (index != -1)
                     {
-                        var index = allTokens.IndexOf(token);
-                        if (index != -1)
-                        {
-                            parsedCommand[parsedCommand.IndexOf(allTokens)][index] = token;
-                        }
+                        parser.ParsedTokens[parser.ParsedTokens.IndexOf(allTokens)][index] = token;
                     }
                 }
-                var newVariableTokens = RunVariableReplacement(p.GetVariables(parsedCommand), out bool success);
-                if (success != true)
-                {
-                    yield return routineToken;
-                }
-                foreach (CommandToken token in newVariableTokens)
-                {
-                    foreach (List<CommandToken> allTokens in parsedCommand)
-                    {
-                        var index = allTokens.IndexOf(token);
-                        if (index != -1)
-                        {
-                            parsedCommand[parsedCommand.IndexOf(allTokens)][index] = token;
-                        }
-                    }
-                }
-                var newQouteTokens = ParseOutQoutes(p.GetQoutedToken(parsedCommand));
-                foreach (CommandToken token in newQouteTokens)
-                {
-                    foreach (List<CommandToken> allTokens in parsedCommand)
-                    {
-                        var index = allTokens.IndexOf(token);
-                        if (index != -1)
-                        {
-                            parsedCommand[parsedCommand.IndexOf(allTokens)][index] = token;
-                        }
-                    }
-                }
-                foreach (List<CommandToken> allCommands in parsedCommand)
-                {
-                    var request = new CommandRequest(allCommands.ToArray());
-                    var routine = new CommandRoutine(request, ProxyManager.Execute(request, CommandExecutionMode.Client, pipe));
-                    routineToken.Value = routine.Output.CustomStatusMessage;
-                    position++;
-                }
-                yield return routineToken;
             }
-        }
-        private IEnumerable<CommandToken> RunSubRoutines(CommandToken[] tokens, IParser p, CommandPipeline pipe, int position)
-        {
-            foreach (CommandToken routineToken in tokens)
-            {
-                var commandToExecute = Regex.Match(routineToken.OriginalValue, CommandToken.SUBROUTINE_PATTERN).Groups[1].Value;
-                var parsedCommand = p.Parse(commandToExecute, false);
-
-                var newVariableTokens = RunVariableReplacement(p.GetVariables(parsedCommand), out bool success);
-                if (success != true)
-                {
-                    yield return routineToken;
-                }
-                foreach (CommandToken token in newVariableTokens)
-                {
-                    foreach (List<CommandToken> allTokens in parsedCommand)
-                    {
-                        var index = allTokens.IndexOf(token);
-                        if (index != -1)
-                        {
-                            parsedCommand[parsedCommand.IndexOf(allTokens)][index] = token;
-                        }
-                    }
-                }
-                var newQouteTokens = ParseOutQoutes(p.GetQoutedToken(parsedCommand));
-                foreach (CommandToken token in newQouteTokens)
-                {
-                    foreach (List<CommandToken> allTokens in parsedCommand)
-                    {
-                        var index = allTokens.IndexOf(token);
-                        if (index != -1)
-                        {
-                            parsedCommand[parsedCommand.IndexOf(allTokens)][index] = token;
-                        }
-                    }
-                }
-                foreach (List<CommandToken> allCommands in parsedCommand)
-                {
-                    var request = new CommandRequest(allCommands.ToArray());
-                    var routine = new CommandRoutine(request, ProxyManager.Execute(request, CommandExecutionMode.Client, pipe));
-                    routineToken.Value = routine.Output.CustomStatusMessage;
-                    position++;
-                }
-                yield return routineToken;
-            }
-        }
-        private IEnumerable<CommandToken> ParseOutQoutes(CommandToken[] tokens)
-        {
-            List<CommandToken> tokenList = new List<CommandToken>();
-            foreach (CommandToken qouteToken in tokens)
-            {
-                var qouteName = Regex.Match(qouteToken.OriginalValue, CommandToken.QOUTE_PATTERN).Groups[1].Value;
-                qouteToken.Value = qouteName.Replace('^', '&');
-                tokenList.Add(qouteToken);
-            }
-            return tokenList.ToArray();
-        }
-        private IEnumerable<CommandToken> ParseOutQoutes(IParser p)
-        {
-            List<CommandToken> tokenList = new List<CommandToken>();
-            var qouteTokens = p.GetQoutedToken();
-            foreach (CommandToken qouteToken in qouteTokens)
-            {
-                var qouteName = Regex.Match(qouteToken.OriginalValue, CommandToken.QOUTE_PATTERN).Groups[1].Value;
-                qouteToken.Value = qouteName.Replace('^', '&');
-                tokenList.Add(qouteToken);
-            }
-            return tokenList.ToArray();
         }
         #endregion
         public void Leave(Guid serverGuid)

@@ -12,7 +12,6 @@ using RemotePlusLibrary.Client;
 using BetterLogger;
 using System.IO;
 using RemotePlusLibrary.Core.IOC;
-using Ninject;
 using RemotePlusLibrary.Scripting;
 using RemotePlusLibrary.Extension.ExtensionLoader;
 
@@ -21,8 +20,8 @@ namespace ProxyServer
     public static class ProxyManager
     {
         public static Guid ProxyGuid { get; } = Guid.NewGuid();
-        public static IRemotePlusService<ProxyServerRemoteImpl> ProxyService => IOCContainer.Provider.Get<IRemotePlusService<ProxyServerRemoteImpl>>();
-        public static ScriptBuilder ScriptBuilder => IOCContainer.Provider.Get<ScriptBuilder>();
+        public static IRemotePlusService<ProxyServerRemoteImpl> ProxyService => IOCContainer.GetService<IRemotePlusService<ProxyServerRemoteImpl>>();
+        public static ScriptBuilder ScriptBuilder => IOCContainer.GetService<ScriptBuilder>();
         [STAThread]
         static void Main(string[] args)
         {
@@ -32,7 +31,7 @@ namespace ProxyServer
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             //BUG: if no form is injected, it will display a blank screen to the user.
-            Form f = IOCContainer.Provider.Get<Form>();
+            Form f = IOCContainer.GetService<Form>();
             Application.Run(f);
         }
 
@@ -125,87 +124,6 @@ namespace ProxyServer
         {
             ProxyService.Close();
             Environment.Exit(0);
-        }
-        public static CommandResponse Execute(CommandRequest c, CommandExecutionMode commandMode, CommandPipeline pipe)
-        {
-            bool throwFlag = false;
-            StatusCodeDeliveryMethod scdm = StatusCodeDeliveryMethod.DoNotDeliver;
-            try
-            {
-                GlobalServices.Logger.Log($"Executing server command {c.Arguments[0]}", LogLevel.Info);
-                try
-                {
-                    var command = ProxyService.Commands[c.Arguments[0].Value];
-                    var ba = RemotePlusConsole.GetCommandBehavior(command);
-                    if (ba != null)
-                    {
-                        if (ba.TopChainCommand && pipe.Count > 0)
-                        {
-                            GlobalServices.Logger.Log($"This is a top-level command.", LogLevel.Error);
-                            ProxyService.RemoteInterface.ProxyClient.ClientCallback.TellMessage(ProxyGuid, $"This is a top-level command.", LogLevel.Error);
-                            return new CommandResponse((int)CommandStatus.AccessDenied);
-                        }
-                        if (commandMode != ba.ExecutionType)
-                        {
-                            GlobalServices.Logger.Log($"The command requires you to be in {ba.ExecutionType} mode.", LogLevel.Error);
-                            ProxyService.RemoteInterface.ProxyClient.ClientCallback.TellMessage(ProxyGuid, $"The command requires you to be in {ba.ExecutionType} mode.", LogLevel.Error);
-                            return new CommandResponse((int)CommandStatus.AccessDenied);
-                        }
-                        if (ba.SupportClients != ClientSupportedTypes.Both && ((ProxyService.RemoteInterface.ProxyClient.ClientType == ClientType.GUI && ba.SupportClients != ClientSupportedTypes.GUI) || (ProxyService.RemoteInterface.ProxyClient.ClientType == ClientType.CommandLine && ba.SupportClients != ClientSupportedTypes.CommandLine)))
-                        {
-                            if (string.IsNullOrEmpty(ba.ClientRejectionMessage))
-                            {
-                                GlobalServices.Logger.Log($"Your client must be a {ba.SupportClients.ToString()} client.", LogLevel.Error);
-                                ProxyService.RemoteInterface.ProxyClient.ClientCallback.TellMessage(ProxyGuid, $"Your client must be a {ba.SupportClients.ToString()} client.", LogLevel.Error);
-                                return new CommandResponse((int)CommandStatus.UnsupportedClient);
-                            }
-                            else
-                            {
-                                GlobalServices.Logger.Log(ba.ClientRejectionMessage, LogLevel.Error);
-                                ProxyService.RemoteInterface.ProxyClient.ClientCallback.TellMessage(ProxyGuid, ba.ClientRejectionMessage, LogLevel.Error);
-                                return new CommandResponse((int)CommandStatus.UnsupportedClient);
-                            }
-                        }
-                        if (ba.DoNotCatchExceptions)
-                        {
-                            throwFlag = true;
-                        }
-                        if (ba.StatusCodeDeliveryMethod != StatusCodeDeliveryMethod.DoNotDeliver)
-                        {
-                            scdm = ba.StatusCodeDeliveryMethod;
-                        }
-                    }
-                    GlobalServices.Logger.Log("Found command, and executing.", LogLevel.Debug);
-                    var sc = command(c, pipe);
-                    if (scdm == StatusCodeDeliveryMethod.TellMessage)
-                    {
-                        ProxyService.RemoteInterface.ProxyClient.ClientCallback.TellMessage(ProxyGuid, $"Command {c.Arguments[0]} finished with status code {sc.ToString()}", LogLevel.Info);
-                    }
-                    else if (scdm == StatusCodeDeliveryMethod.TellMessageToServerConsole)
-                    {
-                        ProxyService.RemoteInterface.ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyGuid, $"Command {c.Arguments[0]} finished with status code {sc.ToString()}", LogLevel.Info);
-                    }
-                    return sc;
-                }
-                catch (KeyNotFoundException)
-                {
-                    GlobalServices.Logger.Log($"Failed to find the command. Passing command to selected server [{ProxyService.RemoteInterface.SelectedClient.UniqueID}]", LogLevel.Debug);
-                    return new CommandResponse(3131);
-                }
-            }
-            catch (Exception ex)
-            {
-                if (throwFlag)
-                {
-                    throw;
-                }
-                else
-                {
-                    GlobalServices.Logger.Log("command failed: " + ex.Message, LogLevel.Info);
-                    ProxyService.RemoteInterface.ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyGuid, "Error whie executing command: " + ex.Message, LogLevel.Error);
-                    return new CommandResponse((int)CommandStatus.Fail);
-                }
-            }
         }
     }
 }

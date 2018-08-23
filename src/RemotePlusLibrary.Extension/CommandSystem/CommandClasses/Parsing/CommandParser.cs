@@ -14,10 +14,6 @@ namespace RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing
     {
         public List<List<CommandToken>> ParsedTokens { get; set; } = new List<List<CommandToken>>();
         public string OriginalCommand { get; set; }
-        public CommandParser(string command)
-        {
-            OriginalCommand = command;
-        }
         public List<List<CommandToken>> Parse(bool prop)
         {
             return internalParse(OriginalCommand, prop);
@@ -174,6 +170,11 @@ namespace RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing
                 allTokens.AddRange(foundTokens.Where(t => t.Type == TokenType.QouteBody));
             }
             return allTokens.ToArray();
+        }
+
+        public void ResetCommand(string command)
+        {
+            OriginalCommand = command;
         }
     }
 }

@@ -21,18 +21,9 @@ namespace RemotePlusClient.CommonUI.Design.Editors
         }
         protected override object CreateInstance(Type itemType)
         {
-            SelectRoleDialogBox roleSelecter = new SelectRoleDialogBox();
-            if (roleSelecter.ShowDialog() == DialogResult.OK)
-            {
-                Random r = new Random();
-                Role role = Role.GetRole(roleSelecter.SelectedRoleName);
-                UserAccount account = new UserAccount(new UserCredentials($"{r.Next(0, 9999999)}", $"{r.Next(0, 9999999)}"), role.RoleName);
-                return account;
-            }
-            else
-            {
-                return null;
-            }
+            Random r = new Random();
+            UserAccount account = new UserAccount(new UserCredentials($"{r.Next(0, 9999999)}", $"{r.Next(0, 9999999)}"));
+            return account;
         }
     }
 }

@@ -7,6 +7,7 @@ using RemotePlusLibrary;
 using BetterLogger;
 using System.Windows.Forms;
 using RemotePlusLibrary.Core.IOC;
+using RemotePlusLibrary.Extension.CommandSystem;
 
 namespace RemotePlusLibrary
 {
@@ -47,6 +48,12 @@ namespace RemotePlusLibrary
         public static IServiceCollection UseConfigurationDataAccess<TDataAccessImpl>(this IServiceCollection services)
         {
             return services.AddSingletonNamed<Configuration.IConfigurationDataAccess, TDataAccessImpl>("DefaultConfigDataAccess");
+        }
+        public static IServiceCollection UseCommandline<TCommandEnvironmentImpl>(this IServiceCollection services, Action<CommandlineBuilder> builder) where TCommandEnvironmentImpl : ICommandEnvironmnet
+        {
+            var b = new CommandlineBuilder(services);
+            builder?.Invoke(b);
+            return services.AddTransient<ICommandEnvironmnet, TCommandEnvironmentImpl>();
         }
     }
 }

@@ -38,9 +38,6 @@ namespace RemotePlusLibrary.Discovery
         UserAccount GetLoggedInUser();
         [OperationContract]
         [FaultContract(typeof(ServerFault))]
-        List<string> GetServerRoleNames();
-        [OperationContract]
-        [FaultContract(typeof(ServerFault))]
         IEnumerable<string> GetCommandsAsStrings();
         [OperationContract]
         [FaultContract(typeof(ServerFault))]

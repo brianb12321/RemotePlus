@@ -77,12 +77,6 @@
     <Compile Include="Design\Editors\GUI\ExtensionRulesStringCollectionEditorForm.Designer.cs">
       <DependentUpon>ExtensionRulesStringCollectionEditorForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Design\Editors\GUI\SelectRoleDialogBox.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Design\Editors\GUI\SelectRoleDialogBox.Designer.cs">
-      <DependentUpon>SelectRoleDialogBox.cs</DependentUpon>
-    </Compile>
     <Compile Include="Design\Editors\UserAccountEditor.cs" />
     <Compile Include="Controls\FileBrowserHelpers\FileAssociationSettings.cs" />
     <Compile Include="Controls\FileBrowser.cs">

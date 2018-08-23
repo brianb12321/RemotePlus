@@ -22,8 +22,6 @@ using RemotePlusLibrary.Client;
 using RemotePlusServer.Core;
 using RemotePlusServer.Core.ExtensionSystem;
 using BetterLogger;
-using Ninject;
-using RemotePlusLibrary.Core.IOC;
 
 namespace RemotePlusServer
 {
@@ -39,7 +37,6 @@ namespace RemotePlusServer
     [GlobalException(typeof(GlobalErrorHandler))]
     public class RemoteImpl : IRemote, IRemoteWithProxy
     {
-        const string OPERATION_COMPLETED = "Operation_Completed";
         private ServerRemoteInterface _interface = null;
         public RemoteImpl()
         {
@@ -49,14 +46,9 @@ namespace RemotePlusServer
         {
             _interface = i;
         }
-        internal void Setup()
-        {
-
-        }
         bool CheckRegisteration(string Action)
         {
-            var l = $"Checking registiration for action {Action}.";
-            GlobalServices.Logger.Log(l, LogLevel.Info);
+            GlobalServices.Logger.Log($"Checking registiration for action {Action}.", LogLevel.Info);
             if (_interface.Registered != true)
             {
                 GlobalServices.Logger.Log("The client is not registired to the server.", LogLevel.Error);
@@ -80,15 +72,8 @@ namespace RemotePlusServer
         {
             if (CheckRegisteration("beep"))
             {
-                if (_interface.LoggedInUser.Role.AttachedPolicyObject.Policies.FindSubFolder("Operations").Policies.First(p => p.ShortName == "EnableConsole").Values["Value"] != "True")
-                {
-                    _interface.Client.ClientCallback.TellMessage("You do not have promission to use the beep function.", LogLevel.Info);
-                }
-                else
-                {
-                    _interface.Beep(Hertz, Duration);
-                    _interface.Client.ClientCallback.TellMessage($"Console beeped. Hertz: {Hertz}, Duration: {Duration}", LogLevel.Info);
-                }
+                _interface.Beep(Hertz, Duration);
+                _interface.Client.ClientCallback.TellMessage($"Console beeped. Hertz: {Hertz}, Duration: {Duration}", LogLevel.Info);
             }
             // OperationContext.Current.OperationCompleted += (sender, e) => _interface.Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
         }
@@ -97,15 +82,8 @@ namespace RemotePlusServer
         {
             if(CheckRegisteration("PlaySound"))
             {
-                if (_interface.LoggedInUser.Role.AttachedPolicyObject.Policies.FindSubFolder("Operations").Policies.First(p => p.ShortName == "EnableConsole").Values["Value"] != "True")
-                {
-                    _interface.Client.ClientCallback.TellMessage("You do not have promission to use the PlaySound function.", LogLevel.Info);
-                }
-                else
-                {
-                    System.Media.SoundPlayer sp = new System.Media.SoundPlayer(FileName);
-                    sp.Play();
-                }
+                System.Media.SoundPlayer sp = new System.Media.SoundPlayer(FileName);
+                sp.Play();
             }
         }
 
@@ -113,15 +91,8 @@ namespace RemotePlusServer
         {
             if (CheckRegisteration("PlaySoundLoop"))
             {
-                if (_interface.LoggedInUser.Role.AttachedPolicyObject.Policies.FindSubFolder("Operations").Policies.First(p => p.ShortName == "EnableConsole").Values["Value"] != "True")
-                {
-                    _interface.Client.ClientCallback.TellMessage("You do not have promission to use the CanPlaySoundLoop function.", LogLevel.Info);
-                }
-                else
-                {
-                    System.Media.SoundPlayer sp = new System.Media.SoundPlayer(FileName);
-                    sp.PlayLooping();
-                }
+                System.Media.SoundPlayer sp = new System.Media.SoundPlayer(FileName);
+                sp.PlayLooping();
             }
             // OperationContext.Current.OperationCompleted += (sender, e) => _interface.Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
         }
@@ -130,74 +101,23 @@ namespace RemotePlusServer
         {
             if (CheckRegisteration("PlaySoundSync"))
             {
-                if (_interface.LoggedInUser.Role.AttachedPolicyObject.Policies.FindSubFolder("Operations").Policies.First(p => p.ShortName == "EnableConsole").Values["Value"] != "True")
-                {
-                    _interface.Client.ClientCallback.TellMessage("You do not have promission to use the CanPlaySoundSync function.", LogLevel.Info);
-                }
-                else
-                {
-                    System.Media.SoundPlayer sp = new System.Media.SoundPlayer(FileName);
-                    sp.PlaySync();
-                }
+                System.Media.SoundPlayer sp = new System.Media.SoundPlayer(FileName);
+                sp.PlaySync();
             }
             // OperationContext.Current.OperationCompleted += (sender, e) => _interface.Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
         }
 
         public void Register(RegisterationObject Settings)
         {
-            const string REG_FAILED = "Registiration failed. The most likely cause is invalid credentials or this account has been blocked. Make sure that the provided credentials are correct and also make sure the account was not blocked. If you still receive this error message, please check the server logs for more details.";
             GlobalServices.Logger.Log("A new client is awaiting registiration.", LogLevel.Info);
             GlobalServices.Logger.Log("Instanitiating callback object.", LogLevel.Debug);
             GlobalServices.Logger.Log("Getting ClientBuilder from client.", LogLevel.Debug);
-
-            if (ServerManager.DefaultSettings.DiscoverySettings.DiscoveryBehavior == RemotePlusLibrary.Configuration.ServerSettings.ProxyConnectionMode.Connect)
-            {
-                _interface.Client = Client<RemoteClient>.Build(ServerStartup.proxyChannel.RegisterClient(), new RemoteClient(null, true, ServerStartup.proxyChannel));
-            }
-            else
-            {
-                var callback = OperationContext.Current.GetCallbackChannel<IRemoteClient>();
-                _interface.Client = Client<RemoteClient>.Build(callback.RegisterClient(), new RemoteClient(callback, false, null));
-            }
+            BuildClient();
             GlobalServices.Logger.Log("Received registiration object from client.", LogLevel.Info);
             this._interface.Settings = Settings;
-            var l = "Processing registiration object.";
-            GlobalServices.Logger.Log(l, LogLevel.Debug);
-            _interface.Client.ClientCallback.TellMessage(l, LogLevel.Debug);
-            if (Settings.LoginRightAway)
-            {
-                var account = LogIn(Settings.Credentials);
-                if (account == null)
-                {
-                    GlobalServices.Logger.Log($"Client {_interface.Client.FriendlyName} [{_interface.Client.UniqueID.ToString()}] disconnected. Failed to register to the server. Authentication failed.", LogLevel.Info);
-                    throw new FaultException(REG_FAILED + $" Provded username: {Settings.Credentials.Username}");
-                }
-                else
-                {
-                    _interface.LoggedInUser = account;
-                    UpdateAccountPolicy();
-                    RegisterComplete();
-                }
-            }
-            else
-            {
-                var l3 = "Awaiting credentials from the client.";
-                GlobalServices.Logger.Log(l3, LogLevel.Info);
-                _interface.Client.ClientCallback.TellMessage(l3, LogLevel.Info);
-                UserCredentials upp = _interface.Client.ClientCallback.RequestAuthentication(new AuthenticationRequest(AuthenticationSeverity.Normal) { Reason = "The server requires credentials to register." });
-                var account = LogIn(upp);
-                if (account == null)
-                {
-                    GlobalServices.Logger.Log($"Client {_interface.Client.FriendlyName} [{_interface.Client.UniqueID.ToString()}] disconnected. Failed to register to the server. Authentication failed.", LogLevel.Info);
-                    throw new FaultException(REG_FAILED + $" Provded username: {upp.Username}");
-                }
-                else
-                {
-                    _interface.LoggedInUser = account;
-                    UpdateAccountPolicy();
-                    RegisterComplete();
-                }
-            }
+            GlobalServices.Logger.Log("Processing registiration object.", LogLevel.Debug);
+            _interface.Client.ClientCallback.TellMessage("Processing registiration object.", LogLevel.Debug);
+            PerformAuthentication(Settings);
             _HookManager.RunHooks(ServerLibraryBuilder.LOGIN_HOOK, new RemotePlusLibrary.Extension.HookSystem.HookArguments(ServerLibraryBuilder.LOGIN_HOOK));
             if (_interface.Client.ClientType == ClientType.CommandLine && ServerStartup.proxyChannelFactory == null)
             {
@@ -211,9 +131,44 @@ namespace RemotePlusServer
             // OperationContext.Current.OperationCompleted += (sender, e) => _interface.Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
         }
 
-        private void UpdateAccountPolicy()
+        private void BuildClient()
         {
-            _interface.LoggedInUser.Role.BuildPolicyObject(IOCContainer.Provider.Get<RemotePlusLibrary.Configuration.IConfigurationDataAccess>("BinaryDataAccess"));
+            if (ServerManager.DefaultSettings.DiscoverySettings.DiscoveryBehavior == ProxyConnectionMode.Connect)
+            {
+                _interface.Client = Client<RemoteClient>.Build(ServerStartup.proxyChannel.RegisterClient(), new RemoteClient(null, true, ServerStartup.proxyChannel));
+            }
+            else
+            {
+                var callback = OperationContext.Current.GetCallbackChannel<IRemoteClient>();
+                _interface.Client = Client<RemoteClient>.Build(callback.RegisterClient(), new RemoteClient(callback, false, null));
+            }
+        }
+
+        const string REG_FAILED = "Registiration failed. The most likely cause is invalid credentials or this account has been blocked. Make sure that the provided credentials are correct and also make sure the account was not blocked. If you still receive this error message, please check the server logs for more details.";
+        private void PerformAuthentication(RegisterationObject regObject)
+        {
+            UserAccount account = null;
+            if (regObject.LoginRightAway)
+            {
+                account = LogIn(regObject.Credentials);
+            }
+            else
+            {
+                GlobalServices.Logger.Log("Awaiting credentials from the client.", LogLevel.Info);
+                _interface.Client.ClientCallback.TellMessage("Awaiting credentials from the client.", LogLevel.Info);
+                UserCredentials upp = _interface.Client.ClientCallback.RequestAuthentication(new AuthenticationRequest(AuthenticationSeverity.Normal) { Reason = "The server requires credentials to register." });
+                account = LogIn(upp);
+            }
+            if (account == null)
+            {
+                GlobalServices.Logger.Log($"Client {_interface.Client.FriendlyName} [{_interface.Client.UniqueID.ToString()}] disconnected. Failed to register to the server. Authentication failed.", LogLevel.Info);
+                throw new FaultException(REG_FAILED + $" Provded username: {regObject.Credentials.Username}");
+            }
+            else
+            {
+                _interface.LoggedInUser = account;
+                RegisterComplete();
+            }
         }
 
         private void RegisterComplete()
@@ -228,14 +183,7 @@ namespace RemotePlusServer
         {
             if (CheckRegisteration("RunProgram"))
             {
-                if (_interface.LoggedInUser.Role.AttachedPolicyObject.Policies.FindSubFolder("Operations").Policies.First(p => p.ShortName == "EnableConsole").Values["Value"] != "True")
-                {
-                    _interface.Client.ClientCallback.TellMessage("You do not have promission to use the CanRunProgram function.", LogLevel.Info);
-                }
-                else
-                {
-                    _interface.RunProgram(Program, Argument);
-                }
+                _interface.RunProgram(Program, Argument);
             }
             // OperationContext.Current.OperationCompleted += (sender, e) => _interface.Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
         }
@@ -244,15 +192,7 @@ namespace RemotePlusServer
         {
             if (CheckRegisteration("ShowMessageBox"))
             {
-                if (_interface.LoggedInUser.Role.AttachedPolicyObject.Policies.FindSubFolder("Operations").Policies.First(p => p.ShortName == "EnableConsole").Values["Value"] != "True")
-                {
-                    _interface.Client.ClientCallback.TellMessage("You do not have promission to use the CanShowMessageBox function.", LogLevel.Info);
-                    return DialogResult.Abort;
-                }
-                else
-                {
-                    return _interface.ShowMessageBox(Message, Caption, Icon, Buttons);
-                }
+                return _interface.ShowMessageBox(Message, Caption, Icon, Buttons);
             }
             else
             {
@@ -265,32 +205,15 @@ namespace RemotePlusServer
         {
             if (CheckRegisteration("Speak"))
             {
-                if (_interface.LoggedInUser.Role.AttachedPolicyObject.Policies.FindSubFolder("Operations").Policies.First(p => p.ShortName == "EnableConsole").Values["Value"] != "True")
-                {
-                    _interface.Client.ClientCallback.TellMessage("You do not have promission to use the Speak function.", LogLevel.Info);
-                }
-                else
-                {
-                    _interface.Speak(Message, Gender, Age);
-                }
+                _interface.Speak(Message, Gender, Age);
             }
-            // OperationContext.Current.OperationCompleted += (sender, e) => _interface.Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
         }
 
         public CommandPipeline RunServerCommand(string Command, CommandExecutionMode commandMode)
         {
             if (CheckRegisteration("RunServerCommand"))
             {
-                if (_interface.LoggedInUser.Role.AttachedPolicyObject.Policies.FindSubFolder("Operations").Policies.First(p => p.ShortName == "EnableConsole").Values["Value"] != "True")
-                {
-                    _interface.Client.ClientCallback.TellMessage("You do not have promission to use the Console function.", LogLevel.Info);
-                    return null;
-                }
-                else
-                {
-                    return _interface.RunServerCommand(Command, commandMode);
-                }
-                // OperationContext.Current.OperationCompleted += (sender, e) => _interface.Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
+                return _interface.RunServerCommand(Command, commandMode);
             }
             else
             {
@@ -302,19 +225,12 @@ namespace RemotePlusServer
         {
             if (CheckRegisteration("UpdateServerSettings"))
             {
-                if (_interface.LoggedInUser.Role.AttachedPolicyObject.Policies.FindSubFolder("Operations").Policies.First(p => p.ShortName == "EnableConsole").Values["Value"] != "True")
-                {
-                    _interface.Client.ClientCallback.TellMessage("You do not have permission to change server settings.", LogLevel.Error);
-                }
-                else
-                {
-                    GlobalServices.Logger.Log("Updating server settings.", LogLevel.Info);
-                    ServerManager.DefaultSettings = Settings;
-                    _interface.Client.ClientCallback.TellMessage("Saving settings.", LogLevel.Info);
-                    GlobalServices.DataAccess.SaveConfig(ServerManager.DefaultSettings, ServerSettings.SERVER_SETTINGS_FILE_PATH);
-                    _interface.Client.ClientCallback.TellMessage("Settings saved.", LogLevel.Info);
-                    GlobalServices.Logger.Log("Settings saved.", LogLevel.Info);
-                }
+                GlobalServices.Logger.Log("Updating server settings.", LogLevel.Info);
+                ServerManager.DefaultSettings = Settings;
+                _interface.Client.ClientCallback.TellMessage("Saving settings.", LogLevel.Info);
+                GlobalServices.DataAccess.SaveConfig(ServerManager.DefaultSettings, ServerSettings.SERVER_SETTINGS_FILE_PATH);
+                _interface.Client.ClientCallback.TellMessage("Settings saved.", LogLevel.Info);
+                GlobalServices.Logger.Log("Settings saved.", LogLevel.Info);
             }
             // OperationContext.Current.OperationCompleted += (sender, e) => _interface.Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
         }
@@ -324,16 +240,8 @@ namespace RemotePlusServer
             // OperationContext.Current.OperationCompleted += (sender, e) => _interface.Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
             if (CheckRegisteration("GetServerSettings"))
             {
-                if (_interface.LoggedInUser.Role.AttachedPolicyObject.Policies.FindSubFolder("Operations").Policies.First(p => p.ShortName == "GetServerSettings").Values["Value"] != "True")
-                {
-                    _interface.Client.ClientCallback.TellMessage("You do not have permission to change server settings.", LogLevel.Error);
-                    return null;
-                }
-                else
-                {
-                    GlobalServices.Logger.Log("Retreiving server settings.", LogLevel.Info);
-                    return ServerManager.DefaultSettings;
-                }
+                GlobalServices.Logger.Log("Retreiving server settings.", LogLevel.Info);
+                return ServerManager.DefaultSettings;
             }
             else
             {
@@ -539,16 +447,6 @@ namespace RemotePlusServer
         public string ReadFileAsString(string fileName)
         {
             return File.ReadAllText(fileName);
-        }
-
-        public List<string> GetServerRoleNames()
-        {
-            List<string> l = new List<string>();
-            foreach(Role r in Role.GlobalPool.Roles)
-            {
-                l.Add(r.RoleName);
-            }
-            return l;
         }
 
         public void ServerRegistered(Guid serverGuid)

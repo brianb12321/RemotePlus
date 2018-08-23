@@ -5,7 +5,6 @@ using System;
 using System.IO;
 using System.Windows.Forms;
 using RemotePlusLibrary.Security.AccountSystem;
-using RemotePlusLibrary.Security.AccountSystem.Policies;
 using System.Diagnostics;
 using RemotePlusClient.Settings;
 using BetterLogger;
@@ -57,8 +56,6 @@ namespace RemotePlusClient
             Logger.Log("Initializing default known types.", LogLevel.Info);
             DefaultKnownTypeManager.LoadDefaultTypes();
             DefaultKnownTypeManager.AddType(typeof(UserAccount));
-            DefaultKnownTypeManager.AddType(typeof(OperationPolicies));
-            DefaultKnownTypeManager.AddType(typeof(DefaultPolicy));
         }
     }
 }

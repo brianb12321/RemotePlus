@@ -1,7 +1,7 @@
 ﻿using BetterLogger;
 using RemotePlusLibrary;
 using RemotePlusLibrary.Client;
-using RemotePlusLibrary.Extension;
+using RemotePlusLibrary.Core.IOC;
 using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing;
@@ -13,7 +13,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Speech.Synthesis;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace RemotePlusServer.Core
@@ -128,7 +127,8 @@ namespace RemotePlusServer.Core
         {
             CommandPipeline pipe = new CommandPipeline();
             int pos = 0;
-            if (Command.StartsWith("::"))
+            //Makes sure that a script command won't be executed by a script, thus avoiding lots of trouble.
+            if (Command.StartsWith("::") && commandMode == CommandExecutionMode.Client)
             {
                 //This is script command.
                 try
@@ -142,55 +142,30 @@ namespace RemotePlusServer.Core
             }
             else
             {
-                IParser parser = new CommandParser(Command);
                 try
                 {
+                    ICommandEnvironmnet env = IOCContainer.GetService<ICommandEnvironmnet>();
+                    IParser parser = env.Parser;
+                    ITokenProcessor processor = env.Processor;
+                    RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing.ICommandExecutor executor = env.Executor;
+                    parser.ResetCommand(Command);
+                    processor.ConfigureProcessor(ServerManager.ServerRemoteService.Variables, executor);
                     var tokens = parser.Parse(true);
-                    var newTokens = RunSubRoutines(parser, pipe, pos);
-                    foreach (CommandToken token in newTokens)
-                    {
-                        foreach (List<CommandToken> allTokens in parser.ParsedTokens)
-                        {
-                            var index = allTokens.IndexOf(token);
-                            if (index != -1)
-                            {
-                                parser.ParsedTokens[parser.ParsedTokens.IndexOf(allTokens)][index] = token;
-                            }
-                        }
-                    }
-                    var newVariableTokens = RunVariableReplacement(parser, out bool success);
+                    var newTokens = processor.RunSubRoutines(parser, pipe, pos);
+                    ReplaceTokens(newTokens, parser);
+                    var newVariableTokens = processor.RunVariableReplacement(parser, out bool success);
                     if (success != true)
                     {
                         return pipe;
                     }
-                    foreach (CommandToken token in newVariableTokens)
-                    {
-                        foreach (List<CommandToken> allTokens in parser.ParsedTokens)
-                        {
-                            var index = allTokens.IndexOf(token);
-                            if (index != -1)
-                            {
-                                parser.ParsedTokens[parser.ParsedTokens.IndexOf(allTokens)][index] = token;
-                            }
-                        }
-                    }
-                    var newQouteTokens = ParseOutQoutes(parser);
-                    foreach (CommandToken token in newQouteTokens)
-                    {
-                        foreach (List<CommandToken> allTokens in parser.ParsedTokens)
-                        {
-                            var index = allTokens.IndexOf(token);
-                            if (index != -1)
-                            {
-                                parser.ParsedTokens[parser.ParsedTokens.IndexOf(allTokens)][index] = token;
-                            }
-                        }
-                    }
+                    ReplaceTokens(newVariableTokens, parser);
+                    var newQouteTokens = processor.ParseOutQoutes(parser);
+                    ReplaceTokens(newQouteTokens, parser);
                     //Run the commands
                     foreach (List<CommandToken> commands in parser.ParsedTokens)
                     {
                         var request = new CommandRequest(commands.ToArray());
-                        var routine = new CommandRoutine(request, Execute(request, CommandExecutionMode.Client, pipe));
+                        var routine = new CommandRoutine(request, executor.Execute(request, CommandExecutionMode.Client, pipe));
                         pipe.Add(pos++, routine);
                     }
                 }
@@ -204,256 +179,17 @@ namespace RemotePlusServer.Core
             }
             return pipe;
         }
-        protected virtual CommandToken[] RunVariableReplacement(IParser p, out bool success)
+        void ReplaceTokens(IEnumerable<CommandToken> tokens, IParser parser)
         {
-            success = true;
-            List<CommandToken> tokenList = new List<CommandToken>();
-            var variableTokens = p.GetVariables();
-            foreach (CommandToken variableToken in variableTokens)
+            foreach (CommandToken token in tokens)
             {
-                var variablename = variableToken.OriginalValue.Remove(0, 1);
-                if (ServerManager.ServerRemoteService.Variables.ContainsKey(variablename))
+                foreach (List<CommandToken> allTokens in parser.ParsedTokens)
                 {
-                    var variableValue = ServerManager.ServerRemoteService.Variables[variablename];
-
-                    variableToken.Value = variableValue;
-                    success = true;
-                    tokenList.Add(variableToken);
-                }
-                else
-                {
-                    Client.ClientCallback.TellMessageToServerConsole($"Variable {variablename} does not exist", LogLevel.Error, "Server Host");
-                    success = false;
-                }
-            }
-            return tokenList.ToArray();
-        }
-        protected virtual CommandToken[] RunVariableReplacement(CommandToken[] tokens, out bool success)
-        {
-            success = true;
-            List<CommandToken> tokenList = new List<CommandToken>();
-            foreach (CommandToken variableToken in tokens)
-            {
-                var variablename = variableToken.OriginalValue.Remove(0, 1);
-                if (ServerManager.ServerRemoteService.Variables.ContainsKey(variablename))
-                {
-                    var variableValue = ServerManager.ServerRemoteService.Variables[variablename];
-
-                    variableToken.Value = variableValue;
-                    success = true;
-                    tokenList.Add(variableToken);
-                }
-                else
-                {
-                    Client.ClientCallback.TellMessageToServerConsole($"Variable {variablename} does not exist", LogLevel.Error, "Server Host");
-                    success = false;
-                }
-            }
-            return tokenList.ToArray();
-        }
-        protected virtual IEnumerable<CommandToken> RunSubRoutines(IParser p, CommandPipeline pipe, int position)
-        {
-            foreach (CommandToken routineToken in p.GetSubRoutines())
-            {
-                var commandToExecute = Regex.Match(routineToken.OriginalValue, CommandToken.SUBROUTINE_PATTERN).Groups[1].Value;
-                var parsedCommand = p.Parse(commandToExecute, false);
-                var newTokens = RunSubRoutines(p.GetSubRoutines(parsedCommand), p, pipe, position);
-                foreach (CommandToken token in newTokens)
-                {
-                    foreach (List<CommandToken> allTokens in parsedCommand)
+                    var index = allTokens.IndexOf(token);
+                    if (index != -1)
                     {
-                        var index = allTokens.IndexOf(token);
-                        if (index != -1)
-                        {
-                            parsedCommand[parsedCommand.IndexOf(allTokens)][index] = token;
-                        }
+                        parser.ParsedTokens[parser.ParsedTokens.IndexOf(allTokens)][index] = token;
                     }
-                }
-                var newVariableTokens = RunVariableReplacement(p.GetVariables(parsedCommand), out bool success);
-                if (success != true)
-                {
-                    yield return routineToken;
-                }
-                foreach (CommandToken token in newVariableTokens)
-                {
-                    foreach (List<CommandToken> allTokens in parsedCommand)
-                    {
-                        var index = allTokens.IndexOf(token);
-                        if (index != -1)
-                        {
-                            parsedCommand[parsedCommand.IndexOf(allTokens)][index] = token;
-                        }
-                    }
-                }
-                var newQouteTokens = ParseOutQoutes(p.GetQoutedToken(parsedCommand));
-                foreach (CommandToken token in newQouteTokens)
-                {
-                    foreach (List<CommandToken> allTokens in parsedCommand)
-                    {
-                        var index = allTokens.IndexOf(token);
-                        if (index != -1)
-                        {
-                            parsedCommand[parsedCommand.IndexOf(allTokens)][index] = token;
-                        }
-                    }
-                }
-                foreach (List<CommandToken> allCommands in parsedCommand)
-                {
-                    var request = new CommandRequest(allCommands.ToArray());
-                    var routine = new CommandRoutine(request, Execute(request, CommandExecutionMode.Client, pipe));
-                    routineToken.Value = routine.Output.CustomStatusMessage;
-                    position++;
-                }
-                yield return routineToken;
-            }
-        }
-        protected virtual IEnumerable<CommandToken> RunSubRoutines(CommandToken[] tokens, IParser p, CommandPipeline pipe, int position)
-        {
-            foreach (CommandToken routineToken in tokens)
-            {
-                var commandToExecute = Regex.Match(routineToken.OriginalValue, CommandToken.SUBROUTINE_PATTERN).Groups[1].Value;
-                var parsedCommand = p.Parse(commandToExecute, false);
-
-                var newVariableTokens = RunVariableReplacement(p.GetVariables(parsedCommand), out bool success);
-                if (success != true)
-                {
-                    yield return routineToken;
-                }
-                foreach (CommandToken token in newVariableTokens)
-                {
-                    foreach (List<CommandToken> allTokens in parsedCommand)
-                    {
-                        var index = allTokens.IndexOf(token);
-                        if (index != -1)
-                        {
-                            parsedCommand[parsedCommand.IndexOf(allTokens)][index] = token;
-                        }
-                    }
-                }
-                var newQouteTokens = ParseOutQoutes(p.GetQoutedToken(parsedCommand));
-                foreach (CommandToken token in newQouteTokens)
-                {
-                    foreach (List<CommandToken> allTokens in parsedCommand)
-                    {
-                        var index = allTokens.IndexOf(token);
-                        if (index != -1)
-                        {
-                            parsedCommand[parsedCommand.IndexOf(allTokens)][index] = token;
-                        }
-                    }
-                }
-                foreach (List<CommandToken> allCommands in parsedCommand)
-                {
-                    var request = new CommandRequest(allCommands.ToArray());
-                    var routine = new CommandRoutine(request, Execute(request, CommandExecutionMode.Client, pipe));
-                    routineToken.Value = routine.Output.CustomStatusMessage;
-                    position++;
-                }
-                yield return routineToken;
-            }
-        }
-        protected virtual IEnumerable<CommandToken> ParseOutQoutes(CommandToken[] tokens)
-        {
-            List<CommandToken> tokenList = new List<CommandToken>();
-            foreach (CommandToken qouteToken in tokens)
-            {
-                var qouteName = Regex.Match(qouteToken.OriginalValue, CommandToken.QOUTE_PATTERN).Groups[1].Value;
-                qouteToken.Value = qouteName.Replace('^', '&');
-                tokenList.Add(qouteToken);
-            }
-            return tokenList.ToArray();
-        }
-        protected virtual IEnumerable<CommandToken> ParseOutQoutes(IParser p)
-        {
-            List<CommandToken> tokenList = new List<CommandToken>();
-            var qouteTokens = p.GetQoutedToken();
-            foreach (CommandToken qouteToken in qouteTokens)
-            {
-                var qouteName = Regex.Match(qouteToken.OriginalValue, CommandToken.QOUTE_PATTERN).Groups[1].Value;
-                qouteToken.Value = qouteName.Replace('^', '&');
-                tokenList.Add(qouteToken);
-            }
-            return tokenList.ToArray();
-        }
-        public static CommandResponse Execute(CommandRequest c, CommandExecutionMode commandMode, CommandPipeline pipe)
-        {
-            bool throwFlag = false;
-            StatusCodeDeliveryMethod scdm = StatusCodeDeliveryMethod.DoNotDeliver;
-            try
-            {
-                GlobalServices.Logger.Log($"Executing server command {c.Arguments[0]}", LogLevel.Info);
-                try
-                {
-                    var command = ServerManager.ServerRemoteService.Commands[c.Arguments[0].Value];
-                    var ba = RemotePlusConsole.GetCommandBehavior(command);
-                    if (ba != null)
-                    {
-                        if (ba.TopChainCommand && pipe.Count > 0)
-                        {
-                            GlobalServices.Logger.Log($"This is a top-level command.", LogLevel.Error);
-                            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessage($"This is a top-level command.", LogLevel.Error);
-                            return new CommandResponse((int)CommandStatus.AccessDenied);
-                        }
-                        if (commandMode != ba.ExecutionType)
-                        {
-                            GlobalServices.Logger.Log($"The command requires you to be in {ba.ExecutionType} mode.", LogLevel.Error);
-                            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessage($"The command requires you to be in {ba.ExecutionType} mode.", LogLevel.Error);
-                            return new CommandResponse((int)CommandStatus.AccessDenied);
-                        }
-                        if (ba.SupportClients != ClientSupportedTypes.Both && ((ServerManager.ServerRemoteService.RemoteInterface.Client.ClientType == ClientType.GUI && ba.SupportClients != ClientSupportedTypes.GUI) || (ServerManager.ServerRemoteService.RemoteInterface.Client.ClientType == ClientType.CommandLine && ba.SupportClients != ClientSupportedTypes.CommandLine)))
-                        {
-                            if (string.IsNullOrEmpty(ba.ClientRejectionMessage))
-                            {
-                                GlobalServices.Logger.Log($"Your client must be a {ba.SupportClients.ToString()} client.", LogLevel.Error);
-                                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessage($"Your client must be a {ba.SupportClients.ToString()} client.", LogLevel.Error);
-                                return new CommandResponse((int)CommandStatus.UnsupportedClient);
-                            }
-                            else
-                            {
-                                GlobalServices.Logger.Log(ba.ClientRejectionMessage, LogLevel.Error);
-                                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessage(ba.ClientRejectionMessage, LogLevel.Error);
-                                return new CommandResponse((int)CommandStatus.UnsupportedClient);
-                            }
-                        }
-                        if (ba.DoNotCatchExceptions)
-                        {
-                            throwFlag = true;
-                        }
-                        if (ba.StatusCodeDeliveryMethod != StatusCodeDeliveryMethod.DoNotDeliver)
-                        {
-                            scdm = ba.StatusCodeDeliveryMethod;
-                        }
-                    }
-                    GlobalServices.Logger.Log("Found command, and executing.", LogLevel.Debug);
-                    var sc = command(c, pipe);
-                    if (scdm == StatusCodeDeliveryMethod.TellMessage)
-                    {
-                        ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessage($"Command {c.Arguments[0]} finished with status code {sc.ToString()}", LogLevel.Info);
-                    }
-                    else if (scdm == StatusCodeDeliveryMethod.TellMessageToServerConsole)
-                    {
-                        ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole($"Command {c.Arguments[0]} finished with status code {sc.ToString()}", LogLevel.Info);
-                    }
-                    return sc;
-                }
-                catch (KeyNotFoundException)
-                {
-                    GlobalServices.Logger.Log("Failed to find the command.", LogLevel.Debug);
-                    ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText("Unknown command. Please type {help} for a list of commands") { TextColor = Color.Red });
-                    return new CommandResponse((int)CommandStatus.Fail);
-                }
-            }
-            catch (Exception ex)
-            {
-                if (throwFlag)
-                {
-                    throw;
-                }
-                else
-                {
-                    GlobalServices.Logger.Log("command failed: " + ex.Message, LogLevel.Info);
-                    ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText("Error whie executing command: " + ex.Message) { TextColor = Color.Red });
-                    return new CommandResponse((int)CommandStatus.Fail);
                 }
             }
         }

@@ -47,17 +47,9 @@
   <ItemGroup>
     <Compile Include="AccountSystem\AccountException.cs" />
     <Compile Include="AccountSystem\AccountManager.cs" />
-    <Compile Include="AccountSystem\DefaultPolicy.cs" />
     <Compile Include="AccountSystem\Design\Converters\UserAccountCollectionDescriptor.cs" />
     <Compile Include="AccountSystem\IAccountManager.cs" />
     <Compile Include="AccountSystem\IServiceCollectionExtensions.cs" />
-    <Compile Include="AccountSystem\Policies\OperationPolicies.cs" />
-    <Compile Include="AccountSystem\PolicyObject.cs" />
-    <Compile Include="AccountSystem\Role.cs" />
-    <Compile Include="AccountSystem\RoleException.cs" />
-    <Compile Include="AccountSystem\RolePool.cs" />
-    <Compile Include="AccountSystem\SecurityPolicy.cs" />
-    <Compile Include="AccountSystem\SecurityPolicyFolder.cs" />
     <Compile Include="AccountSystem\UserAccount.cs" />
     <Compile Include="AccountSystem\UserCollection.cs" />
     <Compile Include="AccountSystem\UserCredentials.cs" />

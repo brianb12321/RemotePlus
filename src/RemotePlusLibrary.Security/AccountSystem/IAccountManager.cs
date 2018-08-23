@@ -7,7 +7,7 @@ namespace RemotePlusLibrary.Security.AccountSystem
     /// </summary>
     public interface IAccountManager
     {
-        UserAccount CreateAccount(UserCredentials cred, string role, Configuration.IConfigurationDataAccess da);
+        UserAccount CreateAccount(UserCredentials cred);
         /// <summary>
         /// Gets an account object associated with the account's AID.
         /// </summary>
@@ -17,7 +17,7 @@ namespace RemotePlusLibrary.Security.AccountSystem
         /// <summary>
         /// Refreshes the currently loaded accounts on the system by enumerating the folder with the account objects.
         /// </summary>
-        void RefreshAccountList(Configuration.IConfigurationDataAccess da);
+        void RefreshAccountList();
         UserAccount AttemptLogin(UserCredentials cred);
     }
 }

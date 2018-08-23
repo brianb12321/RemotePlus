@@ -11,6 +11,7 @@ namespace RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing
     /// </summary>
     public interface IParser
     {
+        void ResetCommand(string command);
         List<List<CommandToken>> ParsedTokens { get; set; }
         List<List<CommandToken>> Parse(string command, bool prop);
         List<List<CommandToken>> Parse(bool prop);

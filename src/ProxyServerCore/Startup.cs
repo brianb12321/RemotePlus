@@ -9,6 +9,8 @@ using ProxyServer;
 using BetterLogger;
 using RemotePlusLibrary.Discovery;
 using RemotePlusLibrary;
+using RemotePlusLibrary.Extension.CommandSystem;
+using RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing;
 
 namespace ProxyServerCore
 {
@@ -32,7 +34,11 @@ namespace ProxyServerCore
                 })
                 .UseScriptingEngine()
                 .UseServerControlPage<ServerControls>()
-                .UseConfigurationDataAccess<RemotePlusLibrary.Configuration.StandordDataAccess.ConfigurationHelper>();
+                .UseConfigurationDataAccess<RemotePlusLibrary.Configuration.StandordDataAccess.ConfigurationHelper>()
+                .UseCommandline<CommandEnvironment>(builder =>
+                    builder.UseParser<CommandParser>()
+                   .UseProcessor<TokenProcessor>()
+                   .UseExecutor<CommandExecutor>());
         }
         public void InitializeServer(IServerBuilder builder)
         {
