@@ -2,10 +2,12 @@
 using RemotePlusLibrary;
 using RemotePlusLibrary.Extension;
 using RemotePlusLibrary.Extension.ExtensionLoader;
+using RemotePlusLibrary.Extension.ExtensionLoader.Initialization;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,6 +19,107 @@ namespace RemotePlusServer.Core.ExtensionSystem
         {
             throw new NotImplementedException();
         }
+
+        public override void LoadExtension(string path, Action<string, LogLevel> callback, IInitEnvironment env)
+        {
+            ServerExtensionLibrary lib;
+            Assembly a = Assembly.LoadFrom(path);
+            ExtensionLibraryAttribute ea = a.GetCustomAttribute<ExtensionLibraryAttribute>();
+            if (ea != null)
+            {
+                if(Libraries.ContainsKey(ea.Name))
+                {
+                    throw new InvalidExtensionLibraryException($"The extension library '{ea.Name}' is already in the system.");
+                }
+                if (ea.LibraryType == ExtensionLibraryType.Server || ea.LibraryType == ExtensionLibraryType.Both)
+                {
+                    Guid guid = Guid.Empty;
+                    try
+                    {
+                        guid = ServerExtensionLibrary.ParseGuid(ea.Guid);
+                    }
+                    catch (FormatException)
+                    {
+                        guid = Guid.NewGuid();
+                        callback($"Unable to parse GUID. Using random generated GUID. GUID: [{guid.ToString()}]", LogLevel.Warning);
+                    }
+                    Version version = ServerExtensionLibrary.ParseVersion(ea.Version);
+                    var deps = LoadDependencies(a, callback, env);
+                    if (!typeof(ILibraryStartup).IsAssignableFrom(ea.Startup))
+                    {
+                        throw new ArgumentException("The startup type does not implement ILibraryStartup.");
+                    }
+                    else
+                    {
+                        var st = (ILibraryStartup)Activator.CreateInstance(ea.Startup);
+                        callback("Beginning initialization.", LogLevel.Info);
+                        ServerLibraryBuilder builder = new ServerLibraryBuilder(ea.Name, ea.FriendlyName, ea.Version, ea.LibraryType);
+                        st.Init(builder, env);
+                        callback("finished initialization.", LogLevel.Info);
+                        lib = new ServerExtensionLibrary(ea.FriendlyName, ea.Name, ea.LibraryType, guid, deps, version);
+                        callback("registering server hooks.", LogLevel.Info);
+                        lib.Hooks = builder.Hooks;
+                    }
+                }
+                else
+                {
+                    throw new InvalidExtensionLibraryException($"The extension library {ea.FriendlyName} must be of type server.");
+                }
+            }
+            else
+            {
+                throw new InvalidExtensionLibraryException("The library does not have an ExtensionLibraryAttrubte.");
+            }
+            Libraries.Add(lib.Name, lib);
+        }
+        private RequiresDependencyAttribute[] LoadDependencies(Assembly a, Action<string, LogLevel> callback, IInitEnvironment env)
+        {
+            callback($"Searching dependencies for {a.GetName().Name}", LogLevel.Info);
+            RequiresDependencyAttribute[] deps = ExtensionLibraryBase<ServerExtensionLibrary>.FindDependencies(a);
+            foreach (RequiresDependencyAttribute d in deps)
+            {
+                if (File.Exists(d.DependencyName))
+                {
+                    callback($"Found dependency {d.DependencyName}", LogLevel.Info);
+                    if (d.DependencyType != DependencyType.Resource)
+                    {
+                        try
+                        {
+                            Assembly da = Assembly.LoadFrom(d.DependencyName);
+                            if (da.GetName().Version != d.Version)
+                            {
+                                throw new DependencyException($"Library {d.DependencyName}, version {da.GetName().Version} does not match requred version of {d.Version}");
+                            }
+                            else
+                            {
+                                if (d.LoadIfNotLoaded && d.DependencyType == DependencyType.RemotePlusLib)
+                                {
+                                    callback($"Loading dependency {d.DependencyName}", LogLevel.Info);
+                                    LoadExtension(d.DependencyName, callback, env);
+                                }
+                            }
+                        }
+                        catch
+                        {
+                            throw;
+                        }
+                    }
+                }
+                else
+                {
+                    if (d.DependencyType == DependencyType.Resource)
+                    {
+                        throw new DependencyException($"Library {a.GetName().Name} is dependent on {d.DependencyName}");
+                    }
+                    else
+                    {
+                        throw new DependencyException($"Library {a.GetName().Name} is dependent on {d.DependencyName}, version {d.Version.ToString()}");
+                    }
+                }
+            }
+            return deps;
+        }
+
         public void LoadExtensionsInFolder()
         {
             List<string> excludedFiles = new List<string>();
@@ -42,8 +145,7 @@ namespace RemotePlusServer.Core.ExtensionSystem
                         {
                             GlobalServices.Logger.Log($"Found extension file ({Path.GetFileName(files)})", LogLevel.Info);
                             env.PreviousError = GlobalServices.Logger.ErrorCount > 0 ? true : false;
-                            var lib = ServerExtensionLibrary.LoadServerLibrary(files, (m, o) => GlobalServices.Logger.Log(m, o), env);
-                            Libraries.Add(lib.Name, lib);
+                            LoadExtension(files, (m, o) => GlobalServices.Logger.Log(m, o), env);
                         }
                         catch (Exception ex)
                         {

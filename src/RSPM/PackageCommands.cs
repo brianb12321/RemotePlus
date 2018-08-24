@@ -5,6 +5,9 @@ using Ninject;
 using System.Runtime.Serialization;
 using System.Xml;
 using System.IO;
+using System;
+using RemotePlusServer.Core;
+using System.Drawing;
 
 namespace RSPM
 {
@@ -21,8 +24,9 @@ namespace RSPM
                 manager.InstallPackage(req.Arguments[1].Value);
                 return new CommandResponse((int)CommandStatus.Success);
             }
-            catch
+            catch (Exception ex)
             {
+                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText($"An error occurred during installation: {ex.Message}") { TextColor = Color.Red });
                 return new CommandResponse((int)CommandStatus.Fail);
             }
         }
@@ -33,6 +37,8 @@ namespace RSPM
             var subReq = new PackageDescription();
             subReq.Description = "Sample description.";
             subReq.Name = "Sample Package";
+            subReq.Extensions.Add("testExtension.dll");
+            subReq.Extensions.Add("awesomeExtension.dll");
             XmlWriterSettings settings = new XmlWriterSettings()
             {
                 Indent = true,

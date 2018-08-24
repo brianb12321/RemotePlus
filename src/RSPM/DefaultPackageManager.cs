@@ -1,4 +1,5 @@
-﻿using RemotePlusLibrary.Extension.CommandSystem;
+﻿using RemotePlusLibrary;
+using RemotePlusLibrary.Extension.CommandSystem;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -33,9 +34,13 @@ namespace RSPM
                         if (confirmInstallation(package.Description))
                         {
                             ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Extracting package.");
-                            package.Zip.ExtractAll("extensions");
+                            package.ExtractWithoutManifest("extensions");
                             ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Loading extensions.");
-                            DefaultCollection.LoadExtensionsInFolder();
+                            package.LoadPackageExtensions("extensions", (l, t) =>
+                            {
+                                GlobalServices.Logger.Log(l, t);
+                                ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(l, t);
+                            }, DefaultCollection);
                             ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Finished extracting package. Deleting downloaded package.");
                         }
                         else
@@ -95,9 +100,9 @@ namespace RSPM
                 _reader.ParsedSource += (sender, e) =>
                 {
                     ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole($"Source: {e.ParsedUri.ToString()}");
-                    Sources.Add(e.ParsedUri);
                 };
-                _reader.ReadSources("Configurations\\Server\\sources.list");
+                var urls = _reader.ReadSources("Configurations\\Server\\sources.list");
+                Sources.AddRange(urls);
             }
             catch (FileNotFoundException)
             {

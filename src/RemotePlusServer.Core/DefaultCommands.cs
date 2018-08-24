@@ -444,12 +444,11 @@ namespace RemotePlusServer.Core
                 {
                     path = Path.Combine(ServerManager.ServerRemoteService.RemoteInterface.CurrentPath, args.Arguments[1].Value);
                 }
-                var lib = ServerExtensionLibrary.LoadServerLibrary(path, (m, o) =>
+                ServerManager.DefaultCollection.LoadExtension(path, (m, o) =>
                 {
                     GlobalServices.Logger.Log(m, o);
                     ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(m, o);
                 }, new ServerInitEnvironment(false));
-                ServerManager.DefaultCollection.Libraries.Add(lib.Name, lib);
                 return new CommandResponse((int)CommandStatus.Success);
             }
             catch (Exception ex)

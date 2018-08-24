@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace RSPM
 {
@@ -9,5 +10,7 @@ namespace RSPM
         public string Name { get; set; }
         [DataMember]
         public string Description { get; set; }
+        [DataMember]
+        public List<string> Extensions { get; set; } = new List<string>();
     }
 }

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using BetterLogger;
+using RemotePlusLibrary.Extension.ExtensionLoader.Initialization;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,5 +16,6 @@ namespace RemotePlusLibrary.Extension.ExtensionLoader
             Libraries = new Dictionary<string, T>();
         }
         public abstract Dictionary<string, E> GetAllExtensions();
+        public abstract void LoadExtension(string path, Action<string, LogLevel> callback, IInitEnvironment env);
     }
 }

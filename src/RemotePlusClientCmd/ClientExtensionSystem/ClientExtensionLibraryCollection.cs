@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BetterLogger;
 using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusLibrary.Extension.ExtensionLoader;
+using RemotePlusLibrary.Extension.ExtensionLoader.Initialization;
 
 namespace RemotePlusClientCmd.ClientExtensionSystem
 {
@@ -25,6 +27,11 @@ namespace RemotePlusClientCmd.ClientExtensionSystem
                 }
             }
             return _allCommands;
+        }
+
+        public override void LoadExtension(string path, Action<string, LogLevel> callback, IInitEnvironment env)
+        {
+            throw new NotImplementedException();
         }
     }
 }
