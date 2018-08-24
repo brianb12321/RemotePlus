@@ -18,7 +18,7 @@ using RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing;
 
 namespace DefaultServerCore
 {
-    public class Startup : IServerCoreStartup
+    public sealed class Startup : IServerCoreStartup
     {
         public void AddServices(IServiceCollection services)
         {

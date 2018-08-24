@@ -4,7 +4,7 @@ using RemotePlusLibrary.Core.IOC;
 
 namespace ProxyServer
 {
-    public class ServerBuilder : IServerBuilder, IServerInitilizer
+    public sealed class ServerBuilder : IServerBuilder, IServerInitilizer
     {
         List<Action> _tasks = new List<Action>();
         public IServerBuilder AddTask(Action task)

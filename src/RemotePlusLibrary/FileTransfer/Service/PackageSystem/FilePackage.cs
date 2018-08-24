@@ -18,7 +18,7 @@ namespace RemotePlusLibrary.FileTransfer.Service.PackageSystem
         public long Length { get; set; }
         public Stream Data { get; set; }
         public bool KeepAlive { get; set; }
-        public virtual void Dispose()
+        public void Dispose()
         {
             if (Data != null)
             {

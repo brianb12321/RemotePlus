@@ -9,7 +9,7 @@ using System.Windows.Forms;
 
 namespace RemotePlusClient.CommonUI.Requests
 {
-    public class MessageBoxRequest : IDataRequest
+    public sealed class MessageBoxRequest : IDataRequest
     {
         bool IDataRequest.ShowProperties => false;
 

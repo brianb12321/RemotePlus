@@ -42,7 +42,7 @@ namespace RemotePlusClientCmd.Requests
 
         public void Update(string message)
         {
-            fd.Counter = int.Parse(message);
+            fd.Counter = int.Parse(message, System.Globalization.CultureInfo.InvariantCulture);
         }
 
         public void UpdateProperties()

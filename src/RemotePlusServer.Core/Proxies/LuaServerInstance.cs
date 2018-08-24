@@ -10,7 +10,7 @@ namespace RemotePlusServer.Core.Proxies
     /// <summary>
     /// Provides functions that allows a script to close the server and get global information about the server.
     /// </summary>
-    public class LuaServerInstance
+    public class PythonServerInstance
     {
         [IndexScriptObject]
         public string CurrentPath

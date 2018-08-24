@@ -11,15 +11,17 @@ namespace RSPM
     public class DefaultPackageManager : IPackageManager
     {
         public List<Uri> Sources { get; private set; } = new List<Uri>();
-        IPackageDownloader mainDownloader = null;
-        public DefaultPackageManager(IPackageDownloader downloader)
+        private IPackageDownloader _mainDownloader;
+        private ISourceReader _reader;
+        public DefaultPackageManager(IPackageDownloader downloader, ISourceReader reader)
         {
-            mainDownloader = downloader;
+            _mainDownloader = downloader;
+            _reader = reader;
         }
         public void InstallPackage(string packageName)
         {
             ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole($"Beginning installation of {packageName}");
-            if (mainDownloader.DownlaodPackage(packageName, Sources.ToArray()))
+            if (_mainDownloader.DownlaodPackage(packageName, Sources.ToArray()))
             {
                 IPackageReader reader = new DefaultPackageReader();
                 ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Reading package file (pkg)");
@@ -70,7 +72,7 @@ namespace RSPM
                 sb.AppendLine();
                 ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(sb.ToString());
                 string response = ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(new RemotePlusLibrary.RequestSystem.RequestBuilder("rcmd_textBox", "I acknowledge the warning and are ready to extract and install package [Y/N]", null)).Data.ToString();
-                if(response.ToUpper() == "Y")
+                if(string.Equals(response, "Y", StringComparison.OrdinalIgnoreCase))
                 {
                     return true;
                 }
@@ -90,17 +92,12 @@ namespace RSPM
             ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Reading sources.");
             try
             {
-                StreamReader fileReader = new StreamReader("Configurations\\Server\\sources.list");
-                while(!fileReader.EndOfStream)
+                _reader.ParsedSource += (sender, e) =>
                 {
-                    string url = fileReader.ReadLine();
-                    if(Uri.TryCreate(url, UriKind.Absolute, out Uri parsedUri))
-                    {
-                        ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole($"Source: {parsedUri.ToString()}");
-                        Sources.Add(parsedUri);
-                    }
-                }
-                fileReader.Close();
+                    ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole($"Source: {e.ParsedUri.ToString()}");
+                    Sources.Add(e.ParsedUri);
+                };
+                _reader.ReadSources("Configurations\\Server\\sources.list");
             }
             catch (FileNotFoundException)
             {

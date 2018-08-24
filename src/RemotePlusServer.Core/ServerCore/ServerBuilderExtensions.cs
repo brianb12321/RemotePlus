@@ -16,6 +16,7 @@ using System.IO;
 using System.ServiceModel.Description;
 using Ninject;
 using static RemotePlusServer.Core.DefaultCommands;
+using System.Speech.Synthesis;
 
 namespace RemotePlusServer.Core.ServerCore
 {
@@ -84,9 +85,9 @@ namespace RemotePlusServer.Core.ServerCore
         {
             try
             {
-                ServerManager.ScriptBuilder.AddScriptObject("serverInstance", new LuaServerInstance(), "Provides access to the global server instance.", ScriptGlobalType.Variable);
+                ServerManager.ScriptBuilder.AddScriptObject("serverInstance", new PythonServerInstance(), "Provides access to the global server instance.", ScriptGlobalType.Variable);
                 ServerManager.ScriptBuilder.AddScriptObject("executeServerCommand", new Func<string, CommandPipeline>((command => ServerManager.ServerRemoteService.RemoteInterface.RunServerCommand(command, CommandExecutionMode.Script))), "Executes a command to the server.", ScriptGlobalType.Function);
-                ServerManager.ScriptBuilder.AddScriptObject("speak", new Action<string, int, int>(StaticRemoteFunctions.speak), "Makes the server speak.", ScriptGlobalType.Function);
+                ServerManager.ScriptBuilder.AddScriptObject("speak", new Action<string, VoiceGender, VoiceAge>(StaticRemoteFunctions.speak), "Makes the server speak.", ScriptGlobalType.Function);
                 ServerManager.ScriptBuilder.AddScriptObject("beep", new Action<int, int>(StaticRemoteFunctions.beep), "Makes the server beep.", ScriptGlobalType.Function);
                 ServerManager.ScriptBuilder.AddScriptObject("functionExists", new Func<string, bool>((name) => ServerManager.ScriptBuilder.FunctionExists(name)), "Returns true if the function exists in the server.", ScriptGlobalType.Function);
                 ServerManager.ScriptBuilder.AddScriptObject("createRequestBuilder", new Func<string, string, Dictionary<string, string>, RequestBuilder>(ClientInstance.createRequestBuilder), "Generates a request builder to be used to generate a request.", ScriptGlobalType.Function);

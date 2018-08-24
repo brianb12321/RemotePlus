@@ -14,5 +14,10 @@ namespace RSPM
             IOCContainer.Provider.Bind<IPackageDownloader>().To(typeof(TPackageDownloader)).InTransientScope();
             return this;
         }
+        public PackageManagerBuilder SetPackageSourceReader<TPackageSourceReaderImpl>() where TPackageSourceReaderImpl : ISourceReader
+        {
+            IOCContainer.Provider.Bind<IPackageDownloader>().To(typeof(TPackageSourceReaderImpl)).InTransientScope();
+            return this;
+        }
     }
 }

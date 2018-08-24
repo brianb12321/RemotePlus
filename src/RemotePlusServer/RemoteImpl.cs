@@ -109,14 +109,14 @@ namespace RemotePlusServer
 
         public void Register(RegisterationObject Settings)
         {
-            GlobalServices.Logger.Log("A new client is awaiting registiration.", LogLevel.Info);
-            GlobalServices.Logger.Log("Instanitiating callback object.", LogLevel.Debug);
+            GlobalServices.Logger.Log("A new client is awaiting registration.", LogLevel.Info);
+            GlobalServices.Logger.Log("Instantiating callback object.", LogLevel.Debug);
             GlobalServices.Logger.Log("Getting ClientBuilder from client.", LogLevel.Debug);
             BuildClient();
-            GlobalServices.Logger.Log("Received registiration object from client.", LogLevel.Info);
+            GlobalServices.Logger.Log("Received registration object from client.", LogLevel.Info);
             this._interface.Settings = Settings;
-            GlobalServices.Logger.Log("Processing registiration object.", LogLevel.Debug);
-            _interface.Client.ClientCallback.TellMessage("Processing registiration object.", LogLevel.Debug);
+            GlobalServices.Logger.Log("Processing registration object.", LogLevel.Debug);
+            _interface.Client.ClientCallback.TellMessage("Processing registration object.", LogLevel.Debug);
             PerformAuthentication(Settings);
             _HookManager.RunHooks(ServerLibraryBuilder.LOGIN_HOOK, new RemotePlusLibrary.Extension.HookSystem.HookArguments(ServerLibraryBuilder.LOGIN_HOOK));
             if (_interface.Client.ClientType == ClientType.CommandLine && ServerStartup.proxyChannelFactory == null)
@@ -175,7 +175,7 @@ namespace RemotePlusServer
         {
             GlobalServices.Logger.Log($"Client \"{_interface.Client.FriendlyName}\" [{_interface.Client.UniqueID}] Type: {_interface.Client.ClientType} registired.", LogLevel.Info);
             _interface.Registered = true;
-            _interface.Client.ClientCallback.TellMessage("Registiration complete.",LogLevel.Info);
+            _interface.Client.ClientCallback.TellMessage("Registration complete.",LogLevel.Info);
             _interface.Client.ClientCallback.RegistirationComplete();
         }
 
@@ -338,7 +338,7 @@ namespace RemotePlusServer
                 }
                 else
                 {
-                    _interface.Client.ClientCallback.TellMessage("Registiration failed. Authentication failed.", LogLevel.Info);
+                    _interface.Client.ClientCallback.TellMessage("Registration failed. Authentication failed.", LogLevel.Info);
                     return null;
                 }
             }

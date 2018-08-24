@@ -16,7 +16,7 @@ namespace RSPM
         {
             try
             {
-                IPackageManager manager = IOCContainer.Provider.Get<IPackageManager>(new Ninject.Parameters.ConstructorArgument("downloader", IOCContainer.Provider.Get<IPackageDownloader>()));
+                IPackageManager manager = IOCContainer.GetService<IPackageManager>();
                 manager.LoadPackageSources();
                 manager.InstallPackage(req.Arguments[1].Value);
                 return new CommandResponse((int)CommandStatus.Success);
