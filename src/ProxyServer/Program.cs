@@ -92,12 +92,23 @@ namespace ProxyServer
         [CommandHelp("Shows help screen.")]
         static CommandResponse help(CommandRequest req, CommandPipeline pipe)
         {
-            var helpString = RemotePlusConsole.ShowHelp(ProxyService.Commands, req.Arguments.Select(t => t.Value).ToArray());
+            string helpString = string.Empty;
+            if (req.Arguments.Count == 2)
+            {
+                helpString = RemotePlusConsole.ShowHelpPage(ProxyService.Commands, req.Arguments[1].Value);
+            }
+            else
+            {
+                helpString = RemotePlusConsole.ShowHelp(ProxyService.Commands);
+            }
+            ProxyService.RemoteInterface.ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyGuid, helpString);
             ProxyService.RemoteInterface.ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyGuid, helpString);
             ProxyService.RemoteInterface.ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyGuid, "\nAny commands not listed on this list will be executed on the selected server.\n");
-            return new CommandResponse((int)CommandStatus.Success);
+            var response = new CommandResponse((int)CommandStatus.Success);
+            response.Metadata.Add("helpText", helpString);
+            return response;
         }
-        [CommandHelp("Establish registeration with the selected server.")]
+        [CommandHelp("Establish registration with the selected server.")]
         static CommandResponse register(CommandRequest req, CommandPipeline pipe)
         {
             ProxyService.RemoteInterface.Register(new RegisterationObject());

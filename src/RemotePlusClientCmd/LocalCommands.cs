@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace RemotePlusClientCmd
 {
-    partial class ClientCmdManager
+    static partial class ClientCmdManager
     {
         [CommandHelp("Shows the banner.")]
         static CommandResponse banner(CommandRequest args, CommandPipeline pipe)
@@ -23,8 +23,19 @@ namespace RemotePlusClientCmd
         [CommandHelp("Shows help for local commands.")]
         static CommandResponse Help(CommandRequest args, CommandPipeline pipe)
         {
-            GlobalServices.Logger.Log(RemotePlusConsole.ShowHelp(LocalCommands, args.Arguments.Select(f => f.ToString()).ToArray()), LogLevel.Info);
-            return new CommandResponse((int)CommandStatus.Success);
+            string helpString = string.Empty;
+            if (args.Arguments.Count == 2)
+            {
+                helpString = RemotePlusConsole.ShowHelpPage(LocalCommands, args.Arguments[1].Value);
+            }
+            else
+            {
+                helpString = RemotePlusConsole.ShowHelp(LocalCommands);
+            }
+            Console.WriteLine(helpString);
+            var response = new CommandResponse((int)CommandStatus.Success);
+            response.Metadata.Add("helpText", helpString);
+            return response;
         }
         [CommandHelp("Clears the console screen.")]
         static CommandResponse clearScreen(CommandRequest args, CommandPipeline pipe)

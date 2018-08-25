@@ -56,7 +56,15 @@ namespace RemotePlusServer.Core
         [CommandHelp("Displays a list of commands.")]
         public static CommandResponse Help(CommandRequest args, CommandPipeline pipe)
         {
-            var helpString = RemotePlusConsole.ShowHelp(ServerManager.ServerRemoteService.Commands, args.Arguments.Select(f => f.ToString()).ToArray());
+            string helpString = string.Empty;
+            if(args.Arguments.Count == 2)
+            {
+                helpString = RemotePlusConsole.ShowHelpPage(ServerManager.ServerRemoteService.Commands, args.Arguments[1].Value);
+            }
+            else
+            {
+                helpString = RemotePlusConsole.ShowHelp(ServerManager.ServerRemoteService.Commands);
+            }
             ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(helpString);
             var response = new CommandResponse((int)CommandStatus.Success);
             response.Metadata.Add("helpText", helpString);

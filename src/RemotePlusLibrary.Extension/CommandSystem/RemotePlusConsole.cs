@@ -12,67 +12,47 @@ namespace RemotePlusLibrary.Extension.CommandSystem
     public delegate CommandResponse CommandDelegate(CommandRequest request, CommandPipeline pipeline);
     public static class RemotePlusConsole
     {
-        public static string ShowHelp(IDictionary<string, CommandDelegate> commands, string[] args)
+        public static string ShowHelp(IDictionary<string, CommandDelegate> commands)
         {
             StringBuilder helpBuilder = new StringBuilder();
-            if (args.Length == 2)
+            var serverData = Assembly.GetEntryAssembly().GetName();
+            helpBuilder.AppendLine($"{serverData.Name} [Version: {serverData.Version}]")
+                .AppendLine()
+                .AppendLine();
+            var padWidth = commands.Keys.Max(c => c.Length) + 5;
+            foreach (KeyValuePair<string, CommandDelegate> c in commands)
             {
-                helpBuilder.Append(ShowHelpPage(commands[args[1]]));
-            }
-            else if (args.Length >= 1)
-            {
-                var serverData = Assembly.GetEntryAssembly().GetName();
-                helpBuilder.AppendLine($"{serverData.Name} [Version: {serverData.Version}]")
-                    .AppendLine()
-                    .AppendLine();
-                var padWidth = commands.Keys.Max(c => c.Length) + 5;
-                foreach (KeyValuePair<string, CommandDelegate> c in commands)
+                bool index = true;
+                var behavior = GetCommandBehavior(c.Value);
+                if (behavior != null)
                 {
-                    bool index = true;
-                    var behavior = GetCommandBehavior(c.Value);
-                    if (behavior != null)
+                    if (!behavior.IndexCommandInHelp)
                     {
-                        if (!behavior.IndexCommandInHelp)
+                        index = false;
+                    }
+                }
+                if (c.Value.Method.GetCustomAttributes(false).Length > 0)
+                {
+                    foreach (object o in c.Value.Method.GetCustomAttributes(false))
+                    {
+                        if (o is CommandHelpAttribute && index)
                         {
-                            index = false;
+                            CommandHelpAttribute cha = (CommandHelpAttribute)o;
+                            string paddedString = c.Key.PadRight(padWidth);
+                            helpBuilder.Append(paddedString)
+                                .AppendLine(cha.HelpMessage);
                         }
                     }
-                    if (c.Value.Method.GetCustomAttributes(false).Length > 0)
+                }
+                else
+                {
+                    if (index == true)
                     {
-                        foreach (object o in c.Value.Method.GetCustomAttributes(false))
-                        {
-                            if (o is CommandHelpAttribute && index)
-                            {
-                                CommandHelpAttribute cha = (CommandHelpAttribute)o;
-                                string paddedString = c.Key.PadRight(padWidth);
-                                helpBuilder.Append(paddedString)
-                                    .AppendLine(cha.HelpMessage);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        if (index == true)
-                        {
-                            helpBuilder.AppendLine(c.Key);
-                        }
+                        helpBuilder.AppendLine(c.Key);
                     }
                 }
             }
             return helpBuilder.ToString();
-        }
-        public static string ShowCommandHelpDescription(CommandDelegate command)
-        {
-            string t = "";
-            foreach (object o in command.Method.GetCustomAttributes(false))
-            {
-                if (o is CommandHelpAttribute)
-                {
-                    CommandHelpAttribute cha = (CommandHelpAttribute)o;
-                    t += cha.HelpMessage;
-                }
-            }
-            return t;
         }
         public static string ShowCommandHelpDescription(IDictionary<string, CommandDelegate> commands, string command)
         {
