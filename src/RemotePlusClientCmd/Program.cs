@@ -19,6 +19,7 @@ using System.IO;
 using RemotePlusClientCmd.ClientExtensionSystem;
 using RemotePlusLibrary.Core.IOC;
 using RemotePlusClient.CommonUI.Connection;
+using RemotePlusLibrary.Extension.EventSystem;
 
 namespace RemotePlusClientCmd
 {
@@ -30,6 +31,7 @@ namespace RemotePlusClientCmd
         public static PromptBuilder prompt = new PromptBuilder();
         public static ProxyClient Proxy = null;
         public static Connection CurrentConnectionData => IOCContainer.GetService<Connection>();
+        public static IEventBus EventBus => IOCContainer.GetService<IEventBus>();
         public static bool WaitFlag = true;
         public static bool ProxyEnabled { get; private set; }
         [STAThread]
@@ -37,6 +39,7 @@ namespace RemotePlusClientCmd
         {
             IOCContainer.Provider.Bind<Connection>().ToSelf().InSingletonScope();
             IOCContainer.Provider.Bind<RemotePlusLibrary.Configuration.IConfigurationDataAccess>().To(typeof(RemotePlusLibrary.Configuration.StandordDataAccess.ConfigurationHelper)).InSingletonScope().Named("DefaultConfigDataAccess");
+            IOCContainer.Provider.Bind<IEventBus>().To(typeof(EventBus)).InSingletonScope();
             var blf = new BaseLogFactory();
             blf.AddLogger(new ConsoleLogger());
             IOCContainer.Provider.Bind<ILogFactory>().ToConstant(blf);

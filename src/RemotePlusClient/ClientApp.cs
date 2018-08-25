@@ -11,6 +11,7 @@ using BetterLogger;
 using BetterLogger.Loggers;
 using RemotePlusLibrary.Core.IOC;
 using RemotePlusLibrary;
+using RemotePlusLibrary.Extension.EventSystem;
 
 namespace RemotePlusClient
 {
@@ -19,6 +20,7 @@ namespace RemotePlusClient
         public static MainF MainWindow;
         public static ILogFactory Logger { get; private set; }
         public static ClientSettings ClientSettings { get; set; } = new ClientSettings();
+        public static IEventBus EventBus => IOCContainer.GetService<IEventBus>();
         [STAThread]
         static void Main(string[] args)
         {
@@ -31,6 +33,7 @@ namespace RemotePlusClient
             Logger = new BaseLogFactory();
             Logger.AddLogger(new ConsoleLogger());
             IOCContainer.Provider.Bind<RemotePlusLibrary.Configuration.IConfigurationDataAccess>().To(typeof(RemotePlusLibrary.Configuration.StandordDataAccess.ConfigurationHelper)).Named("DefaultConfigDataAccess");
+            IOCContainer.Provider.Bind<IEventBus>().To(typeof(EventBus)).InSingletonScope();
             Logger.Log("Loading client settings.", LogLevel.Info);
             if(File.Exists(ClientSettings.CLIENT_SETTING_PATH))
             {

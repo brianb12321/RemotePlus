@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -13,13 +14,18 @@ namespace RemotePlusLibrary.Extension.CommandSystem
     {
         public static string ShowHelp(IDictionary<string, CommandDelegate> commands, string[] args)
         {
-            string t = "";
+            StringBuilder helpBuilder = new StringBuilder();
             if (args.Length == 2)
             {
-                t = ShowHelpPage(commands[args[1]]);
+                helpBuilder.Append(ShowHelpPage(commands[args[1]]));
             }
             else if (args.Length >= 1)
             {
+                var serverData = Assembly.GetEntryAssembly().GetName();
+                helpBuilder.AppendLine($"{serverData.Name} [Version: {serverData.Version}]")
+                    .AppendLine()
+                    .AppendLine();
+                var padWidth = commands.Keys.Max(c => c.Length) + 5;
                 foreach (KeyValuePair<string, CommandDelegate> c in commands)
                 {
                     bool index = true;
@@ -35,13 +41,12 @@ namespace RemotePlusLibrary.Extension.CommandSystem
                     {
                         foreach (object o in c.Value.Method.GetCustomAttributes(false))
                         {
-                            if (o is CommandHelpAttribute)
+                            if (o is CommandHelpAttribute && index)
                             {
-                                if(index == true)
-                                {
-                                    CommandHelpAttribute cha = (CommandHelpAttribute)o;
-                                    t += $"{c.Key}\t{cha.HelpMessage}\n";
-                                }
+                                CommandHelpAttribute cha = (CommandHelpAttribute)o;
+                                string paddedString = c.Key.PadRight(padWidth);
+                                helpBuilder.Append(paddedString)
+                                    .AppendLine(cha.HelpMessage);
                             }
                         }
                     }
@@ -49,12 +54,12 @@ namespace RemotePlusLibrary.Extension.CommandSystem
                     {
                         if (index == true)
                         {
-                            t += $"{c.Key}\n";
+                            helpBuilder.AppendLine(c.Key);
                         }
                     }
                 }
             }
-            return t;
+            return helpBuilder.ToString();
         }
         public static string ShowCommandHelpDescription(CommandDelegate command)
         {

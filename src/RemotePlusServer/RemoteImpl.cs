@@ -22,6 +22,7 @@ using RemotePlusLibrary.Client;
 using RemotePlusServer.Core;
 using RemotePlusServer.Core.ExtensionSystem;
 using BetterLogger;
+using RemotePlusLibrary.Extension.EventSystem;
 
 namespace RemotePlusServer
 {
@@ -118,7 +119,6 @@ namespace RemotePlusServer
             GlobalServices.Logger.Log("Processing registration object.", LogLevel.Debug);
             _interface.Client.ClientCallback.TellMessage("Processing registration object.", LogLevel.Debug);
             PerformAuthentication(Settings);
-            _HookManager.RunHooks(ServerLibraryBuilder.LOGIN_HOOK, new RemotePlusLibrary.Extension.HookSystem.HookArguments(ServerLibraryBuilder.LOGIN_HOOK));
             if (_interface.Client.ClientType == ClientType.CommandLine && ServerStartup.proxyChannelFactory == null)
             {
                 _interface.Client.ClientCallback.ChangePrompt(new RemotePlusLibrary.Extension.CommandSystem.PromptBuilder()
@@ -128,6 +128,7 @@ namespace RemotePlusServer
                     CurrentUser = _interface.LoggedInUser.Credentials.Username
                 });
             }
+            ServerManager.EventBus.Publish(new LoginEvent(_interface.Registered, this));
             // OperationContext.Current.OperationCompleted += (sender, e) => _interface.Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
         }
 

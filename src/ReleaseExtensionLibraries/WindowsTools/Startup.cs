@@ -2,6 +2,7 @@
 using RemotePlusServer.Core;
 using BetterLogger;
 using RemotePlusLibrary;
+using RemotePlusLibrary.Extension.EventSystem;
 
 namespace WindowsTools
 {
@@ -21,6 +22,7 @@ namespace WindowsTools
             ServerManager.ServerRemoteService.Commands.Add("setMousePos", OSCommands.setMousePos);
             ServerManager.ServerRemoteService.Commands.Add("blockInputI", OSCommands.blockInputI);
             ServerManager.ServerRemoteService.Commands.Add("setVolume", OSCommands.setVolume);
+            ServerManager.EventBus.Subscribe<LoginEvent>(e => ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Welcome to WindowsTools!"), e => e.LoginSuccessful);
             //RemotePlusServer.ScriptingEngine.ScriptBuilder.AddFunction<Action>("runFileM", () => ServerManager.ServerRemoteService.RemoteInterface.RunServerCommand("fileM", CommandExecutionMode.Script));
         }
     }

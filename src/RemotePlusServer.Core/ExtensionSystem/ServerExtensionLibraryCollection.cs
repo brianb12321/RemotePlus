@@ -57,8 +57,6 @@ namespace RemotePlusServer.Core.ExtensionSystem
                         st.Init(builder, env);
                         callback("finished initialization.", LogLevel.Info);
                         lib = new ServerExtensionLibrary(ea.FriendlyName, ea.Name, ea.LibraryType, guid, deps, version);
-                        callback("registering server hooks.", LogLevel.Info);
-                        lib.Hooks = builder.Hooks;
                     }
                 }
                 else

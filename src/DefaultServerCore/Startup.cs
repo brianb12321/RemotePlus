@@ -15,6 +15,7 @@ using RemotePlusLibrary.Security.AccountSystem;
 using RSPM;
 using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing;
+using RemotePlusLibrary.Extension.EventSystem;
 
 namespace DefaultServerCore
 {
@@ -70,6 +71,7 @@ namespace DefaultServerCore
                 .AddSingletonNamed<IConfigurationDataAccess, BinarySerializationHelper>("BinaryDataAccess")
                 .UseAuthentication<AccountManager>()
                 .UsePackageManager<DefaultPackageManager>()
+                .UseEventBus<EventBus>()
                 .UseCommandline<CommandEnvironment>(builder =>
                     builder.UseParser<CommandParser>()
                            .UseProcessor<TokenProcessor>()

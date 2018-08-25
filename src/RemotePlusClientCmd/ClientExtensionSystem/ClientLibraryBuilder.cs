@@ -1,5 +1,7 @@
 ﻿using RemotePlusLibrary.Extension.ExtensionLoader;
 using RemotePlusLibrary.Extension.ExtensionLoader.Initialization;
+using System;
+using TinyMessenger;
 
 namespace RemotePlusClientCmd.ClientExtensionSystem
 {
@@ -18,9 +20,14 @@ namespace RemotePlusClientCmd.ClientExtensionSystem
             this.LibraryType = libraryType;
         }
 
-        public void RegisterHook(string hookCategory, ServerHook hook)
+        public void SubscribeToEventBus<TMessage>(Action<TMessage> subscriber) where TMessage : class, ITinyMessage
         {
-            throw new System.NotImplementedException();
+            ClientCmdManager.EventBus.Subscribe(subscriber);
+        }
+
+        public void SubscribeToEventBus<TMessage>(Action<TMessage> subscriber, Func<TMessage, bool> condition) where TMessage : class, ITinyMessage
+        {
+            ClientCmdManager.EventBus.Subscribe(subscriber, condition);
         }
     }
 }

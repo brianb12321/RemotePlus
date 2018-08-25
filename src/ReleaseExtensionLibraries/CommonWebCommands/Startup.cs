@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using RemotePlusLibrary.Extension.HookSystem;
 using RemotePlusLibrary.Extension.ExtensionLoader.Initialization;
 using RemotePlusLibrary.RequestSystem;
 using RemotePlusServer.Core;
@@ -28,7 +27,7 @@ namespace CommonWebCommands
             CHeckFirefox();
             ServerManager.ServerRemoteService.Commands.Add("firefox", WebCommands.firefox);
         }
-        void checkIfUserAcceptsDisclamer(HookArguments args)
+        void checkIfUserAcceptsDisclamer()
         {
             ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(RequestBuilder.RequestMessageBox("Do not use CommonWebCommands to cause harm!", "Warning", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Warning));
         }

@@ -11,6 +11,7 @@ using RemotePlusLibrary.Discovery;
 using RemotePlusLibrary;
 using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing;
+using RemotePlusLibrary.Extension.EventSystem;
 
 namespace ProxyServerCore
 {
@@ -33,6 +34,7 @@ namespace ProxyServerCore
                     return proxyService;
                 })
                 .UseScriptingEngine()
+                .UseEventBus<EventBus>()
                 .UseServerControlPage<ServerControls>()
                 .UseConfigurationDataAccess<RemotePlusLibrary.Configuration.StandordDataAccess.ConfigurationHelper>()
                 .UseCommandline<CommandEnvironment>(builder =>

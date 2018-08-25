@@ -1,12 +1,13 @@
 ﻿using RemotePlusLibrary.Extension.ExtensionLoader;
 using RemotePlusLibrary.Extension.ExtensionLoader.Initialization;
+using System;
 using System.Collections.Generic;
+using TinyMessenger;
 
 namespace RemotePlusClient.ExtensionSystem
 {
     internal class ClientLibraryBuilder : ILibraryBuilder
     {
-        public Dictionary<string, List<ServerHook>> Hooks { get; private set; }
 
         public ClientLibraryBuilder(string name, string friendlyName, string version, ExtensionLibraryType libraryType)
         {
@@ -14,7 +15,6 @@ namespace RemotePlusClient.ExtensionSystem
             FriendlyName = friendlyName;
             Version = version;
             LibraryType = libraryType;
-            Hooks = new Dictionary<string, List<ServerHook>>();
         }
 
         public string FriendlyName { get; private set; }
@@ -25,9 +25,14 @@ namespace RemotePlusClient.ExtensionSystem
 
         public ExtensionLibraryType LibraryType { get; private set; }
 
-        public void RegisterHook(string hookCategory, ServerHook hook)
+        public void SubscribeToEventBus<TMessage>(Action<TMessage> subscriber) where TMessage : class, ITinyMessage
         {
-            Hooks[hookCategory].Add(hook);
+            ClientApp.EventBus.Subscribe(subscriber);   
+        }
+
+        public void SubscribeToEventBus<TMessage>(Action<TMessage> subscriber, Func<TMessage, bool> condition) where TMessage : class, ITinyMessage
+        {
+            ClientApp.EventBus.Subscribe(subscriber, condition);
         }
     }
 }

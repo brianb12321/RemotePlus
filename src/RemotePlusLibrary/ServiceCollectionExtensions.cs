@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using RemotePlusLibrary;
 using BetterLogger;
 using System.Windows.Forms;
 using RemotePlusLibrary.Core.IOC;
 using RemotePlusLibrary.Extension.CommandSystem;
+using RemotePlusLibrary.Extension.EventSystem;
 
 namespace RemotePlusLibrary
 {
@@ -54,6 +50,10 @@ namespace RemotePlusLibrary
             var b = new CommandlineBuilder(services);
             builder?.Invoke(b);
             return services.AddTransient<ICommandEnvironmnet, TCommandEnvironmentImpl>();
+        }
+        public static IServiceCollection UseEventBus<TEventBusImpl>(this IServiceCollection services) where TEventBusImpl : IEventBus
+        {
+            return services.AddSingleton<IEventBus, TEventBusImpl>();
         }
     }
 }

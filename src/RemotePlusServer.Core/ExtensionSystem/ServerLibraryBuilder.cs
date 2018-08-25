@@ -1,10 +1,7 @@
 ﻿using RemotePlusLibrary.Extension.ExtensionLoader;
 using RemotePlusLibrary.Extension.ExtensionLoader.Initialization;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using TinyMessenger;
 
 namespace RemotePlusServer.Core.ExtensionSystem
 {
@@ -18,9 +15,6 @@ namespace RemotePlusServer.Core.ExtensionSystem
             FriendlyName = fn;
             Version = v;
             LibraryType = lt;
-            Hooks = new Dictionary<string, List<ServerHook>>();
-            Hooks.Add(LOGIN_HOOK, new List<ServerHook>());
-            Hooks.Add(RUN_COMMAND_HOOK, new List<ServerHook>());
         }
 
         public string Name { get; private set; }
@@ -30,11 +24,15 @@ namespace RemotePlusServer.Core.ExtensionSystem
         public ExtensionLibraryType LibraryType { get; private set; }
 
         public string FriendlyName { get; private set; }
-        public Dictionary<string, List<ServerHook>> Hooks { get; private set; }
 
-        public void RegisterHook(string hookCategory, ServerHook hook)
+        public void SubscribeToEventBus<TMessage>(Action<TMessage> subscriber) where TMessage : class, ITinyMessage
         {
-            Hooks[hookCategory].Add(hook);
+            ServerManager.EventBus.Subscribe(subscriber);
+        }
+
+        public void SubscribeToEventBus<TMessage>(Action<TMessage> subscriber, Func<TMessage, bool> condition) where TMessage : class, ITinyMessage
+        {
+            ServerManager.EventBus.Subscribe(subscriber, condition);
         }
     }
 }

@@ -7,6 +7,7 @@ using System;
 using RemotePlusLibrary.Core.IOC;
 using RemotePlusLibrary.FileTransfer.Service.PackageSystem;
 using RemotePlusLibrary.Security.AccountSystem;
+using RemotePlusLibrary.Extension.EventSystem;
 
 namespace RemotePlusServer.Core
 {
@@ -27,5 +28,6 @@ namespace RemotePlusServer.Core
         public static IPackageInventorySelector DefaultPackageInventorySelector => IOCContainer.GetService<IPackageInventorySelector>();
         public static bool IsService { get; set; }
         public static IRemotePlusService<FileTransferServciceInterface> FileTransferService => IOCContainer.GetService<IRemotePlusService<FileTransferServciceInterface>>();
+        public static IEventBus EventBus => IOCContainer.GetService<IEventBus>();
     }
 }
