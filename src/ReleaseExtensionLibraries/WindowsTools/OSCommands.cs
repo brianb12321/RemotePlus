@@ -11,6 +11,7 @@ using System.IO;
 using RemotePlusServer.Core;
 using AudioSwitcher.AudioApi.CoreAudio;
 using System.Drawing;
+using NAudio.CoreAudioApi;
 
 namespace WindowsTools
 {
@@ -37,7 +38,7 @@ namespace WindowsTools
             Win32Wrapper.OpenDiskDrive(args.Arguments[1].Value, "");
             return new CommandResponse((int)CommandStatus.Success);
         }
-        [CommandHelp("Lists all the installed drives on the systme.")]
+        [CommandHelp("Lists all the installed drives on the system.")]
         public static CommandResponse drives(CommandRequest args, CommandPipeline pipe)
         {
             foreach(DriveInfo info in DriveInfo.GetDrives())
@@ -87,7 +88,11 @@ namespace WindowsTools
         [CommandHelp("Toggles the mute on the server.")]
         public static CommandResponse toggleMute(CommandRequest args, CommandPipeline pipe)
         {
-            Win32Wrapper.ToggleMute();
+            MMDeviceEnumerator enumerator = new NAudio.CoreAudioApi.MMDeviceEnumerator();
+            foreach(MMDevice device in enumerator.EnumerateAudioEndPoints(DataFlow.All, DeviceState.All))
+            {
+                device.AudioEndpointVolume.Mute = !device.AudioEndpointVolume.Mute;
+            }
             return new CommandResponse((int)CommandStatus.Success);
         }
     }
