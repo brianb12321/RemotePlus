@@ -30,18 +30,15 @@ namespace RemotePlusServer
             {
                 foreach (NetworkInterface nif in adapt)
                 {
-                    if (nif.GetIPProperties().GetIPv4Properties() != null)
+                    if (nif.GetIPProperties().GetIPv4Properties()?.IsDhcpEnabled == false)
                     {
-                        if (!nif.GetIPProperties().GetIPv4Properties().IsDhcpEnabled)
-                        {
-                            foundFlag = true;
-                            break;
-                        }
+                        foundFlag = true;
+                        break;
                     }
                 }
                 if (!foundFlag)
                 {
-                    GlobalServices.Logger.Log("You should have at least one network adapter that has a static IP. This could cause the client fail to connect to the server.", LogLevel.Info);
+                    GlobalServices.Logger.Log("You should have at least one network adapter that has a static IP. This could cause the client to fail to connect to the server.", LogLevel.Warning);
                 }
             }
         }
@@ -54,7 +51,7 @@ namespace RemotePlusServer
             }
             if (ServerManager.DefaultSettings.LoggingSettings.CleanLogFolder)
             {
-                GlobalServices.Logger.Log($"NOTE: Logs will be cleaned out when there are {ServerManager.DefaultSettings.LoggingSettings.LogFileCountThreashold} logs in the logs foleder.", LogLevel.Info);
+                GlobalServices.Logger.Log($"NOTE: Logs will be cleaned out when there are {ServerManager.DefaultSettings.LoggingSettings.LogFileCountThreashold} logs in the logs folder.", LogLevel.Info);
                 CheckLogCount();
             }
         }
@@ -62,7 +59,7 @@ namespace RemotePlusServer
         {
             if (Directory.GetFiles("ServerLogs").Length >= ServerManager.DefaultSettings.LoggingSettings.LogFileCountThreashold)
             {
-                GlobalServices.Logger.Log("IMPORTANT ACTION: The server logs threashold has been reached. The server logs folder will be cleared.", LogLevel.Info);
+                GlobalServices.Logger.Log("IMPORTANT ACTION: The server logs threshold has been reached. The server logs folder will be cleared.", LogLevel.Info);
                 foreach (string fileToBeDeleted in Directory.GetFiles("ServerLogs"))
                 {
                     File.Delete(fileToBeDeleted);

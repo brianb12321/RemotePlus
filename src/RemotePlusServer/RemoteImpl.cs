@@ -8,7 +8,6 @@ using RemotePlusLibrary.Core;
 using RemotePlusLibrary.Extension.CommandSystem;
 using System.IO;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
-using RemotePlusServer.Internal;
 using System.Linq;
 using RemotePlusLibrary.Scripting;
 using RemotePlusLibrary.Security.AccountSystem;
@@ -20,7 +19,6 @@ using RemotePlusLibrary.Security.Authentication;
 using RemotePlusLibrary.Configuration.ServerSettings;
 using RemotePlusLibrary.Client;
 using RemotePlusServer.Core;
-using RemotePlusServer.Core.ExtensionSystem;
 using BetterLogger;
 using RemotePlusLibrary.Extension.EventSystem;
 
@@ -113,12 +111,14 @@ namespace RemotePlusServer
             GlobalServices.Logger.Log("A new client is awaiting registration.", LogLevel.Info);
             GlobalServices.Logger.Log("Instantiating callback object.", LogLevel.Debug);
             GlobalServices.Logger.Log("Getting ClientBuilder from client.", LogLevel.Debug);
+            //Setup the client callback.
             BuildClient();
             GlobalServices.Logger.Log("Received registration object from client.", LogLevel.Info);
             this._interface.Settings = Settings;
             GlobalServices.Logger.Log("Processing registration object.", LogLevel.Debug);
             _interface.Client.ClientCallback.TellMessage("Processing registration object.", LogLevel.Debug);
             PerformAuthentication(Settings);
+            //Setup the prompt if it is a command-line client.
             if (_interface.Client.ClientType == ClientType.CommandLine && ServerStartup.proxyChannelFactory == null)
             {
                 _interface.Client.ClientCallback.ChangePrompt(new RemotePlusLibrary.Extension.CommandSystem.PromptBuilder()
@@ -128,8 +128,8 @@ namespace RemotePlusServer
                     CurrentUser = _interface.LoggedInUser.Credentials.Username
                 });
             }
+            //Publish the LoginEvent onto the event bus, notifying listeners that the user has attempted to login.
             ServerManager.EventBus.Publish(new LoginEvent(_interface.Registered, this));
-            // OperationContext.Current.OperationCompleted += (sender, e) => _interface.Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
         }
 
         private void BuildClient()
@@ -145,7 +145,7 @@ namespace RemotePlusServer
             }
         }
 
-        const string REG_FAILED = "Registiration failed. The most likely cause is invalid credentials or this account has been blocked. Make sure that the provided credentials are correct and also make sure the account was not blocked. If you still receive this error message, please check the server logs for more details.";
+        const string REG_FAILED = "Registration failed. The most likely cause is invalid credentials or this account has been blocked. Make sure that the provided credentials are correct and also make sure the account was not blocked. If you still receive this error message, please check the server logs for more details.";
         private void PerformAuthentication(RegisterationObject regObject)
         {
             UserAccount account = null;
@@ -241,7 +241,7 @@ namespace RemotePlusServer
             // OperationContext.Current.OperationCompleted += (sender, e) => _interface.Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
             if (CheckRegisteration("GetServerSettings"))
             {
-                GlobalServices.Logger.Log("Retreiving server settings.", LogLevel.Info);
+                GlobalServices.Logger.Log("Retrieving server settings.", LogLevel.Info);
                 return ServerManager.DefaultSettings;
             }
             else
@@ -429,8 +429,7 @@ namespace RemotePlusServer
             try
             {
                 GlobalServices.Logger.Log("Running script file.", LogLevel.Info, "Server Host");
-                bool success = ServerManager.ScriptBuilder.ExecuteString(script);
-                return success;
+                return ServerManager.ScriptBuilder.ExecuteString(script);
             }
             catch (Exception ex)
             {

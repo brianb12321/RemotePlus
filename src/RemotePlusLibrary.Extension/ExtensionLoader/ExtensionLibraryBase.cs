@@ -15,15 +15,17 @@ namespace RemotePlusLibrary.Extension.ExtensionLoader
     /// <typeparam name="T">The extension that the library type will load</typeparam>
     public abstract class ExtensionLibraryBase<T>
     {
-        public List<RequiresDependencyAttribute> Dependencies { get; private set; }
-        public Dictionary<string, T> Extensions { get; private set; }
-        public string FriendlyName { get; private set; }
-        public string Name { get; private set; }
-        public ExtensionLibraryType LibraryType { get; private set; }
-        public Guid Guid { get; private set; }
-        public Version Version { get; private set; }
-        protected ExtensionLibraryBase(string friendlyName, string name, ExtensionLibraryType type, Guid g, RequiresDependencyAttribute[] deps, Version v)
+        public List<RequiresDependencyAttribute> Dependencies { get; }
+        public Dictionary<string, T> Extensions { get; }
+        public string FriendlyName { get; }
+        public string Name { get; }
+        public ExtensionLibraryType LibraryType { get; }
+        public Guid Guid { get; }
+        public Version Version { get; }
+        private Assembly _assembly;
+        protected ExtensionLibraryBase(Assembly assembly, string friendlyName, string name, ExtensionLibraryType type, Guid g, RequiresDependencyAttribute[] deps, Version v)
         {
+            _assembly = assembly;
             FriendlyName = friendlyName;
             Name = name;
             LibraryType = type;

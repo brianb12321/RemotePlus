@@ -6,10 +6,7 @@ using RemotePlusLibrary.Extension.ExtensionLoader.Initialization;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RemotePlusServer.Core.ExtensionSystem
 {
@@ -19,15 +16,13 @@ namespace RemotePlusServer.Core.ExtensionSystem
         {
             throw new NotImplementedException();
         }
-
-        public override void LoadExtension(string path, Action<string, LogLevel> callback, IInitEnvironment env)
+        private void internalLoadExtension(Assembly a, Action<string, LogLevel> callback, IInitEnvironment env)
         {
             ServerExtensionLibrary lib;
-            Assembly a = Assembly.LoadFrom(path);
             ExtensionLibraryAttribute ea = a.GetCustomAttribute<ExtensionLibraryAttribute>();
             if (ea != null)
             {
-                if(Libraries.ContainsKey(ea.Name))
+                if (Libraries.ContainsKey(ea.Name))
                 {
                     throw new InvalidExtensionLibraryException($"The extension library '{ea.Name}' is already in the system.");
                 }
@@ -56,7 +51,7 @@ namespace RemotePlusServer.Core.ExtensionSystem
                         ServerLibraryBuilder builder = new ServerLibraryBuilder(ea.Name, ea.FriendlyName, ea.Version, ea.LibraryType);
                         st.Init(builder, env);
                         callback("finished initialization.", LogLevel.Info);
-                        lib = new ServerExtensionLibrary(ea.FriendlyName, ea.Name, ea.LibraryType, guid, deps, version);
+                        lib = new ServerExtensionLibrary(a, ea.FriendlyName, ea.Name, ea.LibraryType, guid, deps, version);
                     }
                 }
                 else
@@ -69,6 +64,18 @@ namespace RemotePlusServer.Core.ExtensionSystem
                 throw new InvalidExtensionLibraryException("The library does not have an ExtensionLibraryAttrubte.");
             }
             Libraries.Add(lib.Name, lib);
+        }
+        public override void LoadExtension(string path, Action<string, LogLevel> callback, IInitEnvironment env)
+        {
+            Assembly a = Assembly.LoadFrom(path);
+            try
+            {
+                internalLoadExtension(a, callback, env);
+            }
+            catch
+            {
+                throw;
+            }
         }
         private RequiresDependencyAttribute[] LoadDependencies(Assembly a, Action<string, LogLevel> callback, IInitEnvironment env)
         {
@@ -142,7 +149,7 @@ namespace RemotePlusServer.Core.ExtensionSystem
                         try
                         {
                             GlobalServices.Logger.Log($"Found extension file ({Path.GetFileName(files)})", LogLevel.Info);
-                            env.PreviousError = GlobalServices.Logger.ErrorCount > 0 ? true : false;
+                            env.PreviousError = GlobalServices.Logger.ErrorCount > 0;
                             LoadExtension(files, (m, o) => GlobalServices.Logger.Log(m, o), env);
                         }
                         catch (Exception ex)
@@ -157,6 +164,19 @@ namespace RemotePlusServer.Core.ExtensionSystem
             else
             {
                 GlobalServices.Logger.Log("The extensions folder does not exist.", LogLevel.Info);
+            }
+        }
+
+        public override void LoadExtension(byte[] data, Action<string, LogLevel> callback, IInitEnvironment env)
+        {
+            Assembly a = Assembly.Load(data);
+            try
+            {
+                internalLoadExtension(a, callback, env);
+            }
+            catch
+            {
+                throw;
             }
         }
     }

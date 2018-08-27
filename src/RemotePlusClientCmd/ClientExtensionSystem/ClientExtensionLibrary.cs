@@ -4,18 +4,14 @@ using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusLibrary.Extension.ExtensionLoader;
 using RemotePlusLibrary.Extension.ExtensionLoader.Initialization;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RemotePlusClientCmd.ClientExtensionSystem
 {
     public class ClientExtensionLibrary : ExtensionLibraryBase<CommandDelegate>
     {
-        protected ClientExtensionLibrary(string friendlyName, string name, ExtensionLibraryType type, Guid g, RequiresDependencyAttribute[] deps, Version v) : base(friendlyName, name, type, g, deps, v)
+        protected ClientExtensionLibrary(Assembly assembly, string friendlyName, string name, ExtensionLibraryType type, Guid g, RequiresDependencyAttribute[] deps, Version v) : base(assembly, friendlyName, name, type, g, deps, v)
         {
         }
 
@@ -47,7 +43,7 @@ namespace RemotePlusClientCmd.ClientExtensionSystem
                     {
                         var st = (ILibraryStartup)Activator.CreateInstance(ea.Startup);
                         st.Init(new ClientLibraryBuilder(ea.Name, ea.FriendlyName, ea.Version, ea.LibraryType), env);
-                        lib = new ClientExtensionLibrary(ea.FriendlyName, ea.Name, ea.LibraryType, guid, deps, version);
+                        lib = new ClientExtensionLibrary(a, ea.FriendlyName, ea.Name, ea.LibraryType, guid, deps, version);
                         foreach (Type t in a.GetTypes())
                         {
                             if (t.IsClass == true && (typeof(CommandDelegate).IsAssignableFrom(t)))

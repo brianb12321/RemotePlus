@@ -24,10 +24,7 @@ namespace RemotePlusClient.UIForms
         }
         public void Log(string message, LogLevel level)
         {
-            switch(level)
-            {
-                //TODO: Add custom color
-            }
+            //TODO: Add custom color
             _textBox.AppendText(message + Environment.NewLine);
         }
     }

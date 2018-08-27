@@ -3,7 +3,6 @@ using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Speech.Synthesis;
@@ -14,10 +13,10 @@ using RemotePlusLibrary.RequestSystem;
 using RemotePlusLibrary.Scripting.ScriptPackageEngine;
 using System.Drawing;
 using BetterLogger;
-using RemotePlusLibrary.Core.IOC;
 using RemotePlusLibrary;
 using RemotePlusLibrary.FileTransfer.Service.PackageSystem;
 using System.Media;
+using System.Net;
 
 namespace RemotePlusServer.Core
 {
@@ -466,6 +465,30 @@ namespace RemotePlusServer.Core
                 return new CommandResponse((int)CommandStatus.Fail);
             }
         }
+        [CommandHelp("Loads an extension library from an external url.")]
+        public static CommandResponse loadExtensionLibraryRemote(CommandRequest args, CommandPipeline pipe)
+        {
+            if (args.Arguments.Count < 2)
+            {
+                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText("You must provide a url.") { TextColor = Color.Red });
+                return new CommandResponse((int)CommandStatus.Fail);
+            }
+            else
+            {
+                try
+                {
+                    WebClient client = new WebClient();
+                    var extensionData = client.DownloadData(args.Arguments[1].Value);
+                    ServerManager.DefaultCollection.LoadExtension(extensionData, (m, l) => ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(m, l), new ServerInitEnvironment(false));
+                    client.Dispose();
+                    return new CommandResponse((int)CommandStatus.Success);
+                }
+                catch
+                {
+                    throw;
+                }
+            }
+        }
         [CommandHelp("Copies a specified file to a new file.")]
         public static CommandResponse cp(CommandRequest args, CommandPipeline pipe)
         {
@@ -580,6 +603,7 @@ namespace RemotePlusServer.Core
             ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(RequestBuilder.RequestFile());
             return new CommandResponse((int)CommandStatus.Success);
         }
+
         [CommandHelp("Plays an audio file sent by the client.")]
         public static CommandResponse playAudio(CommandRequest req, CommandPipeline pipe)
         {

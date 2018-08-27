@@ -14,7 +14,7 @@ namespace RemotePlusClient.ExtensionSystem
 {
     public class ClientExtensionLibrary : ExtensionLibraryBase<IClientExtension>
     {
-        private ClientExtensionLibrary(string friendlyName, string name, ExtensionLibraryType type, Guid g, RequiresDependencyAttribute[] deps, Version v) : base(friendlyName, name, type, g, deps, v)
+        private ClientExtensionLibrary(Assembly assembly, string friendlyName, string name, ExtensionLibraryType type, Guid g, RequiresDependencyAttribute[] deps, Version v) : base(assembly, friendlyName, name, type, g, deps, v)
         {
         }
         public static ClientExtensionLibrary LoadClientLibrary(string fileName, Action<IClientExtension> callback, Action<string, LogLevel> logCallback, IInitEnvironment env)
@@ -45,7 +45,7 @@ namespace RemotePlusClient.ExtensionSystem
                     {
                         var st = (ILibraryStartup)Activator.CreateInstance(ea.Startup);
                         st.Init(new ClientLibraryBuilder(ea.Name, ea.FriendlyName, ea.Version, ea.LibraryType), env);
-                        lib = new ClientExtensionLibrary(ea.FriendlyName, ea.Name, ea.LibraryType, guid, deps, version);
+                        lib = new ClientExtensionLibrary(a, ea.FriendlyName, ea.Name, ea.LibraryType, guid, deps, version);
                         foreach (Type t in a.GetTypes())
                         {
                             if (t.IsClass == true && (typeof(IClientExtension).IsAssignableFrom(t)))

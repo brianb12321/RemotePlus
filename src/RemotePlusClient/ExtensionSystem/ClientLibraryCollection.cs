@@ -30,5 +30,10 @@ namespace RemotePlusClient.ExtensionSystem
         {
             throw new NotImplementedException();
         }
+
+        public override void LoadExtension(byte[] data, Action<string, LogLevel> callback, IInitEnvironment env)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

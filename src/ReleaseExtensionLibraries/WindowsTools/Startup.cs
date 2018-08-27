@@ -15,7 +15,7 @@ namespace WindowsTools
             ServerManager.ServerRemoteService.Commands.Add("sendKey", OSCommands.sendKey);
             GlobalServices.Logger.Log("Adding dskClean command", LogLevel.Info, "WindowsTools");
             ServerManager.ServerRemoteService.Commands.Add("dskClean", dskClean.dskCleanCommand);
-            GlobalServices.Logger.Log("Adding filem command", LogLevel.Info, "WindowsTools");
+            GlobalServices.Logger.Log("Adding fileM command", LogLevel.Info, "WindowsTools");
             ServerManager.ServerRemoteService.Commands.Add("fileM", Filem.filem_command);
             ServerManager.ServerRemoteService.Commands.Add("openDiskDrive", OSCommands.openDiskDrive);
             ServerManager.ServerRemoteService.Commands.Add("drives", OSCommands.drives);
@@ -23,7 +23,6 @@ namespace WindowsTools
             ServerManager.ServerRemoteService.Commands.Add("blockInputI", OSCommands.blockInputI);
             ServerManager.ServerRemoteService.Commands.Add("setVolume", OSCommands.setVolume);
             ServerManager.EventBus.Subscribe<LoginEvent>(e => ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Welcome to WindowsTools!"), e => e.LoginSuccessful);
-            //RemotePlusServer.ScriptingEngine.ScriptBuilder.AddFunction<Action>("runFileM", () => ServerManager.ServerRemoteService.RemoteInterface.RunServerCommand("fileM", CommandExecutionMode.Script));
         }
     }
 }

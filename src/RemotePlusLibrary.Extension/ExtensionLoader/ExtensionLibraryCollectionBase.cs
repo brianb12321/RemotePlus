@@ -17,5 +17,6 @@ namespace RemotePlusLibrary.Extension.ExtensionLoader
         }
         public abstract Dictionary<string, E> GetAllExtensions();
         public abstract void LoadExtension(string path, Action<string, LogLevel> callback, IInitEnvironment env);
+        public abstract void LoadExtension(byte[] data, Action<string, LogLevel> callback, IInitEnvironment env);
     }
 }

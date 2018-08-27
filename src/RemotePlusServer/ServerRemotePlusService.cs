@@ -22,18 +22,21 @@ namespace RemotePlusLibrary
     /// <typeparam name="I">The implementation of the service to use.</typeparam>
     public class ServerRemotePlusService : IRemotePlusService<ServerRemoteInterface>
     {
-        public ServiceHost Host { get; private set; }
+        public ServiceHost Host { get; }
 
-        public RemoteImpl Remote { get; private set; }
+        public RemoteImpl Remote { get; }
 
         public Dictionary<string, CommandDelegate> Commands { get; set; } = new Dictionary<string, CommandDelegate>();
         public VariableManager Variables { get; set; }
-        public ServerRemoteInterface RemoteInterface { get; private set; } = new ServerRemoteInterface();
+        public ServerRemoteInterface RemoteInterface { get; } = new ServerRemoteInterface();
 
         /// <summary>
         /// Creates a new instance of the <see cref="RemotePlusService{I}"/> class
         /// </summary>
+        /// <param name="contractType"></param>
         /// <param name="singleTon">The instance of the service implementation.</param>
+        /// <param name="binding"></param>
+        /// <param name="address"></param>
         /// <param name="portNumber">The port number to use for listening.</param>
         /// <param name="setupCallback">The function to call when setting up the service implementation.</param>
         protected ServerRemotePlusService(Type contractType, RemoteImpl singleTon, Binding binding, string address, Action<RemoteImpl> setupCallback)
@@ -44,6 +47,7 @@ namespace RemotePlusLibrary
             Host = new ServiceHost(Remote);
             Host.AddServiceEndpoint(contractType, binding, address);
         }
+
         protected ServerRemotePlusService(Binding b, RemoteImpl singleTon, Action<RemoteImpl> setupCallback)
         {
             Commands = new Dictionary<string, CommandDelegate>();
