@@ -201,7 +201,7 @@ namespace ProxyServer
             }
             tempClient.Channel.Faulted += (sender, e) =>
             {
-                var closedClient = ConnectedServers.First(s => s.Channel == tempClient.Channel);
+                var closedClient = ConnectedServers.FirstOrDefault(s => s.Channel == tempClient.Channel);
                 GlobalServices.Logger.Log($"Server [{closedClient.UniqueID}] closed without proper shutdown.", LogLevel.Info);
                 ConnectedServers.Remove(closedClient);
                 if (SelectedClient == closedClient)
@@ -256,7 +256,7 @@ namespace ProxyServer
 
         public void SelectServer(Guid guid)
         {
-            SelectedClient = ConnectedServers.First(s => s.UniqueID == guid);
+            SelectedClient = ConnectedServers.FirstOrDefault(s => s.UniqueID == guid);
             if (SelectedClient == null)
             {
                 ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyManager.ProxyGuid, "The requested server is not connected.");
@@ -447,7 +447,7 @@ namespace ProxyServer
         #endregion
         public void Leave(Guid serverGuid)
         {
-            var foundServer = ConnectedServers.First(s => s.UniqueID == serverGuid);
+            var foundServer = ConnectedServers.FirstOrDefault(s => s.UniqueID == serverGuid);
             if(foundServer != null)
             {
                 GlobalServices.Logger.Log($"Server [{foundServer.UniqueID}] disconnected gracefully.", LogLevel.Info);

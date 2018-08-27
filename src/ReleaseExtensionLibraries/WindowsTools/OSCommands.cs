@@ -88,10 +88,17 @@ namespace WindowsTools
         [CommandHelp("Toggles the mute on the server.")]
         public static CommandResponse toggleMute(CommandRequest args, CommandPipeline pipe)
         {
-            MMDeviceEnumerator enumerator = new NAudio.CoreAudioApi.MMDeviceEnumerator();
+            MMDeviceEnumerator enumerator = new MMDeviceEnumerator();
             foreach(MMDevice device in enumerator.EnumerateAudioEndPoints(DataFlow.All, DeviceState.All))
             {
-                device.AudioEndpointVolume.Mute = !device.AudioEndpointVolume.Mute;
+                try
+                {
+                    device.AudioEndpointVolume.Mute = !device.AudioEndpointVolume.Mute;
+                }
+                catch
+                {
+
+                }
             }
             return new CommandResponse((int)CommandStatus.Success);
         }
