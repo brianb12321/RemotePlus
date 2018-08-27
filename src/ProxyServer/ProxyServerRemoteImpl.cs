@@ -13,7 +13,6 @@ using RemotePlusLibrary.Security.AccountSystem;
 using System.Speech.Synthesis;
 using System.Windows.Forms;
 using RemotePlusLibrary.Core;
-using System.Text.RegularExpressions;
 using System.Reflection;
 using RemotePlusLibrary.Configuration.ServerSettings;
 using RemotePlusLibrary.Client;
@@ -208,6 +207,7 @@ namespace ProxyServer
                 if (SelectedClient == closedClient)
                 {
                     Task.Run(() => ProxyClient.ClientCallback.RequestInformation(ProxyManager.ProxyGuid, RequestBuilder.RequestMessageBox($"Server [{SelectedClient.UniqueID}] has disconnected without proper shutdown. Please select another server to be the active server.", "Proxy Server", MessageBoxButtons.OK, MessageBoxIcon.Information)));
+                    SelectedClient = null;
                 }
             };
             tempClient.ClientCallback.ServerRegistered(tempClient.UniqueID);
@@ -352,27 +352,27 @@ namespace ProxyServer
             return SelectedClient.UniqueID;
         }
         #region Command Methods
-        public CommandPipeline ExecuteProxyCommand(string Command, CommandExecutionMode mode)
+        public CommandPipeline ExecuteProxyCommand(string command, CommandExecutionMode mode)
         {
             CommandPipeline pipe = new CommandPipeline();
             int pos = 0;
-            if (Command.StartsWith("::") && mode == CommandExecutionMode.Client)
+            if (command.StartsWith("::") && mode == CommandExecutionMode.Client)
             {
                 try
                 {
-                    ProxyManager.ScriptBuilder.ExecuteStringUsingSameScriptScope(Command.TrimStart(':'));
+                    ProxyManager.ScriptBuilder.ExecuteStringUsingSameScriptScope(command.TrimStart(':'));
                 }
                 catch (Exception ex)
                 {
                     ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyManager.ProxyGuid, $"Could not execute script file: {ex.Message}", LogLevel.Error, ScriptBuilder.SCRIPT_LOG_CONSTANT);
                 }
             }
-            //Sends a script command to the selected server.
-            else if(Command.StartsWith("=>::") && mode == CommandExecutionMode.Client)
+            //Sends the command directly to the selected server.
+            else if(command.StartsWith("=>"))
             {
                 try
                 {
-                    return SelectedClient.ClientCallback.RunServerCommand(Command.Remove(0, 2), CommandExecutionMode.Client);
+                    return SelectedClient.ClientCallback.RunServerCommand(command.Remove(0, 2), mode);
                 }
                 catch (Exception ex)
                 {
@@ -390,12 +390,12 @@ namespace ProxyServer
                     processor.ConfigureProcessor(ProxyManager.ProxyService.Variables, executor);
                     try
                     {
-                        parser.ResetCommand(Command);
+                        parser.ResetCommand(command);
                         var tokens = parser.Parse(true);
                         var newTokens = processor.RunSubRoutines(parser, pipe, pos);
                         ReplaceTokens(newTokens, parser);
                         var newVariableTokens = processor.RunVariableReplacement(parser, out bool success);
-                        if (success != true)
+                        if (!success)
                         {
                             return pipe;
                         }
@@ -409,7 +409,7 @@ namespace ProxyServer
                             var routine = new CommandRoutine(request, executor.Execute(request, mode, pipe));
                             if (routine.Output.ResponseCode == 3131)
                             {
-                                RunServerCommand(Command, CommandExecutionMode.Client);
+                                RunServerCommand(command, CommandExecutionMode.Client);
                             }
                             pipe.Add(pos++, routine);
                         }

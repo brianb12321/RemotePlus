@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using RemotePlusLibrary;
 using System.Reflection;
 using System.Windows.Forms;
 using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
-using RemotePlusLibrary.Extension;
-using RemotePlusLibrary.Client;
 using BetterLogger;
 using System.IO;
 using RemotePlusLibrary.Core.IOC;
@@ -101,7 +97,6 @@ namespace ProxyServer
             {
                 helpString = RemotePlusConsole.ShowHelp(ProxyService.Commands);
             }
-            ProxyService.RemoteInterface.ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyGuid, helpString);
             ProxyService.RemoteInterface.ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyGuid, helpString);
             ProxyService.RemoteInterface.ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyGuid, "\nAny commands not listed on this list will be executed on the selected server.\n");
             var response = new CommandResponse((int)CommandStatus.Success);

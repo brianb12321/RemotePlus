@@ -22,6 +22,7 @@ namespace WindowsTools
             ServerManager.ServerRemoteService.Commands.Add("setMousePos", OSCommands.setMousePos);
             ServerManager.ServerRemoteService.Commands.Add("blockInputI", OSCommands.blockInputI);
             ServerManager.ServerRemoteService.Commands.Add("setVolume", OSCommands.setVolume);
+            ServerManager.ServerRemoteService.Commands.Add("toggleMute", OSCommands.toggleMute);
             ServerManager.EventBus.Subscribe<LoginEvent>(e => ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Welcome to WindowsTools!"), e => e.LoginSuccessful);
         }
     }

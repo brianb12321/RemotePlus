@@ -84,5 +84,11 @@ namespace WindowsTools
                 }
             }
         }
+        [CommandHelp("Toggles the mute on the server.")]
+        public static CommandResponse toggleMute(CommandRequest args, CommandPipeline pipe)
+        {
+            Win32Wrapper.ToggleMute();
+            return new CommandResponse((int)CommandStatus.Success);
+        }
     }
 }
