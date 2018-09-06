@@ -154,7 +154,7 @@ Please look at the `IRemote.cs` for your answer. If you want a more user friendl
 ### Server Core Is Missing
 If you receive the follwing error while starting up RemotePlusServer:
 ```
-elcome to RemotePlusServer, version: 1.0.0.0
+Welcome to RemotePlusServer, version: 1.0.0.0
 
 
 Starting server core to setup and initialize services.
