@@ -1,21 +1,20 @@
-﻿using BetterLogger;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
+using BetterLogger;
 using RemotePlusLibrary.Core;
 using RemotePlusLibrary.Extension;
 using RemotePlusLibrary.Extension.ExtensionLoader;
 using RemotePlusLibrary.Extension.ExtensionLoader.Initialization;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
 
-namespace RemotePlusServer.Core.ExtensionSystem
+namespace ProxyServer.ExtensionSystem
 {
-    public class ServerExtensionLibraryCollection : ExtensionLibraryCollectionBase<ServerExtensionLibrary>
+    public class ProxyExtensionCollection : ExtensionLibraryCollectionBase<ProxyExtensionLibrary>
     {
-        const string EXTENSION_LOADER = "Extension Loader";
         private void internalLoadExtension(Assembly a, IInitEnvironment env)
         {
-            ServerExtensionLibrary lib;
+            ProxyExtensionLibrary lib;
             ExtensionLibraryAttribute ea = a.GetCustomAttribute<ExtensionLibraryAttribute>();
             if (ea != null)
             {
@@ -28,14 +27,14 @@ namespace RemotePlusServer.Core.ExtensionSystem
                     Guid guid = Guid.Empty;
                     try
                     {
-                        guid = ExtensionLibraryBase.ParseGuid(ea.Guid);
+                        guid = ProxyExtensionLibrary.ParseGuid(ea.Guid);
                     }
                     catch (FormatException)
                     {
                         guid = Guid.NewGuid();
                         GlobalServices.Logger.Log($"Unable to parse GUID. Using random generated GUID. GUID: [{guid.ToString()}]", LogLevel.Warning);
                     }
-                    Version version = ServerExtensionLibrary.ParseVersion(ea.Version);
+                    Version version = ProxyExtensionLibrary.ParseVersion(ea.Version);
                     var deps = LoadDependencies(a, env);
                     if (!typeof(ILibraryStartup).IsAssignableFrom(ea.Startup))
                     {
@@ -44,11 +43,11 @@ namespace RemotePlusServer.Core.ExtensionSystem
                     else
                     {
                         var st = (ILibraryStartup)Activator.CreateInstance(ea.Startup);
-                        GlobalServices.Logger.Log("Beginning initialization.", LogLevel.Info, EXTENSION_LOADER);
-                        ServerLibraryBuilder builder = new ServerLibraryBuilder(ea.Name, ea.FriendlyName, ea.Version, ea.LibraryType);
+                        GlobalServices.Logger.Log("Beginning initialization.", LogLevel.Info);
+                        ProxyLibraryBuilder builder = new ProxyLibraryBuilder(ea.Name, ea.FriendlyName, ea.Version, ea.LibraryType);
                         st.Init(builder, env);
-                        GlobalServices.Logger.Log("finished initialization.", LogLevel.Info, EXTENSION_LOADER);
-                        lib = new ServerExtensionLibrary(a, ea.FriendlyName, ea.Name, ea.LibraryType, guid, deps, version);
+                        GlobalServices.Logger.Log("finished initialization.", LogLevel.Info);
+                        lib = new ProxyExtensionLibrary(a, ea.FriendlyName, ea.Name, ea.LibraryType, guid, deps, version);
                     }
                 }
                 else
@@ -76,13 +75,13 @@ namespace RemotePlusServer.Core.ExtensionSystem
         }
         private RequiresDependencyAttribute[] LoadDependencies(Assembly a, IInitEnvironment env)
         {
-            GlobalServices.Logger.Log($"Searching dependencies for {a.GetName().Name}", LogLevel.Info, EXTENSION_LOADER);
+            GlobalServices.Logger.Log($"Searching dependencies for {a.GetName().Name}", LogLevel.Info);
             RequiresDependencyAttribute[] deps = ExtensionLibraryBase.FindDependencies(a);
             foreach (RequiresDependencyAttribute d in deps)
             {
                 if (File.Exists(d.DependencyName))
                 {
-                    GlobalServices.Logger.Log($"Found dependency {d.DependencyName}", LogLevel.Info, EXTENSION_LOADER);
+                    GlobalServices.Logger.Log($"Found dependency {d.DependencyName}", LogLevel.Info);
                     if (d.DependencyType != DependencyType.Resource)
                     {
                         try
@@ -96,7 +95,7 @@ namespace RemotePlusServer.Core.ExtensionSystem
                             {
                                 if (d.LoadIfNotLoaded && d.DependencyType == DependencyType.RemotePlusLib)
                                 {
-                                    GlobalServices.Logger.Log($"Loading dependency {d.DependencyName}", LogLevel.Info, EXTENSION_LOADER);
+                                    GlobalServices.Logger.Log($"Loading dependency {d.DependencyName}", LogLevel.Info);
                                     LoadExtension(d.DependencyName, env);
                                 }
                             }
@@ -125,42 +124,42 @@ namespace RemotePlusServer.Core.ExtensionSystem
         public void LoadExtensionsInFolder()
         {
             List<string> excludedFiles = new List<string>();
-            GlobalServices.Logger.Log("Loading extensions...", LogLevel.Info, EXTENSION_LOADER);
+            GlobalServices.Logger.Log("Loading extensions...", LogLevel.Info);
             if (Directory.Exists("extensions"))
             {
                 if (File.Exists("extensions\\excludes.txt"))
                 {
-                    GlobalServices.Logger.Log("Found an excludes.txt file. Reading file...", LogLevel.Info, EXTENSION_LOADER);
+                    GlobalServices.Logger.Log("Found an excludes.txt file. Reading file...", LogLevel.Info);
                     foreach (string excludedFile in File.ReadLines("extensions\\excludes.txt"))
                     {
-                        GlobalServices.Logger.Log($"{excludedFile} is excluded from the extension search.", LogLevel.Info, EXTENSION_LOADER);
+                        GlobalServices.Logger.Log($"{excludedFile} is excluded from the extension search.", LogLevel.Info);
                         excludedFiles.Add("extensions\\" + excludedFile);
                     }
-                    GlobalServices.Logger.Log("Finished reading extension exclusion file.", LogLevel.Info, EXTENSION_LOADER);
+                    GlobalServices.Logger.Log("Finished reading extension exclusion file.", LogLevel.Info);
                 }
-                ServerInitEnvironment env = new ServerInitEnvironment(false);
+                ProxyInitEnvironment env = new ProxyInitEnvironment(false);
                 foreach (string files in Directory.GetFiles("extensions"))
                 {
                     if (Path.GetExtension(files) == ".dll" && !excludedFiles.Contains(files))
                     {
                         try
                         {
-                            GlobalServices.Logger.Log($"Found extension file ({Path.GetFileName(files)})", LogLevel.Info, EXTENSION_LOADER);
+                            GlobalServices.Logger.Log($"Found extension file ({Path.GetFileName(files)})", LogLevel.Info);
                             env.PreviousError = GlobalServices.Logger.ErrorCount > 0;
                             LoadExtension(files, env);
                         }
                         catch (Exception ex)
                         {
-                            GlobalServices.Logger.Log($"Could not load \"{files}\" because of a load error or initialization error. Error: {ex.Message}", LogLevel.Warning, EXTENSION_LOADER);
+                            GlobalServices.Logger.Log($"Could not load \"{files}\" because of a load error or initialization error. Error: {ex.Message}", LogLevel.Warning);
                         }
                         env.InitPosition++;
                     }
                 }
-                GlobalServices.Logger.Log($"{ServerManager.DefaultCollection.Libraries.Count} extension libraries loaded.", LogLevel.Info, EXTENSION_LOADER);
+                GlobalServices.Logger.Log($"{ProxyManager.DefaultCollection.Libraries.Count} extension libraries loaded.", LogLevel.Info);
             }
             else
             {
-                GlobalServices.Logger.Log("The extensions folder does not exist.", LogLevel.Info, EXTENSION_LOADER);
+                GlobalServices.Logger.Log("The extensions folder does not exist.", LogLevel.Info);
             }
         }
 

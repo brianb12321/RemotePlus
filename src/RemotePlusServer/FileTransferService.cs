@@ -23,28 +23,6 @@ namespace RemotePlusServer
         public Dictionary<string, CommandDelegate> Commands { get; set; } = new Dictionary<string, CommandDelegate>();
         public VariableManager Variables { get; set; }
         public FileTransferServciceInterface RemoteInterface { get; private set; }
-
-        /// <summary>
-        /// Creates a new instance of the <see cref="FileTransferService"/> class
-        /// </summary>
-        /// <param name="singleTon">The instance of the service implementation.</param>
-        /// <param name="portNumber">The port number to use for listening.</param>
-        /// <param name="setupCallback">The function to call when setting up the service implementation.</param>
-        protected FileTransferService(Type contractType, RemoteImpl singleTon, Binding binding, string address, Action<RemoteImpl> setupCallback)
-        {
-            Commands = new Dictionary<string, CommandDelegate>();
-            Remote = singleTon;
-            setupCallback?.Invoke(Remote);
-            Host = new ServiceHost(Remote);
-            Host.AddServiceEndpoint(contractType, binding, address);
-        }
-        protected FileTransferService(Binding b, RemoteImpl singleTon, Action<RemoteImpl> setupCallback)
-        {
-            Commands = new Dictionary<string, CommandDelegate>();
-            Remote = singleTon;
-            setupCallback?.Invoke(Remote);
-            Host = new ServiceHost(Remote);
-        }
         private FileTransferService(Type contractType, Binding binding, string address)
         {
             Commands = new Dictionary<string, CommandDelegate>();
@@ -101,33 +79,6 @@ namespace RemotePlusServer
         public void Close()
         {
             Host.Close();
-        }
-        /// <summary>
-        /// Creates a new server object that can be opened.
-        /// </summary>
-        /// <param name="singleTon">The instance of a service implementation</param>
-        /// <param name="port">The port number to use for listening.</param>
-        /// <param name="callback">The callback to use when an event occures for logging.</param>
-        /// <param name="setupCallback">The callback to use when setting up the service implementation.</param>
-        /// <returns></returns>
-        public static IRemotePlusService<FileTransferServciceInterface> CreateNotSingle(Type contractType, int port, string defaultEndpoint, Action<string, LogLevel> callback)
-        {
-            FileTransferService temp;
-            callback?.Invoke("Building endpoint URL.", LogLevel.Debug);
-            string url = $"net.tcp://0.0.0.0:{port}/{defaultEndpoint}";
-            callback?.Invoke($"URL built {url}", LogLevel.Debug);
-            callback?.Invoke("Creating server.", LogLevel.Debug);
-            callback?.Invoke("Publishing server events.", LogLevel.Debug);
-            NetTcpBinding binding = _ConnectionFactory.BuildBinding();
-            StringBuilder dataBuilder = new StringBuilder();
-            dataBuilder.AppendLine("Binding configurations:");
-            dataBuilder.AppendLine();
-            dataBuilder.AppendLine($"MaxBufferPoolSize: {binding.MaxBufferPoolSize}");
-            dataBuilder.AppendLine($"MaxBufferSize: {binding.MaxBufferSize}");
-            dataBuilder.AppendLine($"MaxReceivedMessageSize: {binding.MaxReceivedMessageSize}");
-            callback?.Invoke(dataBuilder.ToString(), LogLevel.Debug);
-            temp = new FileTransferService(contractType, binding, url);
-            return temp;
         }
         public static IRemotePlusService<FileTransferServciceInterface> CreateNotSingle(Type contractType, int port, Binding binding, string defaultEndpoint, Action<string, LogLevel> callback)
         {

@@ -7,6 +7,7 @@ using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing;
 using RemotePlusLibrary.Scripting;
 using RemotePlusLibrary.Security.AccountSystem;
+using RemotePlusLibrary.Core;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

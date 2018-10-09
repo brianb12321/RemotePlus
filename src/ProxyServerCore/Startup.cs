@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using BetterLogger.Loggers;
 using RemotePlusLibrary.Core.IOC;
 using ProxyServer;
@@ -11,7 +7,8 @@ using RemotePlusLibrary.Discovery;
 using RemotePlusLibrary;
 using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing;
-using RemotePlusLibrary.Extension.EventSystem;
+using RemotePlusLibrary.Core.EventSystem;
+using RemotePlusLibrary.Core;
 
 namespace ProxyServerCore
 {

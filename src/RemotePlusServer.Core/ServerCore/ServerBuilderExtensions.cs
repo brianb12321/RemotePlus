@@ -190,14 +190,14 @@ namespace RemotePlusServer.Core.ServerCore
                 if (!File.Exists("Configurations\\Server\\GlobalServerSettings.config"))
                 {
                     GlobalServices.Logger.Log("The server settings file does not exist. Creating server settings file.", LogLevel.Warning);
-                    GlobalServices.DataAccess.SaveConfig(ServerManager.DefaultSettings, ServerSettings.SERVER_SETTINGS_FILE_PATH);
+                    ServerManager.DataAccess.SaveConfig(ServerManager.DefaultSettings, ServerSettings.SERVER_SETTINGS_FILE_PATH);
                 }
                 else
                 {
                     GlobalServices.Logger.Log("Loading server settings file.", LogLevel.Info);
                     try
                     {
-                        ServerManager.DefaultSettings = GlobalServices.DataAccess.LoadConfig<ServerSettings>(ServerSettings.SERVER_SETTINGS_FILE_PATH);
+                        ServerManager.DefaultSettings = ServerManager.DataAccess.LoadConfig<ServerSettings>(ServerSettings.SERVER_SETTINGS_FILE_PATH);
                     }
                     catch (Exception ex)
                     {

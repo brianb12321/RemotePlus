@@ -1,5 +1,5 @@
 ﻿using BetterLogger;
-using RemotePlusLibrary;
+using RemotePlusLibrary.Core;
 using RemotePlusLibrary.Extension.ExtensionLoader.Initialization;
 using RemotePlusServer.Core;
 

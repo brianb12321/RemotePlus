@@ -72,7 +72,7 @@ namespace RemotePlusClient.CommonUI
             associations = new FileAssociationSettings();
             if (File.Exists(FileAssociationSettings.FILE_PATH))
             {
-                associations = GlobalServices.DataAccess.LoadConfig<FileAssociationSettings>(FileAssociationSettings.FILE_PATH);
+                associations = new RemotePlusLibrary.Configuration.StandordDataAccess.ConfigurationHelper().LoadConfig<FileAssociationSettings>(FileAssociationSettings.FILE_PATH);
             }
             SetupAssociation();
             Counter = 0;

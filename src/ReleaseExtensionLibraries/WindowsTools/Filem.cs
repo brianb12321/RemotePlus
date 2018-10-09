@@ -5,7 +5,7 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Security.Principal;
-using RemotePlusLibrary;
+using RemotePlusLibrary.Core;
 using System.Windows.Forms;
 using System.Drawing;
 using RemotePlusLibrary.RequestSystem;

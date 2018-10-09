@@ -81,6 +81,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ClientLogger.cs" />
     <Compile Include="CommandExecutor.cs" />
     <Compile Include="DefaultCommands.cs" />
     <Compile Include="ExtensionSystem\ServerExtensionLibrary.cs" />

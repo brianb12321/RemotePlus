@@ -1,6 +1,6 @@
 ﻿using BetterLogger;
 using RemotePlusClientCmd.ClientExtensionSystem;
-using RemotePlusLibrary;
+using RemotePlusLibrary.Core;
 using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
 using System;
@@ -70,8 +70,7 @@ namespace RemotePlusClientCmd
             try
             {
                 GlobalServices.Logger.Log($"Loading extension library. {args.Arguments[1]}", LogLevel.Info);
-                var library = ClientExtensionLibrary.LoadClientLibrary(args.Arguments[1].Value, (m, o) => GlobalServices.Logger.Log(m, o), new ClientInitEnvironment(false));
-                ClientCmdManager.ExtensionLibraries.Libraries.Add(library.Name, library);
+                ClientCmdManager.ExtensionLibraries.LoadExtension(args.Arguments[1].Value, new ClientInitEnvironment(false));
                 GlobalServices.Logger.Log("Finished.", LogLevel.Info);
                 return new CommandResponse((int)CommandStatus.Success);
             }

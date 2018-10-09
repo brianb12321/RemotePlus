@@ -4,6 +4,7 @@ using RemotePlusServer.Core;
 using System.IO;
 using System.Net.NetworkInformation;
 using System.Security.Principal;
+using RemotePlusLibrary.Core;
 
 namespace RemotePlusServer
 {

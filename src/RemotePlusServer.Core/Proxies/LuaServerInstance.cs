@@ -2,7 +2,7 @@
 using System.ServiceModel;
 using System.Text;
 using BetterLogger;
-using RemotePlusLibrary;
+using RemotePlusLibrary.Core;
 using RemotePlusLibrary.Scripting;
 
 namespace RemotePlusServer.Core.Proxies

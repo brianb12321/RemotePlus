@@ -11,7 +11,7 @@ using BetterLogger;
 using BetterLogger.Loggers;
 using RemotePlusLibrary.Core.IOC;
 using RemotePlusLibrary;
-using RemotePlusLibrary.Extension.EventSystem;
+using RemotePlusLibrary.Core.EventSystem;
 
 namespace RemotePlusClient
 {
@@ -37,14 +37,14 @@ namespace RemotePlusClient
             Logger.Log("Loading client settings.", LogLevel.Info);
             if(File.Exists(ClientSettings.CLIENT_SETTING_PATH))
             {
-                ClientSettings = GlobalServices.DataAccess.LoadConfig<ClientSettings>(ClientSettings.CLIENT_SETTING_PATH);
+                ClientSettings = new RemotePlusLibrary.Configuration.StandordDataAccess.ConfigurationHelper().LoadConfig<ClientSettings>(ClientSettings.CLIENT_SETTING_PATH);
             }
             else
             {
                 Logger.Log("No config file exists. Creating new config file.", LogLevel.Warning);
                 ClientSettings.DefaultTheme = Theme.AwesomeWhite;
                 ClientSettings.DefaultTheme.ThemeEnabled = false;
-                GlobalServices.DataAccess.SaveConfig(ClientSettings, ClientSettings.CLIENT_SETTING_PATH);
+                new RemotePlusLibrary.Configuration.StandordDataAccess.ConfigurationHelper().SaveConfig(ClientSettings, ClientSettings.CLIENT_SETTING_PATH);
             }
             InitializeDefaultKnownTypes();
             RequestStore.Init();

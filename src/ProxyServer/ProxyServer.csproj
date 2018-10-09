@@ -60,6 +60,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommandExecutor.cs" />
+    <Compile Include="ExtensionSystem\ProxyExtensionCollection.cs" />
+    <Compile Include="ExtensionSystem\ProxyExtensionLibrary.cs" />
+    <Compile Include="ExtensionSystem\ProxyInitEnvironment.cs" />
+    <Compile Include="ExtensionSystem\ProxyLibraryBuilder.cs" />
     <Compile Include="GlobalErrorHandler.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Internal\_ClientTextWriter.cs" />

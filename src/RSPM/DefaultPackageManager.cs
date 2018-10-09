@@ -1,5 +1,6 @@
-﻿using RemotePlusLibrary;
+﻿using RemotePlusLibrary.Core;
 using RemotePlusLibrary.Extension.CommandSystem;
+using RemotePlusServer.Core;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -33,14 +34,13 @@ namespace RSPM
                     {
                         if (confirmInstallation(package.Description))
                         {
+                            var clientLogger = new ClientLogger(ServerRemoteService.RemoteInterface.Client);
                             ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Extracting package.");
                             package.ExtractWithoutManifest("extensions");
                             ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Loading extensions.");
-                            package.LoadPackageExtensions("extensions", (l, t) =>
-                            {
-                                GlobalServices.Logger.Log(l, t);
-                                ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(l, t);
-                            }, DefaultCollection);
+                            GlobalServices.Logger.AddLogger(clientLogger);
+                            package.LoadPackageExtensions("extensions", DefaultCollection);
+                            GlobalServices.Logger.RemoveLogger(clientLogger);
                             ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Finished extracting package. Deleting downloaded package.");
                         }
                         else

@@ -1,6 +1,6 @@
 ﻿
 using BetterLogger;
-using RemotePlusLibrary;
+using RemotePlusLibrary.Core;
 using RemotePlusLibrary.Core.Faults;
 using RemotePlusServer.Core;
 using System;

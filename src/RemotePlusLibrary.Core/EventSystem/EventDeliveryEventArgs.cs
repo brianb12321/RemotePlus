@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace RemotePlusLibrary.Extension.EventSystem
+namespace RemotePlusLibrary.Core.EventSystem
 {
     public class EventDeliveryEventArgs : EventArgs
     {

@@ -53,7 +53,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DefaultKnownTypeManager.cs" />
+    <Compile Include="EventSystem\EventBus.cs" />
+    <Compile Include="EventSystem\EventDeliveryEventArgs.cs" />
+    <Compile Include="EventSystem\IEventBus.cs" />
+    <Compile Include="EventSystem\LoggerEventProxy.cs" />
+    <Compile Include="EventSystem\LoginEvent.cs" />
+    <Compile Include="EventSystem\TinyMessenger.cs" />
     <Compile Include="GlobalExceptionAttribute.cs" />
+    <Compile Include="GlobalServices.cs" />
     <Compile Include="IOC\IOCContainer.cs" />
     <Compile Include="IOC\IServerBuilder.cs" />
     <Compile Include="IOC\IServerCoreStartup.cs" />

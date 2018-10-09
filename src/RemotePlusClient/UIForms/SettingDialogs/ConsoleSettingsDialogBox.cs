@@ -78,7 +78,7 @@ namespace RemotePlusClient.UIForms.SettingDialogs
 
         private void button1_Click(object sender, EventArgs e)
         {
-            GlobalServices.DataAccess.SaveConfig(settings, ConsoleSettings.CONSOLE_SETTINGS_PATH);
+            new RemotePlusLibrary.Configuration.StandordDataAccess.ConfigurationHelper().SaveConfig(settings, ConsoleSettings.CONSOLE_SETTINGS_PATH);
             MessageBox.Show("Saved", "RemotePlusClient");
             MainF.ConsoleObj.Logger.Log("Saved console config file.", LogLevel.Info);
         }

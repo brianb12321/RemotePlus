@@ -15,7 +15,8 @@ using RemotePlusLibrary.Security.AccountSystem;
 using RSPM;
 using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing;
-using RemotePlusLibrary.Extension.EventSystem;
+using RemotePlusLibrary.Core.EventSystem;
+using RemotePlusLibrary.Core;
 
 namespace DefaultServerCore
 {

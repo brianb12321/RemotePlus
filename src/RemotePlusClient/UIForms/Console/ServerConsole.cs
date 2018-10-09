@@ -52,12 +52,12 @@ namespace RemotePlusClient.UIForms.Consoles
             #region Initialize Settings
             try
             {
-                settings = GlobalServices.DataAccess.LoadConfig<ConsoleSettings>(ConsoleSettings.CONSOLE_SETTINGS_PATH);
+                settings = new RemotePlusLibrary.Configuration.StandordDataAccess.ConfigurationHelper().LoadConfig<ConsoleSettings>(ConsoleSettings.CONSOLE_SETTINGS_PATH);
             }
             catch (FileNotFoundException)
             {
                 MainF.ConsoleObj.Logger.Log("Created new console config file.", LogLevel.Info, "ServerConsole");
-                GlobalServices.DataAccess.SaveConfig(settings, ConsoleSettings.CONSOLE_SETTINGS_PATH);
+                new RemotePlusLibrary.Configuration.StandordDataAccess.ConfigurationHelper().SaveConfig(settings, ConsoleSettings.CONSOLE_SETTINGS_PATH);
             }
             #endregion Initialize Settings
             Logger = new BaseLogFactory();

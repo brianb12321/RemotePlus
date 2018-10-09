@@ -40,7 +40,7 @@ namespace RemotePlusClient.CommonUI.Connection
                 foreach(string file in Directory.GetFiles(ConnectionConfiguration.CONFIGURATION_NAME, "*.ccf", SearchOption.AllDirectories))
                 {
                     ConnectionConfiguration cc = new ConnectionConfiguration("");
-                    cc = GlobalServices.DataAccess.LoadConfig<ConnectionConfiguration>(file);
+                    cc = new RemotePlusLibrary.Configuration.StandordDataAccess.ConfigurationHelper().LoadConfig<ConnectionConfiguration>(file);
                     _connections.Add(cc);
                 }
             }

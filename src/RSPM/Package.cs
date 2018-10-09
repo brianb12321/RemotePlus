@@ -1,7 +1,6 @@
 ﻿using BetterLogger;
 using Ionic.Zip;
-using RemotePlusLibrary;
-using RemotePlusLibrary.Extension.ExtensionLoader;
+using RemotePlusLibrary.Core;
 using System;
 using System.IO;
 
@@ -24,18 +23,18 @@ namespace RSPM
             Zip.ExtractAll(location);
             File.Delete($"{location}\\package.manifest");
         }
-        public void LoadPackageExtensions(string location, Action<string, LogLevel> callback, RemotePlusServer.Core.ExtensionSystem.ServerExtensionLibraryCollection collection)
+        public void LoadPackageExtensions(string location, RemotePlusServer.Core.ExtensionSystem.ServerExtensionLibraryCollection collection)
         {
             var env = new RemotePlusServer.Core.ExtensionSystem.ServerInitEnvironment(false);
             foreach (string extensions in Description.Extensions)
             {
                 try
                 {
-                    collection.LoadExtension($"{location}\\{extensions}", callback, env);
+                    collection.LoadExtension($"{location}\\{extensions}", env);
                 }
                 catch (Exception ex)
                 {
-                    callback?.Invoke($"Unable to load extension library from package: {ex.Message}", LogLevel.Error);
+                    GlobalServices.Logger.Log($"Unable to load extension library from package: {ex.Message}", LogLevel.Error);
                 }
             }
         }

@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TinyMessenger;
 
-namespace RemotePlusLibrary.Extension.EventSystem
+namespace RemotePlusLibrary.Core.EventSystem
 {
     public class EventBus : IEventBus
     {

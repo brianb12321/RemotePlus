@@ -8,7 +8,7 @@ using System.Windows;
 using BetterLogger;
 using BetterLogger.Loggers;
 using NewRemotePlusClient.IOC;
-using RemotePlusLibrary;
+using RemotePlusLibrary.Core;
 using RemotePlusLibrary.Core.IOC;
 
 namespace NewRemotePlusClient

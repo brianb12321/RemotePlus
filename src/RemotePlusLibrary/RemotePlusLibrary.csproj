@@ -68,7 +68,6 @@
     <Compile Include="FileTransfer\Service\PackageSystem\PackageSelectorBuilder.cs" />
     <Compile Include="FileTransfer\Service\PackageSystem\StandordPackageInventory.cs" />
     <Compile Include="FileTransfer\Service\PackageSystem\StandordPackageInventorySelector.cs" />
-    <Compile Include="GlobalServices.cs" />
     <Compile Include="IRemotePlusService.cs" />
     <Compile Include="RemotePlusServiceOptions.cs" />
     <Compile Include="RequestSystem\AcquisitionMode.cs" />

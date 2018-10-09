@@ -1,8 +1,8 @@
 ﻿using RemotePlusLibrary.Extension.ExtensionLoader.Initialization;
 using RemotePlusServer.Core;
 using BetterLogger;
-using RemotePlusLibrary;
-using RemotePlusLibrary.Extension.EventSystem;
+using RemotePlusLibrary.Core;
+using RemotePlusLibrary.Core.EventSystem;
 
 namespace WindowsTools
 {
@@ -23,7 +23,7 @@ namespace WindowsTools
             ServerManager.ServerRemoteService.Commands.Add("blockInputI", OSCommands.blockInputI);
             ServerManager.ServerRemoteService.Commands.Add("setVolume", OSCommands.setVolume);
             ServerManager.ServerRemoteService.Commands.Add("toggleMute", OSCommands.toggleMute);
-            ServerManager.EventBus.Subscribe<LoginEvent>(e => ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Welcome to WindowsTools!"), e => e.LoginSuccessful);
+            GlobalServices.EventBus.Subscribe<LoginEvent>(e => ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Welcome to WindowsTools!"), e => e.LoginSuccessful);
         }
     }
 }

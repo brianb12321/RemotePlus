@@ -13,10 +13,9 @@ namespace RemotePlusLibrary.Extension.ExtensionLoader
     /// Represents an extension library that can be loaded into the system.
     /// </summary>
     /// <typeparam name="T">The extension that the library type will load</typeparam>
-    public abstract class ExtensionLibraryBase<T>
+    public abstract class ExtensionLibraryBase
     {
         public List<RequiresDependencyAttribute> Dependencies { get; }
-        public Dictionary<string, T> Extensions { get; }
         public string FriendlyName { get; }
         public string Name { get; }
         public ExtensionLibraryType LibraryType { get; }
@@ -31,7 +30,6 @@ namespace RemotePlusLibrary.Extension.ExtensionLoader
             LibraryType = type;
             Guid = g;
             Version = v;
-            Extensions = new Dictionary<string, T>();
             Dependencies = deps.ToList();
         }
 

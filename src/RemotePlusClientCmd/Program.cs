@@ -19,7 +19,7 @@ using System.IO;
 using RemotePlusClientCmd.ClientExtensionSystem;
 using RemotePlusLibrary.Core.IOC;
 using RemotePlusClient.CommonUI.Connection;
-using RemotePlusLibrary.Extension.EventSystem;
+using RemotePlusLibrary.Core.EventSystem;
 
 namespace RemotePlusClientCmd
 {
@@ -128,8 +128,7 @@ namespace RemotePlusClientCmd
                         {
                             GlobalServices.Logger.Log($"Found extension file ({Path.GetFileName(files)})", LogLevel.Info);
                             env.PreviousError = GlobalServices.Logger.ErrorCount > 0 ? true : false;
-                            var lib = ClientExtensionLibrary.LoadClientLibrary(files, (m, o) => GlobalServices.Logger.Log(m, o), env);
-                            ExtensionLibraries.Libraries.Add(lib.Name, lib);
+                            ExtensionLibraries.LoadExtension(files, env);
                         }
                         catch (Exception ex)
                         {

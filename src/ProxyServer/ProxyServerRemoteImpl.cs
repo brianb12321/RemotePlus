@@ -201,13 +201,16 @@ namespace ProxyServer
             }
             tempClient.Channel.Faulted += (sender, e) =>
             {
-                var closedClient = ConnectedServers.FirstOrDefault(s => s.Channel == tempClient.Channel);
+                var closedClient = ConnectedServers.First(s => s.Channel == tempClient.Channel);
                 GlobalServices.Logger.Log($"Server [{closedClient.UniqueID}] closed without proper shutdown.", LogLevel.Info);
                 ConnectedServers.Remove(closedClient);
                 if (SelectedClient == closedClient)
                 {
-                    Task.Run(() => ProxyClient.ClientCallback.RequestInformation(ProxyManager.ProxyGuid, RequestBuilder.RequestMessageBox($"Server [{SelectedClient.UniqueID}] has disconnected without proper shutdown. Please select another server to be the active server.", "Proxy Server", MessageBoxButtons.OK, MessageBoxIcon.Information)));
-                    SelectedClient = null;
+                    Task.Run(() =>
+                    {
+                        ProxyClient.ClientCallback.RequestInformation(ProxyManager.ProxyGuid, RequestBuilder.RequestMessageBox($"Server [{SelectedClient.UniqueID}] has disconnected without proper shutdown. Please select another server to be the active server.", "Proxy Server", MessageBoxButtons.OK, MessageBoxIcon.Information));
+                        SelectedClient = null;
+                    });
                 }
             };
             tempClient.ClientCallback.ServerRegistered(tempClient.UniqueID);
@@ -256,7 +259,7 @@ namespace ProxyServer
 
         public void SelectServer(Guid guid)
         {
-            SelectedClient = ConnectedServers.FirstOrDefault(s => s.UniqueID == guid);
+            SelectedClient = ConnectedServers.First(s => s.UniqueID == guid);
             if (SelectedClient == null)
             {
                 ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyManager.ProxyGuid, "The requested server is not connected.");
@@ -455,7 +458,11 @@ namespace ProxyServer
                 //Notify client that the active server has disconnected gracefully.
                 if(SelectedClient == foundServer)
                 {
-                    Task.Run(() => ProxyClient.ClientCallback.RequestInformation(ProxyManager.ProxyGuid, RequestBuilder.RequestMessageBox($"Server [{SelectedClient.UniqueID}] has disconnected gracefully. Please select another server to be the active server.", "Proxy Server", MessageBoxButtons.OK, MessageBoxIcon.Information)));
+                    Task.Run(() =>
+                    {
+                        ProxyClient.ClientCallback.RequestInformation(ProxyManager.ProxyGuid, RequestBuilder.RequestMessageBox($"Server [{SelectedClient.UniqueID}] has disconnected gracefully. Please select another server to be the active server.", "Proxy Server", MessageBoxButtons.OK, MessageBoxIcon.Information));
+                        SelectedClient = null;
+                    });
                 }
             }
         }

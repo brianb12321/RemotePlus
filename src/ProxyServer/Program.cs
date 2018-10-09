@@ -18,6 +18,7 @@ namespace ProxyServer
         public static Guid ProxyGuid { get; } = Guid.NewGuid();
         public static IRemotePlusService<ProxyServerRemoteImpl> ProxyService => IOCContainer.GetService<IRemotePlusService<ProxyServerRemoteImpl>>();
         public static ScriptBuilder ScriptBuilder => IOCContainer.GetService<ScriptBuilder>();
+        public static ExtensionSystem.ProxyExtensionCollection DefaultCollection { get; private set; } = new ExtensionSystem.ProxyExtensionCollection();
         [STAThread]
         static void Main(string[] args)
         {

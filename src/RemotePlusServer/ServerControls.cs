@@ -25,9 +25,16 @@ namespace RemotePlusServer
             button1.Enabled = false;
             Hide();
 #else
-            ServerStartup.RunInServerMode();
-            button2.Enabled = true;
-            button1.Enabled = false;
+            try
+            {
+                ServerStartup.RunInServerMode();
+                button2.Enabled = true;
+                button1.Enabled = false;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"There was an error starting the server: {ex.Message}", "STarting server", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
 #endif
         }
 

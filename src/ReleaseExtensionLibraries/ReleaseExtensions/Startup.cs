@@ -5,7 +5,7 @@ using System.Windows.Forms;
 using RemotePlusLibrary.Extension.ExtensionLoader.Initialization;
 using RemotePlusServer.Core;
 using BetterLogger;
-using RemotePlusLibrary;
+using RemotePlusLibrary.Core;
 
 namespace ReleaseExtensions
 {

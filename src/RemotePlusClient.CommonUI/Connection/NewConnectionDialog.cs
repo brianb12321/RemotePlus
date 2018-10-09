@@ -1,6 +1,7 @@
 ﻿using RemotePlusLibrary;
 using System;
 using System.Windows.Forms;
+using RemotePlusLibrary.Core;
 
 namespace RemotePlusClient.CommonUI.Connection
 {
@@ -21,7 +22,7 @@ namespace RemotePlusClient.CommonUI.Connection
             }
             else
             {
-                config = GlobalServices.DataAccess.LoadConfig<ConnectionConfiguration>(config.ConfigurationFileName);
+                config = new RemotePlusLibrary.Configuration.StandordDataAccess.ConfigurationHelper().LoadConfig<ConnectionConfiguration>(config.ConfigurationFileName);
             }
             populateFields();
         }
@@ -38,7 +39,7 @@ namespace RemotePlusClient.CommonUI.Connection
             config.ConfigurationFileName = textBox2.Text + ".ccf";
             config.ServerAddress = textBox1.Text;
             config.RegisterationDetails = (RegisterationObject)propertyGrid1.SelectedObject;
-            GlobalServices.DataAccess.SaveConfig(config, config.ConfigurationFileName);
+            new RemotePlusLibrary.Configuration.StandordDataAccess.ConfigurationHelper().SaveConfig(config, config.ConfigurationFileName);
             MessageBox.Show("Connection saved.");
             DialogResult = DialogResult.OK;
             Close();

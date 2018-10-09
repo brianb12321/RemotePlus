@@ -3,7 +3,7 @@ using BetterLogger;
 using System.Windows.Forms;
 using RemotePlusLibrary.Core.IOC;
 using RemotePlusLibrary.Extension.CommandSystem;
-using RemotePlusLibrary.Extension.EventSystem;
+using RemotePlusLibrary.Core.EventSystem;
 
 namespace RemotePlusLibrary
 {

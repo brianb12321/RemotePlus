@@ -20,7 +20,7 @@ using RemotePlusLibrary.Configuration.ServerSettings;
 using RemotePlusLibrary.Client;
 using RemotePlusServer.Core;
 using BetterLogger;
-using RemotePlusLibrary.Extension.EventSystem;
+using RemotePlusLibrary.Core.EventSystem;
 
 namespace RemotePlusServer
 {
@@ -229,7 +229,7 @@ namespace RemotePlusServer
                 GlobalServices.Logger.Log("Updating server settings.", LogLevel.Info);
                 ServerManager.DefaultSettings = Settings;
                 _interface.Client.ClientCallback.TellMessage("Saving settings.", LogLevel.Info);
-                GlobalServices.DataAccess.SaveConfig(ServerManager.DefaultSettings, ServerSettings.SERVER_SETTINGS_FILE_PATH);
+                ServerManager.DataAccess.SaveConfig(ServerManager.DefaultSettings, ServerSettings.SERVER_SETTINGS_FILE_PATH);
                 _interface.Client.ClientCallback.TellMessage("Settings saved.", LogLevel.Info);
                 GlobalServices.Logger.Log("Settings saved.", LogLevel.Info);
             }

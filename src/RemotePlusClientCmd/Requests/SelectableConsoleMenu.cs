@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using RemotePlusLibrary;
 using ConsoLovers.ConsoleToolkit.Menu;
 using System.Drawing;
-using ConsoLovers.ConsoleToolkit.Console;
+using RemotePlusLibrary.Core;
 using RemotePlusLibrary.RequestSystem;
 using BetterLogger;
 

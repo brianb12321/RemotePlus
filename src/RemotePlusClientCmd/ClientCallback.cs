@@ -13,6 +13,7 @@ using RemotePlusLibrary.Contracts;
 using RemotePlusLibrary.RequestSystem;
 using RemotePlusLibrary.Security.Authentication;
 using RemotePlusLibrary.Client;
+using RemotePlusLibrary.Core;
 using BetterLogger;
 
 namespace RemotePlusClientCmd

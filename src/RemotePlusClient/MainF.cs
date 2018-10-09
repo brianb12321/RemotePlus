@@ -344,11 +344,7 @@ namespace RemotePlusClient
             if (ofd.ShowDialog() == DialogResult.OK)
             {
                 ClientInitEnvironment env = new ClientInitEnvironment((ConsoleObj.Logger.ErrorCount > 0) ? true : false);
-                var lib = ClientExtensionLibrary.LoadClientLibrary(ofd.FileName,
-                    (f) => MainF.ConsoleObj.Logger.Log($"Form load: {f.ExtensionName}", LogLevel.Info),
-                    (m, o) => ConsoleObj.Logger.Log(m, o, "Extension Loader"),
-                    env);
-                DefaultCollection.Libraries.Add(lib.Name, lib);
+                DefaultCollection.LoadExtension(ofd.FileName, env);
                 Task.Factory.StartNew(() =>
                 {
                     foreach (KeyValuePair<string, IClientExtension> f2 in DefaultCollection.GetAllExtensions())

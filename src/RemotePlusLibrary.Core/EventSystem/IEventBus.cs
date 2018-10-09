@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TinyMessenger;
 
-namespace RemotePlusLibrary.Extension.EventSystem
+namespace RemotePlusLibrary.Core.EventSystem
 {
     /// <summary>
     /// An event bus holds subscribers that can be called when a particular event gets raised.

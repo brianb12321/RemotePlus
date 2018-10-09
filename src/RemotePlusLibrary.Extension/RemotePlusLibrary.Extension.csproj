@@ -72,14 +72,10 @@
     <Compile Include="CommandSystem\ICommandEnvironmnet.cs" />
     <Compile Include="CommandSystem\PromptBuilder.cs" />
     <Compile Include="CommandSystem\StatusCodeDeliveryMethod.cs" />
-    <Compile Include="EventSystem\EventBus.cs" />
-    <Compile Include="EventSystem\EventDeliveryEventArgs.cs" />
-    <Compile Include="EventSystem\IEventBus.cs" />
-    <Compile Include="EventSystem\LoggerEventProxy.cs" />
-    <Compile Include="EventSystem\LoginEvent.cs" />
     <Compile Include="ExtensionLoader\DependencyException.cs" />
     <Compile Include="ExtensionLoader\DependencyType.cs" />
     <Compile Include="ExtensionDevelopmentState.cs" />
+    <Compile Include="ExtensionLoader\Initialization\DefaultLibraryBuilder.cs" />
     <Compile Include="ExtensionLoader\ServerCoreLibraryAttribute.cs" />
     <Compile Include="ExtensionLoader\ServerCoreLoader.cs" />
     <Compile Include="ExtensionLoader\Initialization\IInitEnvironment.cs" />
@@ -104,7 +100,6 @@
     <Compile Include="ExtensionLoader\InvalidExtensionLibraryException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RequiresDependencyAttribute.cs" />
-    <Compile Include="TinyMessenger.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\RemotePlusLibrary.Configuration\RemotePlusLibrary.Configuration.csproj">

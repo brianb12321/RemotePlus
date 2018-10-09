@@ -13,7 +13,7 @@ using RemotePlusLibrary.RequestSystem;
 using RemotePlusLibrary.Scripting.ScriptPackageEngine;
 using System.Drawing;
 using BetterLogger;
-using RemotePlusLibrary;
+using RemotePlusLibrary.Core;
 using RemotePlusLibrary.FileTransfer.Service.PackageSystem;
 using System.Media;
 using System.Net;
@@ -451,11 +451,10 @@ namespace RemotePlusServer.Core
                 {
                     path = Path.Combine(ServerManager.ServerRemoteService.RemoteInterface.CurrentPath, args.Arguments[1].Value);
                 }
-                ServerManager.DefaultCollection.LoadExtension(path, (m, o) =>
-                {
-                    GlobalServices.Logger.Log(m, o);
-                    ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(m, o);
-                }, new ServerInitEnvironment(false));
+                var clientLogger = new ClientLogger(ServerManager.ServerRemoteService.RemoteInterface.Client);
+                GlobalServices.Logger.AddLogger(clientLogger);
+                ServerManager.DefaultCollection.LoadExtension(path, new ServerInitEnvironment(false));
+                GlobalServices.Logger.RemoveLogger(clientLogger);
                 return new CommandResponse((int)CommandStatus.Success);
             }
             catch (Exception ex)
@@ -479,7 +478,10 @@ namespace RemotePlusServer.Core
                 {
                     WebClient client = new WebClient();
                     var extensionData = client.DownloadData(args.Arguments[1].Value);
-                    ServerManager.DefaultCollection.LoadExtension(extensionData, (m, l) => ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(m, l), new ServerInitEnvironment(false));
+                    var clientLogger = new ClientLogger(ServerManager.ServerRemoteService.RemoteInterface.Client);
+                    GlobalServices.Logger.AddLogger(clientLogger);
+                    ServerManager.DefaultCollection.LoadExtension(extensionData, new ServerInitEnvironment(false));
+                    GlobalServices.Logger.RemoveLogger(clientLogger);
                     client.Dispose();
                     return new CommandResponse((int)CommandStatus.Success);
                 }
