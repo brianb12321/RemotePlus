@@ -7,7 +7,7 @@ using System.ServiceModel.Channels;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RemotePlusLibrary
+namespace RemotePlusLibrary.ServiceArchitecture
 {
     public interface IRemotePlusService<TRemoteInterface> where TRemoteInterface : new()
     {
@@ -46,7 +46,7 @@ namespace RemotePlusLibrary
         /// <summary>
         /// Provides access to remote operations and variables.
         /// </summary>
-        TRemoteInterface RemoteInterface { get; }
+        TRemoteInterface RemoteInterface { get; set; }
         /// <summary>
         /// The variables that are defined on the server.
         /// </summary>

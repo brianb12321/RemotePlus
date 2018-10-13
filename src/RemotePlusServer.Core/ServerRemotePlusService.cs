@@ -1,35 +1,49 @@
-﻿using BetterLogger;
-using RemotePlusLibrary;
-using RemotePlusLibrary.Core;
+﻿using RemotePlusLibrary;
 using RemotePlusLibrary.Extension.CommandSystem;
-using RemotePlusServer.Core;
+using RemotePlusLibrary.ServiceArchitecture;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace RemotePlusServer
+namespace RemotePlusServer.Core
 {
-    public class FileTransferService : IRemotePlusService<FileTransferServciceInterface>
+    /// <summary>
+    /// Provides a container for the service.
+    /// </summary>
+    /// <typeparam name="I">The implementation of the service to use.</typeparam>
+    public class ServerRemotePlusService : IRemotePlusService<ServerRemoteInterface>
     {
-        public ServiceHost Host { get; private set; }
-
-        public RemoteImpl Remote { get; private set; }
+        public ServiceHost Host { get; }
 
         public Dictionary<string, CommandDelegate> Commands { get; set; } = new Dictionary<string, CommandDelegate>();
         public VariableManager Variables { get; set; }
-        public FileTransferServciceInterface RemoteInterface { get; private set; }
-        private FileTransferService(Type contractType, Binding binding, string address)
+        public ServerRemoteInterface RemoteInterface { get; set; }
+
+        /// <summary>
+        /// Creates a new instance of the <see cref="RemotePlusService{I}"/> class
+        /// </summary>
+        /// <param name="contractType"></param>
+        /// <param name="singleTon">The instance of the service implementation.</param>
+        /// <param name="binding"></param>
+        /// <param name="address"></param>
+        /// <param name="portNumber">The port number to use for listening.</param>
+        public ServerRemotePlusService(Type contractType, object singleTon, Binding binding, string address)
         {
             Commands = new Dictionary<string, CommandDelegate>();
-            Host = new ServiceHost(typeof(FileTransferServiceImpl));
+            Host = new ServiceHost(singleTon);
             Host.AddServiceEndpoint(contractType, binding, address);
         }
 
+        public ServerRemotePlusService(Binding b, object singleTon)
+        {
+            Commands = new Dictionary<string, CommandDelegate>();
+            Host = new ServiceHost(singleTon);
+        }
+        public ServerRemotePlusService()
+        {
+            Commands = new Dictionary<string, CommandDelegate>();
+        }
         public event EventHandler HostClosed
         {
             add { Host.Closed += value; }
@@ -79,21 +93,6 @@ namespace RemotePlusServer
         public void Close()
         {
             Host.Close();
-        }
-        public static IRemotePlusService<FileTransferServciceInterface> CreateNotSingle(Type contractType, int port, Binding binding, string defaultEndpoint, Action<string, LogLevel> callback)
-        {
-            FileTransferService temp;
-            callback?.Invoke("Building endpoint URL.", LogLevel.Debug);
-            string url = $"{binding.Scheme}://0.0.0.0:{port}/{defaultEndpoint}";
-            callback?.Invoke($"URL built {url}", LogLevel.Debug);
-            callback?.Invoke("Creating server.", LogLevel.Debug);
-            callback?.Invoke("Publishing server events.", LogLevel.Debug);
-            StringBuilder dataBuilder = new StringBuilder();
-            dataBuilder.AppendLine("Binding configurations:");
-            dataBuilder.AppendLine();
-            callback?.Invoke(dataBuilder.ToString(), LogLevel.Debug);
-            temp = new FileTransferService(contractType, binding, url);
-            return temp;
         }
     }
 }

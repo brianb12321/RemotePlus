@@ -89,8 +89,11 @@
     <Compile Include="ExtensionSystem\ServerInitEnvironment.cs" />
     <Compile Include="ExtensionSystem\ServerLibraryBuilder.cs" />
     <Compile Include="FileTransferServciceInterface.cs" />
+    <Compile Include="FileTransferService.cs" />
+    <Compile Include="FileTransferServiceBuilder.cs" />
     <Compile Include="Internal\_ClientTextReader.cs" />
     <Compile Include="Internal\_ClientTextWriter.cs" />
+    <Compile Include="MainRemotePlusServiceBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Proxies\ClientInstance.cs" />
     <Compile Include="Proxies\LuaServerInstance.cs" />
@@ -103,6 +106,7 @@
     <Compile Include="ServerManager.cs" />
     <Compile Include="ServerOnlyServiceCollectionExtensions.cs" />
     <Compile Include="ServerRemoteInterface.cs" />
+    <Compile Include="ServerRemotePlusService.cs" />
     <Compile Include="ServiceCollection.cs" />
   </ItemGroup>
   <ItemGroup>

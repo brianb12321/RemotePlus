@@ -107,11 +107,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FileTransferService.cs" />
     <Compile Include="FileTransferServiceImpl.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="ServerBuilder.cs" />
-    <Compile Include="ServerRemotePlusService.cs" />
     <Compile Include="ServerControls.cs">
       <SubType>Form</SubType>
     </Compile>

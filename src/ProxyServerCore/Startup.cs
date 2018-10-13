@@ -5,6 +5,7 @@ using ProxyServer;
 using BetterLogger;
 using RemotePlusLibrary.Discovery;
 using RemotePlusLibrary;
+using RemotePlusLibrary.ServiceArchitecture;
 using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing;
 using RemotePlusLibrary.Core.EventSystem;
@@ -17,19 +18,7 @@ namespace ProxyServerCore
         public void AddServices(IServiceCollection services)
         {
             services.UseLogger((logFactory) => logFactory.AddLogger(new ConsoleLogger()))
-                .AddServer(() =>
-                {
-                    GlobalServices.Logger.Log("Opening proxy server.", LogLevel.Info);
-                    var proxyService = ProbeService.CreateProxyService(typeof(IProxyServerRemote), new ProxyServerRemoteImpl(),
-                        8080,
-                        "Proxy",
-                        "ProxyClient",
-                        (m, o) => GlobalServices.Logger.Log(m, o), null);
-                    proxyService.HostOpened += ProxyService_HostOpened;
-                    proxyService.HostClosed += ProxyService_HostClosed;
-                    proxyService.HostFaulted += ProxyService_HostFaulted;
-                    return proxyService;
-                })
+                .UseServerManager<DefaultServiceManager>()
                 .UseScriptingEngine()
                 .UseEventBus<EventBus>()
                 .UseServerControlPage<ServerControls>()
@@ -38,6 +27,21 @@ namespace ProxyServerCore
                     builder.UseParser<CommandParser>()
                    .UseProcessor<TokenProcessor>()
                    .UseExecutor<CommandExecutor>());
+
+            //Set up WCF services.
+            IServiceManager manager = IOCContainer.GetService<IServiceManager>();
+            manager.AddServiceUsingBuilder<ProxyServerRemoteImpl>(() =>
+            {
+                ProbeServiceBuilder psb = new ProbeServiceBuilder(new ProxyServerRemoteImpl(), _ConnectionFactory.BuildBinding());
+                return psb.SetBinding(_ConnectionFactory.BuildBinding())
+                    .SetPortNumber(8080)
+                    .RouteHostClosedEvent(ProxyService_HostClosed)
+                    .RouteHostClosingEvent(ProxyService_HostClosing)
+                    .RouteHostFaultedEvent(ProxyService_HostFaulted)
+                    .RouteHostOpenEvent(ProxyService_HostOpened)
+                    .RouteHostOpeningEvent(ProxyService_HostOpening)
+                    .RouteUnknownMessageReceivedEvent(ProxyService_UnknownMessageReceived);
+            });
         }
         public void InitializeServer(IServerBuilder builder)
         {
@@ -54,10 +58,22 @@ namespace ProxyServerCore
         {
             GlobalServices.Logger.Log("Proxy server closed.", LogLevel.Info);
         }
+        private static void ProxyService_HostClosing(object sender, EventArgs e)
+        {
+            GlobalServices.Logger.Log("Closing proxy server.", LogLevel.Info);
+        }
 
         private static void ProxyService_HostOpened(object sender, EventArgs e)
         {
-            GlobalServices.Logger.Log($"Proxy server opened on port 9001", LogLevel.Info);
+            GlobalServices.Logger.Log($"Proxy server opened on port 8080.", LogLevel.Info);
+        }
+        private static void ProxyService_UnknownMessageReceived(object sender, System.ServiceModel.UnknownMessageReceivedEventArgs e)
+        {
+            GlobalServices.Logger.Log($"An unknown message has been received. Message: {e.Message}", LogLevel.Info);
+        }
+        private static void ProxyService_HostOpening(object sender, EventArgs e)
+        {
+            GlobalServices.Logger.Log($"Opening proxy server.", LogLevel.Info);
         }
     }
 }

@@ -37,13 +37,10 @@ namespace RemotePlusServer
     public class RemoteImpl : IRemote, IRemoteWithProxy
     {
         private ServerRemoteInterface _interface = null;
-        public RemoteImpl()
+        public void SetRemoteInterface(RemotePlusLibrary.ServiceArchitecture.IRemotePlusService<ServerRemoteInterface> i)
         {
             _interface = new ServerRemoteInterface();
-        }
-        public void SetRemoteInterface(ServerRemoteInterface i)
-        {
-            _interface = i;
+            i.RemoteInterface = _interface;
         }
         bool CheckRegisteration(string Action)
         {

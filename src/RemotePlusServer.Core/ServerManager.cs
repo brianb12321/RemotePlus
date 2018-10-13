@@ -9,12 +9,14 @@ using RemotePlusLibrary.FileTransfer.Service.PackageSystem;
 using RemotePlusLibrary.Security.AccountSystem;
 using RemotePlusLibrary.Core.EventSystem;
 using RemotePlusLibrary.Configuration;
+using RemotePlusLibrary.ServiceArchitecture;
 
 namespace RemotePlusServer.Core
 {
     public static class ServerManager
     {
-        public static IRemotePlusService<ServerRemoteInterface> ServerRemoteService => IOCContainer.GetService<IRemotePlusService<ServerRemoteInterface>>();
+        public static IServiceManager DefaultServiceManager => IOCContainer.GetService<IServiceManager>();
+        public static IRemotePlusService<ServerRemoteInterface> ServerRemoteService => DefaultServiceManager.GetService<ServerRemoteInterface>();
         /// <summary>
         /// The main server configuration. Provides settings for the main server.
         /// </summary>
@@ -28,7 +30,7 @@ namespace RemotePlusServer.Core
         public static ScriptBuilder ScriptBuilder => IOCContainer.GetService<ScriptBuilder>();
         public static IPackageInventorySelector DefaultPackageInventorySelector => IOCContainer.GetService<IPackageInventorySelector>();
         public static bool IsService { get; set; }
-        public static IRemotePlusService<FileTransferServciceInterface> FileTransferService => IOCContainer.GetService<IRemotePlusService<FileTransferServciceInterface>>();
+        public static IRemotePlusService<FileTransferServciceInterface> FileTransferService => DefaultServiceManager.GetService<FileTransferServciceInterface>();
         public static IEventBus EventBus => IOCContainer.GetService<IEventBus>();
         public static IConfigurationDataAccess DataAccess => IOCContainer.GetService<IConfigurationDataAccess>("DefaultConfigDataAccess");
     }

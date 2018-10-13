@@ -1,30 +1,33 @@
 ﻿using BetterLogger;
-using ProxyServer;
 using RemotePlusLibrary;
 using RemotePlusLibrary.Core;
-using RemotePlusLibrary.Discovery;
 using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusLibrary.ServiceArchitecture;
+using RemotePlusServer.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
-using System.ServiceModel.Description;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ProxyServer
+namespace RemotePlusServer.Core
 {
-    public class ProbeService : IRemotePlusService<ProxyServerRemoteImpl>
+    public class FileTransferService : IRemotePlusService<FileTransferServciceInterface>
     {
         public ServiceHost Host { get; private set; }
 
-        public ProxyServerRemoteImpl RemoteInterface { get; set; } = new ProxyServerRemoteImpl();
-
         public Dictionary<string, CommandDelegate> Commands { get; set; } = new Dictionary<string, CommandDelegate>();
         public VariableManager Variables { get; set; }
+        public FileTransferServciceInterface RemoteInterface { get; set; }
+        public FileTransferService(Type serviceimpl, Type contractType, Binding binding, string address)
+        {
+            Commands = new Dictionary<string, CommandDelegate>();
+            Host = new ServiceHost(serviceimpl);
+            Host.AddServiceEndpoint(contractType, binding, address);
+        }
 
         public event EventHandler HostClosed
         {
@@ -75,16 +78,6 @@ namespace ProxyServer
         public void Close()
         {
             Host.Close();
-        }
-        public ServiceEndpoint ClientEndpoint { get; private set; }
-
-        public ProbeService(ProxyServerRemoteImpl singleTon, Binding serverBinding, Binding clientBinding, string proxyAddress, string proxyClientAddress)
-        {
-            Commands = new Dictionary<string, CommandDelegate>();
-            RemoteInterface = singleTon;
-            Host = new ServiceHost(RemoteInterface);
-            Host.AddServiceEndpoint(typeof(IProxyServerRemote), serverBinding, proxyAddress);
-            ClientEndpoint = Host.AddServiceEndpoint(typeof(IProxyRemote), clientBinding, proxyClientAddress);
         }
     }
 }

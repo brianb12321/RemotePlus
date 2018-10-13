@@ -1,11 +1,10 @@
 ﻿using System;
-using BetterLogger;         
+using BetterLogger;
 using RemotePlusServer.Core;
 using RemotePlusServer.Core.ServerCore;
 using RemotePlusServer;
-using System.ServiceModel.Description;
 using RemotePlusLibrary;
-using RemotePlusLibrary.Contracts;
+using RemotePlusLibrary.ServiceArchitecture;
 using BetterLogger.Loggers;
 using RemotePlusLibrary.Configuration;
 using RemotePlusLibrary.Configuration.StandordDataAccess;
@@ -34,38 +33,7 @@ namespace DefaultServerCore
                     }
                 });
             })
-                .AddServer(() =>
-                {
-                    string endpointAddress = "Remote";
-                    ServerStartup._remote = new RemoteImpl();
-                    var service = ServerRemotePlusService.Create(typeof(IRemote), ServerStartup._remote, ServerManager.DefaultSettings.PortNumber, endpointAddress, (m, o) => GlobalServices.Logger.Log(m, o), null);
-                    ServiceThrottlingBehavior throt = new ServiceThrottlingBehavior();
-                    throt.MaxConcurrentCalls = int.MaxValue;
-                    service.Host.Description.Behaviors.Add(throt);
-                    GlobalServices.Logger.Log("Attaching server events.", LogLevel.Debug);
-                    service.HostClosed += Host_Closed;
-                    service.HostClosing += Host_Closing;
-                    service.HostFaulted += Host_Faulted;
-                    service.HostOpened += Host_Opened;
-                    service.HostOpening += Host_Opening;
-                    service.HostUnknownMessageReceived += Host_UnknownMessageReceived;
-                    return service;
-                })
-                .AddServer(() =>
-                {
-                    IRemotePlusService<FileTransferServciceInterface> fts = null;
-                    GlobalServices.Logger.Log("Adding file transfer service.", BetterLogger.LogLevel.Info);
-                    var binding = RemotePlusLibrary.Core._ConnectionFactory.BuildBinding();
-                    binding.TransferMode = System.ServiceModel.TransferMode.Streamed;
-                    fts = FileTransferService.CreateNotSingle(typeof(RemotePlusLibrary.FileTransfer.Service.IFileTransferContract), ServerManager.DefaultSettings.PortNumber, binding, "FileTransfer", null);
-                    fts.HostClosed += Host_Closed;
-                    fts.HostClosing += Host_Closing;
-                    fts.HostFaulted += Host_Faulted;
-                    fts.HostOpened += Host_Opened;
-                    fts.HostOpening += Host_Opening;
-                    fts.HostUnknownMessageReceived += Host_UnknownMessageReceived;
-                    return fts;
-                })
+                .UseServerManager<DefaultServiceManager>()
                 .UseServerControlPage<ServerControls>()
                 .UseScriptingEngine()
                 .UseConfigurationDataAccess<ConfigurationHelper>()
@@ -78,7 +46,35 @@ namespace DefaultServerCore
                            .UseProcessor<TokenProcessor>()
                            .UseExecutor<CommandExecutor>())
                 .UsePackageInventorySelector<StandordPackageInventorySelector>(builder =>
-                    builder.AddPackageInventory<FilePackage, StandordPackageInventory>("DefaultFileInventory"));            
+                    builder.AddPackageInventory<FilePackage, StandordPackageInventory>("DefaultFileInventory"));
+
+            //Add the services.
+            IServiceManager manager = IOCContainer.GetService<IServiceManager>();
+            manager.AddServiceUsingBuilder(() =>
+            {
+                ServerStartup._remote = new RemoteImpl();
+                MainRemotePlusServiceBuilder builder = new MainRemotePlusServiceBuilder(ServerStartup._remote);
+                return builder.RouteHostClosedEvent(Host_Closed)
+                        .RouteHostClosingEvent(Host_Closing)
+                        .RouteHostFaultedEvent(Host_Faulted)
+                        .RouteHostOpenEvent(Host_Opened)
+                        .RouteHostOpeningEvent(Host_Opening)
+                        .RouteUnknownMessageReceivedEvent(Host_UnknownMessageReceived)
+                        .SetBinding(_ConnectionFactory.BuildBinding())
+                        .SetPortNumber(ServerManager.DefaultSettings.PortNumber);
+            });
+            manager.AddServiceUsingBuilder(() =>
+            {
+                FileTransferServiceBuilder builder = new FileTransferServiceBuilder(typeof(FileTransferServiceImpl));
+                return builder.RouteHostClosedEvent(Host_Closed)
+                        .RouteHostClosingEvent(Host_Closing)
+                        .RouteHostFaultedEvent(Host_Faulted)
+                        .RouteHostOpenEvent(Host_Opened)
+                        .RouteHostOpeningEvent(Host_Opening)
+                        .RouteUnknownMessageReceivedEvent(Host_UnknownMessageReceived)
+                        .SetBinding(_ConnectionFactory.BuildBinding())
+                        .SetPortNumber(ServerManager.DefaultSettings.PortNumber);
+            });
         }
 
         void IServerCoreStartup.InitializeServer(IServerBuilder builder)
@@ -105,6 +101,7 @@ namespace DefaultServerCore
         private void Host_Opening(object sender, EventArgs e)
         {
             GlobalServices.Logger.Log("Opening server.", LogLevel.Info);
+            ServerStartup._remote.SetRemoteInterface(ServerManager.ServerRemoteService);
         }
 
         private void Host_Opened(object sender, EventArgs e)

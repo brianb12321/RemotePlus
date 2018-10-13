@@ -68,7 +68,9 @@
     <Compile Include="FileTransfer\Service\PackageSystem\PackageSelectorBuilder.cs" />
     <Compile Include="FileTransfer\Service\PackageSystem\StandordPackageInventory.cs" />
     <Compile Include="FileTransfer\Service\PackageSystem\StandordPackageInventorySelector.cs" />
-    <Compile Include="IRemotePlusService.cs" />
+    <Compile Include="ServiceArchitecture\DefaultServiceBuilder.cs" />
+    <Compile Include="ServiceArchitecture\DefaultServiceManager.cs" />
+    <Compile Include="ServiceArchitecture\IRemotePlusService.cs" />
     <Compile Include="RemotePlusServiceOptions.cs" />
     <Compile Include="RequestSystem\AcquisitionMode.cs" />
     <Compile Include="Client\Client.cs" />
@@ -94,6 +96,8 @@
     <Compile Include="RequestSystem\RequestException.cs" />
     <Compile Include="RequestSystem\RequestState.cs" />
     <Compile Include="RequestSystem\ReturnData.cs" />
+    <Compile Include="ServiceArchitecture\IServiceManager.cs" />
+    <Compile Include="ServiceArchitecture\IWCFServiceBuilder.cs" />
     <Compile Include="ServiceCollectionExtensions.cs" />
     <Compile Include="SignalMessage.cs" />
     <Compile Include="VariableManager.cs" />

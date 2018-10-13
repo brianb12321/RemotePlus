@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using RemotePlusLibrary.Core.IOC;
 using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusLibrary.Core.EventSystem;
+using RemotePlusLibrary.ServiceArchitecture;
 
 namespace RemotePlusLibrary
 {
@@ -54,6 +55,10 @@ namespace RemotePlusLibrary
         public static IServiceCollection UseEventBus<TEventBusImpl>(this IServiceCollection services) where TEventBusImpl : IEventBus
         {
             return services.AddSingleton<IEventBus, TEventBusImpl>();
+        }
+        public static IServiceCollection UseServerManager<TServerManager>(this IServiceCollection services) where TServerManager : IServiceManager
+        {
+            return services.AddSingleton<IServiceManager, TServerManager>();
         }
     }
 }

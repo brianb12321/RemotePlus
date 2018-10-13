@@ -68,6 +68,7 @@
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Internal\_ClientTextWriter.cs" />
     <Compile Include="ProbeService.cs" />
+    <Compile Include="ProbeServiceBuilder.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ProxyServerRemoteImpl.cs" />
