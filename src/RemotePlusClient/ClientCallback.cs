@@ -163,7 +163,7 @@ namespace RemotePlusClient
             //Role.RoleNames = MainF.Remote.GetServerRoleNames().ToArray();
         }
 
-        public void SendSignal(Guid serverGuid, SignalMessage message)
+        public void SendSignal(SignalMessage message)
         {
             switch(message.Message)
             {

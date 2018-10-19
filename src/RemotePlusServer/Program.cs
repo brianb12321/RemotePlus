@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ServiceModel;
-using RemotePlusLibrary;
 using System.IO;
 using BetterLogger;
 using RemotePlusLibrary.Core;
@@ -144,13 +143,12 @@ namespace RemotePlusServer
         }
         public static void Close()
         {
-            ServerManager.ServerRemoteService.Host.Close();
-            ServerManager.FileTransferService.Close();
-            if(ServerManager.DefaultSettings.DiscoverySettings.DiscoveryBehavior == ProxyConnectionMode.Connect && proxyChannelFactory != null)
+            if (ServerManager.DefaultSettings.DiscoverySettings.DiscoveryBehavior == ProxyConnectionMode.Connect && proxyChannelFactory != null)
             {
                 proxyChannel.Leave(ServerGuid);
                 proxyChannelFactory.Close();
             }
+            ServerManager.DefaultServiceManager.CloseAll();
             Environment.Exit(0);
         }
     }

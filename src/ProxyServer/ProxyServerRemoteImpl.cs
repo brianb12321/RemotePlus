@@ -30,6 +30,7 @@ namespace ProxyServer
     [ServiceBehavior(IncludeExceptionDetailInFaults = true,
         InstanceContextMode = InstanceContextMode.Single,
         ConcurrencyMode = ConcurrencyMode.Multiple,
+        MaxItemsInObjectGraph = int.MaxValue,
         UseSynchronizationContext = false)]
     [GlobalException(typeof(GlobalErrorHandler))]
     public class ProxyServerRemoteImpl : IProxyServerRemote, IProxyRemote
@@ -340,9 +341,9 @@ namespace ProxyServer
             ProxyClient.ClientCallback.TellMessageToServerConsole(SelectedClient.UniqueID, text);
         }
 
-        public void SendSignal(Guid guid, SignalMessage signal)
+        public void SendSignal(SignalMessage signal)
         {
-            ProxyClient.ClientCallback.SendSignal(SelectedClient.UniqueID, signal);
+            ProxyClient.ClientCallback.SendSignal(signal);
         }
 
         public void ChangePrompt(Guid guid, RemotePlusLibrary.Extension.CommandSystem.PromptBuilder newPrompt)
@@ -480,6 +481,11 @@ namespace ProxyServer
         public void TellMessageToServerConsoleNoNewLine(Guid serverGuid, string Message)
         {
             ProxyClient.ClientCallback.TellMessageToServerConsoleNoNewLine(serverGuid, Message);
+        }
+
+        public void UploadBytesToPackageSystem(byte[] data, int length, string name)
+        {
+            SelectedClient.ClientCallback.UploadBytesToPackageSystem(data, length, name);
         }
     }
 }

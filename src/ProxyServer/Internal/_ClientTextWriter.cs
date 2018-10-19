@@ -11,12 +11,12 @@ namespace ProxyServer.Internal
     {
         public override void Write(char value)
         {
-            ProxyManager.ProxyService.RemoteInterface.ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyManager.ProxyGuid, value.ToString());
+            ProxyManager.ProxyService.RemoteInterface.ProxyClient.ClientCallback.TellMessageToServerConsoleNoNewLine(ProxyManager.ProxyGuid, value.ToString());
         }
 
         public override void Write(string value)
         {
-            ProxyManager.ProxyService.RemoteInterface.ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyManager.ProxyGuid, value);
+            ProxyManager.ProxyService.RemoteInterface.ProxyClient.ClientCallback.TellMessageToServerConsoleNoNewLine(ProxyManager.ProxyGuid, value);
         }
 
         public override Encoding Encoding

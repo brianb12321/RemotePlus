@@ -18,6 +18,7 @@ using RemotePlusLibrary.Contracts;
 using RemotePlusLibrary.Security.Authentication;
 using RemotePlusLibrary.Configuration.ServerSettings;
 using RemotePlusLibrary.Client;
+using RemotePlusLibrary.FileTransfer.Service.PackageSystem;
 using RemotePlusServer.Core;
 using BetterLogger;
 using RemotePlusLibrary.Core.EventSystem;
@@ -449,6 +450,23 @@ namespace RemotePlusServer
         public void ServerRegistered(Guid serverGuid)
         {
             ServerManager.ServerGuid = serverGuid;
+        }
+
+        public void SendSignal(SignalMessage signal)
+        {
+            
+        }
+        public void UploadBytesToPackageSystem(byte[] data, int length, string name)
+        {
+            FilePackage fp = new FilePackage();
+            fp.Data.Write(data, 0, length);
+            fp.Data.Seek(0, SeekOrigin.Begin);
+            fp.FileName = name;
+            ServerManager.DefaultPackageInventorySelector.AddRoute(package =>
+            {
+                ServerManager.DefaultPackageInventorySelector.GetInventory<FilePackage>("DefaultFileInventory").Dispatch((FilePackage)package);
+            });
+            ServerManager.DefaultPackageInventorySelector.Route(fp);
         }
     }
 }

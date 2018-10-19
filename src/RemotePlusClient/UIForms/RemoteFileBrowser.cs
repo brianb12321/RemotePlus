@@ -1,9 +1,8 @@
 ﻿using BetterLogger;
-using RemotePlusClient.CommonUI;
 using RemotePlusClient.CommonUI.Controls.FileBrowserHelpers;
-using RemotePlusLibrary;
 using RemotePlusLibrary.Extension.Gui;
 using RemotePlusLibrary.FileTransfer.BrowserClasses;
+using RemotePlusLibrary.FileTransfer.Service;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

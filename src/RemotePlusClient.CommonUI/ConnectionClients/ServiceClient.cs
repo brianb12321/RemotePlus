@@ -200,5 +200,15 @@ namespace RemotePlusClient.CommonUI.ConnectionClients
         {
             return ServerPosition.ToString();
         }
+
+        public void SendSignal(SignalMessage signal)
+        {
+            Channel.SendSignal(signal);
+        }
+
+        public void UploadBytesToPackageSystem(byte[] data, int length, string name)
+        {
+            Channel.UploadBytesToPackageSystem(data, length, name);
+        }
     }
 }

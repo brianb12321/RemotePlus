@@ -173,11 +173,11 @@ namespace RemotePlusServer
         {
             if (useProxy)
             {
-                proxyChannel.SendSignal(Server, signal);
+                proxyChannel.SendSignal(signal);
             }
             else
             {
-                c.SendSignal(Server, signal);
+                c.SendSignal(signal);
             }
         }
 

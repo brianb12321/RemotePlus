@@ -59,7 +59,9 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FileTransfer\Service\FileTransfer.cs" />
     <Compile Include="FileTransfer\Service\IFile.cs" />
+    <Compile Include="FileTransfer\Service\PackageSystem\BytePackage.cs" />
     <Compile Include="FileTransfer\Service\PackageSystem\FilePackage.cs" />
     <Compile Include="FileTransfer\Service\PackageSystem\IPackageInventory.cs" />
     <Compile Include="FileTransfer\Service\PackageSystem\IPackageInventorySelector.cs" />
@@ -68,6 +70,7 @@
     <Compile Include="FileTransfer\Service\PackageSystem\PackageSelectorBuilder.cs" />
     <Compile Include="FileTransfer\Service\PackageSystem\StandordPackageInventory.cs" />
     <Compile Include="FileTransfer\Service\PackageSystem\StandordPackageInventorySelector.cs" />
+    <Compile Include="FileTransfer\Service\PackageSystem\StreamPackage.cs" />
     <Compile Include="ServiceArchitecture\DefaultServiceBuilder.cs" />
     <Compile Include="ServiceArchitecture\DefaultServiceManager.cs" />
     <Compile Include="ServiceArchitecture\IRemotePlusService.cs" />
@@ -98,6 +101,7 @@
     <Compile Include="RequestSystem\ReturnData.cs" />
     <Compile Include="ServiceArchitecture\IServiceManager.cs" />
     <Compile Include="ServiceArchitecture\IWCFServiceBuilder.cs" />
+    <Compile Include="ServiceArchitecture\StandordService.cs" />
     <Compile Include="ServiceCollectionExtensions.cs" />
     <Compile Include="SignalMessage.cs" />
     <Compile Include="VariableManager.cs" />

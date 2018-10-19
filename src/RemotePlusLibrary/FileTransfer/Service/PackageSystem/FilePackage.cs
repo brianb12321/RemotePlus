@@ -12,20 +12,8 @@ namespace RemotePlusLibrary.FileTransfer.Service.PackageSystem
     /// <summary>
     /// Represents package that contains a file.
     /// </summary>
-    public class FilePackage : Package, IDisposable
+    public class FilePackage : StreamPackage
     {
         public string FileName { get; set; }
-        public long Length { get; set; }
-        public Stream Data { get; set; }
-        public bool KeepAlive { get; set; }
-        public void Dispose()
-        {
-            if (Data != null)
-            {
-                Data.Close();
-                Data = null;
-            }
-            GC.SuppressFinalize(this);
-        }
     }
 }

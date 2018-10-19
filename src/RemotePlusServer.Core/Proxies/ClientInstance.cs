@@ -75,5 +75,10 @@ namespace RemotePlusServer.Core.Proxies
         {
             ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.Speak(Message, Gender, Age);
         }
+
+        public void SendSignal(SignalMessage signal)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

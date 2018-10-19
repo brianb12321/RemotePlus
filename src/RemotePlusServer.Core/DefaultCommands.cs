@@ -440,6 +440,7 @@ namespace RemotePlusServer.Core
         [CommandHelp("Loads an extension library dll into the system.")]
         public static CommandResponse loadExtensionLibrary(CommandRequest args, CommandPipeline pipe)
         {
+            var clientLogger = new ClientLogger(ServerManager.ServerRemoteService.RemoteInterface.Client);
             try
             {
                 string path = string.Empty;
@@ -451,7 +452,6 @@ namespace RemotePlusServer.Core
                 {
                     path = Path.Combine(ServerManager.ServerRemoteService.RemoteInterface.CurrentPath, args.Arguments[1].Value);
                 }
-                var clientLogger = new ClientLogger(ServerManager.ServerRemoteService.RemoteInterface.Client);
                 GlobalServices.Logger.AddLogger(clientLogger);
                 ServerManager.DefaultCollection.LoadExtension(path, new ServerInitEnvironment(false));
                 GlobalServices.Logger.RemoveLogger(clientLogger);
@@ -459,6 +459,7 @@ namespace RemotePlusServer.Core
             }
             catch (Exception ex)
             {
+                GlobalServices.Logger.RemoveLogger(clientLogger);
                 GlobalServices.Logger.Log($"Unable to load extension library: {ex.Message}", LogLevel.Error);
                 ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText($"Unable to load extension library: {ex.Message}") { TextColor = Color.Red });
                 return new CommandResponse((int)CommandStatus.Fail);
@@ -625,7 +626,7 @@ namespace RemotePlusServer.Core
             var path = ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(requestPathBuilder);
             if (path.AcquisitionState ==  RequestState.OK)
             {
-                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(RequestBuilder.SendFilePackage(path.Data.ToString()));
+                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(RequestBuilder.SendByteStreamPackage(path.Data.ToString()));
             }
             return new CommandResponse((int)CommandStatus.Success);
         }

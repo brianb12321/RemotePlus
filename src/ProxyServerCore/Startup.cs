@@ -3,11 +3,11 @@ using BetterLogger.Loggers;
 using RemotePlusLibrary.Core.IOC;
 using ProxyServer;
 using BetterLogger;
-using RemotePlusLibrary.Discovery;
 using RemotePlusLibrary;
 using RemotePlusLibrary.ServiceArchitecture;
 using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing;
+using RemotePlusLibrary.FileTransfer.Service.PackageSystem;
 using RemotePlusLibrary.Core.EventSystem;
 using RemotePlusLibrary.Core;
 
@@ -26,11 +26,13 @@ namespace ProxyServerCore
                 .UseCommandline<CommandEnvironment>(builder =>
                     builder.UseParser<CommandParser>()
                    .UseProcessor<TokenProcessor>()
-                   .UseExecutor<CommandExecutor>());
+                   .UseExecutor<CommandExecutor>())
+                .UsePackageInventorySelector<StandordPackageInventorySelector>(builder =>
+                    builder.AddPackageInventory<FilePackage, StandordPackageInventory>("DefaultFileInventory"));
 
             //Set up WCF services.
             IServiceManager manager = IOCContainer.GetService<IServiceManager>();
-            manager.AddServiceUsingBuilder<ProxyServerRemoteImpl>(() =>
+            manager.AddServiceUsingBuilder(() =>
             {
                 ProbeServiceBuilder psb = new ProbeServiceBuilder(new ProxyServerRemoteImpl(), _ConnectionFactory.BuildBinding());
                 return psb.SetBinding(_ConnectionFactory.BuildBinding())

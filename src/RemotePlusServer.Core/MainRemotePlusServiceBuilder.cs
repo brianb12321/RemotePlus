@@ -14,7 +14,7 @@ namespace RemotePlusServer.Core
         public override IRemotePlusService<ServerRemoteInterface> BuildService()
         {
             string endpointAddress = "Remote";
-            var _service = new ServerRemotePlusService(typeof(IRemote), _remote, _binding, $"net.tcp://0.0.0.0:{_portNumber}/{endpointAddress}");
+            var _service = new ServerRemotePlusService(_remote, _binding, $"net.tcp://0.0.0.0:{_portNumber}/{endpointAddress}");
             ServiceThrottlingBehavior throt = new ServiceThrottlingBehavior();
             throt.MaxConcurrentCalls = int.MaxValue;
             _service.Host.Description.Behaviors.Add(throt);

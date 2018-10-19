@@ -12,7 +12,8 @@ namespace RemotePlusServer.Core
         }
         public void Log(string message, LogLevel level)
         {
-            _client.ClientCallback.TellMessage(message, level);
+            string newMessage = message.Remove(0, (message.IndexOf(']') + 3));
+            _client.ClientCallback.TellMessage(newMessage, level);
         }
     }
 }

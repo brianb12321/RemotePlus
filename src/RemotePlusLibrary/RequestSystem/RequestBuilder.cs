@@ -71,5 +71,9 @@ namespace RemotePlusLibrary.RequestSystem
         {
             return new RequestBuilder("global_sendFilePackage", localFilePath, null);
         }
+        public static RequestBuilder SendByteStreamPackage(string localFilePath)
+        {
+            return new RequestBuilder("global_sendByteStreamFilePackage", localFilePath, null);
+        }
     }
 }

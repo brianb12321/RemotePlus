@@ -160,6 +160,7 @@ namespace RemotePlusClientCmd
                 CurrentConnectionData.BaseAddress = ea.Uri.Host;
                 CurrentConnectionData.Port = ea.Uri.Port;
                 Proxy = new ProxyClient(new ClientCallback(), _ConnectionFactory.BuildBinding(), ea);
+                RequestStore.Add("global_sendByteStreamFilePackage", new RemotePlusClient.CommonUI.Requests.SendLocalFileByteStreamRequest(Proxy));
                 Proxy.ChannelFactory.Faulted += (sender, e) =>
                 {
                     var dr = MessageBox.Show("The connection to the proxy server has faulted. Would you like to reconnect to the server.", "RemotePlusClientCmd", MessageBoxButtons.YesNo, MessageBoxIcon.Error);
@@ -178,6 +179,7 @@ namespace RemotePlusClientCmd
                 CurrentConnectionData.BaseAddress = ea.Uri.Host;
                 CurrentConnectionData.Port = ea.Uri.Port;
                 Remote = new ServiceClient(new ClientCallback(), _ConnectionFactory.BuildBinding(), ea);
+                RequestStore.Add("global_sendByteStreamFilePackage", new RemotePlusClient.CommonUI.Requests.SendLocalFileByteStreamRequest(Remote));
                 Remote.Register(ro);
             }
         }

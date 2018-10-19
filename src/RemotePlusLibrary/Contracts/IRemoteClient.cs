@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.ServiceModel;
 using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusLibrary.Security.AccountSystem;
@@ -37,8 +33,6 @@ namespace RemotePlusLibrary.Contracts
         ReturnData RequestInformation(Guid serverGuid, RequestBuilder builder);
         [OperationContract(IsOneWay = true)]
         void RegistirationComplete(Guid serverGuid);
-        [OperationContract(IsOneWay = true)]
-        void SendSignal(Guid serverGuid, SignalMessage signal);
         [OperationContract(IsOneWay = true)]
         void ChangePrompt(Guid serverGuid, PromptBuilder newPrompt);
         [OperationContract]

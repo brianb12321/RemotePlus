@@ -31,5 +31,8 @@ namespace RemotePlusLibrary.Contracts
         [OperationContract()]
         [FaultContract(typeof(ServerFault))]
         void Speak(string Message, VoiceGender Gender, VoiceAge Age);
+        [OperationContract]
+        [FaultContract(typeof(ServerFault))]
+        void SendSignal(SignalMessage signal);
     }
 }

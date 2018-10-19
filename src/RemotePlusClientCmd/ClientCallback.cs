@@ -104,7 +104,7 @@ namespace RemotePlusClientCmd
             Process.Start(Program, Argument);
         }
 
-        public void SendSignal(Guid guid, SignalMessage message)
+        public void SendSignal(SignalMessage message)
         {
             //ClientCmdManager.WaitFlag = true;
             switch (message.Message)

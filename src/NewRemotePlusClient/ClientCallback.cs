@@ -93,7 +93,7 @@ namespace NewRemotePlusClient
             throw new NotImplementedException();
         }
 
-        public void SendSignal(Guid serverGuid, SignalMessage signal)
+        public void SendSignal(SignalMessage signal)
         {
             throw new NotImplementedException();
         }

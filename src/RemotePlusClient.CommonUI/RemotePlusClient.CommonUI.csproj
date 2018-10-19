@@ -31,6 +31,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BetterLogger, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
     <Reference Include="Logging">
       <HintPath>..\..\Libs\Logging.dll</HintPath>
     </Reference>
@@ -87,7 +88,6 @@
     </Compile>
     <Compile Include="Controls\FileBrowserHelpers\FileOperationEventArgs.cs" />
     <Compile Include="Controls\FileBrowserHelpers\FileSelectedEventArgs.cs" />
-    <Compile Include="FileTransfer.cs" />
     <Compile Include="Controls\FileBrowserHelpers\FilterMode.cs" />
     <Compile Include="FindRemoteFileDialog.cs">
       <SubType>Form</SubType>
@@ -107,6 +107,7 @@
     </Compile>
     <Compile Include="ConnectionClients\ServiceClient.cs" />
     <Compile Include="Requests\SelectLocalFileRequest.cs" />
+    <Compile Include="Requests\SendLocalFileByteStreamRequest.cs" />
     <Compile Include="Requests\SpeechRequest.cs" />
   </ItemGroup>
   <ItemGroup>

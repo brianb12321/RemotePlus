@@ -22,6 +22,7 @@ namespace RSPM
         }
         public void InstallPackage(string packageName)
         {
+            var clientLogger = new ClientLogger(ServerRemoteService.RemoteInterface.Client);
             ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole($"Beginning installation of {packageName}");
             if (_mainDownloader.DownlaodPackage(packageName, Sources.ToArray()))
             {
@@ -34,13 +35,20 @@ namespace RSPM
                     {
                         if (confirmInstallation(package.Description))
                         {
-                            var clientLogger = new ClientLogger(ServerRemoteService.RemoteInterface.Client);
                             ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Extracting package.");
                             package.ExtractWithoutManifest("extensions");
                             ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Loading extensions.");
-                            GlobalServices.Logger.AddLogger(clientLogger);
-                            package.LoadPackageExtensions("extensions", DefaultCollection);
-                            GlobalServices.Logger.RemoveLogger(clientLogger);
+                            try
+                            {
+                                GlobalServices.Logger.AddLogger(clientLogger);
+                                package.LoadPackageExtensions("extensions", DefaultCollection);
+                                GlobalServices.Logger.RemoveLogger(clientLogger);
+                            }
+                            catch
+                            {
+                                GlobalServices.Logger.RemoveLogger(clientLogger);
+                                throw;
+                            }
                             ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Finished extracting package. Deleting downloaded package.");
                         }
                         else

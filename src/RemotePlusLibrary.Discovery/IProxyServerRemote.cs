@@ -45,8 +45,6 @@ namespace RemotePlusLibrary.Discovery
         [OperationContract(IsOneWay = true)]
         void RegistirationComplete(Guid serverGuid);
         [OperationContract(IsOneWay = true)]
-        void SendSignal(Guid serverGuid, SignalMessage signal);
-        [OperationContract(IsOneWay = true)]
         void ChangePrompt(Guid serverGuid, PromptBuilder newPrompt);
         [OperationContract]
         PromptBuilder GetCurrentPrompt();

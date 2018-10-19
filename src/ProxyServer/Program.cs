@@ -21,6 +21,7 @@ namespace ProxyServer
         public static IRemotePlusService<ProxyServerRemoteImpl> ProxyService => DefaultServiceManager.GetService<ProxyServerRemoteImpl>();
         public static ScriptBuilder ScriptBuilder => IOCContainer.GetService<ScriptBuilder>();
         public static ExtensionSystem.ProxyExtensionCollection DefaultCollection { get; private set; } = new ExtensionSystem.ProxyExtensionCollection();
+        public static RemotePlusLibrary.FileTransfer.Service.PackageSystem.IPackageInventorySelector DefaultPackageInventorySelector => IOCContainer.GetService<RemotePlusLibrary.FileTransfer.Service.PackageSystem.IPackageInventorySelector>();
         [STAThread]
         static void Main(string[] args)
         {
@@ -131,7 +132,7 @@ namespace ProxyServer
 
         internal static void Close()
         {
-            ProxyService.Close();
+            DefaultServiceManager.CloseAll();
             Environment.Exit(0);
         }
     }

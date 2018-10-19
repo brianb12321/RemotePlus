@@ -10,7 +10,7 @@ using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RemotePlusClient.CommonUI
+namespace RemotePlusLibrary.FileTransfer.Service
 {
     public class FileTransfer
     {

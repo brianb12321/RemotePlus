@@ -21,7 +21,7 @@ namespace RemotePlusServer.Core
         {
             ((NetTcpBinding)_binding).TransferMode = TransferMode.Buffered;
             string endpointAddress = "FileTransfer";
-            var _service = new FileTransferService(_serviceImpl, typeof(RemotePlusLibrary.FileTransfer.Service.IFileTransferContract), _binding, $"net.tcp://0.0.0.0:{_portNumber}/{endpointAddress}");
+            var _service = new FileTransferService(_serviceImpl, _binding, $"net.tcp://0.0.0.0:{_portNumber}/{endpointAddress}");
             _service.HostClosed += _hostClosed;
             _service.HostClosing += _hostClosing;
             _service.HostOpened += _hostOpened;
