@@ -113,6 +113,12 @@ namespace ProxyServer
             ProxyService.RemoteInterface.Register(new RegisterationObject());
             return new CommandResponse((int)CommandStatus.Success);
         }
+        [CommandHelp("Clears all variables and functions from the interactive scripts.")]
+        public static CommandResponse resetStaticScript(CommandRequest reqest, CommandPipeline pipe)
+        {
+            ProxyManager.ScriptBuilder.ClearStaticScope();
+            return new CommandResponse((int)CommandStatus.Success);
+        }
         public static IServerBuilder AddDefaultProxyCommands(this IServerBuilder builder)
         {
             return builder.AddTask(InitializeCommands);
@@ -123,6 +129,7 @@ namespace ProxyServer
             ProxyService.Commands.Add("proxyHelp", help);
             ProxyService.Commands.Add("proxyViewServers", viewServers);
             ProxyService.Commands.Add("proxyRegister", register);
+            ProxyService.Commands.Add("proxyResetStaticScript", resetStaticScript);
         }
 
         internal static void RunInServerMode()

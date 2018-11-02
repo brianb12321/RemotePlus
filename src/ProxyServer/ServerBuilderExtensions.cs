@@ -8,6 +8,8 @@ using BetterLogger;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
 using RemotePlusLibrary.Core.IOC;
 using RemotePlusLibrary.Core;
+using System.Reflection;
+using ProxyServer.Scripting;
 
 namespace ProxyServer
 {
@@ -32,6 +34,9 @@ namespace ProxyServer
             {
                 GlobalServices.Logger.Log("Initializing functions and variables.", LogLevel.Info, "Scripting Engine");
                 InitializeGlobals();
+                ProxyManager.ScriptBuilder.AddAssembly("ProxyServer");
+                ProxyManager.ScriptBuilder.AddClass<BatchJob>();
+                ProxyManager.ScriptBuilder.ExecuteStringUsingSameScriptScope("import clr; clr.AddReference(\"ProxyServer\"); from ProxyServer.Scripting import *;");
             });
         }
 

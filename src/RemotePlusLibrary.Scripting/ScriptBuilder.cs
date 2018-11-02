@@ -17,12 +17,21 @@ namespace RemotePlusLibrary.Scripting
         private  Dictionary<string, ScriptGlobal> globals = new Dictionary<string, ScriptGlobal>();
         public const string SCRIPT_LOG_CONSTANT = "Script Engine";
         public ScriptEngine ScriptingEngine { get; private set; }
+        public ScriptScope _templateScope = null;
         void InitializeGlobals()
         {
             foreach (KeyValuePair<string, ScriptGlobal> global in globals)
             {
                 ScriptingEngine.GetBuiltinModule().SetVariable(global.Key, global.Value.Global);
             }
+        }
+        public void AddAssembly(string name)
+        {
+            ScriptingEngine.Execute($"clr.AddReference(\"{name}\")", _templateScope);
+        }
+        public void AddClass<TClass>()
+        {
+            ScriptingEngine.Execute($"from {typeof(TClass).Namespace} import {typeof(TClass).Name}", _templateScope);
         }
         public void AddScriptObject<T>(string objectName, T scriptObject, string description, ScriptGlobalType objectType) where T : class
         {
@@ -83,12 +92,14 @@ namespace RemotePlusLibrary.Scripting
             var paths = ScriptingEngine.GetSearchPaths();
             paths.Add($"{Environment.CurrentDirectory}\\extensions");
             ScriptingEngine.SetSearchPaths(paths);
+            ScriptingEngine.GetBuiltinModule().ImportModule("clr");
+            _templateScope = ScriptingEngine.CreateScope();
             InitializeGlobals();
         }
         public bool ExecuteString(string script)
         {
             var source = ScriptingEngine.CreateScriptSourceFromString(script);
-            source.Execute();
+            source.Execute(_templateScope);
             return true;
         }
         ScriptScope staticScope = null;
@@ -97,14 +108,14 @@ namespace RemotePlusLibrary.Scripting
             var source = ScriptingEngine.CreateScriptSourceFromString(script);
             if (staticScope ==  null)
             {
-                staticScope = ScriptingEngine.CreateScope();
+                staticScope = _templateScope;
             }
             source.Execute(staticScope);
             return true;
         }
         public void ClearStaticScope()
         {
-            staticScope = null;
+            staticScope = _templateScope;
         }
     }
 }

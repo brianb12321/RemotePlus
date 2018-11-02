@@ -48,8 +48,8 @@ namespace ProxyServerCore
         public void InitializeServer(IServerBuilder builder)
         {
             builder.AddDefaultProxyCommands()
-                .InitializeGlobals()
-                .InitializeScriptingEngine();
+                .InitializeScriptingEngine()
+                .InitializeGlobals();
         }
         private static void ProxyService_HostFaulted(object sender, EventArgs e)
         {
