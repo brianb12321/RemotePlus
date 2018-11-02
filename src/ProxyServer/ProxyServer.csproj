@@ -93,8 +93,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ProxyServerRemoteImpl.cs" />
     <Compile Include="Scripting\Batch\BatchJob.cs" />
-    <Compile Include="Scripting\Batch\BatchTask.cs" />
     <Compile Include="Scripting\Batch\JobExecutionMode.cs" />
+    <Compile Include="Scripting\Batch\JobTask.cs" />
+    <Compile Include="Scripting\Batch\TaskGroup.cs" />
     <Compile Include="ServerBuilder.cs" />
     <Compile Include="ServerBuilderExtensions.cs" />
     <Compile Include="ServerControls.cs">

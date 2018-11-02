@@ -7,74 +7,79 @@ using System.Threading.Tasks;
 
 namespace ProxyServer.Scripting.Batch
 {
-    public class BatchJob
+    public class BatchJob : TaskGroup
     {
-        private List<SessionClient<IRemoteWithProxy>> servers = new List<SessionClient<IRemoteWithProxy>>();
-        private List<BatchTask> tasks = new List<BatchTask>();
-        private JobExecutionMode executionMode = JobExecutionMode.Single;
-        public void addTask(BatchTask task)
+        private List<TaskGroup> taskGroups = new List<TaskGroup>();
+        public BatchJob()
         {
-            tasks.Add(task);
+            taskGroups.Add(new TaskGroup());
         }
-        public BatchTask addTask(Action<SessionClient<IRemoteWithProxy>> task)
+        public override void addServer(int serverID)
         {
-            BatchTask t = new BatchTask(task);
-            tasks.Add(t);
-            return t;
+            taskGroups[0].addServer(serverID);
         }
-        public BatchTask replaceTask(int taskPosition, Action<SessionClient<IRemoteWithProxy>> task)
+        public override JobTask addTask(Action<SessionClient<IRemoteWithProxy>> task)
         {
-            BatchTask t = new BatchTask(task);
-            tasks[taskPosition] = t;
-            return t;
+            return taskGroups[0].addTask(task);
         }
-        public void replaceTask(int taskPosition, BatchTask task)
+        public override JobTask addCommandTask(string command)
         {
-            tasks[taskPosition] = task;
+            return taskGroups[0].addCommandTask(command);
         }
-        public void removeTask(int taskPosition)
+        public override JobTask addScriptTask(string script)
         {
-            tasks.RemoveAt(taskPosition);
+            return taskGroups[0].addScriptTask(script);
         }
-        public void addServer(int serverID)
+        public override void addTask(JobTask task)
         {
-            try
+            taskGroups[0].addTask(task);
+        }
+        public void addTaskGroup(TaskGroup tg)
+        {
+            taskGroups.Add(tg);
+        }
+        public void removeTaskGroup(int taskGroupPosition)
+        {
+            taskGroups.RemoveAt(taskGroupPosition);
+        }
+        public void removeTaskGroup(TaskGroup tg)
+        {
+            taskGroups.Remove(tg);
+        }
+        public override void removeTask(int taskPosition)
+        {
+            taskGroups[0].removeTask(taskPosition);
+        }
+        public override void removeTask(JobTask task)
+        {
+            taskGroups[0].removeTask(task);
+        }
+        public override JobTask replaceTask(int taskPosition, Action<SessionClient<IRemoteWithProxy>> task)
+        {
+            return taskGroups[0].replaceTask(taskPosition, task);
+        }
+        public override void replaceTask(int taskPosition, JobTask task)
+        {
+            taskGroups[0].replaceTask(taskPosition, task);
+        }
+        public override void setTaskExecutionMode(JobExecutionMode mode)
+        {
+            taskGroups[0].setTaskExecutionMode(mode);
+        }
+        public override void setExecutionMode(JobExecutionMode mode)
+        {
+            taskGroups[0].setExecutionMode(mode);
+        }
+        public override void run()
+        {
+            foreach(TaskGroup tg in taskGroups)
             {
-                servers.Add(ProxyManager.ProxyService.RemoteInterface.ConnectedServers[serverID]);
+                tg.run();
             }
-            catch (KeyNotFoundException)
-            {
-                throw new KeyNotFoundException("The client does not exist.");
-            }
         }
-        public BatchTask addCommandTask(string command)
+        public override void clearAllTasks()
         {
-            return addTask((s) =>
-            {
-                s.ClientCallback.RunServerCommand(command, RemotePlusLibrary.Extension.CommandSystem.CommandExecutionMode.Script);
-            });
-        }
-        public BatchTask addScriptTask(string script)
-        {
-            return addTask((s) =>
-            {
-                s.ClientCallback.ExecuteScript(script);
-            });
-        }
-        public void setExecutionMode(JobExecutionMode mode)
-        {
-            executionMode = mode;
-        }
-        public void run()
-        {
-            if (executionMode == JobExecutionMode.Parallel)
-            {
-                servers.AsParallel().ForAll(s => tasks.ForEach(a => a.run(s)));
-            }
-            else
-            {
-                servers.ForEach(s => tasks.ForEach((a) => a.run(s)));
-            }
+            taskGroups = new List<TaskGroup>();
         }
     }
 }

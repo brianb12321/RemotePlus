@@ -37,7 +37,8 @@ namespace ProxyServer
                 InitializeGlobals();
                 ProxyManager.ScriptBuilder.AddAssembly("ProxyServer");
                 ProxyManager.ScriptBuilder.AddClass<BatchJob>();
-                ProxyManager.ScriptBuilder.AddClass<BatchTask>();
+                ProxyManager.ScriptBuilder.AddClass<TaskGroup>();
+                ProxyManager.ScriptBuilder.AddClass<JobTask>();
                 ProxyManager.ScriptBuilder.AddClass<JobExecutionMode>();
             });
         }
