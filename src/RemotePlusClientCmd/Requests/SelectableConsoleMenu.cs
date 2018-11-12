@@ -9,6 +9,7 @@ using System.Drawing;
 using RemotePlusLibrary.Core;
 using RemotePlusLibrary.RequestSystem;
 using BetterLogger;
+using RemotePlusLibrary.RequestSystem.DefaultRequestOptions;
 
 namespace RemotePlusClientCmd.Requests
 {
@@ -20,12 +21,16 @@ namespace RemotePlusClientCmd.Requests
         string IDataRequest.FriendlyName => "Selectable Command Line Menu";
 
         string IDataRequest.Description => "You can use arrows to select your option.";
+
+        string IDataRequest.URI => "rcmd_csmenu";
+
         ConsoLovers.ConsoleToolkit.Menu.ColoredConsoleMenu cm;
         char selectedItem = '0';
         RawDataRequest IDataRequest.RequestData(RequestBuilder builder)
         {
            try
             {
+                var options = builder.UnsafeResolve<SMenuRequestOptions>();
                 bool useBorderaroundHeader = false;
                 Color selectBackColor = Color.Brown;
                 Color consoleBackColor = Color.Black;
@@ -33,38 +38,13 @@ namespace RemotePlusClientCmd.Requests
                 Color menuItemForeground = Color.White;
                 Color selectForeColor = Color.Black;
                 Color headerFillColor = consoleBackColor;
-                if (builder.Metadata.ContainsKey("BorderHeader"))
-                {
-                    useBorderaroundHeader = (builder.Metadata["BorderHeader"].ToLower() == "true") ? true : false;
-                }
-                if (builder.Metadata.ContainsKey("HeaderBackColor"))
-                {
-                    headerFillColor = Color.FromName(builder.Metadata["HeaderBackColor"]);
-                }
-                if(builder.Metadata.ContainsKey("SelectBackColor"))
-                {
-                    selectBackColor = Color.FromName(builder.Metadata["SelectBackColor"]);
-                }
-                if (builder.Metadata.ContainsKey("ConsoleBackColor"))
-                {
-                    consoleBackColor = Color.FromName(builder.Metadata["ConsoleBackColor"]);
-                    if (!builder.Metadata.ContainsKey("HeaderBackColor"))
-                    {
-                        headerFillColor = consoleBackColor;
-                    }
-                }
-                if(builder.Metadata.ContainsKey("HeaderForeground"))
-                {
-                    headerForeground = Color.FromName(builder.Metadata["HeaderForeground"]);
-                }
-                if(builder.Metadata.ContainsKey("MenuItemForeground"))
-                {
-                    menuItemForeground = Color.FromName(builder.Metadata["MenuItemForeground"]);
-                }
-                if(builder.Metadata.ContainsKey("SelectForeColor"))
-                {
-                    selectForeColor = Color.FromName(builder.Metadata["SelectForeColor"]);
-                }
+                useBorderaroundHeader = options.DrawHeadingBorder;
+                selectBackColor = Color.FromArgb(options.SelectBackColor);
+                consoleBackColor = Color.FromArgb(options.ConsoleBackColor);
+                headerForeground = Color.FromArgb(options.HeaderForeground);
+                menuItemForeground = Color.FromArgb(options.MenuItemForeground);
+                selectForeColor = Color.FromArgb(options.SelectForeground);
+                headerFillColor = Color.FromArgb(options.HeaderBackgrondColor);
                 selectedItem = '0';
                 cm = new ColoredConsoleMenu();
                 cm.Theme = new MenuColorTheme()
@@ -88,15 +68,15 @@ namespace RemotePlusClientCmd.Requests
                 };
                 if (useBorderaroundHeader)
                 {
-                    cm.Header = "===========================\n" + builder.Message + "\n" + "===========================\n";
+                    cm.Header = "===========================\n" + options.Message + "\n" + "===========================\n";
                 }
                 else
                 {
-                    cm.Header = builder.Message + "\n";
+                    cm.Header = options.Message + "\n";
                 }
-                foreach (KeyValuePair<string, string> options in builder.Arguments)
+                foreach (KeyValuePair<string, string> optionsList in options.MenuItems)
                 {
-                    var mi = new ConsoleMenuItem($"{options.Key}) {options.Value}", new Action<ConsoleMenuItem>(doneExecute));
+                    var mi = new ConsoleMenuItem($"{optionsList.Key}) {optionsList.Value}", new Action<ConsoleMenuItem>(doneExecute));
                     cm.Add(mi);
                 }
                 cm.Show();
@@ -123,6 +103,11 @@ namespace RemotePlusClientCmd.Requests
         }
 
         public void Update(string message)
+        {
+            throw new NotImplementedException();
+        }
+
+        void IDataRequest.Update(string message)
         {
             throw new NotImplementedException();
         }

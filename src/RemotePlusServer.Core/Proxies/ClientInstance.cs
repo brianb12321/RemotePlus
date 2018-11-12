@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using RemotePlusLibrary;
 using RemotePlusLibrary.Contracts;
 using RemotePlusLibrary.RequestSystem;
+using RemotePlusLibrary.RequestSystem.DefaultRequestOptions;
 using RemotePlusLibrary.Scripting;
 
 namespace RemotePlusServer.Core.Proxies
@@ -15,15 +16,17 @@ namespace RemotePlusServer.Core.Proxies
         [IndexScriptObject]
         public string requestString(string prompt)
         {
-            return ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(RequestBuilder.RequestString(prompt)).Data.ToString();
+            var builder = RequestBuilder.RequestString();
+            builder.PutObject(new PromptRequestOptions()
+            {
+                Message = prompt
+            });
+            return ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(builder).Data.ToString();
         }
         [IndexScriptObject]
         public void speak(string message, VoiceGender voiceGender, VoiceAge voiceAge)
         {
-            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(new RequestBuilder("a_speak", message, null) { Metadata = new Dictionary<string, string>() {
-                {"vg", voiceGender.ToString()},
-                {"va", voiceAge.ToString()}
-            } });
+            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.Speak(message, voiceGender, voiceAge);
         }
         [IndexScriptObject]
         public ReturnData sendRequest(RequestBuilder builder)
@@ -31,9 +34,9 @@ namespace RemotePlusServer.Core.Proxies
             return ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(builder);
         }
         [IndexScriptObject]
-        public static RequestBuilder createRequestBuilder(string URI, string message, Dictionary<string, string> args)
+        public static RequestBuilder createRequestBuilder(string URI)
         {
-            return new RequestBuilder(URI, message, args);
+            return new RequestBuilder(URI);
         }
         [IndexScriptObject]
         public void postMessage(string message)
@@ -56,9 +59,9 @@ namespace RemotePlusServer.Core.Proxies
             ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.PlaySoundSync(FileName);
         }
         [IndexScriptObject]
-        public void RunProgram(string Program, string Argument)
+        public void RunProgram(string Program, string Argument, bool ignore)
         {
-            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RunProgram(Program, Argument);
+            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RunProgram(Program, Argument, ignore);
         }
         [IndexScriptObject]
         public void Beep(int Hertz, int Duration)

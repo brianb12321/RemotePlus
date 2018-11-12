@@ -1,6 +1,7 @@
 ﻿using RemotePlusLibrary.RequestSystem;
 using RemotePlusLibrary.FileTransfer.Service;
 using System;
+using RemotePlusLibrary.RequestSystem.DefaultRequestOptions;
 
 namespace RemotePlusClient
 {
@@ -12,11 +13,13 @@ namespace RemotePlusClient
 
         public string Description => "Asks the client for a specific file package.";
 
+        public string URI => "global_sendFilePackage";
+
         public RawDataRequest RequestData(RequestBuilder builder)
         {
             try
             {
-                new FileTransfer(MainF.CurrentConnectionData.BaseAddress, MainF.CurrentConnectionData.Port).SendFile(builder.Message);
+                new FileTransfer(MainF.CurrentConnectionData.BaseAddress, MainF.CurrentConnectionData.Port).SendFile(builder.UnsafeResolve<FileRequestOptions>().FileName);
                 return RawDataRequest.Success(null);
             }
             catch

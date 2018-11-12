@@ -17,7 +17,7 @@ namespace RemotePlusServer.Core
             var _service = new ServerRemotePlusService(_remote, _binding, $"net.tcp://0.0.0.0:{_portNumber}/{endpointAddress}");
             ServiceThrottlingBehavior throt = new ServiceThrottlingBehavior();
             throt.MaxConcurrentCalls = int.MaxValue;
-            _service.Host.Description.Behaviors.Add(throt);
+            _service.Behaviors.Add(throt);
             _service.HostClosed += _hostClosed;
             _service.HostClosing += _hostClosing;
             _service.HostOpened += _hostOpened;

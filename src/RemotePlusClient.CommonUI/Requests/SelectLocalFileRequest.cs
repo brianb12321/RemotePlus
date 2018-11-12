@@ -1,4 +1,5 @@
 ﻿using RemotePlusLibrary.RequestSystem;
+using RemotePlusLibrary.RequestSystem.DefaultRequestOptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,14 +17,14 @@ namespace RemotePlusClient.CommonUI.Requests
 
         public string Description => "Requests for a local path. A local path is a path on the client.";
 
+        public string URI => "r_selectLocalFile";
+
         public RawDataRequest RequestData(RequestBuilder builder)
         {
+            var options = builder.UnsafeResolve<FileDialogRequestOptions>();
             OpenFileDialog ofd = new OpenFileDialog();
-            ofd.Title = builder.Message;
-            if (builder.Metadata.ContainsKey("Filter"))
-            {
-                ofd.Filter = builder.Metadata["Filter"];
-            }
+            ofd.Title = options.Title;
+            ofd.Filter = options.Filter;
             if(ofd.ShowDialog() == DialogResult.OK)
             {
                 return RawDataRequest.Success(ofd.FileName);

@@ -19,6 +19,8 @@ namespace RemotePlusClient
 
         public string Description => "Stuff";
 
+        public string URI => "global_selectFile";
+
         public RawDataRequest RequestData(RequestBuilder builder)
         {
             FindRemoteFileDialog fd = new FindRemoteFileDialog(FilterMode.File, MainF.Remote, MainF.CurrentConnectionData.BaseAddress, MainF.CurrentConnectionData.Port);

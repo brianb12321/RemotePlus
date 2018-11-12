@@ -71,6 +71,14 @@
     <Compile Include="FileTransfer\Service\PackageSystem\StandordPackageInventory.cs" />
     <Compile Include="FileTransfer\Service\PackageSystem\StandordPackageInventorySelector.cs" />
     <Compile Include="FileTransfer\Service\PackageSystem\StreamPackage.cs" />
+    <Compile Include="GlobalServerBuilderExtensions.cs" />
+    <Compile Include="RequestSystem\DefaultRequestOptions\FileDialogRequestOptions.cs" />
+    <Compile Include="RequestSystem\DefaultRequestOptions\FileRequestOptions.cs" />
+    <Compile Include="RequestSystem\DefaultRequestOptions\MessageBoxRequestOptions.cs" />
+    <Compile Include="RequestSystem\DefaultRequestOptions\PromptRequestOptions.cs" />
+    <Compile Include="RequestSystem\DefaultRequestOptions\SimpleMenuRequestOptions.cs" />
+    <Compile Include="RequestSystem\DefaultRequestOptions\SMenuRequestOptions.cs" />
+    <Compile Include="RequestSystem\IGenericObject.cs" />
     <Compile Include="ServiceArchitecture\DefaultServiceBuilder.cs" />
     <Compile Include="ServiceArchitecture\DefaultServiceManager.cs" />
     <Compile Include="ServiceArchitecture\IRemotePlusService.cs" />

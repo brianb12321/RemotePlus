@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 using RemotePlusLibrary.RequestSystem;
+using RemotePlusLibrary.RequestSystem.DefaultRequestOptions;
 
 namespace RemotePlusClient.CommonUI
 {
@@ -15,6 +16,8 @@ namespace RemotePlusClient.CommonUI
 
         string IDataRequest.Description => "Requests the user for a string.";
 
+        public string URI => "r_string";
+
         public RequestStringDialogBox(string _message)
         {
             message = _message;
@@ -27,7 +30,7 @@ namespace RemotePlusClient.CommonUI
 
         RawDataRequest IDataRequest.RequestData(RequestBuilder builder)
         {
-            RequestStringDialogBox rd = new RequestStringDialogBox(builder.Message);
+            RequestStringDialogBox rd = new RequestStringDialogBox(builder.UnsafeResolve<PromptRequestOptions>().Message);
             if(rd.ShowDialog() == DialogResult.OK)
             {
                 return RawDataRequest.Success(rd.data);

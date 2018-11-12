@@ -1,6 +1,7 @@
 ﻿using RemotePlusLibrary.Client;
 using RemotePlusLibrary.Configuration.ServerSettings;
 using RemotePlusLibrary.Contracts;
+using RemotePlusLibrary.Core;
 using RemotePlusLibrary.Core.Faults;
 using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
@@ -14,6 +15,7 @@ using System.ServiceModel;
 namespace RemotePlusLibrary.Discovery
 {
     [ServiceContract(CallbackContract = typeof(IRemoteClient))]
+    [ServiceKnownType("GetKnownTypes", typeof(DefaultKnownTypeManager))]
     public interface IRemoteWithProxy : IClient, IBidirectionalContract
     {
         [OperationContract]

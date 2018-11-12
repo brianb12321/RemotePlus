@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RemotePlusLibrary.Core.EventSystem
+namespace RemotePlusLibrary.Core.EventSystem.Events
 {
     /// <summary>
     /// Gets raised when a user attempts to login.

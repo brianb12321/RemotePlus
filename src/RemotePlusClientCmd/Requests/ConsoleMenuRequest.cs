@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using RemotePlusLibrary;
 using RemotePlusLibrary.RequestSystem;
+using RemotePlusLibrary.RequestSystem.DefaultRequestOptions;
 
 namespace RemotePlusClientCmd.Requests
 {
@@ -16,6 +17,8 @@ namespace RemotePlusClientCmd.Requests
 
         string IDataRequest.Description => "Provides a simple menu";
 
+        string IDataRequest.URI => "rcmd_smenu";
+
         public void Update(string message)
         {
             throw new NotImplementedException();
@@ -23,19 +26,20 @@ namespace RemotePlusClientCmd.Requests
 
         RawDataRequest IDataRequest.RequestData(RequestBuilder builder)
         {
+            var options = builder.UnsafeResolve<SimpleMenuRequestOptions>();
             while(true)
             {
-                Console.WriteLine($"{builder.Message}");
+                Console.WriteLine($"{options.Message}");
                 Console.WriteLine("============================");
-                foreach (KeyValuePair<string, string> options in builder.Arguments)
+                foreach (KeyValuePair<string, string> optionsList in options.MenuItems)
                 {
-                    Console.WriteLine($"{options.Key}){options.Value}");
+                    Console.WriteLine($"{optionsList.Key}){optionsList.Value}");
                 }
                 Console.WriteLine();
                 Console.Write("Please enter a value: ");
                 ConsoleKeyInfo option = Console.ReadKey(false);
                 Console.WriteLine();
-                if(!builder.Arguments.ContainsKey(option.KeyChar.ToString()))
+                if(!options.MenuItems.ContainsKey(option.KeyChar.ToString()))
                 {
                     Console.WriteLine("Please enter a valid option.");
                 }
@@ -44,6 +48,11 @@ namespace RemotePlusClientCmd.Requests
                     return RawDataRequest.Success(option.KeyChar);
                 }
             }
+        }
+
+        void IDataRequest.Update(string message)
+        {
+            throw new NotImplementedException();
         }
 
         void IDataRequest.UpdateProperties()

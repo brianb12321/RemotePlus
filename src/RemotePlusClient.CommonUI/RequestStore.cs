@@ -2,42 +2,42 @@
 using RemotePlusLibrary.RequestSystem;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace RemotePlusClient.CommonUI
 {
     public static class RequestStore
     {
         static IDataRequest current;
-        static Dictionary<string, IDataRequest> requestForms = new Dictionary<string, IDataRequest>();
+        static List<IDataRequest> requestForms = new List<IDataRequest>();
         public static void Init()
         {
-            requestForms.Add("r_string", new RequestStringDialogBox());
-            requestForms.Add("r_color", new ColorRequest());
-            requestForms.Add("r_messageBox", new MessageBoxRequest());
-            requestForms.Add("a_speak", new SpeechRequest());
-            requestForms.Add("r_filePath", new SelectLocalFileRequest());
+            requestForms.Add(new RequestStringDialogBox());
+            requestForms.Add(new ColorRequest());
+            requestForms.Add(new MessageBoxRequest());
+            requestForms.Add(new SelectLocalFileRequest());
         }
-        public static void Add(string name, IDataRequest requestForm)
+        public static void Add(IDataRequest requestForm)
         {
-            requestForms.Add(name, requestForm);
+            requestForms.Add(requestForm);
         }
-        public static IDictionary<string, IDataRequest> GetAll()
+        public static List<IDataRequest> GetAll()
         {
             return requestForms;
         }
         public static IDataRequest Get(string name)
         {
-            return requestForms[name];
+            return requestForms.FirstOrDefault(r => r.URI.ToUpper() == name.ToUpper());
         }
         public static ReturnData Show(RequestBuilder builder)
         {
             try
             {
-                var keyFound = requestForms.TryGetValue(builder.Interface, out IDataRequest val);
-                if (keyFound)
+                var request = requestForms.FirstOrDefault(r => r.URI.ToUpper() == builder.Interface.ToUpper());
+                if (request != null)
                 {
-                    current = val;
-                    var rd = val.RequestData(builder);
+                    current = request;
+                    var rd = request.RequestData(builder);
                     if (rd.State == RequestState.OK)
                     {
                         return new ReturnData(rd.RawData, RequestState.OK);

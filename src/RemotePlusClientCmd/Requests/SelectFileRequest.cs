@@ -20,6 +20,8 @@ namespace RemotePlusClientCmd.Requests
 
         public string Description => "Stuff";
 
+        public string URI => "global_selectFile";
+
         public RawDataRequest RequestData(RequestBuilder builder)
         {
             if (ClientCmdManager.ProxyEnabled)

@@ -11,11 +11,13 @@ using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
 using BetterLogger;
+using RemotePlusLibrary.Core;
 
 namespace RemotePlusLibrary.Discovery
 {
     [ServiceContract(CallbackContract = typeof(IRemoteWithProxy),
         SessionMode = SessionMode.Required)]
+    [ServiceKnownType("GetKnownTypes", typeof(DefaultKnownTypeManager))]
     public interface IProxyServerRemote : IBidirectionalContract
     {
         [OperationContract(IsOneWay = true, IsTerminating = true)]

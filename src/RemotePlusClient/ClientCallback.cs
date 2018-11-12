@@ -17,12 +17,14 @@ using RemotePlusLibrary.Client;
 using RemotePlusLibrary.Security.Authentication;
 using RemotePlusLibrary.Contracts;
 using BetterLogger;
+using RemotePlusLibrary.Core;
 
 namespace RemotePlusClient
 {
     [CallbackBehavior(ConcurrencyMode = ConcurrencyMode.Multiple,
         IncludeExceptionDetailInFaults = true,
         UseSynchronizationContext = false)]
+    [ServiceKnownType("GetKnownTypes", typeof(DefaultKnownTypeManager))]
     public class ClientCallback : IRemoteClient
     {
         public int ServerPosition { get; private set; }
@@ -74,9 +76,13 @@ namespace RemotePlusClient
             SoundPlayer player = new SoundPlayer(FileName);
             player.PlayLooping();
         }
-        public void RunProgram(string Program, string Argument)
+        public void RunProgram(string Program, string Argument, bool ignore)
         {
-            Process.Start(Program, Argument);
+            var p = Process.Start(Program, Argument);
+            if(!ignore)
+            {
+                p.WaitForExit();
+            }
         }
         public DialogResult ShowMessageBox(string Message, string Caption, MessageBoxIcon Icon, MessageBoxButtons Buttons)
         {

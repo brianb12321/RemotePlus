@@ -1,4 +1,5 @@
 ﻿using RemotePlusLibrary.Contracts;
+using RemotePlusLibrary.Core;
 using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
 using System;
@@ -8,6 +9,7 @@ namespace RemotePlusLibrary.Discovery
 {
     [ServiceContract(CallbackContract = typeof(IRemoteClient),
         SessionMode = SessionMode.Required)]
+    [ServiceKnownType("GetKnownTypes", typeof(DefaultKnownTypeManager))]
     public interface IProxyRemote : IRemote
     {
         [OperationContract(Name = "SelectServerByNumber")]

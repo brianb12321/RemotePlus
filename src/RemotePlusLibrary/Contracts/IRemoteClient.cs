@@ -6,9 +6,11 @@ using RemotePlusLibrary.Client;
 using RemotePlusLibrary.RequestSystem;
 using RemotePlusLibrary.Security.Authentication;
 using BetterLogger;
+using RemotePlusLibrary.Core;
 
 namespace RemotePlusLibrary.Contracts
 {
+    [ServiceKnownType("GetKnownTypes", typeof(DefaultKnownTypeManager))]
     public interface IRemoteClient : IClient, IBidirectionalContract
     {
         [OperationContract(IsOneWay = true)]

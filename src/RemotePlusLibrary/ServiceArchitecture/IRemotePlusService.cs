@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
+using System.ServiceModel.Description;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -15,6 +16,7 @@ namespace RemotePlusLibrary.ServiceArchitecture
         /// The host object.
         /// </summary>
         ServiceHost Host { get; }
+        List<IServiceBehavior> Behaviors { get; }
         /// <summary>
         /// Occures when the host object is closed.
         /// </summary>
@@ -51,6 +53,7 @@ namespace RemotePlusLibrary.ServiceArchitecture
         /// The variables that are defined on the server.
         /// </summary>
         VariableManager Variables { get; set; }
+        void BuildHost();
         void AddEndpoint<TEndpoint>(TEndpoint endpoint, Binding binding, string endpointName, Action<TEndpoint> setupCallback);
         void Start();
         void Close();

@@ -15,6 +15,7 @@ using RemotePlusLibrary.Scripting;
 using RemotePlusLibrary.RequestSystem;
 using RemotePlusServer.Core;
 using BetterLogger;
+using RemotePlusLibrary.RequestSystem.DefaultRequestOptions;
 
 namespace WindowsTools
 {
@@ -39,8 +40,13 @@ namespace WindowsTools
             cleanOptions.Add("7", "All Temp Folders");
             cleanOptions.Add("8", "Clean all temp folders and take own");
             cleanOptions.Add("9", "Exit");
-            var optionBuilder = new RequestBuilder("rcmd_smenu", "What should dskClean clean from the server?\nNOTE: These actions will be performed on all users except for the Recycle Bin clean.", cleanOptions);
-            var result = ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(optionBuilder);
+            var rb = new RequestBuilder("rcmd_csmenu");
+            rb.PutObject(new SMenuRequestOptions()
+            {
+                MenuItems = cleanOptions,
+                Message = "What should dskClean clean from the server?\nNOTE: These actions will be performed on all users except for the Recycle Bin clean."
+            });
+            var result = ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(rb);
             switch((char)result.Data)
             {
                 case '0':

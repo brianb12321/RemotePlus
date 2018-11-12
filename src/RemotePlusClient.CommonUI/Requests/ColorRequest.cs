@@ -13,6 +13,8 @@ namespace RemotePlusClient.CommonUI.Requests
 
         string IDataRequest.Description => "Requests a color from the user.";
 
+        string IDataRequest.URI => "r_color";
+
         void IDataRequest.UpdateProperties()
         {
             throw new NotImplementedException();
@@ -32,6 +34,11 @@ namespace RemotePlusClient.CommonUI.Requests
         }
 
         public void Update(string message)
+        {
+            throw new NotImplementedException();
+        }
+
+        void IDataRequest.Update(string message)
         {
             throw new NotImplementedException();
         }

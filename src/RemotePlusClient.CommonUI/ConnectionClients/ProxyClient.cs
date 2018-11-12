@@ -146,9 +146,9 @@ namespace RemotePlusClient.CommonUI.ConnectionClients
             Channel.Restart();
         }
 
-        public void RunProgram(string Program, string Argument)
+        public void RunProgram(string Program, string Argument, bool ignore)
         {
-            Channel.RunProgram(Program, Argument);
+            Channel.RunProgram(Program, Argument, ignore);
         }
 
         public CommandPipeline RunServerCommand(string Command, CommandExecutionMode commandMode)

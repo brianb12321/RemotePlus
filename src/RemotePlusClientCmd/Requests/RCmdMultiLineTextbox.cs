@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using RemotePlusLibrary;
 using RemotePlusLibrary.RequestSystem;
+using RemotePlusLibrary.RequestSystem.DefaultRequestOptions;
 
 namespace RemotePlusClientCmd.Requests
 {
@@ -17,10 +18,12 @@ namespace RemotePlusClientCmd.Requests
 
         public string Description => "Allows you to enter multiple lines of text.";
 
+        public string URI => "rcmd_mTextBox";
+
         public RawDataRequest RequestData(RequestBuilder builder)
         {
             StringBuilder sb = new StringBuilder();
-            Console.WriteLine($"{builder.Message}");
+            Console.WriteLine($"{builder.UnsafeResolve<PromptRequestOptions>().Message}");
             while(true)
             {
                 string result = Console.ReadLine();

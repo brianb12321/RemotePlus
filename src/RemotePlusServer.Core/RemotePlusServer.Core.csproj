@@ -88,7 +88,6 @@
     <Compile Include="FileTransferServciceInterface.cs" />
     <Compile Include="FileTransferService.cs" />
     <Compile Include="FileTransferServiceBuilder.cs" />
-    <Compile Include="Internal\_ClientTextReader.cs" />
     <Compile Include="Internal\_ClientTextWriter.cs" />
     <Compile Include="MainRemotePlusServiceBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

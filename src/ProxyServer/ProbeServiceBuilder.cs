@@ -24,7 +24,7 @@ namespace ProxyServer
             var _service = new ProbeService(_remote, _binding, _clientBinding, $"net.tcp://0.0.0.0:{_portNumber}/{endpointAddress}", $"net.tcp://0.0.0.0:{_portNumber}/ProxyClient");
             ServiceThrottlingBehavior throt = new ServiceThrottlingBehavior();
             throt.MaxConcurrentCalls = int.MaxValue;
-            _service.Host.Description.Behaviors.Add(throt);
+            _service.Behaviors.Add(throt);
             _service.HostClosed += _hostClosed;
             _service.HostClosing += _hostClosing;
             _service.HostOpened += _hostOpened;

@@ -3,6 +3,7 @@ using RemotePlusServer.Core;
 using BetterLogger;
 using RemotePlusLibrary.Core;
 using RemotePlusLibrary.Core.EventSystem;
+using RemotePlusLibrary.Core.EventSystem.Events;
 
 namespace WindowsTools
 {

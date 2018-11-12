@@ -22,6 +22,7 @@ using RemotePlusLibrary.FileTransfer.Service.PackageSystem;
 using RemotePlusServer.Core;
 using BetterLogger;
 using RemotePlusLibrary.Core.EventSystem;
+using RemotePlusLibrary.Core.EventSystem.Events;
 
 namespace RemotePlusServer
 {
@@ -35,6 +36,7 @@ namespace RemotePlusServer
         UseSynchronizationContext = false,
         MaxItemsInObjectGraph = int.MaxValue)]
     [GlobalException(typeof(GlobalErrorHandler))]
+    [ServiceKnownType("GetKnownTypes", typeof(DefaultKnownTypeManager))]
     public class RemoteImpl : IRemote, IRemoteWithProxy
     {
         private ServerRemoteInterface _interface = null;
@@ -178,11 +180,11 @@ namespace RemotePlusServer
             _interface.Client.ClientCallback.RegistirationComplete();
         }
 
-        public void RunProgram(string Program, string Argument)
+        public void RunProgram(string Program, string Argument, bool ignore)
         {
             if (CheckRegisteration("RunProgram"))
             {
-                _interface.RunProgram(Program, Argument);
+                _interface.RunProgram(Program, Argument, ignore);
             }
             // OperationContext.Current.OperationCompleted += (sender, e) => _interface.Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
         }

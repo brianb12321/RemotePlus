@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RemotePlusLibrary.Core;
+using System;
 using System.Runtime.Serialization.Formatters;
 using System.ServiceModel;
 using System.Speech.Synthesis;
@@ -8,6 +9,7 @@ using System.Windows.Forms;
 namespace RemotePlusLibrary.Contracts
 {
     [ServiceContract(CallbackContract = typeof(IBidirectionalContract))]
+    [ServiceKnownType("GetKnownTypes", typeof(DefaultKnownTypeManager))]
     public interface IBidirectionalContract
     {
         [OperationContract]
@@ -21,7 +23,7 @@ namespace RemotePlusLibrary.Contracts
         void PlaySoundSync(string FileName);
         [OperationContract()]
         [FaultContract(typeof(ServerFault))]
-        void RunProgram(string Program, string Argument);
+        void RunProgram(string Program, string Argument, bool ignore);
         [FaultContract(typeof(ServerFault))]
         [OperationContract()]
         void Beep(int Hertz, int Duration);

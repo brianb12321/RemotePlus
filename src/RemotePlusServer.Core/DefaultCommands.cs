@@ -17,6 +17,7 @@ using RemotePlusLibrary.Core;
 using RemotePlusLibrary.FileTransfer.Service.PackageSystem;
 using System.Media;
 using System.Net;
+using RemotePlusLibrary.RequestSystem.DefaultRequestOptions;
 
 namespace RemotePlusServer.Core
 {
@@ -40,13 +41,13 @@ namespace RemotePlusServer.Core
                         a += " " + args.Arguments[i];
                     }
                 }
-                ServerManager.ServerRemoteService.RemoteInterface.RunProgram(args.Arguments[1].Value, a);
+                ServerManager.ServerRemoteService.RemoteInterface.RunProgram(args.Arguments[1].Value, a, false);
                 ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Program start command finished.");
                 return new CommandResponse((int)CommandStatus.Success);
             }
             else if (args.Arguments.Count == 2 && args.Arguments[2].Type != TokenType.QouteBody)
             {
-                ServerManager.ServerRemoteService.RemoteInterface.RunProgram(args.Arguments[1].Value, "");
+                ServerManager.ServerRemoteService.RemoteInterface.RunProgram(args.Arguments[1].Value, "", false);
                 ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Program start command finished.");
                 return new CommandResponse((int)CommandStatus.Success);
             }
@@ -621,8 +622,12 @@ namespace RemotePlusServer.Core
                 SoundPlayer sp = new SoundPlayer(package.Data);
                 sp.PlaySync();
             });
-            RequestBuilder requestPathBuilder = RequestBuilder.RequestFilePath("Select audio file.");
-            requestPathBuilder.Metadata["Filter"] = "Wav File (*.wav)|*.wav";
+            RequestBuilder requestPathBuilder = RequestBuilder.RequestFilePath();
+            requestPathBuilder.PutObject(new FileDialogRequestOptions()
+            {
+                Title = "Select audio file.",
+                Filter = "Wav File (*.wav)|*.wav"
+            });
             var path = ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(requestPathBuilder);
             if (path.AcquisitionState ==  RequestState.OK)
             {

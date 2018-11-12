@@ -33,7 +33,7 @@ namespace RemotePlusServer.Core
         {
             Console.Beep(Hertz, Duration);
         }
-        public void RunProgram(string Program, string Argument)
+        public void RunProgram(string Program, string Argument, bool ignore)
         {
             GlobalServices.Logger.Log("Creating process component.", LogLevel.Debug);
             Process p = new Process();
@@ -95,7 +95,10 @@ namespace RemotePlusServer.Core
             p.BeginErrorReadLine();
             GlobalServices.Logger.Log("Beginning standord output stream reade line.", LogLevel.Debug);
             p.BeginOutputReadLine();
-            p.WaitForExit();
+            if (!ignore)
+            {
+                p.WaitForExit();
+            }
         }
         public void EncryptFile(string fileName, string password)
         {

@@ -3,7 +3,7 @@
 namespace RemotePlusLibrary.RequestSystem
 {
     [DataContract]
-    public class ReturnData
+    public class ReturnData : IGenericObject
     {
         [DataMember]
         public object Data { get; private set; }
@@ -13,6 +13,21 @@ namespace RemotePlusLibrary.RequestSystem
         {
             Data = d;
             AcquisitionState = ac;
+        }
+
+        public TType Resolve<TType>() where TType : class
+        {
+            return Data as TType;
+        }
+
+        public TType UnsafeResolve<TType>() where TType : class
+        {
+            return (TType)Data;
+        }
+
+        public void PutObject<TType>(TType obj) where TType : class
+        {
+            throw new System.Exception("Return data is immutable.");
         }
     }
 }

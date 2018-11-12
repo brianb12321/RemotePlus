@@ -228,9 +228,9 @@ namespace ProxyServer
             SelectedClient.ClientCallback.Restart();
         }
 
-        public void RunProgram(string Program, string Argument)
+        public void RunProgram(string Program, string Argument, bool ignore)
         {
-            SelectedClient.ClientCallback.RunProgram(Program, Argument);
+            SelectedClient.ClientCallback.RunProgram(Program, Argument, ignore);
         }
 
         public CommandPipeline RunServerCommand(string Command, CommandExecutionMode commandMode)

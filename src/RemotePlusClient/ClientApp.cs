@@ -48,17 +48,15 @@ namespace RemotePlusClient
             }
             InitializeDefaultKnownTypes();
             RequestStore.Init();
-            RequestStore.Add("global_selectFile", new SelectFileRequest());
-            RequestStore.Add("global_sendFilePackage", new SendFilePackageRequest());
+            RequestStore.Add(new SelectFileRequest());
+            RequestStore.Add(new SendFilePackageRequest());
             MainWindow = new MainF();
             Application.Run(MainWindow);
         }
 
         static void InitializeDefaultKnownTypes()
         {
-            Logger.Log("Initializing default known types.", LogLevel.Info);
-            DefaultKnownTypeManager.LoadDefaultTypes();
-            DefaultKnownTypeManager.AddType(typeof(UserAccount));
+            GlobalServerBuilderExtensions.InitializeKnownTypes();
         }
     }
 }

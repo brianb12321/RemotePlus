@@ -2,6 +2,7 @@
 using RemotePlusLibrary.Core;
 using RemotePlusLibrary.Discovery;
 using RemotePlusLibrary.RequestSystem;
+using RemotePlusLibrary.RequestSystem.DefaultRequestOptions;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -24,12 +25,15 @@ namespace RemotePlusClient.CommonUI.Requests
 
         public string Description => "Asks the client for a specific file byte stream package.";
 
+        public string URI => "global_sendByteStreamFilePackage";
+
         public RawDataRequest RequestData(RequestBuilder builder)
         {
             try
             {
-                byte[] data = File.ReadAllBytes(builder.Message);
-                _remote.UploadBytesToPackageSystem(data, data.Length, builder.Message);
+                var options = builder.UnsafeResolve<FileRequestOptions>();
+                byte[] data = File.ReadAllBytes(options.FileName);
+                _remote.UploadBytesToPackageSystem(data, data.Length, options.FileName);
                 return RawDataRequest.Success(null);
             }
             catch (Exception ex)

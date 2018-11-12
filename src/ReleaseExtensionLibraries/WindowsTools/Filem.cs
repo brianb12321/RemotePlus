@@ -1,6 +1,5 @@
 ﻿using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
-using RemotePlusClientCmd.RequestHelpers;
 using System;
 using System.IO;
 using System.Threading;
@@ -11,6 +10,7 @@ using System.Drawing;
 using RemotePlusLibrary.RequestSystem;
 using RemotePlusServer.Core;
 using BetterLogger;
+using RemotePlusLibrary.RequestSystem.DefaultRequestOptions;
 
 namespace WindowsTools
 {
@@ -36,16 +36,19 @@ namespace WindowsTools
             //    SendMessage("FileM is currently only availible to command line users.", LogLevel.Error);
             //    return new CommandResponse(-999); // Random Error Code
             //}
-            SMenuBuilder menu = new SMenuBuilder("Please select a file operation below.");
-            menu.MenuOptions.Add("Open file");
-            menu.MenuOptions.Add("Open directory");
-            menu.MenuOptions.Add("View tree");
-            menu.MenuOptions.Add("Exit");
-            menu.SelectForeground = Color.White;
-            menu.SelectBackColor = Color.RoyalBlue;
+            SMenuRequestOptions menu = new SMenuRequestOptions();
+            menu.Message = "Please select a file operation below.";
+            menu.MenuItems.Add("0", "Open file");
+            menu.MenuItems.Add("1", "Open directory");
+            menu.MenuItems.Add("2", "View tree");
+            menu.MenuItems.Add("3", "Exit");
+            menu.SelectForeground = Color.White.ToArgb();
+            menu.SelectBackColor = Color.RoyalBlue.ToArgb();
+            RequestBuilder rb = new RequestBuilder("rcmd_csmenu");
+            rb.PutObject(menu);
             while(true)
             {
-                var choice = menu.BuildAndSend();
+                var choice = int.Parse(ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(rb).Data.ToString());
                 switch (choice)
                 {
                     case 0:
@@ -73,7 +76,8 @@ namespace WindowsTools
         }
         static void showFIleMenu(FileInfo file)
         {
-            SMenuBuilder menu = new SMenuBuilder($"File Name: {file.Name}\n" + 
+            SMenuRequestOptions menu = new SMenuRequestOptions();
+                                  menu.Message = $"File Name: {file.Name}\n" + 
                                                  $"Creation Date: {file.CreationTime.ToString()}\n" + 
                                                  $"Last Modified: {file.LastWriteTime.ToString()}\n" +
                                                  $"Is Readonly: {(file.Attributes == FileAttributes.ReadOnly ? "Yes" : "No")}\n" +
@@ -81,17 +85,19 @@ namespace WindowsTools
                                                  $"Is Hidden: {(file.Attributes == FileAttributes.Hidden ? "Yes" : "No")}\n" +
                                                  $"Is Compressed: {(file.Attributes == FileAttributes.Compressed ? "yes" : "No")}\n\n" +
 
-                                                 "Please select a file operation.");
-            menu.MenuOptions.Add("Append");
-            menu.MenuOptions.Add("Overwrite");
-            menu.MenuOptions.Add("Delete");
-            menu.MenuOptions.Add("Copy");
-            menu.MenuOptions.Add("Move");
-            menu.MenuOptions.Add("Use Windows encryption");
-            menu.MenuOptions.Add("Use Gameclub encryption");
-            menu.MenuOptions.Add("Set owner");
-            menu.MenuOptions.Add("Return to home emnu");
-            var choice = menu.BuildAndSend();
+                                                 "Please select a file operation.";
+            menu.MenuItems.Add("0", "Append");
+            menu.MenuItems.Add("1", "Overwrite");
+            menu.MenuItems.Add("2", "Delete");
+            menu.MenuItems.Add("3", "Copy");
+            menu.MenuItems.Add("4", "Move");
+            menu.MenuItems.Add("5", "Use Windows encryption");
+            menu.MenuItems.Add("6", "Use Gameclub encryption");
+            menu.MenuItems.Add("7", "Set owner");
+            menu.MenuItems.Add("8", "Return to home emnu");
+            RequestBuilder rb = new RequestBuilder("rcmd_csmenu");
+            rb.PutObject(menu);
+            var choice = int.Parse(ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(rb).Data.ToString());
             switch(choice)
             {
                 case 0:
@@ -110,13 +116,23 @@ namespace WindowsTools
 
         private static void AppendFile(string fullName)
         {
-            string message = (string)ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(new RequestBuilder("rcmd_multitextBox", "Please enter text to append to the file. When finished, hit {ENTER}", null)).Data;
+            var rb = new RequestBuilder("rcmd_mTextBox");
+            rb.PutObject(new PromptRequestOptions()
+            {
+                Message = "Please enter text to append to the file. When finished, hit {ENTER}"
+            });
+            string message = (string)ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(rb).Data;
             File.AppendAllText(fullName, message);
             SendMessage($"File {fullName} appended.", LogLevel.Info);
         }
         private static void OverrideFile(string file)
         {
-            string message = (string)ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(new RequestBuilder("rcmd_multitextBox", "Please enter text to override. When finished, hit {ENTER}", null)).Data;
+            var rb = new RequestBuilder("rcmd_mTextBox");
+            rb.PutObject(new PromptRequestOptions()
+            {
+                Message = "Please enter text to override. When finished, hit {ENTER}"
+            });
+            string message = (string)ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(rb).Data;
             File.WriteAllText(file, message);
             SendMessage($"File {file} overwritten.", LogLevel.Info);
         }

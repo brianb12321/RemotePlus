@@ -17,6 +17,8 @@ using System.ServiceModel.Description;
 using Ninject;
 using static RemotePlusServer.Core.DefaultCommands;
 using System.Speech.Synthesis;
+using System.Reflection;
+using RemotePlusLibrary.RequestSystem.DefaultRequestOptions;
 
 namespace RemotePlusServer.Core.ServerCore
 {
@@ -58,14 +60,11 @@ namespace RemotePlusServer.Core.ServerCore
         /// </summary>
         /// <param name="builder"></param>
         /// <returns></returns>
-        public static IServerBuilder InitializeKnownTypes(this IServerBuilder builder)
+        public static IServerBuilder InitializeServerSideKnownTypes(this IServerBuilder builder)
         {
             return builder.AddTask(() =>
             {
-                GlobalServices.Logger.Log("Adding default known types.", LogLevel.Info);
-                DefaultKnownTypeManager.LoadDefaultTypes();
-                GlobalServices.Logger.Log("Adding UserAccount to known type list.", LogLevel.Debug);
-                DefaultKnownTypeManager.AddType(typeof(UserAccount));
+                
             });
         }
         /// <summary>
@@ -90,8 +89,12 @@ namespace RemotePlusServer.Core.ServerCore
                 ServerManager.ScriptBuilder.AddScriptObject("speak", new Action<string, VoiceGender, VoiceAge>(StaticRemoteFunctions.speak), "Makes the server speak.", ScriptGlobalType.Function);
                 ServerManager.ScriptBuilder.AddScriptObject("beep", new Action<int, int>(StaticRemoteFunctions.beep), "Makes the server beep.", ScriptGlobalType.Function);
                 ServerManager.ScriptBuilder.AddScriptObject("functionExists", new Func<string, bool>((name) => ServerManager.ScriptBuilder.FunctionExists(name)), "Returns true if the function exists in the server.", ScriptGlobalType.Function);
-                ServerManager.ScriptBuilder.AddScriptObject("createRequestBuilder", new Func<string, string, Dictionary<string, string>, RequestBuilder>(ClientInstance.createRequestBuilder), "Generates a request builder to be used to generate a request.", ScriptGlobalType.Function);
+                ServerManager.ScriptBuilder.AddScriptObject("createRequestBuilder", new Func<string, RequestBuilder>(ClientInstance.createRequestBuilder), "Generates a request builder to be used to generate a request.", ScriptGlobalType.Function);
                 ServerManager.ScriptBuilder.AddScriptObject("clientPrint", new Action<string>((text => ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(text))), "Prints the text to the client-console", ScriptGlobalType.Function);
+                ServerManager.ScriptBuilder.AddScriptObject("ps", new Action<string, string, bool>((program, args, ignore) =>
+                {
+                    ServerManager.ServerRemoteService.RemoteInterface.RunProgram(program, args, ignore);
+                }), "Executes a program on the server using the RunProgram service method.", ScriptGlobalType.Function);
             }
             catch (ArgumentException)
             {

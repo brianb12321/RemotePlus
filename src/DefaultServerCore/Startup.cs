@@ -32,8 +32,9 @@ namespace DefaultServerCore
                         VerboseColor = ConsoleColor.DarkMagenta
                     }
                 });
-            })
-                .UseServerManager<DefaultServiceManager>()
+            });
+            GlobalServerBuilderExtensions.InitializeKnownTypes();
+            services.UseServerManager<DefaultServiceManager>()
                 .UseServerControlPage<ServerControls>()
                 .UseScriptingEngine()
                 .UseConfigurationDataAccess<ConfigurationHelper>()
@@ -47,7 +48,6 @@ namespace DefaultServerCore
                            .UseExecutor<CommandExecutor>())
                 .UsePackageInventorySelector<StandordPackageInventorySelector>(builder =>
                     builder.AddPackageInventory<FilePackage, StandordPackageInventory>("DefaultFileInventory"));
-
             //Add the services.
             IServiceManager manager = IOCContainer.GetService<IServiceManager>();
             manager.AddServiceUsingBuilder(() =>
@@ -75,6 +75,9 @@ namespace DefaultServerCore
                         .SetBinding(_ConnectionFactory.BuildBinding())
                         .SetPortNumber(ServerManager.DefaultSettings.PortNumber);
             });
+            ServerManager.DefaultCollection.LoadExtensionsInFolder();
+            manager.BuildHost<ServerRemoteInterface>();
+            manager.BuildHost<FileTransferServciceInterface>();
         }
 
         void IServerCoreStartup.InitializeServer(IServerBuilder builder)
@@ -85,7 +88,6 @@ namespace DefaultServerCore
                 .InitializeScriptingEngine((options) => { })
                 .OpenMexForRemotePlus()
                 .OpenMexForFileTransfer()
-                .LoadExtensionLibraries()
                 .InitializeVariables()
                 .AddTask(() => GlobalServices.Logger.Log("Loading Commands.", LogLevel.Info))
                 .AddDefaultServerCommands()

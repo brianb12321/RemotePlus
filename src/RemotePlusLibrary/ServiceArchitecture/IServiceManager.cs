@@ -26,6 +26,7 @@ namespace RemotePlusLibrary.ServiceArchitecture
         /// <typeparam name="TImpl">The service interface used to identify the service.</typeparam>
         /// <returns>The service.</returns>
         IRemotePlusService<TImpl> GetService<TImpl>() where TImpl : new();
+        void BuildHost<TImpl>() where TImpl : new();
         /// <summary>
         /// Closes all the services managed by the manager.
         /// </summary>

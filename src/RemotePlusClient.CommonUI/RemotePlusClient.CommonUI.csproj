@@ -108,7 +108,6 @@
     <Compile Include="ConnectionClients\ServiceClient.cs" />
     <Compile Include="Requests\SelectLocalFileRequest.cs" />
     <Compile Include="Requests\SendLocalFileByteStreamRequest.cs" />
-    <Compile Include="Requests\SpeechRequest.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="AuthenticationDialog.resx">

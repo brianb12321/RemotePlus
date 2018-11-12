@@ -68,13 +68,13 @@ namespace RemotePlusClientCmd
             Application.SetCompatibleTextRenderingDefault(false);
             InitializeDefaultKnownTypes();
             RequestStore.Init();
-            RequestStore.Add("rcmd_menu", new Requests.ConsoleMenuRequest());
-            RequestStore.Add("rcmd_smenu", new Requests.SelectableConsoleMenu());
-            RequestStore.Add("rcmd_messageBox", new Requests.RCmdMessageBox());
-            RequestStore.Add("rcmd_textBox", new Requests.RCmdTextBox());
-            RequestStore.Add("rcmd_multitextBox", new Requests.RCmdMultiLineTextbox());
-            RequestStore.Add("global_selectFile", new Requests.SelectFileRequest());
-            RequestStore.Add("global_sendFilePackage", new Requests.SendFilePackageRequest());
+            RequestStore.Add(new Requests.ConsoleMenuRequest());
+            RequestStore.Add(new Requests.SelectableConsoleMenu());
+            RequestStore.Add(new Requests.RCmdMessageBox());
+            RequestStore.Add(new Requests.RCmdTextBox());
+            RequestStore.Add(new Requests.RCmdMultiLineTextbox());
+            RequestStore.Add(new Requests.SelectFileRequest());
+            RequestStore.Add(new Requests.SendFilePackageRequest());
             if (args.Length == 0)
             {
                 Console.Write("Enter url: ");
@@ -160,7 +160,7 @@ namespace RemotePlusClientCmd
                 CurrentConnectionData.BaseAddress = ea.Uri.Host;
                 CurrentConnectionData.Port = ea.Uri.Port;
                 Proxy = new ProxyClient(new ClientCallback(), _ConnectionFactory.BuildBinding(), ea);
-                RequestStore.Add("global_sendByteStreamFilePackage", new RemotePlusClient.CommonUI.Requests.SendLocalFileByteStreamRequest(Proxy));
+                RequestStore.Add(new RemotePlusClient.CommonUI.Requests.SendLocalFileByteStreamRequest(Proxy));
                 Proxy.ChannelFactory.Faulted += (sender, e) =>
                 {
                     var dr = MessageBox.Show("The connection to the proxy server has faulted. Would you like to reconnect to the server.", "RemotePlusClientCmd", MessageBoxButtons.YesNo, MessageBoxIcon.Error);
@@ -179,7 +179,7 @@ namespace RemotePlusClientCmd
                 CurrentConnectionData.BaseAddress = ea.Uri.Host;
                 CurrentConnectionData.Port = ea.Uri.Port;
                 Remote = new ServiceClient(new ClientCallback(), _ConnectionFactory.BuildBinding(), ea);
-                RequestStore.Add("global_sendByteStreamFilePackage", new RemotePlusClient.CommonUI.Requests.SendLocalFileByteStreamRequest(Remote));
+                RequestStore.Add(new RemotePlusClient.CommonUI.Requests.SendLocalFileByteStreamRequest(Remote));
                 Remote.Register(ro);
             }
         }
@@ -455,9 +455,7 @@ namespace RemotePlusClientCmd
         }
         static void InitializeDefaultKnownTypes()
         {
-            GlobalServices.Logger.Log("Initializing default known types.", LogLevel.Info);
-            DefaultKnownTypeManager.LoadDefaultTypes();
-            DefaultKnownTypeManager.AddType(typeof(UserAccount));
+            GlobalServerBuilderExtensions.InitializeKnownTypes();
         }
     }
 }

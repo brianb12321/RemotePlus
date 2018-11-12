@@ -90,10 +90,6 @@
     <Compile Include="Win32Wrapper.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Client Tools\RemotePlusClientCmd.RequestHelpers\RemotePlusClientCmd.RequestHelpers.csproj">
-      <Project>{4f29fed8-1edf-44f6-93cb-9000415802b1}</Project>
-      <Name>RemotePlusClientCmd.RequestHelpers</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\RemotePlusLibrary.Configuration\RemotePlusLibrary.Configuration.csproj">
       <Project>{8a8a5888-1ce7-46ed-b8de-1ac7671f3426}</Project>
       <Name>RemotePlusLibrary.Configuration</Name>

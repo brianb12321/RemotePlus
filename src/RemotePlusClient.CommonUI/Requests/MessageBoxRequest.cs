@@ -1,5 +1,6 @@
 ﻿using RemotePlusLibrary;
 using RemotePlusLibrary.RequestSystem;
+using RemotePlusLibrary.RequestSystem.DefaultRequestOptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +18,8 @@ namespace RemotePlusClient.CommonUI.Requests
 
         string IDataRequest.Description => "Shows a message box to the user.";
 
+        string IDataRequest.URI => "r_messageBox";
+
         public void Update(string message)
         {
             throw new NotImplementedException();
@@ -26,13 +29,19 @@ namespace RemotePlusClient.CommonUI.Requests
         {
             try
             {
-                var result = MessageBox.Show(builder.Message, builder.Arguments["Caption"], (MessageBoxButtons)Enum.Parse(typeof(MessageBoxButtons), builder.Arguments["Buttons"]), (MessageBoxIcon)Enum.Parse(typeof(MessageBoxIcon), builder.Arguments["Icon"]));
+                var options = builder.UnsafeResolve<MessageBoxRequestOptions>();
+                var result = MessageBox.Show(options.Message, options.Caption, options.Buttons, options.Icons);
                 return RawDataRequest.Success(result.ToString());
             }
             catch
             {
                 return RawDataRequest.Cancel();
             }
+        }
+
+        void IDataRequest.Update(string message)
+        {
+            throw new NotImplementedException();
         }
 
         void IDataRequest.UpdateProperties()

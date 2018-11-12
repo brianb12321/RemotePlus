@@ -12,6 +12,7 @@ namespace RemotePlusLibrary.RequestSystem
     /// </summary>
     public interface IDataRequest
     {
+        string URI { get; }
         /// <summary>
         /// Starts the data request process.
         /// </summary>

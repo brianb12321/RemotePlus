@@ -21,6 +21,7 @@ namespace RemotePlusClientCmd
     [CallbackBehavior(ConcurrencyMode = ConcurrencyMode.Multiple,
         IncludeExceptionDetailInFaults = true,
         UseSynchronizationContext = false)]
+    [ServiceKnownType("GetKnownTypes", typeof(DefaultKnownTypeManager))]
     class ClientCallback : IRemoteClient
     {
         public void Beep(int Hertz, int Duration)
@@ -99,9 +100,13 @@ namespace RemotePlusClientCmd
             return data;
         }
 
-        public void RunProgram(string Program, string Argument)
+        public void RunProgram(string Program, string Argument, bool ignore)
         {
-            Process.Start(Program, Argument);
+            var p = Process.Start(Program, Argument);
+            if(!ignore)
+            {
+                p.WaitForExit();
+            }
         }
 
         public void SendSignal(SignalMessage message)

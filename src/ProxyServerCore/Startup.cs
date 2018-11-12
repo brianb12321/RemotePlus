@@ -17,8 +17,9 @@ namespace ProxyServerCore
     {
         public void AddServices(IServiceCollection services)
         {
-            services.UseLogger((logFactory) => logFactory.AddLogger(new ConsoleLogger()))
-                .UseServerManager<DefaultServiceManager>()
+            services.UseLogger((logFactory) => logFactory.AddLogger(new ConsoleLogger()));
+            GlobalServerBuilderExtensions.InitializeKnownTypes();
+            services.UseServerManager<DefaultServiceManager>()
                 .UseScriptingEngine()
                 .UseEventBus<EventBus>()
                 .UseServerControlPage<ServerControls>()
@@ -44,6 +45,8 @@ namespace ProxyServerCore
                     .RouteHostOpeningEvent(ProxyService_HostOpening)
                     .RouteUnknownMessageReceivedEvent(ProxyService_UnknownMessageReceived);
             });
+            ProxyManager.DefaultCollection.LoadExtensionsInFolder();
+            manager.BuildHost<ProxyServerRemoteImpl>();
         }
         public void InitializeServer(IServerBuilder builder)
         {

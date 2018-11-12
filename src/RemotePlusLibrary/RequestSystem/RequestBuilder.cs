@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using RemotePlusLibrary.Core;
+using RemotePlusLibrary.RequestSystem.DefaultRequestOptions;
+using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Windows.Forms;
 
@@ -8,7 +11,7 @@ namespace RemotePlusLibrary.RequestSystem
     /// Represents a request for information object.
     /// </summary>
     [DataContract]
-    public class RequestBuilder
+    public class RequestBuilder : IGenericObject
     {
         /// <summary>
         /// The unique request interface (URI) string used for identifying a request interface to use.
@@ -16,64 +19,71 @@ namespace RemotePlusLibrary.RequestSystem
         [DataMember]
         public string Interface { get; private set; }
         /// <summary>
-        /// The message that will be passed to the URI. This is usually the message explaining why you are requesting information from the client.
-        /// </summary>
-        [DataMember]
-        public string Message { get; private set; }
-        /// <summary>
         /// Sets how the client should acquire the data and provides settings for if there was en error during hhe process.
         /// </summary>
         [DataMember]
         public AcquisitionMode AcqMode { get; set; } = AcquisitionMode.None;
-        /// <summary>
-        /// Proves the data used by the URI to build the RM (request message). Please see your URI documentation for the correct information needed to be passed to the argument
-        /// </summary>
         [DataMember]
-        public Dictionary<string, string> Arguments { get; set; }
-        /// <summary>
-        /// Proves extra data and settings used by the URI. These settings are usually used to build the interface. Please see your URI documentation 
-        /// </summary>
-        [DataMember]
-        public Dictionary<string, string> Metadata { get; set; }
-        public RequestBuilder(string i, string m, IDictionary<string, string> args)
+        public object Data { get; private set; }
+
+        public RequestBuilder(string i)
         {
             Interface = i;
-            Message = m;
-            Arguments = (Dictionary<string, string>)args;
-            Metadata = new Dictionary<string, string>();
         }
-        public static RequestBuilder RequestString(string message)
+        public static RequestBuilder RequestString()
         {
-            return new RequestBuilder("r_string", message, null);
+            return new RequestBuilder("r_string");
         }
         public static RequestBuilder RequestColor()
         {
-            return new RequestBuilder("r_color", "", null);
+            return new RequestBuilder("r_color");
         }
-        public static RequestBuilder RequestFilePath(string title)
+        public static RequestBuilder RequestFilePath()
         {
-            return new RequestBuilder("r_filePath", title, null);
+            return new RequestBuilder("r_selectLocalFile");
         }
-        public static RequestBuilder RequestMessageBox(string message, string title, MessageBoxButtons buttons, MessageBoxIcon icon)
+        public static RequestBuilder RequestMessageBox()
         {
-            Dictionary<string, string> args = new Dictionary<string, string>();
-            args.Add("Caption", title);
-            args.Add("Buttons", buttons.ToString());
-            args.Add("Icon", icon.ToString());
-            RequestBuilder rb = new RequestBuilder("r_messageBox", message, args);
+            return new RequestBuilder("r_messageBox");
+        }
+        public static RequestBuilder RequestMessageBox(string message, string capiton, MessageBoxButtons buttons, MessageBoxIcon icons)
+        {
+            var rb = RequestMessageBox();
+            rb.PutObject(new MessageBoxRequestOptions()
+            {
+                Message = message,
+                Caption = capiton,
+                Buttons = buttons,
+                Icons = icons
+            });
             return rb;
         }
         public static RequestBuilder RequestFile()
         {
-            return new RequestBuilder("global_selectFile", null, null);
+            return new RequestBuilder("global_selectFile");
         }
         public static RequestBuilder SendFilePackage(string localFilePath)
         {
-            return new RequestBuilder("global_sendFilePackage", localFilePath, null);
+            return new RequestBuilder("global_sendFilePackage");
         }
         public static RequestBuilder SendByteStreamPackage(string localFilePath)
         {
-            return new RequestBuilder("global_sendByteStreamFilePackage", localFilePath, null);
+            return new RequestBuilder("global_sendByteStreamFilePackage");
+        }
+
+        public TType Resolve<TType>() where TType : class
+        {
+            return Data as TType;
+        }
+
+        public TType UnsafeResolve<TType>() where TType : class
+        {
+            return (TType)Data;
+        }
+
+        public void PutObject<TType>(TType obj) where TType : class
+        {
+            Data = obj;
         }
     }
 }

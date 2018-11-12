@@ -108,7 +108,7 @@ namespace RemotePlusClient
                 Remote = new ServiceClient(LocalCallback, _ConnectionFactory.BuildBinding(), new EndpointAddress(Address));
                 Remote.Open();
                 ConsoleObj.Logger.Log("Registering...", LogLevel.Info);
-                RequestStore.Add("global_sendByteStreamFilePackage", new CommonUI.Requests.SendLocalFileByteStreamRequest(MainF.Remote));
+                RequestStore.Add(new CommonUI.Requests.SendLocalFileByteStreamRequest(MainF.Remote));
                 Remote.Register(Settings);
                 EnableMenuItems();
                 cmb_servers.Items.Add(Remote);
@@ -124,7 +124,7 @@ namespace RemotePlusClient
             LocalCallback = new ClientCallback(0);
             Uri proxyEndpointAddress = new Uri(Address);
             FoundServers = new ProxyClient(LocalCallback, _ConnectionFactory.BuildBinding(), new EndpointAddress(proxyEndpointAddress));
-            RequestStore.Add("global_sendByteStreamFilePackage", new CommonUI.Requests.SendLocalFileByteStreamRequest(FoundServers));
+            RequestStore.Add(new CommonUI.Requests.SendLocalFileByteStreamRequest(FoundServers));
             FoundServers.Connect();
             FoundServers.ProxyRegister();
             ConsoleObj.Logger.Log($"Found {FoundServers.GetServers().Count()} servers joined to the proxy server.", LogLevel.Info);

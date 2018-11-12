@@ -24,10 +24,10 @@ namespace RemotePlusClient.UIForms
         private void ViewRequestDialogBox_Load(object sender, EventArgs e)
         {
             temp = new Dictionary<string, IDataRequest>();
-            foreach(KeyValuePair<string, IDataRequest> req in RequestStore.GetAll())
+            foreach(IDataRequest req in RequestStore.GetAll())
             {
-                listView1.Items.Add(new ListViewItem(new string[] { req.Value.FriendlyName, req.Key, req.Value.Description }));
-                temp.Add(req.Key, req.Value);
+                listView1.Items.Add(new ListViewItem(new string[] { req.FriendlyName, req.URI, req.Description }));
+                temp.Add(req.URI, req);
             }
         }
 

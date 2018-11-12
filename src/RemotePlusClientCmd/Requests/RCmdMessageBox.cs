@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using RemotePlusLibrary;
 using RemotePlusLibrary.RequestSystem;
+using RemotePlusLibrary.RequestSystem.DefaultRequestOptions;
 
 namespace RemotePlusClientCmd.Requests
 {
@@ -17,6 +18,8 @@ namespace RemotePlusClientCmd.Requests
 
         string IDataRequest.Description => "Displays a message box on the command line.";
 
+        string IDataRequest.URI => "rcmd_messageBox";
+
         public void Update(string message)
         {
             throw new NotImplementedException();
@@ -25,8 +28,13 @@ namespace RemotePlusClientCmd.Requests
         RawDataRequest IDataRequest.RequestData(RequestBuilder builder)
         {
             ConsoLovers.ConsoleToolkit.ConsoleMessageBox cmb = new ConsoLovers.ConsoleToolkit.ConsoleMessageBox();
-            var result = cmb.Show(builder.Message);
+            var result = cmb.Show(builder.UnsafeResolve<PromptRequestOptions>().Message);
             return RawDataRequest.Success(result.ToString());
+        }
+
+        void IDataRequest.Update(string message)
+        {
+            throw new NotImplementedException();
         }
 
         void IDataRequest.UpdateProperties()

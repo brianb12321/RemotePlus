@@ -3,57 +3,63 @@ using System;
 using System.Collections.Generic;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
+using System.ServiceModel.Description;
 
 namespace RemotePlusLibrary.ServiceArchitecture
 {
     public abstract class StandordService<TInterface> : IRemotePlusService<TInterface> where TInterface : new()
     {
         public ServiceHost Host { get; protected set; }
-
+        private Type _impl;
+        private Type _contract;
+        private Binding _binding;
+        private string _address;
+        private object _singleTon;
         public Dictionary<string, CommandDelegate> Commands { get; set; } = new Dictionary<string, CommandDelegate>();
         public VariableManager Variables { get; set; }
         public TInterface RemoteInterface { get; set; }
-        public event EventHandler HostClosed
+        public List<IServiceBehavior> Behaviors { get; } = new List<IServiceBehavior>();
+
+        public event EventHandler HostClosed;
+        public event EventHandler HostClosing;
+        public event EventHandler HostFaulted;
+        public event EventHandler HostOpened;
+        public event EventHandler HostOpening;
+        public event EventHandler<UnknownMessageReceivedEventArgs> HostUnknownMessageReceived;
+        public virtual void BuildHost()
         {
-            add { Host.Closed += value; }
-            remove { Host.Closed -= value; }
-        }
-        public event EventHandler HostClosing
-        {
-            add { Host.Closing += value; }
-            remove { Host.Closing -= value; }
-        }
-        public event EventHandler HostFaulted
-        {
-            add { Host.Faulted += value; }
-            remove { Host.Faulted += value; }
-        }
-        public event EventHandler HostOpened
-        {
-            add { Host.Opened += value; }
-            remove { Host.Opened -= value; }
-        }
-        public event EventHandler HostOpening
-        {
-            add { Host.Opening += value; }
-            remove { Host.Opening -= value; }
-        }
-        public event EventHandler<UnknownMessageReceivedEventArgs> HostUnknownMessageReceived
-        {
-            add { Host.UnknownMessageReceived += value; }
-            remove { Host.UnknownMessageReceived -= value; }
+            if (_singleTon == null)
+            {
+                Host = new ServiceHost(_impl);
+            }
+            else
+            {
+                Host = new ServiceHost(_singleTon);
+            }
+            Behaviors.ForEach(b => Host.Description.Behaviors.Add(b));
+            Host.Closed += HostClosed;
+            Host.Closing += HostClosing;
+            Host.Faulted += HostFaulted;
+            Host.Opened += HostOpened;
+            Host.Opening += HostOpening;
+            Host.UnknownMessageReceived += HostUnknownMessageReceived;
+            Host.AddServiceEndpoint(_contract, _binding, _address);
         }
         protected StandordService(Type contract, Type implementation, Binding binding, string address)
         {
             Commands = new Dictionary<string, CommandDelegate>();
-            Host = new ServiceHost(implementation);
-            Host.AddServiceEndpoint(contract, binding, address);
+            _contract = contract;
+            _impl = implementation;
+            _binding = binding;
+            _address = address;
         }
         protected StandordService(Type contract, object singleTon, Binding binding, string address)
         {
             Commands = new Dictionary<string, CommandDelegate>();
-            Host = new ServiceHost(singleTon);
-            Host.AddServiceEndpoint(contract, binding, address);
+            _contract = contract;
+            _singleTon = singleTon;
+            _binding = binding;
+            _address = address;
         }
         public virtual void AddEndpoint<TEndpoint>(TEndpoint endpoint, Binding binding, string endpointName, Action<TEndpoint> setupCallback)
         {

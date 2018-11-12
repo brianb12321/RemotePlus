@@ -9,7 +9,6 @@ namespace RemotePlusLibrary.ServiceArchitecture
     {
         private IKernel serviceKernel = new StandardKernel();
         private List<ICommunicationObject> communicationObjects = new List<ICommunicationObject>();
-
         public void AbortAll()
         {
             foreach (ICommunicationObject commObject in communicationObjects)
@@ -44,13 +43,23 @@ namespace RemotePlusLibrary.ServiceArchitecture
         {
             return serviceKernel.Get<IRemotePlusService<TInterface>>().Host.State;
         }
+        
+        void ConstructServices()
+        {
 
+        }
         void IServiceManager.AddServiceUsingBuilder<TServiceImpl>(Func<IWCFServiceBuilder<TServiceImpl>> builder)
         {
             var b = builder?.Invoke();
             var service = b.BuildService();
-            communicationObjects.Add(service.Host);
             serviceKernel.Bind<IRemotePlusService<TServiceImpl>>().ToConstant(service);
+        }
+
+        public void BuildHost<TImpl>() where TImpl : new()
+        {
+            var service = serviceKernel.Get<IRemotePlusService<TImpl>>();
+            service.BuildHost();
+            communicationObjects.Add(service.Host);
         }
     }
 }
