@@ -2,7 +2,7 @@
 using RemotePlusLibrary.Core;
 using RemotePlusLibrary.Discovery;
 using RemotePlusLibrary.RequestSystem;
-using RemotePlusLibrary.RequestSystem.DefaultRequestOptions;
+using RemotePlusLibrary.RequestSystem.DefaultRequestBuilders;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,43 +12,39 @@ using System.Threading.Tasks;
 
 namespace RemotePlusClient.CommonUI.Requests
 {
-    public class SendLocalFileByteStreamRequest : IDataRequest
+    public class SendLocalFileByteStreamRequest : StandordRequest<SendLocalFileByteStreamRequestBuilder>
     {
         IRemote _remote;
         public SendLocalFileByteStreamRequest(IRemote remote)
         {
             _remote = remote;
         }
-        public bool ShowProperties => false;
+        public override bool ShowProperties => false;
 
-        public string FriendlyName => "Send File Byte Stream Package Request";
+        public override string FriendlyName => "Send File Byte Stream Package Request";
 
-        public string Description => "Asks the client for a specific file byte stream package.";
+        public override string Description => "Asks the client for a specific file byte stream package.";
 
-        public string URI => "global_sendByteStreamFilePackage";
+        public override string URI => "global_sendByteStreamFilePackage";
 
-        public RawDataRequest RequestData(RequestBuilder builder)
+        public override NetworkSide SupportedSides => NetworkSide.Client;
+
+        public override RawDataResponse RequestData(SendLocalFileByteStreamRequestBuilder builder, NetworkSide executingSide)
         {
             try
             {
-                var options = builder.UnsafeResolve<FileRequestOptions>();
-                byte[] data = File.ReadAllBytes(options.FileName);
-                _remote.UploadBytesToPackageSystem(data, data.Length, options.FileName);
-                return RawDataRequest.Success(null);
+                byte[] data = File.ReadAllBytes(builder.FileName);
+                _remote.UploadBytesToPackageSystem(data, data.Length, builder.FileName);
+                return RawDataResponse.Success(null);
             }
             catch (Exception ex)
             {
                 GlobalServices.Logger.Log($"An error occurred in sending byte data to the server. Error: " + ex, BetterLogger.LogLevel.Error);
-                return RawDataRequest.Cancel();
+                return RawDataResponse.Cancel();
             }
         }
 
-        public void Update(string message)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void UpdateProperties()
+        public override void Update(string message)
         {
             throw new NotImplementedException();
         }

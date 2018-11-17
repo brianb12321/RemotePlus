@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RemotePlusLibrary.Core;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -33,7 +34,7 @@ namespace ProxyServer
 
         private void button2_Click(object sender, EventArgs e)
         {
-            ProxyManager.Close();
+            GlobalServices.RunningEnvironment.Close();
         }
 
         private void ServerControls_Load(object sender, EventArgs e)

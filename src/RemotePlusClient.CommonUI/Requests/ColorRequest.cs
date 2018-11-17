@@ -1,44 +1,37 @@
-﻿using RemotePlusLibrary.RequestSystem;
+﻿using RemotePlusLibrary.Core;
+using RemotePlusLibrary.RequestSystem;
 using System;
 using System.Drawing;
 using System.Windows.Forms;
 
 namespace RemotePlusClient.CommonUI.Requests
 {
-    public sealed class ColorRequest : IDataRequest
+    public sealed class ColorRequest : StandordRequest<RequestBuilder>
     {
-        bool IDataRequest.ShowProperties => false;
+        public override bool ShowProperties => false;
 
-        string IDataRequest.FriendlyName => "Color Request";
+        public override string FriendlyName => "Color Request";
 
-        string IDataRequest.Description => "Requests a color from the user.";
+        public override string Description => "Requests a color from the user.";
 
-        string IDataRequest.URI => "r_color";
+        public override string URI => "r_color";
 
-        void IDataRequest.UpdateProperties()
-        {
-            throw new NotImplementedException();
-        }
+        public override NetworkSide SupportedSides => NetworkSide.Client;
 
-        RawDataRequest IDataRequest.RequestData(RequestBuilder builder)
+        public override RawDataResponse RequestData(RequestBuilder builder, NetworkSide executingSide)
         {
             ColorDialog cd = new ColorDialog();
             if (cd.ShowDialog() == DialogResult.OK)
             {
-                return RawDataRequest.Success(cd.Color.ToString());
+                return RawDataResponse.Success(cd.Color.ToString());
             }
             else
             {
-                return RawDataRequest.Cancel(Color.Black.ToString());
+                return RawDataResponse.Cancel(Color.Black.ToString());
             }
         }
 
-        public void Update(string message)
-        {
-            throw new NotImplementedException();
-        }
-
-        void IDataRequest.Update(string message)
+        public override void Update(string message)
         {
             throw new NotImplementedException();
         }

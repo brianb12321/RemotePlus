@@ -1,4 +1,5 @@
-﻿using RemotePlusLibrary.Extension.ExtensionLoader;
+﻿using RemotePlusLibrary.Core;
+using RemotePlusLibrary.Extension.ExtensionLoader;
 using RemotePlusLibrary.Extension.ExtensionLoader.Initialization;
 using System;
 using TinyMessenger;
@@ -9,7 +10,7 @@ namespace RemotePlusServer.Core.ExtensionSystem
     {
         public const string LOGIN_HOOK = "Login";
         public const string RUN_COMMAND_HOOK = "RunCommand";
-        public ServerLibraryBuilder(string n, string fn, string v, ExtensionLibraryType lt)
+        public ServerLibraryBuilder(string n, string fn, string v, NetworkSide lt)
         {
             Name = n;
             FriendlyName = fn;
@@ -21,7 +22,7 @@ namespace RemotePlusServer.Core.ExtensionSystem
 
         public string Version { get; private set; }
 
-        public ExtensionLibraryType LibraryType { get; private set; }
+        public NetworkSide LibraryType { get; private set; }
 
         public string FriendlyName { get; private set; }
 

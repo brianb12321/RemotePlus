@@ -5,11 +5,15 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RemotePlusLibrary.RequestSystem.DefaultRequestOptions
+namespace RemotePlusLibrary.RequestSystem.DefaultRequestBuilders
 {
     [DataContract]
-    public class FileDialogRequestOptions
+    public class FileDialogRequestBuilder : RequestBuilder
     {
+        public FileDialogRequestBuilder() : base("r_selectLocalFile")
+        {
+        }
+
         [DataMember]
         public string Title { get; set; }
         [DataMember]

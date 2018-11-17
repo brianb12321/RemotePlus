@@ -23,7 +23,7 @@ namespace RemotePlusServer.Core.ExtensionSystem
                 {
                     throw new InvalidExtensionLibraryException($"The extension library '{ea.Name}' is already in the system.");
                 }
-                if (ea.LibraryType == ExtensionLibraryType.Server || ea.LibraryType == ExtensionLibraryType.Both)
+                if (ea.LibraryType.HasFlag(NetworkSide.Server))
                 {
                     Guid guid = Guid.Empty;
                     try

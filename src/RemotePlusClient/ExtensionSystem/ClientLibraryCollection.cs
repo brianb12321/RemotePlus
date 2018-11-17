@@ -32,7 +32,7 @@ namespace RemotePlusClient.ExtensionSystem
             ExtensionLibraryAttribute ea = a.GetCustomAttribute<ExtensionLibraryAttribute>();
             if (ea != null)
             {
-                if (ea.LibraryType == ExtensionLibraryType.Client || ea.LibraryType == ExtensionLibraryType.Both)
+                if (ea.LibraryType.HasFlag(NetworkSide.Client))
                 {
                     Guid guid = Guid.Empty;
                     try

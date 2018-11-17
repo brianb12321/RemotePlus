@@ -1,11 +1,12 @@
 ﻿using System.Reflection;
 using System.Runtime.InteropServices;
+using RemotePlusLibrary.Core;
 using RemotePlusLibrary.Extension.ExtensionLoader;
 using WindowsTools;
 
 [assembly: ExtensionLibrary(typeof(Startup), "WindowsTools",
     FriendlyName = "Windows Tools",
-    LibraryType = ExtensionLibraryType.Server)]
+    LibraryType = NetworkSide.Server)]
 
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information

@@ -334,7 +334,6 @@ namespace RemotePlusClient
             this.Name = "MainF";
             this.Text = "RemotePlusClient";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainF_FormClosing);
             this.Load += new System.EventHandler(this.MainF_Load);
             this.Resize += new System.EventHandler(this.MainF_Resize);
             this.splitContainer1.Panel1.ResumeLayout(false);

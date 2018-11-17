@@ -5,11 +5,15 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RemotePlusLibrary.RequestSystem.DefaultRequestOptions
+namespace RemotePlusLibrary.RequestSystem.DefaultRequestBuilders.BaseBuilders
 {
     [DataContract]
-    public class PromptRequestOptions
+    public abstract class PromptRequestBuilder : RequestBuilder
     {
+        public PromptRequestBuilder(string i) : base(i)
+        {
+        }
+
         [DataMember]
         public string Message { get; set; }
     }

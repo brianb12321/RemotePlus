@@ -6,11 +6,15 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace RemotePlusLibrary.RequestSystem.DefaultRequestOptions
+namespace RemotePlusLibrary.RequestSystem.DefaultRequestBuilders
 {
     [DataContract]
-    public class MessageBoxRequestOptions
+    public class MessageBoxRequestBuilder : RequestBuilder
     {
+        public MessageBoxRequestBuilder() : base("r_messageBox")
+        {
+        }
+
         [DataMember]
         public string Message { get; set; }
         [DataMember]

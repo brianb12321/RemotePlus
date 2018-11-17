@@ -11,7 +11,6 @@ namespace CommonWebCommands
     {
         public void Init(ILibraryBuilder builder, IInitEnvironment env)
         {
-            //builder.RegisterHook(LibraryBuilder.LOGIN_HOOK, checkIfUserAcceptsDisclamer);
             GlobalServices.Logger.Log($"Current position {env.InitPosition}", LogLevel.Debug, "WebCommands");
             GlobalServices.Logger.Log("Welcome to WebCommands.", LogLevel.Info, "WebCommands");
             GlobalServices.Logger.Log("Adding Chrome", LogLevel.Info, "WebCommands");
@@ -26,10 +25,6 @@ namespace CommonWebCommands
             GlobalServices.Logger.Log("Adding Firefox", LogLevel.Info, "WebCommands");
             CHeckFirefox();
             ServerManager.ServerRemoteService.Commands.Add("firefox", WebCommands.firefox);
-        }
-        void checkIfUserAcceptsDisclamer()
-        {
-            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(RequestBuilder.RequestMessageBox("Do not use CommonWebCommands to cause harm!", "Warning", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Warning));
         }
         void CheckIE()
         {

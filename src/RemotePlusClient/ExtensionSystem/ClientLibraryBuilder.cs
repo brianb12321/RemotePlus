@@ -1,4 +1,5 @@
-﻿using RemotePlusLibrary.Extension.ExtensionLoader;
+﻿using RemotePlusLibrary.Core;
+using RemotePlusLibrary.Extension.ExtensionLoader;
 using RemotePlusLibrary.Extension.ExtensionLoader.Initialization;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ namespace RemotePlusClient.ExtensionSystem
     internal class ClientLibraryBuilder : ILibraryBuilder
     {
 
-        public ClientLibraryBuilder(string name, string friendlyName, string version, ExtensionLibraryType libraryType)
+        public ClientLibraryBuilder(string name, string friendlyName, string version, NetworkSide libraryType)
         {
             Name = name;
             FriendlyName = friendlyName;
@@ -23,7 +24,7 @@ namespace RemotePlusClient.ExtensionSystem
 
         public string Version { get; private set; }
 
-        public ExtensionLibraryType LibraryType { get; private set; }
+        public NetworkSide LibraryType { get; private set; }
 
         public void SubscribeToEventBus<TMessage>(Action<TMessage> subscriber) where TMessage : class, ITinyMessage
         {

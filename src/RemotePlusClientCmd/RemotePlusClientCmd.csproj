@@ -106,8 +106,6 @@
     <Compile Include="Requests\RCmdMultiLineTextbox.cs" />
     <Compile Include="Requests\RCmdTextBox.cs" />
     <Compile Include="Requests\SelectableConsoleMenu.cs" />
-    <Compile Include="Requests\SelectFileRequest.cs" />
-    <Compile Include="Requests\SendFilePackageRequest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RemotePlusLibrary.Core;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,7 +13,7 @@ namespace RemotePlusLibrary.Extension.ExtensionLoader.Initialization
         string FriendlyName { get; }
         string Name { get; }
         string Version { get; }
-        ExtensionLibraryType LibraryType { get; }
+        NetworkSide LibraryType { get; }
         void SubscribeToEventBus<TMessage>(Action<TMessage> subscriber) where TMessage : class, ITinyMessage;
         void SubscribeToEventBus<TMessage>(Action<TMessage> subscriber, Func<TMessage, bool> condition) where TMessage : class, ITinyMessage;
     }

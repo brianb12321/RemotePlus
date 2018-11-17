@@ -15,7 +15,7 @@ namespace RemotePlusClient.UIForms
 {
     public partial class ViewRequestDialogBox : Form
     {
-        Dictionary<string, IDataRequest> temp;
+        Dictionary<string, IRequestAdapter> temp;
         public ViewRequestDialogBox()
         {
             InitializeComponent();
@@ -23,8 +23,8 @@ namespace RemotePlusClient.UIForms
 
         private void ViewRequestDialogBox_Load(object sender, EventArgs e)
         {
-            temp = new Dictionary<string, IDataRequest>();
-            foreach(IDataRequest req in RequestStore.GetAll())
+            temp = new Dictionary<string, IRequestAdapter>();
+            foreach(IRequestAdapter req in RequestStore.GetAll())
             {
                 listView1.Items.Add(new ListViewItem(new string[] { req.FriendlyName, req.URI, req.Description }));
                 temp.Add(req.URI, req);
@@ -40,7 +40,7 @@ namespace RemotePlusClient.UIForms
             }
             else
             {
-                selectedItem.UpdateProperties();
+
             }
         }
     }

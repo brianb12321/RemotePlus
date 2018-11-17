@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RemotePlusLibrary.Core;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,7 +11,7 @@ namespace RemotePlusLibrary.Extension.ExtensionLoader
     public class ExtensionLibraryAttribute : Attribute
     {
         public Type Startup { get; private set; }
-        public ExtensionLibraryType LibraryType { get; set; }
+        public NetworkSide LibraryType { get; set; }
         public string FriendlyName { get; set; }
         public string Name { get; private set; }
         public string Guid { get; set; }

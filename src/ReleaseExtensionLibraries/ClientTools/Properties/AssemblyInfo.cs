@@ -1,11 +1,12 @@
 ﻿using ClientTools;
+using RemotePlusLibrary.Core;
 using RemotePlusLibrary.Extension.ExtensionLoader;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
 [assembly: ExtensionLibrary(typeof(Startup), "ClientTools",
     FriendlyName = "Client Tools",
-    LibraryType = ExtensionLibraryType.Client)]
+    LibraryType = NetworkSide.Client)]
 
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information

@@ -3,6 +3,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using RemotePlusLibrary.Extension.ExtensionLoader;
 using ProxyServerCore;
+using RemotePlusLibrary.Core;
 
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
@@ -17,7 +18,7 @@ using ProxyServerCore;
 [assembly: AssemblyCulture("")]
 [assembly: ServerCoreLibrary(typeof(Startup), "ProxyServerCore",
     FriendlyName = "Proxy Server Core",
-    LibraryType = ExtensionLibraryType.Server)]
+    LibraryType = NetworkSide.Server)]
 
 // Setting ComVisible to false makes the types in this assembly not visible
 // to COM components.  If you need to access a type in this assembly from

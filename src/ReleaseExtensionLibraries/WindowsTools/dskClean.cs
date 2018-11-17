@@ -15,7 +15,7 @@ using RemotePlusLibrary.Scripting;
 using RemotePlusLibrary.RequestSystem;
 using RemotePlusServer.Core;
 using BetterLogger;
-using RemotePlusLibrary.RequestSystem.DefaultRequestOptions;
+using RemotePlusLibrary.RequestSystem.DefaultRequestBuilders;
 
 namespace WindowsTools
 {
@@ -40,12 +40,11 @@ namespace WindowsTools
             cleanOptions.Add("7", "All Temp Folders");
             cleanOptions.Add("8", "Clean all temp folders and take own");
             cleanOptions.Add("9", "Exit");
-            var rb = new RequestBuilder("rcmd_csmenu");
-            rb.PutObject(new SMenuRequestOptions()
+            var rb = new SMenuRequestBuilder()
             {
                 MenuItems = cleanOptions,
                 Message = "What should dskClean clean from the server?\nNOTE: These actions will be performed on all users except for the Recycle Bin clean."
-            });
+            };
             var result = ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(rb);
             switch((char)result.Data)
             {
@@ -186,7 +185,14 @@ namespace WindowsTools
         [IronPython.Runtime.PythonHidden]
         public static void ownAppDataTempFolder()
         {
-            var result = (DialogResult)Enum.Parse(typeof(DialogResult), ((string)ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(RequestBuilder.RequestMessageBox($"WARNING: Continuing will override ownership of each user's AppData\\Temp Folder. All AppData\\Temp files will be owned by {Environment.UserName}. Do you want to proceed?", "File Ownership warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)).Data));
+            var rb = new MessageBoxRequestBuilder()
+            {
+                Message = $"WARNING: Continuing will override ownership of each user's AppData\\Temp Folder. All AppData\\Temp files will be owned by {Environment.UserName}. Do you want to proceed?",
+                Caption = "File Ownership warning",
+                Buttons = MessageBoxButtons.YesNo,
+                Icons = MessageBoxIcon.Warning
+            };
+            var result = (DialogResult)Enum.Parse(typeof(DialogResult), ((string)ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(rb).Data));
             if(result != DialogResult.Yes)
             {
                 ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Operation aborted.", BetterLogger.LogLevel.Info, "dskClean");
@@ -221,7 +227,14 @@ namespace WindowsTools
         [IronPython.Runtime.PythonHidden]
         public static void ownIECacheFolder()
         {
-            var result = (DialogResult)Enum.Parse(typeof(DialogResult), ((string)ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(RequestBuilder.RequestMessageBox($"WARNING: Continuing will override ownership of each user's IE Cache Folder. All IE Cache files will be owned by {Environment.UserName}. Do you want to proceed?", "File Ownership warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)).Data));
+            var rb = new MessageBoxRequestBuilder()
+            {
+                Message = $"WARNING: Continuing will override ownership of each user's IE Cache Folder. All IE Cache files will be owned by {Environment.UserName}. Do you want to proceed?",
+                Caption = "File Ownership warning",
+                Buttons = MessageBoxButtons.YesNo,
+                Icons = MessageBoxIcon.Warning
+            };
+            var result = (DialogResult)Enum.Parse(typeof(DialogResult), ((string)ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(rb).Data));
             if (result != DialogResult.Yes)
             {
                 ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Operation aborted.", LogLevel.Info, "dskClean");

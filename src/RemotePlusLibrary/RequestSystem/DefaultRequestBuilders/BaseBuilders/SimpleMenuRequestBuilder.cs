@@ -5,11 +5,15 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RemotePlusLibrary.RequestSystem.DefaultRequestOptions
+namespace RemotePlusLibrary.RequestSystem.DefaultRequestBuilders.BaseBuilders
 {
     [DataContract]
-    public class SimpleMenuRequestOptions : PromptRequestOptions
+    public abstract class SimpleMenuRequestBuilder : PromptRequestBuilder
     {
+        public SimpleMenuRequestBuilder(string i) : base(i)
+        {
+        }
+
         [DataMember]
         public Dictionary<string, string> MenuItems { get; set; } = new Dictionary<string, string>();
     }

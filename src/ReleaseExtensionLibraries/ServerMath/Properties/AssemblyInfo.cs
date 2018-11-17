@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using System.Runtime.InteropServices;
+using RemotePlusLibrary.Core;
 using RemotePlusLibrary.Extension.ExtensionLoader;
 using ServerMath;
 
@@ -16,7 +17,7 @@ using ServerMath;
 [assembly: AssemblyCulture("")]
 [assembly: ExtensionLibrary(typeof(Startup), "ServerMath",
     FriendlyName = "Server Math",
-    LibraryType = ExtensionLibraryType.Server)]
+    LibraryType = NetworkSide.Server)]
 
 // Setting ComVisible to false makes the types in this assembly not visible
 // to COM components.  If you need to access a type in this assembly from

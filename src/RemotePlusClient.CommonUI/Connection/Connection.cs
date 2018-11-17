@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RemotePlusLibrary.Contracts;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -14,5 +15,7 @@ namespace RemotePlusClient.CommonUI.Connection
         public string BaseAddress { get; set; }
         [DataMember]
         public int Port { get; set; }
+        [IgnoreDataMember]
+        public IRemote RemoteConnection { get; set; }
     }
 }

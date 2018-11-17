@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using System.Runtime.InteropServices;
 using DefaultServerCore;
+using RemotePlusLibrary.Core;
 using RemotePlusLibrary.Extension.ExtensionLoader;
 
 // General Information about an assembly is controlled through the following
@@ -16,7 +17,7 @@ using RemotePlusLibrary.Extension.ExtensionLoader;
 [assembly: AssemblyCulture("")]
 [assembly: ServerCoreLibrary(typeof(Startup), "DefaultCore",
     FriendlyName = "Default Core",
-    LibraryType = ExtensionLibraryType.Server)]
+    LibraryType = NetworkSide.Server)]
 
 // Setting ComVisible to false makes the types in this assembly not visible
 // to COM components.  If you need to access a type in this assembly from

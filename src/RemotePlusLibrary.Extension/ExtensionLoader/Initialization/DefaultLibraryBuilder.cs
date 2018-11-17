@@ -12,7 +12,7 @@ namespace RemotePlusLibrary.Extension.ExtensionLoader.Initialization
     /// </summary>
     public class DefaultLibraryBuilder : ILibraryBuilder
     {
-        public DefaultLibraryBuilder(string friendlyName, string name, string version, ExtensionLibraryType type)
+        public DefaultLibraryBuilder(string friendlyName, string name, string version, NetworkSide type)
         {
             FriendlyName = friendlyName;
             Name = name;
@@ -25,7 +25,7 @@ namespace RemotePlusLibrary.Extension.ExtensionLoader.Initialization
 
         public string Version { get; private set; }
 
-        public ExtensionLibraryType LibraryType { get; private set; }
+        public NetworkSide LibraryType { get; private set; }
 
         void ILibraryBuilder.SubscribeToEventBus<TMessage>(Action<TMessage> subscriber)
         {

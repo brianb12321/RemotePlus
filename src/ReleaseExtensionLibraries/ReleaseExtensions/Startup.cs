@@ -7,7 +7,7 @@ using RemotePlusServer.Core;
 using BetterLogger;
 using RemotePlusLibrary.Core;
 using RemotePlusLibrary.RequestSystem;
-using RemotePlusLibrary.RequestSystem.DefaultRequestOptions;
+using RemotePlusLibrary.RequestSystem.DefaultRequestBuilders;
 
 namespace ReleaseExtensions
 {
@@ -23,7 +23,14 @@ namespace ReleaseExtensions
         [RemotePlusLibrary.Scripting.IndexScriptObject]
         DialogResult showMessageBoxScriptMethod(string message, string caption, MessageBoxButtons buttons, MessageBoxIcon icon)
         {
-            return (DialogResult)Enum.Parse(typeof(DialogResult), ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(RemotePlusLibrary.RequestSystem.RequestBuilder.RequestMessageBox(message, caption, buttons, icon)).Data.ToString());
+            var rb = new MessageBoxRequestBuilder()
+            {
+                Message = message,
+                Caption = caption,
+                Buttons = buttons,
+                Icons = icon
+            };
+            return (DialogResult)Enum.Parse(typeof(DialogResult), ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(rb).Data.ToString());
         }
         [CommandHelp("Describes about the ReleaseExtensionsLibrary.")]
         CommandResponse releaseExtensionAbout(CommandRequest args, CommandPipeline pipe)

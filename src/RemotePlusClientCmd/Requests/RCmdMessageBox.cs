@@ -4,42 +4,35 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using RemotePlusLibrary;
+using RemotePlusLibrary.Core;
 using RemotePlusLibrary.RequestSystem;
-using RemotePlusLibrary.RequestSystem.DefaultRequestOptions;
+using RemotePlusLibrary.RequestSystem.DefaultRequestBuilders;
 
 namespace RemotePlusClientCmd.Requests
 {
     //Interface: rcmd_messageBox
-    public class RCmdMessageBox : IDataRequest
+    public class RCmdMessageBox : StandordRequest<RCmdMessageBoxBuilder>
     {
-        bool IDataRequest.ShowProperties => false;
+        public override bool ShowProperties => false;
 
-        string IDataRequest.FriendlyName => "Command Line Message Box";
+        public override string FriendlyName => "Command Line Message Box";
 
-        string IDataRequest.Description => "Displays a message box on the command line.";
+        public override string Description => "Displays a message box on the command line.";
 
-        string IDataRequest.URI => "rcmd_messageBox";
+        public override string URI => "rcmd_messageBox";
 
-        public void Update(string message)
+        public override NetworkSide SupportedSides => NetworkSide.Client;
+
+        public override void Update(string message)
         {
             throw new NotImplementedException();
         }
 
-        RawDataRequest IDataRequest.RequestData(RequestBuilder builder)
+        public override RawDataResponse RequestData(RCmdMessageBoxBuilder builder, NetworkSide executingSide)
         {
             ConsoLovers.ConsoleToolkit.ConsoleMessageBox cmb = new ConsoLovers.ConsoleToolkit.ConsoleMessageBox();
-            var result = cmb.Show(builder.UnsafeResolve<PromptRequestOptions>().Message);
-            return RawDataRequest.Success(result.ToString());
-        }
-
-        void IDataRequest.Update(string message)
-        {
-            throw new NotImplementedException();
-        }
-
-        void IDataRequest.UpdateProperties()
-        {
-            throw new NotImplementedException();
+            var result = cmb.Show(builder.Message);
+            return RawDataResponse.Success(result.ToString());
         }
     }
 }

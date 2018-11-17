@@ -1,7 +1,7 @@
 ﻿using RemotePlusLibrary.Core;
 using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusLibrary.RequestSystem;
-using RemotePlusLibrary.RequestSystem.DefaultRequestOptions;
+using RemotePlusLibrary.RequestSystem.DefaultRequestBuilders;
 using RemotePlusServer.Core;
 using System;
 using System.Collections.Generic;
@@ -86,11 +86,10 @@ namespace RSPM
                 sb.AppendLine("If the package was downloaded from our package source, please notify us immediately if you suspect that a package is malicious.");
                 sb.AppendLine();
                 ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(sb.ToString());
-                RequestBuilder rb = new RequestBuilder("rcmd_textBox");
-                rb.PutObject(new PromptRequestOptions()
+                RCmdTextBoxBuilder rb = new RCmdTextBoxBuilder()
                 {
                     Message = "I acknowledge the warning and are ready to extract and install package [Y/N]"
-                });
+                };
                 string response = ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(rb).Data.ToString();
                 if(string.Equals(response, "Y", StringComparison.OrdinalIgnoreCase))
                 {

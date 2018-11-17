@@ -1,6 +1,7 @@
 ﻿using RemotePlusLibrary;
+using RemotePlusLibrary.Core;
 using RemotePlusLibrary.RequestSystem;
-using RemotePlusLibrary.RequestSystem.DefaultRequestOptions;
+using RemotePlusLibrary.RequestSystem.DefaultRequestBuilders;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,41 +11,32 @@ using System.Windows.Forms;
 
 namespace RemotePlusClient.CommonUI.Requests
 {
-    public sealed class MessageBoxRequest : IDataRequest
+    public sealed class MessageBoxRequest : StandordRequest<MessageBoxRequestBuilder>
     {
-        bool IDataRequest.ShowProperties => false;
+        public override bool ShowProperties => false;
 
-        string IDataRequest.FriendlyName => "Message Box Request";
+        public override string FriendlyName => "Message Box Request";
 
-        string IDataRequest.Description => "Shows a message box to the user.";
+        public override string Description => "Shows a message box to the user.";
 
-        string IDataRequest.URI => "r_messageBox";
+        public override string URI => "r_messageBox";
 
-        public void Update(string message)
-        {
-            throw new NotImplementedException();
-        }
+        public override NetworkSide SupportedSides => NetworkSide.Client;
 
-        RawDataRequest IDataRequest.RequestData(RequestBuilder builder)
+        public override RawDataResponse RequestData(MessageBoxRequestBuilder builder, NetworkSide executingSide)
         {
             try
             {
-                var options = builder.UnsafeResolve<MessageBoxRequestOptions>();
-                var result = MessageBox.Show(options.Message, options.Caption, options.Buttons, options.Icons);
-                return RawDataRequest.Success(result.ToString());
+                var result = MessageBox.Show(builder.Message, builder.Caption, builder.Buttons, builder.Icons);
+                return RawDataResponse.Success(result.ToString());
             }
             catch
             {
-                return RawDataRequest.Cancel();
+                return RawDataResponse.Cancel();
             }
         }
 
-        void IDataRequest.Update(string message)
-        {
-            throw new NotImplementedException();
-        }
-
-        void IDataRequest.UpdateProperties()
+        public override void Update(string message)
         {
             throw new NotImplementedException();
         }

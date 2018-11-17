@@ -1,4 +1,5 @@
-﻿using RemotePlusLibrary.Extension.ExtensionLoader.Initialization;
+﻿using RemotePlusLibrary.Core;
+using RemotePlusLibrary.Extension.ExtensionLoader.Initialization;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -18,11 +19,11 @@ namespace RemotePlusLibrary.Extension.ExtensionLoader
         public List<RequiresDependencyAttribute> Dependencies { get; }
         public string FriendlyName { get; }
         public string Name { get; }
-        public ExtensionLibraryType LibraryType { get; }
+        public NetworkSide LibraryType { get; }
         public Guid Guid { get; }
         public Version Version { get; }
         private Assembly _assembly;
-        protected ExtensionLibraryBase(Assembly assembly, string friendlyName, string name, ExtensionLibraryType type, Guid g, RequiresDependencyAttribute[] deps, Version v)
+        protected ExtensionLibraryBase(Assembly assembly, string friendlyName, string name, NetworkSide type, Guid g, RequiresDependencyAttribute[] deps, Version v)
         {
             _assembly = assembly;
             FriendlyName = friendlyName;

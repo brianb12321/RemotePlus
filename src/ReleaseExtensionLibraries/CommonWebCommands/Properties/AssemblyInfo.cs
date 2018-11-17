@@ -1,11 +1,12 @@
 ﻿using System.Reflection;
 using System.Runtime.InteropServices;
+using RemotePlusLibrary.Core;
 using RemotePlusLibrary.Extension.ExtensionLoader;
 
 [assembly: ExtensionLibrary(typeof(CommonWebCommands.Startup), "WebCommands",
     FriendlyName = "Web Commands",
     Guid = "021C2D5D-FC26-4175-8292-EE04D299D930",
-    LibraryType = ExtensionLibraryType.Server)]
+    LibraryType = NetworkSide.Server)]
 
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information

@@ -5,11 +5,15 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RemotePlusLibrary.RequestSystem.DefaultRequestOptions
+namespace RemotePlusLibrary.RequestSystem.DefaultRequestBuilders.BaseBuilders
 {
     [DataContract]
-    public class FileRequestOptions
+    public abstract class FileRequestBuilder : RequestBuilder
     {
+        public FileRequestBuilder(string i) : base(i)
+        {
+        }
+
         [DataMember]
         public string FileName { get; set; }
     }

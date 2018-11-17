@@ -4,26 +4,29 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using RemotePlusLibrary;
+using RemotePlusLibrary.Core;
 using RemotePlusLibrary.RequestSystem;
-using RemotePlusLibrary.RequestSystem.DefaultRequestOptions;
+using RemotePlusLibrary.RequestSystem.DefaultRequestBuilders;
 
 namespace RemotePlusClientCmd.Requests
 {
     //Interface: rcmd_multitextBox
-    public class RCmdMultiLineTextbox : IDataRequest
+    public class RCmdMultiLineTextbox : StandordRequest<RCmdMultilineRequestBuilder>
     {
-        public bool ShowProperties => false;
+        public override bool ShowProperties => false;
 
-        public string FriendlyName => "Commandline Multiline Textbox";
+        public override string FriendlyName => "Commandline Multiline Textbox";
 
-        public string Description => "Allows you to enter multiple lines of text.";
+        public override string Description => "Allows you to enter multiple lines of text.";
 
-        public string URI => "rcmd_mTextBox";
+        public override string URI => "rcmd_mTextBox";
 
-        public RawDataRequest RequestData(RequestBuilder builder)
+        public override NetworkSide SupportedSides => NetworkSide.Client;
+
+        public override RawDataResponse RequestData(RCmdMultilineRequestBuilder builder, NetworkSide executingSide)
         {
             StringBuilder sb = new StringBuilder();
-            Console.WriteLine($"{builder.UnsafeResolve<PromptRequestOptions>().Message}");
+            Console.WriteLine($"{builder.Message}");
             while(true)
             {
                 string result = Console.ReadLine();
@@ -40,17 +43,12 @@ namespace RemotePlusClientCmd.Requests
                 }
                 else
                 {
-                    return RawDataRequest.Success(sb.ToString());
+                    return RawDataResponse.Success(sb.ToString());
                 }
             }
         }
 
-        public void Update(string message)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void UpdateProperties()
+        public override void Update(string message)
         {
             throw new NotImplementedException();
         }

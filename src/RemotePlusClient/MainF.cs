@@ -22,6 +22,7 @@ using BetterLogger;
 using RemotePlusClient.CommonUI.Connection;
 using RemotePlusLibrary.Core.IOC;
 using RemotePlusClient.CommonUI;
+using RemotePlusLibrary.RequestSystem;
 
 namespace RemotePlusClient
 {
@@ -110,6 +111,7 @@ namespace RemotePlusClient
                 ConsoleObj.Logger.Log("Registering...", LogLevel.Info);
                 RequestStore.Add(new CommonUI.Requests.SendLocalFileByteStreamRequest(MainF.Remote));
                 Remote.Register(Settings);
+                CurrentConnectionData.RemoteConnection = Remote;
                 EnableMenuItems();
                 cmb_servers.Items.Add(Remote);
             }
@@ -127,6 +129,7 @@ namespace RemotePlusClient
             RequestStore.Add(new CommonUI.Requests.SendLocalFileByteStreamRequest(FoundServers));
             FoundServers.Connect();
             FoundServers.ProxyRegister();
+            CurrentConnectionData.RemoteConnection = FoundServers;
             ConsoleObj.Logger.Log($"Found {FoundServers.GetServers().Count()} servers joined to the proxy server.", LogLevel.Info);
             AddTabToSideControl("Server Explorer", new ServerExplorer());
             string[] servers = FoundServers.GetServers().Select(g => g.ToString()).ToArray();
@@ -324,17 +327,6 @@ namespace RemotePlusClient
         {
             ServerSettingsDialog ssd = new ServerSettingsDialog();
             ssd.ShowDialog();
-        }
-
-        private void MainF_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            try
-            {
-                Disconnect();
-            }
-            catch
-            {
-            }
         }
 
         private void loadToolStripMenuItem_Click(object sender, EventArgs e)

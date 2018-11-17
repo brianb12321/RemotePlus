@@ -1,11 +1,12 @@
 ﻿using System.Reflection;
 using System.Runtime.InteropServices;
+using RemotePlusLibrary.Core;
 using RemotePlusLibrary.Extension.ExtensionLoader;
 
 // RemotePlus server extension attributes.
 [assembly: ExtensionLibrary(typeof(ReleaseExtensions.Startup), "ReleaseExtensions",
     FriendlyName = "Release Extensions",
-    LibraryType = ExtensionLibraryType.Both,
+    LibraryType = NetworkSide.Client | NetworkSide.Server,
     Guid = "DAA60EA7-76D1-4144-8CD8-FC1DE9C8A5C2")]
 
 // General Information about an assembly is controlled through the following

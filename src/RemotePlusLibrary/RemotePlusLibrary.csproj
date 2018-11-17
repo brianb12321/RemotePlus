@@ -34,6 +34,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="BetterLogger">
       <HintPath>..\..\Libs\BetterLogger.dll</HintPath>
@@ -72,13 +75,24 @@
     <Compile Include="FileTransfer\Service\PackageSystem\StandordPackageInventorySelector.cs" />
     <Compile Include="FileTransfer\Service\PackageSystem\StreamPackage.cs" />
     <Compile Include="GlobalServerBuilderExtensions.cs" />
-    <Compile Include="RequestSystem\DefaultRequestOptions\FileDialogRequestOptions.cs" />
-    <Compile Include="RequestSystem\DefaultRequestOptions\FileRequestOptions.cs" />
-    <Compile Include="RequestSystem\DefaultRequestOptions\MessageBoxRequestOptions.cs" />
-    <Compile Include="RequestSystem\DefaultRequestOptions\PromptRequestOptions.cs" />
-    <Compile Include="RequestSystem\DefaultRequestOptions\SimpleMenuRequestOptions.cs" />
-    <Compile Include="RequestSystem\DefaultRequestOptions\SMenuRequestOptions.cs" />
+    <Compile Include="RequestSystem\DefaultRequestBuilders\ConsoleMenuRequestBuilder.cs" />
+    <Compile Include="RequestSystem\DefaultRequestBuilders\FileDialogRequestBuilder.cs" />
+    <Compile Include="RequestSystem\DefaultRequestBuilders\BaseBuilders\FileRequestBuilder.cs" />
+    <Compile Include="RequestSystem\DefaultRequestBuilders\MessageBoxRequestBuilder.cs" />
+    <Compile Include="RequestSystem\DefaultRequestBuilders\BaseBuilders\PromptRequestBuilder.cs" />
+    <Compile Include="RequestSystem\DefaultRequestBuilders\RCmdMessageBoxBuilder.cs" />
+    <Compile Include="RequestSystem\DefaultRequestBuilders\RCmdMultilineRequestBuilder.cs" />
+    <Compile Include="RequestSystem\DefaultRequestBuilders\RCmdTextBoxBuilder.cs" />
+    <Compile Include="RequestSystem\DefaultRequestBuilders\RequestStringRequestBuilder.cs" />
+    <Compile Include="RequestSystem\DefaultRequestBuilders\SelectFileRequestBuilder.cs" />
+    <Compile Include="RequestSystem\DefaultRequestBuilders\SendFilePackageRequestBuilder.cs" />
+    <Compile Include="RequestSystem\DefaultRequestBuilders\SendLocalFileByteStreamRequestBuilder.cs" />
+    <Compile Include="RequestSystem\DefaultRequestBuilders\BaseBuilders\SimpleMenuRequestBuilder.cs" />
+    <Compile Include="RequestSystem\DefaultRequestBuilders\SMenuRequestBuilder.cs" />
     <Compile Include="RequestSystem\IGenericObject.cs" />
+    <Compile Include="RequestSystem\INonGenericRequest.cs" />
+    <Compile Include="RequestSystem\RequestStore.cs" />
+    <Compile Include="RequestSystem\StandordRequest.cs" />
     <Compile Include="ServiceArchitecture\DefaultServiceBuilder.cs" />
     <Compile Include="ServiceArchitecture\DefaultServiceManager.cs" />
     <Compile Include="ServiceArchitecture\IRemotePlusService.cs" />

@@ -95,7 +95,6 @@
     </Compile>
     <Compile Include="Gui\Theme.cs" />
     <Compile Include="ExtensionLoader\ExtensionLibraryAttribute.cs" />
-    <Compile Include="ExtensionLoader\ExtensionLibraryType.cs" />
     <Compile Include="ExtensionLoader\Initialization\ILibraryStartup.cs" />
     <Compile Include="ExtensionLoader\InvalidExtensionLibraryException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

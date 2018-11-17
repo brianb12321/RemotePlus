@@ -91,6 +91,7 @@
     <Compile Include="ProbeServiceBuilder.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ProxyServerBulderExtensions.cs" />
     <Compile Include="ProxyServerRemoteImpl.cs" />
     <Compile Include="Scripting\Batch\BatchJob.cs" />
     <Compile Include="Scripting\Batch\JobExecutionMode.cs" />

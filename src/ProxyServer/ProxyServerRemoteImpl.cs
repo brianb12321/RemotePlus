@@ -24,6 +24,7 @@ using RemotePlusLibrary.Security.Authentication;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing;
 using BetterLogger;
 using RemotePlusLibrary.Core.IOC;
+using RemotePlusLibrary.RequestSystem.DefaultRequestBuilders;
 
 namespace ProxyServer
 {
@@ -209,7 +210,14 @@ namespace ProxyServer
                 {
                     Task.Run(() =>
                     {
-                        ProxyClient.ClientCallback.RequestInformation(ProxyManager.ProxyGuid, RequestBuilder.RequestMessageBox($"Server [{SelectedClient.UniqueID}] has disconnected without proper shutdown. Please select another server to be the active server.", "Proxy Server", MessageBoxButtons.OK, MessageBoxIcon.Information));
+                        var rb = new MessageBoxRequestBuilder()
+                        {
+                            Message = $"Server [{SelectedClient.UniqueID}] has disconnected without proper shutdown. Please select another server to be the active server.",
+                            Caption = "Proxy Server",
+                            Buttons = MessageBoxButtons.OK,
+                            Icons = MessageBoxIcon.Information
+                        };
+                        ProxyClient.ClientCallback.RequestInformation(ProxyManager.ProxyGuid, rb);
                         SelectedClient = null;
                     });
                 }
@@ -461,7 +469,14 @@ namespace ProxyServer
                 {
                     Task.Run(() =>
                     {
-                        ProxyClient.ClientCallback.RequestInformation(ProxyManager.ProxyGuid, RequestBuilder.RequestMessageBox($"Server [{SelectedClient.UniqueID}] has disconnected gracefully. Please select another server to be the active server.", "Proxy Server", MessageBoxButtons.OK, MessageBoxIcon.Information));
+                        var rb = new MessageBoxRequestBuilder()
+                        {
+                            Message = $"Server [{SelectedClient.UniqueID}] has disconnected gracefully. Please select another server to be the active server.",
+                            Caption = "Proxy Server",
+                            Buttons = MessageBoxButtons.OK,
+                            Icons = MessageBoxIcon.Information
+                        };
+                        ProxyClient.ClientCallback.RequestInformation(ProxyManager.ProxyGuid, rb);
                         SelectedClient = null;
                     });
                 }

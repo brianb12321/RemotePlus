@@ -33,7 +33,6 @@ namespace DefaultServerCore
                     }
                 });
             });
-            GlobalServerBuilderExtensions.InitializeKnownTypes();
             services.UseServerManager<DefaultServiceManager>()
                 .UseServerControlPage<ServerControls>()
                 .UseScriptingEngine()
@@ -76,14 +75,14 @@ namespace DefaultServerCore
                         .SetPortNumber(ServerManager.DefaultSettings.PortNumber);
             });
             ServerManager.DefaultCollection.LoadExtensionsInFolder();
+            GlobalServerBuilderExtensions.InitializeKnownTypes();
             manager.BuildHost<ServerRemoteInterface>();
             manager.BuildHost<FileTransferServciceInterface>();
         }
 
         void IServerCoreStartup.InitializeServer(IServerBuilder builder)
         {
-            builder.InitializeKnownTypes()
-                .LoadServerConfig()
+            builder.LoadServerConfig()
                 .InitializeDefaultGlobals()
                 .InitializeScriptingEngine((options) => { })
                 .OpenMexForRemotePlus()

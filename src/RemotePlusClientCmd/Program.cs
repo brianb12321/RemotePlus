@@ -5,7 +5,6 @@ using System.ServiceModel;
 using RemotePlusLibrary.Core;
 using System.Windows.Forms;
 using System.Drawing;
-using RemotePlusClient.CommonUI;
 using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
 using System.Text.RegularExpressions;
@@ -20,22 +19,33 @@ using RemotePlusClientCmd.ClientExtensionSystem;
 using RemotePlusLibrary.Core.IOC;
 using RemotePlusClient.CommonUI.Connection;
 using RemotePlusLibrary.Core.EventSystem;
+using RemotePlusLibrary.RequestSystem;
+using RemotePlusClient.CommonUI.Requests;
 
 namespace RemotePlusClientCmd
 {
-    public partial class ClientCmdManager
+    public partial class ClientCmdManager : IEnvironment
     {
-        public static Dictionary<string, CommandDelegate> LocalCommands = new Dictionary<string, CommandDelegate>();
+        public Dictionary<string, CommandDelegate> LocalCommands = new Dictionary<string, CommandDelegate>();
         public static ClientExtensionLibraryCollection ExtensionLibraries { get; set; } = new ClientExtensionLibraryCollection();
         public static ServiceClient Remote = null;
         public static PromptBuilder prompt = new PromptBuilder();
-        public static ProxyClient Proxy = null;
-        public static Connection CurrentConnectionData => IOCContainer.GetService<Connection>();
-        public static IEventBus EventBus => IOCContainer.GetService<IEventBus>();
+        public ProxyClient Proxy = null;
+        public Connection CurrentConnectionData => IOCContainer.GetService<Connection>();
+        public IEventBus EventBus => IOCContainer.GetService<IEventBus>();
         public static bool WaitFlag = true;
-        public static bool ProxyEnabled { get; private set; }
+        public bool ProxyEnabled { get; private set; }
+        public NetworkSide ExecutingSide => NetworkSide.Client;
+
+        public EnvironmentState State { get; private set; } = EnvironmentState.Created;
+
         [STAThread]
         static void Main(string[] args)
+        {
+            IOCContainer.Provider.Bind<IEnvironment>().ToConstant(new ClientCmdManager());
+            GlobalServices.RunningEnvironment.Start(args);
+        }
+        public void Start(string[] args)
         {
             IOCContainer.Provider.Bind<Connection>().ToSelf().InSingletonScope();
             IOCContainer.Provider.Bind<RemotePlusLibrary.Configuration.IConfigurationDataAccess>().To(typeof(RemotePlusLibrary.Configuration.StandordDataAccess.ConfigurationHelper)).InSingletonScope().Named("DefaultConfigDataAccess");
@@ -56,7 +66,7 @@ namespace RemotePlusClientCmd
                 {
                     CatchException((Exception)e.ExceptionObject);
                 }
-                if(e.IsTerminating)
+                if (e.IsTerminating)
                 {
                     Environment.Exit(-1);
                 }
@@ -66,15 +76,19 @@ namespace RemotePlusClientCmd
             InitCommands();
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            InitializeDefaultKnownTypes();
-            RequestStore.Init();
+            RequestStore.Add(new RequestStringRequest());
+            RequestStore.Add(new ColorRequest());
+            RequestStore.Add(new MessageBoxRequest());
+            RequestStore.Add(new SelectLocalFileRequest());
+            RequestStore.Add(new SelectFileRequest());
+            RequestStore.Add(new SendFilePackageRequest());
             RequestStore.Add(new Requests.ConsoleMenuRequest());
             RequestStore.Add(new Requests.SelectableConsoleMenu());
             RequestStore.Add(new Requests.RCmdMessageBox());
             RequestStore.Add(new Requests.RCmdTextBox());
             RequestStore.Add(new Requests.RCmdMultiLineTextbox());
-            RequestStore.Add(new Requests.SelectFileRequest());
-            RequestStore.Add(new Requests.SendFilePackageRequest());
+            InitializeDefaultKnownTypes();
+            State = EnvironmentState.Running;
             if (args.Length == 0)
             {
                 Console.Write("Enter url: ");
@@ -102,8 +116,7 @@ namespace RemotePlusClientCmd
                 }
             }
         }
-
-        private static void LoadExtensions()
+        private void LoadExtensions()
         {
             List<string> excludedFiles = new List<string>();
             GlobalServices.Logger.Log("Loading extensions...", LogLevel.Info);
@@ -145,14 +158,14 @@ namespace RemotePlusClientCmd
             }
         }
 
-        static void CatchException(Exception ex)
+        void CatchException(Exception ex)
         {
             using (ErrorDialog d = new ErrorDialog(ex))
             {
                 d.ShowDialog();
             }
         }
-        static void Connect(string url, RegisterationObject ro, bool useProxy)
+        void Connect(string url, RegisterationObject ro, bool useProxy)
         {
             if (useProxy)
             {
@@ -172,6 +185,7 @@ namespace RemotePlusClientCmd
                     }
                 };
                 Proxy.ProxyRegister();
+                CurrentConnectionData.RemoteConnection = Proxy;
             }
             else
             {
@@ -181,9 +195,10 @@ namespace RemotePlusClientCmd
                 Remote = new ServiceClient(new ClientCallback(), _ConnectionFactory.BuildBinding(), ea);
                 RequestStore.Add(new RemotePlusClient.CommonUI.Requests.SendLocalFileByteStreamRequest(Remote));
                 Remote.Register(ro);
+                CurrentConnectionData.RemoteConnection = Remote;
             }
         }
-        static void AcceptInput(bool useProxy)
+        void AcceptInput(bool useProxy)
         {
             Console.WriteLine("Enter a command to the server. Type {help} for a list of commands.");
             while (true)
@@ -285,7 +300,7 @@ namespace RemotePlusClientCmd
         //    return tokenList.ToArray();
         //}
 
-        private static IEnumerable<CommandToken> RunSubRoutines(CommandParser p, CommandPipeline pipe, int position)
+        private IEnumerable<CommandToken> RunSubRoutines(CommandParser p, CommandPipeline pipe, int position)
         {
             foreach (CommandToken routineToken in p.GetSubRoutines())
             {
@@ -302,7 +317,7 @@ namespace RemotePlusClientCmd
             }
         }
 
-        private static void WritePrompt()
+        private void WritePrompt()
         {
             Console.ResetColor();
             if (!string.IsNullOrEmpty(prompt.CurrentUser))
@@ -372,11 +387,11 @@ namespace RemotePlusClientCmd
             return messages[rand.Next(messages.Length)];
         }
 
-        static CommandPipeline Input(string i)
+        CommandPipeline Input(string i)
         {
             return Remote.RunServerCommand(i, CommandExecutionMode.Client);
         }
-        private static void InitCommands()
+        private void InitCommands()
         {
             LocalCommands.Add("#banner", banner);
             LocalCommands.Add("#help", Help);
@@ -387,7 +402,7 @@ namespace RemotePlusClientCmd
             LocalCommands.Add("#execute-script", loadScriptFIle);
         }
 
-        static CommandResponse RunLocalCommand(CommandRequest request, CommandExecutionMode commandMode, CommandPipeline pipe)
+        CommandResponse RunLocalCommand(CommandRequest request, CommandExecutionMode commandMode, CommandPipeline pipe)
         {
             bool throwFlag = false;
             StatusCodeDeliveryMethod scdm = StatusCodeDeliveryMethod.DoNotDeliver;
@@ -453,9 +468,19 @@ namespace RemotePlusClientCmd
                 }
             }
         }
-        static void InitializeDefaultKnownTypes()
+        void InitializeDefaultKnownTypes()
         {
             GlobalServerBuilderExtensions.InitializeKnownTypes();
+        }
+
+        public void Close()
+        {
+            State = EnvironmentState.Closing;
+            Remote?.Disconnect();
+            Remote?.Close();
+            Proxy?.ProxyDisconnect();
+            Proxy?.Close();
+            Environment.Exit(0);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RemotePlusLibrary.RequestSystem.DefaultRequestBuilders.BaseBuilders;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -6,11 +7,15 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RemotePlusLibrary.RequestSystem.DefaultRequestOptions
+namespace RemotePlusLibrary.RequestSystem.DefaultRequestBuilders
 {
     [DataContract]
-    public class SMenuRequestOptions : SimpleMenuRequestOptions
+    public class SMenuRequestBuilder : SimpleMenuRequestBuilder
     {
+        public SMenuRequestBuilder() : base("rcmd_csmenu")
+        {
+        }
+
         /// <summary>
         /// The background color of the header. The default color is Black.
         /// </summary>

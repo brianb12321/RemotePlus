@@ -1,31 +1,28 @@
-﻿using RemotePlusClient.CommonUI.Requests;
+﻿using RemotePlusLibrary.Core;
 using RemotePlusLibrary.RequestSystem;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace RemotePlusClient.CommonUI
+namespace RemotePlusLibrary.RequestSystem
 {
     public static class RequestStore
     {
-        static IDataRequest current;
-        static List<IDataRequest> requestForms = new List<IDataRequest>();
+        static IRequestAdapter current;
+        static List<IRequestAdapter> requestForms = new List<IRequestAdapter>();
         public static void Init()
         {
-            requestForms.Add(new RequestStringDialogBox());
-            requestForms.Add(new ColorRequest());
-            requestForms.Add(new MessageBoxRequest());
-            requestForms.Add(new SelectLocalFileRequest());
+
         }
-        public static void Add(IDataRequest requestForm)
+        public static void Add<TBuilder>(IDataRequest<TBuilder> requestForm) where TBuilder : RequestBuilder
         {
             requestForms.Add(requestForm);
         }
-        public static List<IDataRequest> GetAll()
+        public static List<IRequestAdapter> GetAll()
         {
             return requestForms;
         }
-        public static IDataRequest Get(string name)
+        public static IRequestAdapter Get(string name)
         {
             return requestForms.FirstOrDefault(r => r.URI.ToUpper() == name.ToUpper());
         }
@@ -37,7 +34,7 @@ namespace RemotePlusClient.CommonUI
                 if (request != null)
                 {
                     current = request;
-                    var rd = request.RequestData(builder);
+                    var rd = request.StartRequestData(builder, GlobalServices.RunningEnvironment.ExecutingSide);
                     if (rd.State == RequestState.OK)
                     {
                         return new ReturnData(rd.RawData, RequestState.OK);
@@ -79,7 +76,7 @@ namespace RemotePlusClient.CommonUI
                 }
             }
         }
-        public static IDataRequest GetCurrent()
+        public static IRequestAdapter GetCurrent()
         {
             return current;
         }

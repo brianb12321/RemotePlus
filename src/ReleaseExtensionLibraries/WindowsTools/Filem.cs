@@ -10,7 +10,7 @@ using System.Drawing;
 using RemotePlusLibrary.RequestSystem;
 using RemotePlusServer.Core;
 using BetterLogger;
-using RemotePlusLibrary.RequestSystem.DefaultRequestOptions;
+using RemotePlusLibrary.RequestSystem.DefaultRequestBuilders;
 
 namespace WindowsTools
 {
@@ -36,7 +36,7 @@ namespace WindowsTools
             //    SendMessage("FileM is currently only availible to command line users.", LogLevel.Error);
             //    return new CommandResponse(-999); // Random Error Code
             //}
-            SMenuRequestOptions menu = new SMenuRequestOptions();
+            SMenuRequestBuilder menu = new SMenuRequestBuilder();
             menu.Message = "Please select a file operation below.";
             menu.MenuItems.Add("0", "Open file");
             menu.MenuItems.Add("1", "Open directory");
@@ -44,11 +44,9 @@ namespace WindowsTools
             menu.MenuItems.Add("3", "Exit");
             menu.SelectForeground = Color.White.ToArgb();
             menu.SelectBackColor = Color.RoyalBlue.ToArgb();
-            RequestBuilder rb = new RequestBuilder("rcmd_csmenu");
-            rb.PutObject(menu);
             while(true)
             {
-                var choice = int.Parse(ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(rb).Data.ToString());
+                var choice = int.Parse(ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(menu).Data.ToString());
                 switch (choice)
                 {
                     case 0:
@@ -62,7 +60,7 @@ namespace WindowsTools
         }
         static void openFile()
         {
-            string file = (string)ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(RequestBuilder.RequestFile()).Data;
+            string file = (string)ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(new SelectFileRequestBuilder()).Data;
             //var filePath = new CmdTextBox("Enter file path to open").BuildAndSend();
             try
             {
@@ -76,7 +74,7 @@ namespace WindowsTools
         }
         static void showFIleMenu(FileInfo file)
         {
-            SMenuRequestOptions menu = new SMenuRequestOptions();
+            SMenuRequestBuilder menu = new SMenuRequestBuilder();
                                   menu.Message = $"File Name: {file.Name}\n" + 
                                                  $"Creation Date: {file.CreationTime.ToString()}\n" + 
                                                  $"Last Modified: {file.LastWriteTime.ToString()}\n" +
@@ -95,9 +93,7 @@ namespace WindowsTools
             menu.MenuItems.Add("6", "Use Gameclub encryption");
             menu.MenuItems.Add("7", "Set owner");
             menu.MenuItems.Add("8", "Return to home emnu");
-            RequestBuilder rb = new RequestBuilder("rcmd_csmenu");
-            rb.PutObject(menu);
-            var choice = int.Parse(ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(rb).Data.ToString());
+            var choice = int.Parse(ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(menu).Data.ToString());
             switch(choice)
             {
                 case 0:
@@ -116,22 +112,20 @@ namespace WindowsTools
 
         private static void AppendFile(string fullName)
         {
-            var rb = new RequestBuilder("rcmd_mTextBox");
-            rb.PutObject(new PromptRequestOptions()
+            var rb = new RCmdMultilineRequestBuilder()
             {
                 Message = "Please enter text to append to the file. When finished, hit {ENTER}"
-            });
+            };
             string message = (string)ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(rb).Data;
             File.AppendAllText(fullName, message);
             SendMessage($"File {fullName} appended.", LogLevel.Info);
         }
         private static void OverrideFile(string file)
         {
-            var rb = new RequestBuilder("rcmd_mTextBox");
-            rb.PutObject(new PromptRequestOptions()
+            var rb = new RCmdMultilineRequestBuilder()
             {
                 Message = "Please enter text to override. When finished, hit {ENTER}"
-            });
+            };
             string message = (string)ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(rb).Data;
             File.WriteAllText(file, message);
             SendMessage($"File {file} overwritten.", LogLevel.Info);
@@ -139,7 +133,14 @@ namespace WindowsTools
 
         static void DeleteFile(string file)
         {
-            var result = (DialogResult)Enum.Parse(typeof(DialogResult), (string)ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(RequestBuilder.RequestMessageBox($"Are you sure that you want to delete {Path.GetFileName(file)}? You cannot revert once completed.", "File Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)).Data);
+            var rb = new MessageBoxRequestBuilder()
+            {
+                Message = $"Are you sure that you want to delete {Path.GetFileName(file)}? You cannot revert once completed.",
+                Caption = "File Delete",
+                Buttons = MessageBoxButtons.YesNo,
+                Icons = MessageBoxIcon.Warning
+            };
+            var result = (DialogResult)Enum.Parse(typeof(DialogResult), (string)ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(rb).Data);
             if(result == DialogResult.Yes)
             {
                 SendMessage($"Deleting {file}.", LogLevel.Info);

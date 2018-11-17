@@ -1,39 +1,31 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using RemotePlusLibrary;
 using ConsoLovers.ConsoleToolkit;
+using RemotePlusLibrary.Core;
 using RemotePlusLibrary.RequestSystem;
-using RemotePlusLibrary.RequestSystem.DefaultRequestOptions;
+using RemotePlusLibrary.RequestSystem.DefaultRequestBuilders;
 
 namespace RemotePlusClientCmd.Requests
 {
-    //Interface rcmd_textBox
-    public class RCmdTextBox : IDataRequest
+    public class RCmdTextBox : StandordRequest<RCmdTextBoxBuilder>
     {
-        public string URI => "rcmd_textBox";
+        public override string URI => "rcmd_textBox";
 
-        bool IDataRequest.ShowProperties => false;
+        public override bool ShowProperties => false;
 
-        string IDataRequest.FriendlyName => "Command line text box";
+        public override string FriendlyName => "Command line text box";
 
-        string IDataRequest.Description => "Provides a simple command line based text box";
+        public override string Description => "Provides a simple command line based text box";
 
-        public void Update(string message)
+        public override NetworkSide SupportedSides => NetworkSide.Client;
+
+        public override void Update(string message)
         {
             throw new NotImplementedException();
         }
 
-        RawDataRequest IDataRequest.RequestData(RequestBuilder builder)
+        public override RawDataResponse RequestData(RCmdTextBoxBuilder builder, NetworkSide executingSide)
         {
-            return RawDataRequest.Success(new InputBox<string>($"{builder.UnsafeResolve<PromptRequestOptions>().Message}: ").ReadLine());
-        }
-
-        void IDataRequest.UpdateProperties()
-        {
-            throw new NotImplementedException();
+            return RawDataResponse.Success(new InputBox<string>($"{builder.Message}: ").ReadLine());
         }
     }
 }

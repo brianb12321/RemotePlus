@@ -4,7 +4,7 @@ using System.Windows.Forms;
 using RemotePlusLibrary;
 using RemotePlusLibrary.Contracts;
 using RemotePlusLibrary.RequestSystem;
-using RemotePlusLibrary.RequestSystem.DefaultRequestOptions;
+using RemotePlusLibrary.RequestSystem.DefaultRequestBuilders;
 using RemotePlusLibrary.Scripting;
 
 namespace RemotePlusServer.Core.Proxies
@@ -16,11 +16,10 @@ namespace RemotePlusServer.Core.Proxies
         [IndexScriptObject]
         public string requestString(string prompt)
         {
-            var builder = RequestBuilder.RequestString();
-            builder.PutObject(new PromptRequestOptions()
+            var builder = new RequestStringRequestBuilder()
             {
                 Message = prompt
-            });
+            };
             return ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(builder).Data.ToString();
         }
         [IndexScriptObject]
@@ -32,11 +31,6 @@ namespace RemotePlusServer.Core.Proxies
         public ReturnData sendRequest(RequestBuilder builder)
         {
             return ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(builder);
-        }
-        [IndexScriptObject]
-        public static RequestBuilder createRequestBuilder(string URI)
-        {
-            return new RequestBuilder(URI);
         }
         [IndexScriptObject]
         public void postMessage(string message)

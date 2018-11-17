@@ -1,5 +1,6 @@
-﻿using RemotePlusLibrary.RequestSystem;
-using RemotePlusLibrary.RequestSystem.DefaultRequestOptions;
+﻿using RemotePlusLibrary.Core;
+using RemotePlusLibrary.RequestSystem;
+using RemotePlusLibrary.RequestSystem.DefaultRequestBuilders;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,38 +10,34 @@ using System.Windows.Forms;
 
 namespace RemotePlusClient.CommonUI.Requests
 {
-    public class SelectLocalFileRequest : IDataRequest
+    public class SelectLocalFileRequest : StandordRequest<FileDialogRequestBuilder>
     {
-        public bool ShowProperties => false;
+        public override bool ShowProperties => false;
 
-        public string FriendlyName => "Select Local File Request";
+        public override string FriendlyName => "Select Local File Request";
 
-        public string Description => "Requests for a local path. A local path is a path on the client.";
+        public override string Description => "Requests for a local path. A local path is a path on the client.";
 
-        public string URI => "r_selectLocalFile";
+        public override string URI => "r_selectLocalFile";
 
-        public RawDataRequest RequestData(RequestBuilder builder)
+        public override NetworkSide SupportedSides => NetworkSide.Client;
+
+        public override RawDataResponse RequestData(FileDialogRequestBuilder builder, NetworkSide executingSide)
         {
-            var options = builder.UnsafeResolve<FileDialogRequestOptions>();
             OpenFileDialog ofd = new OpenFileDialog();
-            ofd.Title = options.Title;
-            ofd.Filter = options.Filter;
+            ofd.Title = builder.Title;
+            ofd.Filter = builder.Filter;
             if(ofd.ShowDialog() == DialogResult.OK)
             {
-                return RawDataRequest.Success(ofd.FileName);
+                return RawDataResponse.Success(ofd.FileName);
             }
             else
             {
-                return RawDataRequest.Cancel();
+                return RawDataResponse.Cancel();
             }
         }
 
-        public void Update(string message)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void UpdateProperties()
+        public override void Update(string message)
         {
             throw new NotImplementedException();
         }

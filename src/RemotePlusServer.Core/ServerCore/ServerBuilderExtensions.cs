@@ -18,7 +18,7 @@ using Ninject;
 using static RemotePlusServer.Core.DefaultCommands;
 using System.Speech.Synthesis;
 using System.Reflection;
-using RemotePlusLibrary.RequestSystem.DefaultRequestOptions;
+using RemotePlusLibrary.RequestSystem.DefaultRequestBuilders;
 
 namespace RemotePlusServer.Core.ServerCore
 {
@@ -89,7 +89,6 @@ namespace RemotePlusServer.Core.ServerCore
                 ServerManager.ScriptBuilder.AddScriptObject("speak", new Action<string, VoiceGender, VoiceAge>(StaticRemoteFunctions.speak), "Makes the server speak.", ScriptGlobalType.Function);
                 ServerManager.ScriptBuilder.AddScriptObject("beep", new Action<int, int>(StaticRemoteFunctions.beep), "Makes the server beep.", ScriptGlobalType.Function);
                 ServerManager.ScriptBuilder.AddScriptObject("functionExists", new Func<string, bool>((name) => ServerManager.ScriptBuilder.FunctionExists(name)), "Returns true if the function exists in the server.", ScriptGlobalType.Function);
-                ServerManager.ScriptBuilder.AddScriptObject("createRequestBuilder", new Func<string, RequestBuilder>(ClientInstance.createRequestBuilder), "Generates a request builder to be used to generate a request.", ScriptGlobalType.Function);
                 ServerManager.ScriptBuilder.AddScriptObject("clientPrint", new Action<string>((text => ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(text))), "Prints the text to the client-console", ScriptGlobalType.Function);
                 ServerManager.ScriptBuilder.AddScriptObject("ps", new Action<string, string, bool>((program, args, ignore) =>
                 {
@@ -269,7 +268,6 @@ namespace RemotePlusServer.Core.ServerCore
             .AddCommand("genMan", genMan)
             .AddCommand("scp", scp)
             .AddCommand("resetStaticScript", resetStaticScript)
-            .AddCommand("requestFile", requestFile)
             .AddCommand("playAudio", playAudio)
             .AddCommand("load-extensionLibrary-remote", loadExtensionLibraryRemote);
         }

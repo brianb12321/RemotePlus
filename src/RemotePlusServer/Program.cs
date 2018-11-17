@@ -17,13 +17,23 @@ namespace RemotePlusServer
     /// <summary>
     /// The class that starts the server.
     /// </summary>
-    public static partial class ServerStartup
+    public class ServerStartup : IEnvironment
     {
         static Stopwatch sw = new Stopwatch();
         static Guid ServerGuid = Guid.NewGuid();
         public static RemoteImpl _remote = null;
+        public NetworkSide ExecutingSide => NetworkSide.Server;
+
+        public EnvironmentState State { get; private set; } = EnvironmentState.Created;
+
         [STAThread]
         static void Main(string[] args)
+        {
+            IOCContainer.Provider.Bind<IEnvironment>().ToConstant(new ServerStartup());
+            GlobalServices.RunningEnvironment.Start(args);
+        }
+
+        public void Start(string[] args)
         {
 #if !SERVICE
             try
@@ -40,6 +50,7 @@ namespace RemotePlusServer
                     Application.SetCompatibleTextRenderingDefault(false);
                     //BUG: if no form is injected, it will display a blank screen to the user.
                     Form serverControl = IOCContainer.GetService<Form>();
+                    State = EnvironmentState.Running;
                     Application.Run(serverControl);
                 }
             }
@@ -125,6 +136,11 @@ namespace RemotePlusServer
         }
         public static DuplexChannelFactory<IProxyServerRemote> proxyChannelFactory = null;
         public static IProxyServerRemote proxyChannel = null;
+
+        public ServerStartup()
+        {
+        }
+
         public static void RunInServerMode()
         {
             if (ServerManager.DefaultSettings.DiscoverySettings.DiscoveryBehavior == ProxyConnectionMode.Connect)
@@ -141,7 +157,7 @@ namespace RemotePlusServer
                 ServerManager.FileTransferService.Start();
             }
         }
-        public static void Close()
+        public void Close()
         {
             if (ServerManager.DefaultSettings.DiscoverySettings.DiscoveryBehavior == ProxyConnectionMode.Connect && proxyChannelFactory != null)
             {

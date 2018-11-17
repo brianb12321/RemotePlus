@@ -6,28 +6,28 @@ using System.Threading.Tasks;
 
 namespace RemotePlusLibrary.RequestSystem
 {
-    public class RawDataRequest : IGenericObject
+    public class RawDataResponse : IGenericObject
     {
         public object RawData { get; private set; }
         public RequestState State { get; private set; }
         public object Data { get; set; }
 
-        private RawDataRequest(object data, RequestState state)
+        private RawDataResponse(object data, RequestState state)
         {
             RawData = data;
             State = state;
         }
-        public static RawDataRequest Success(object data)
+        public static RawDataResponse Success(object data)
         {
-            return new RawDataRequest(data, RequestState.OK);
+            return new RawDataResponse(data, RequestState.OK);
         }
-        public static RawDataRequest Cancel()
+        public static RawDataResponse Cancel()
         {
-            return new RawDataRequest(null, RequestState.Cancel);
+            return new RawDataResponse(null, RequestState.Cancel);
         }
-        public static RawDataRequest Cancel(object data)
+        public static RawDataResponse Cancel(object data)
         {
-            return new RawDataRequest(data, RequestState.Cancel);
+            return new RawDataResponse(data, RequestState.Cancel);
         }
 
         public TType Resolve<TType>() where TType : class

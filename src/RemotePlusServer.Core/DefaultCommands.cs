@@ -17,7 +17,7 @@ using RemotePlusLibrary.Core;
 using RemotePlusLibrary.FileTransfer.Service.PackageSystem;
 using System.Media;
 using System.Net;
-using RemotePlusLibrary.RequestSystem.DefaultRequestOptions;
+using RemotePlusLibrary.RequestSystem.DefaultRequestBuilders;
 
 namespace RemotePlusServer.Core
 {
@@ -515,7 +515,14 @@ namespace RemotePlusServer.Core
             {
                 if (!autoAccept)
                 {
-                    DialogResult result = (DialogResult)Enum.Parse(typeof(DialogResult), (string)ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(RequestBuilder.RequestMessageBox("You are about to delete a file. THIS OPERATION IS PERMANENT!!", "WARNING", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)).Data);
+                    var rb = new MessageBoxRequestBuilder()
+                    {
+                        Message = "You are about to delete a file. THIS OPERATION IS PERMANENT!!",
+                        Caption = "WARNING",
+                        Buttons = MessageBoxButtons.YesNo,
+                        Icons = MessageBoxIcon.Warning
+                    };
+                    DialogResult result = (DialogResult)Enum.Parse(typeof(DialogResult), (string)ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(rb).Data);
                     if (result == DialogResult.Yes)
                     {
                         File.Delete(args.Arguments[1].Value);
@@ -600,14 +607,6 @@ namespace RemotePlusServer.Core
             ServerManager.ScriptBuilder.ClearStaticScope();
             return new CommandResponse((int)CommandStatus.Success);
         }
-        //Test command only
-        [CommandBehavior(IndexCommandInHelp = false)]
-        public static CommandResponse requestFile(CommandRequest req, CommandPipeline pipe)
-        {
-            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(RequestBuilder.RequestFile());
-            return new CommandResponse((int)CommandStatus.Success);
-        }
-
         [CommandHelp("Plays an audio file sent by the client.")]
         public static CommandResponse playAudio(CommandRequest req, CommandPipeline pipe)
         {
@@ -622,16 +621,15 @@ namespace RemotePlusServer.Core
                 SoundPlayer sp = new SoundPlayer(package.Data);
                 sp.PlaySync();
             });
-            RequestBuilder requestPathBuilder = RequestBuilder.RequestFilePath();
-            requestPathBuilder.PutObject(new FileDialogRequestOptions()
+            var requestPathBuilder = new FileDialogRequestBuilder()
             {
                 Title = "Select audio file.",
                 Filter = "Wav File (*.wav)|*.wav"
-            });
+            };
             var path = ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(requestPathBuilder);
             if (path.AcquisitionState ==  RequestState.OK)
             {
-                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(RequestBuilder.SendByteStreamPackage(path.Data.ToString()));
+                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(new SendLocalFileByteStreamRequestBuilder(path.Data.ToString()));
             }
             return new CommandResponse((int)CommandStatus.Success);
         }

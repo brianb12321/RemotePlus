@@ -4,34 +4,36 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using RemotePlusLibrary;
+using RemotePlusLibrary.Core;
 using RemotePlusLibrary.RequestSystem;
-using RemotePlusLibrary.RequestSystem.DefaultRequestOptions;
+using RemotePlusLibrary.RequestSystem.DefaultRequestBuilders;
 
 namespace RemotePlusClientCmd.Requests
 {
-    public class ConsoleMenuRequest : IDataRequest
+    public class ConsoleMenuRequest : StandordRequest<ConsoleMenuRequestBuilder>
     {
-        bool IDataRequest.ShowProperties => false;
+        public override bool ShowProperties => false;
 
-        string IDataRequest.FriendlyName => "Menu Request";
+        public override string FriendlyName => "Menu Request";
 
-        string IDataRequest.Description => "Provides a simple menu";
+        public override string Description => "Provides a simple menu";
 
-        string IDataRequest.URI => "rcmd_smenu";
+        public override string URI => "rcmd_smenu";
 
-        public void Update(string message)
+        public override NetworkSide SupportedSides => NetworkSide.Client;
+
+        public override void Update(string message)
         {
             throw new NotImplementedException();
         }
 
-        RawDataRequest IDataRequest.RequestData(RequestBuilder builder)
+        public override RawDataResponse RequestData(ConsoleMenuRequestBuilder builder, NetworkSide executingSide)
         {
-            var options = builder.UnsafeResolve<SimpleMenuRequestOptions>();
             while(true)
             {
-                Console.WriteLine($"{options.Message}");
+                Console.WriteLine($"{builder.Message}");
                 Console.WriteLine("============================");
-                foreach (KeyValuePair<string, string> optionsList in options.MenuItems)
+                foreach (KeyValuePair<string, string> optionsList in builder.MenuItems)
                 {
                     Console.WriteLine($"{optionsList.Key}){optionsList.Value}");
                 }
@@ -39,25 +41,15 @@ namespace RemotePlusClientCmd.Requests
                 Console.Write("Please enter a value: ");
                 ConsoleKeyInfo option = Console.ReadKey(false);
                 Console.WriteLine();
-                if(!options.MenuItems.ContainsKey(option.KeyChar.ToString()))
+                if(!builder.MenuItems.ContainsKey(option.KeyChar.ToString()))
                 {
                     Console.WriteLine("Please enter a valid option.");
                 }
                 else
                 {
-                    return RawDataRequest.Success(option.KeyChar);
+                    return RawDataResponse.Success(option.KeyChar);
                 }
             }
-        }
-
-        void IDataRequest.Update(string message)
-        {
-            throw new NotImplementedException();
-        }
-
-        void IDataRequest.UpdateProperties()
-        {
-            throw new NotImplementedException();
         }
     }
 }
