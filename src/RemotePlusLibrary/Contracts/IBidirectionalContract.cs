@@ -23,7 +23,7 @@ namespace RemotePlusLibrary.Contracts
         void PlaySoundSync(string FileName);
         [OperationContract()]
         [FaultContract(typeof(ServerFault))]
-        void RunProgram(string Program, string Argument, bool ignore);
+        void RunProgram(string Program, string Argument, bool shell, bool ignore);
         [FaultContract(typeof(ServerFault))]
         [OperationContract()]
         void Beep(int Hertz, int Duration);

@@ -18,7 +18,7 @@ namespace CommonWebCommands
         {
             try
             {
-                ServerManager.ServerRemoteService.RemoteInterface.RunProgram("cmd.exe", $"/c \"start chrome.exe {args.Arguments[1]}\"", false);
+                ServerManager.ServerRemoteService.RemoteInterface.RunProgram("cmd.exe", $"/c \"start chrome.exe {args.Arguments[1]}\"", false, false);
                 ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("chrome started", BetterLogger.LogLevel.Info, "WebCommands");
                 return new CommandResponse((int)CommandStatus.Success);
             }
@@ -33,7 +33,7 @@ namespace CommonWebCommands
         {
             try
             {
-                ServerManager.ServerRemoteService.RemoteInterface.RunProgram("cmd.exe", $"/c \"start iexplore.exe {args.Arguments[1]}\"", false);
+                ServerManager.ServerRemoteService.RemoteInterface.RunProgram("cmd.exe", $"/c \"start iexplore.exe {args.Arguments[1]}\"", false, false);
                 ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("chrome started", BetterLogger.LogLevel.Info, "WebCommands");
                 return new CommandResponse((int)CommandStatus.Success);
             }
@@ -48,7 +48,7 @@ namespace CommonWebCommands
         {
             try
             {
-                ServerManager.ServerRemoteService.RemoteInterface.RunProgram("cmd.exe", $"/c \"start opera.exe {args.Arguments[1]}\"", false);
+                ServerManager.ServerRemoteService.RemoteInterface.RunProgram("cmd.exe", $"/c \"start opera.exe {args.Arguments[1]}\"", false, false);
                 ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Opera started", BetterLogger.LogLevel.Info, "WebCommands");
                 return new CommandResponse((int)CommandStatus.Success);
             }
@@ -63,7 +63,7 @@ namespace CommonWebCommands
         {
             try
             {
-                ServerManager.ServerRemoteService.RemoteInterface.RunProgram("cmd.exe", $"/c \"start firefox.exe {args.Arguments[1]}\"", false);
+                ServerManager.ServerRemoteService.RemoteInterface.RunProgram("cmd.exe", $"/c \"start firefox.exe {args.Arguments[1]}\"", false, false);
                 ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Firefox started", BetterLogger.LogLevel.Info, "WebCommands");
                 return new CommandResponse((int)CommandStatus.Success);
             }

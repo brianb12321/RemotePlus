@@ -90,9 +90,9 @@ namespace RemotePlusServer.Core.ServerCore
                 ServerManager.ScriptBuilder.AddScriptObject("beep", new Action<int, int>(StaticRemoteFunctions.beep), "Makes the server beep.", ScriptGlobalType.Function);
                 ServerManager.ScriptBuilder.AddScriptObject("functionExists", new Func<string, bool>((name) => ServerManager.ScriptBuilder.FunctionExists(name)), "Returns true if the function exists in the server.", ScriptGlobalType.Function);
                 ServerManager.ScriptBuilder.AddScriptObject("clientPrint", new Action<string>((text => ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(text))), "Prints the text to the client-console", ScriptGlobalType.Function);
-                ServerManager.ScriptBuilder.AddScriptObject("ps", new Action<string, string, bool>((program, args, ignore) =>
+                ServerManager.ScriptBuilder.AddScriptObject("ps", new Action<string, string, bool, bool>((program, args, shell, ignore) =>
                 {
-                    ServerManager.ServerRemoteService.RemoteInterface.RunProgram(program, args, ignore);
+                    ServerManager.ServerRemoteService.RemoteInterface.RunProgram(program, args, shell, ignore);
                 }), "Executes a program on the server using the RunProgram service method.", ScriptGlobalType.Function);
             }
             catch (ArgumentException)

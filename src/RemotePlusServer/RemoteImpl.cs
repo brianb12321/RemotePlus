@@ -180,11 +180,11 @@ namespace RemotePlusServer
             _interface.Client.ClientCallback.RegistirationComplete();
         }
 
-        public void RunProgram(string Program, string Argument, bool ignore)
+        public void RunProgram(string Program, string Argument, bool shell, bool ignore)
         {
             if (CheckRegisteration("RunProgram"))
             {
-                _interface.RunProgram(Program, Argument, ignore);
+                _interface.RunProgram(Program, Argument, shell, ignore);
             }
             // OperationContext.Current.OperationCompleted += (sender, e) => _interface.Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
         }

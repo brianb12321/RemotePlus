@@ -157,15 +157,15 @@ namespace RemotePlusServer
             }
         }
 
-        public void RunProgram(string Program, string Argument, bool ignore)
+        public void RunProgram(string Program, string Argument, bool shell, bool ignore)
         {
             if (useProxy)
             {
-                proxyChannel.RunProgram(Program, Argument, ignore);
+                proxyChannel.RunProgram(Program, Argument, shell, ignore);
             }
             else
             {
-                c.RunProgram(Program, Argument, ignore);
+                c.RunProgram(Program, Argument, shell, ignore);
             }
         }
 

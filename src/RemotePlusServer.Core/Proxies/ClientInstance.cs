@@ -53,9 +53,9 @@ namespace RemotePlusServer.Core.Proxies
             ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.PlaySoundSync(FileName);
         }
         [IndexScriptObject]
-        public void RunProgram(string Program, string Argument, bool ignore)
+        public void RunProgram(string Program, string Argument, bool shell, bool ignore)
         {
-            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RunProgram(Program, Argument, ignore);
+            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RunProgram(Program, Argument, shell, ignore);
         }
         [IndexScriptObject]
         public void Beep(int Hertz, int Duration)

@@ -33,7 +33,7 @@ namespace RemotePlusServer.Core
         {
             Console.Beep(Hertz, Duration);
         }
-        public void RunProgram(string Program, string Argument, bool ignore)
+        public void RunProgram(string Program, string Argument, bool shellExecute, bool ignore)
         {
             GlobalServices.Logger.Log("Creating process component.", LogLevel.Debug);
             Process p = new Process();
@@ -42,11 +42,14 @@ namespace RemotePlusServer.Core
             GlobalServices.Logger.Log($"File arguments: {Argument}", LogLevel.Debug);
             p.StartInfo.Arguments = Argument;
             GlobalServices.Logger.Log($"Shell execution is disabled.", LogLevel.Debug);
-            p.StartInfo.UseShellExecute = false;
-            GlobalServices.Logger.Log($"Error stream will be redirected.", LogLevel.Debug);
-            p.StartInfo.RedirectStandardError = true;
-            GlobalServices.Logger.Log($"Standord output stream will be redirected.", LogLevel.Debug);
-            p.StartInfo.RedirectStandardOutput = true;
+            p.StartInfo.UseShellExecute = shellExecute;
+            if(!shellExecute)
+            {
+                GlobalServices.Logger.Log($"Error stream will be redirected.", LogLevel.Debug);
+                p.StartInfo.RedirectStandardError = true;
+                GlobalServices.Logger.Log($"Standord output stream will be redirected.", LogLevel.Debug);
+                p.StartInfo.RedirectStandardOutput = true;
+            }
             p.ErrorDataReceived += (sender, e) =>
             {
                 if (e.Data != null)
@@ -91,10 +94,13 @@ namespace RemotePlusServer.Core
             };
             GlobalServices.Logger.Log("Starting process component.", LogLevel.Info);
             p.Start();
-            GlobalServices.Logger.Log("Beginning error stream read line.", LogLevel.Debug);
-            p.BeginErrorReadLine();
-            GlobalServices.Logger.Log("Beginning standord output stream reade line.", LogLevel.Debug);
-            p.BeginOutputReadLine();
+            if(!shellExecute)
+            {
+                GlobalServices.Logger.Log("Beginning error stream read line.", LogLevel.Debug);
+                p.BeginErrorReadLine();
+                GlobalServices.Logger.Log("Beginning standord output stream reade line.", LogLevel.Debug);
+                p.BeginOutputReadLine();
+            }
             if (!ignore)
             {
                 p.WaitForExit();

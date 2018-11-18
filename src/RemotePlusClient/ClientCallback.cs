@@ -76,7 +76,7 @@ namespace RemotePlusClient
             SoundPlayer player = new SoundPlayer(FileName);
             player.PlayLooping();
         }
-        public void RunProgram(string Program, string Argument, bool ignore)
+        public void RunProgram(string Program, string Argument, bool shell, bool ignore)
         {
             var p = Process.Start(Program, Argument);
             if(!ignore)

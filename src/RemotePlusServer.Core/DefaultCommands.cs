@@ -41,13 +41,13 @@ namespace RemotePlusServer.Core
                         a += " " + args.Arguments[i];
                     }
                 }
-                ServerManager.ServerRemoteService.RemoteInterface.RunProgram(args.Arguments[1].Value, a, false);
+                ServerManager.ServerRemoteService.RemoteInterface.RunProgram(args.Arguments[1].Value, a, false, false);
                 ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Program start command finished.");
                 return new CommandResponse((int)CommandStatus.Success);
             }
             else if (args.Arguments.Count == 2 && args.Arguments[2].Type != TokenType.QouteBody)
             {
-                ServerManager.ServerRemoteService.RemoteInterface.RunProgram(args.Arguments[1].Value, "", false);
+                ServerManager.ServerRemoteService.RemoteInterface.RunProgram(args.Arguments[1].Value, "", false, false);
                 ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Program start command finished.");
                 return new CommandResponse((int)CommandStatus.Success);
             }

@@ -88,7 +88,7 @@ namespace NewRemotePlusClient
             throw new NotImplementedException();
         }
 
-        public void RunProgram(string Program, string Argument, bool ignore)
+        public void RunProgram(string Program, string Argument, bool shell, bool ignore)
         {
             throw new NotImplementedException();
         }
