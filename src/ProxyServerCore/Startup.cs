@@ -20,6 +20,7 @@ namespace ProxyServerCore
         {
             services.UseLogger((logFactory) => logFactory.AddLogger(new ConsoleLogger()));
             services.UseServerManager<DefaultServiceManager>()
+                .UseErrorHandler<GlobalErrorHandler>()
                 .UseExtensionContainer<ProxyExtensionCollection, ProxyExtensionLibrary>(new ProxyExtensionCollection())
                 .UseScriptingEngine()
                 .UseEventBus<EventBus>()

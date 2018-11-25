@@ -32,9 +32,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="BetterLogger, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
-    <Reference Include="Logging">
-      <HintPath>..\..\Libs\Logging.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Design" />

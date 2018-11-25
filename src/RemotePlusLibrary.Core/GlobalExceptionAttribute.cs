@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RemotePlusLibrary.Core.IOC;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -11,13 +12,8 @@ using System.Threading.Tasks;
 
 namespace RemotePlusLibrary.Core
 {
-    public class GlobalExceptionAttribute : Attribute, IServiceBehavior
+    public class GlobalExceptionIOCAttributeAttribute : Attribute, IServiceBehavior
     {
-        private Type errorType = null;
-        public GlobalExceptionAttribute(Type et)
-        {
-            errorType = et;
-        }
         public void AddBindingParameters(ServiceDescription serviceDescription, ServiceHostBase serviceHostBase, Collection<ServiceEndpoint> endpoints, BindingParameterCollection bindingParameters)
         {
             
@@ -25,7 +21,7 @@ namespace RemotePlusLibrary.Core
 
         public void ApplyDispatchBehavior(ServiceDescription serviceDescription, ServiceHostBase serviceHostBase)
         {
-            IErrorHandler handler = (IErrorHandler)Activator.CreateInstance(errorType);
+            IErrorHandler handler = IOCContainer.GetService<IErrorHandler>();
             foreach(ChannelDispatcherBase b in serviceHostBase.ChannelDispatchers)
             {
                 ChannelDispatcher cd = b as ChannelDispatcher;

@@ -18,6 +18,12 @@ namespace RemotePlusLibrary.Core.Faults
         public List<string> LoadedServerExtensionLibs { get; set; } = new List<string>();
         [DataMember]
         public string StackTrace { get; set; }
+        public ServerFault(string stackTrace, List<string> libs)
+        {
+            LoadedServerExtensionLibs = libs;
+            StackTrace = stackTrace;
+
+        }
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();

@@ -35,6 +35,7 @@ namespace DefaultServerCore
                 });
             });
             services.UseServerManager<DefaultServiceManager>()
+                .UseErrorHandler<GlobalErrorHandler>()
                 .UseExtensionContainer<ServerExtensionLibraryCollection, ServerExtensionLibrary>(new ServerExtensionLibraryCollection())
                 .UseServerControlPage<ServerControls>()
                 .UseScriptingEngine()

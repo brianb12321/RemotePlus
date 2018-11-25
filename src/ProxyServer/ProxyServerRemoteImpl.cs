@@ -33,7 +33,7 @@ namespace ProxyServer
         ConcurrencyMode = ConcurrencyMode.Multiple,
         MaxItemsInObjectGraph = int.MaxValue,
         UseSynchronizationContext = false)]
-    [GlobalException(typeof(GlobalErrorHandler))]
+    [GlobalExceptionIOCAttribute]
     public class ProxyServerRemoteImpl : IProxyServerRemote, IProxyRemote
     {
         public SessionClient<IRemoteWithProxy> SelectedClient = null;

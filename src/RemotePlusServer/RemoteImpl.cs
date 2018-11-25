@@ -36,7 +36,7 @@ namespace RemotePlusServer
         ConcurrencyMode = ConcurrencyMode.Multiple,
         UseSynchronizationContext = false,
         MaxItemsInObjectGraph = int.MaxValue)]
-    [GlobalException(typeof(GlobalErrorHandler))]
+    [GlobalExceptionIOCAttribute]
     [ServiceKnownType("GetKnownTypes", typeof(DefaultKnownTypeManager))]
     public class RemoteImpl : IRemote, IRemoteWithProxy
     {
@@ -420,7 +420,7 @@ namespace RemotePlusServer
                 }
                 catch (UnauthorizedAccessException ex)
                 {
-                    throw new FaultException<ServerFault>(new ServerFault(), ex.Message);
+                    throw new FaultException<ServerFault>(new ServerFault(ex.StackTrace, ServerManager.DefaultCollection.Libraries.Select(l => l.Value.FriendlyName).ToList()), ex.Message);
                 }
             }
         }

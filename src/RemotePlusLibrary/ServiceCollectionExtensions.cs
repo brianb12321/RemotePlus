@@ -8,6 +8,7 @@ using RemotePlusLibrary.ServiceArchitecture;
 using RemotePlusLibrary.FileTransfer.Service.PackageSystem;
 using RemotePlusLibrary.Extension.ExtensionLoader;
 using System.Collections.Generic;
+using System.ServiceModel.Dispatcher;
 
 namespace RemotePlusLibrary
 {
@@ -77,6 +78,10 @@ namespace RemotePlusLibrary
             where TLibrary : ExtensionLibraryBase
         {
             return services.AddSingleton(container);
+        }
+        public static IServiceCollection UseErrorHandler<TErrorHandler>(this IServiceCollection services) where TErrorHandler : IErrorHandler
+        {
+            return services.AddTransient<IErrorHandler, TErrorHandler>();
         }
     }
 }
