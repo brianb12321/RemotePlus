@@ -23,7 +23,13 @@ namespace RemotePlusLibrary.Extension.ExtensionLoader
         public Guid Guid { get; }
         public Version Version { get; }
         private Assembly _assembly;
-        protected ExtensionLibraryBase(Assembly assembly, string friendlyName, string name, NetworkSide type, Guid g, RequiresDependencyAttribute[] deps, Version v)
+        protected ExtensionLibraryBase(Assembly assembly,
+            string friendlyName,
+            string name,
+            NetworkSide type,
+            Guid g,
+            RequiresDependencyAttribute[] deps,
+            Version v)
         {
             _assembly = assembly;
             FriendlyName = friendlyName;

@@ -52,7 +52,7 @@ namespace RemotePlusClient.ExtensionSystem
                     else
                     {
                         var st = (ILibraryStartup)Activator.CreateInstance(ea.Startup);
-                        st.Init(new ClientLibraryBuilder(ea.Name, ea.FriendlyName, ea.Version, ea.LibraryType), env);
+                        st.Init(new DefaultLibraryBuilder(ea.Name, ea.FriendlyName, ea.Version, ea.LibraryType), env);
                         lib = new ClientExtensionLibrary(a, ea.FriendlyName, ea.Name, ea.LibraryType, guid, deps, version);
                         foreach (Type t in a.GetTypes())
                         {

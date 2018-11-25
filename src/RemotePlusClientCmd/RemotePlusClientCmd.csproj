@@ -85,7 +85,6 @@
     <Compile Include="ClientExtensionSystem\ClientExtensionLibrary.cs" />
     <Compile Include="ClientExtensionSystem\ClientExtensionLibraryCollection.cs" />
     <Compile Include="ClientExtensionSystem\ClientInitEnvironment.cs" />
-    <Compile Include="ClientExtensionSystem\ClientLibraryBuilder.cs" />
     <Compile Include="CommandLineOptions.cs" />
     <Compile Include="ErrorDialog.cs">
       <SubType>Form</SubType>

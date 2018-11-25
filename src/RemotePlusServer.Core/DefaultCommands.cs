@@ -18,14 +18,26 @@ using RemotePlusLibrary.FileTransfer.Service.PackageSystem;
 using System.Media;
 using System.Net;
 using RemotePlusLibrary.RequestSystem.DefaultRequestBuilders;
+using System.Linq;
+using Ninject;
+using RemotePlusLibrary.ServiceArchitecture;
 
 namespace RemotePlusServer.Core
 {
-    public static class DefaultCommands
+    public class DefaultCommands : StandordCommandClass
     {
+        IRemotePlusService<ServerRemoteInterface> _service;
+        ICommandClassStore _store;
+        public DefaultCommands(IRemotePlusService<ServerRemoteInterface> service, ICommandClassStore store)
+        {
+            _service = service;
+            _store = store;
+        }
+
+        #region Commands
         [CommandHelp("Starts a new process on the server.")]
         [HelpPage("ps.txt", Source = HelpSourceType.File)]
-        public static CommandResponse ProcessStartCommand(CommandRequest args, CommandPipeline pipe)
+        public CommandResponse ProcessStartCommand(CommandRequest args, CommandPipeline pipe)
         {
             if (args.Arguments.Count > 2)
             {
@@ -41,45 +53,45 @@ namespace RemotePlusServer.Core
                         a += " " + args.Arguments[i];
                     }
                 }
-                ServerManager.ServerRemoteService.RemoteInterface.RunProgram(args.Arguments[1].Value, a, false, false);
-                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Program start command finished.");
+                _service.RemoteInterface.RunProgram(args.Arguments[1].Value, a, false, false);
+                _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Program start command finished.");
                 return new CommandResponse((int)CommandStatus.Success);
             }
             else if (args.Arguments.Count == 2 && args.Arguments[2].Type != TokenType.QouteBody)
             {
-                ServerManager.ServerRemoteService.RemoteInterface.RunProgram(args.Arguments[1].Value, "", false, false);
-                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Program start command finished.");
+                _service.RemoteInterface.RunProgram(args.Arguments[1].Value, "", false, false);
+                _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Program start command finished.");
                 return new CommandResponse((int)CommandStatus.Success);
             }
             return new CommandResponse((int)CommandStatus.Fail);
         }
         [CommandHelp("Displays a list of commands.")]
-        public static CommandResponse Help(CommandRequest args, CommandPipeline pipe)
+        public CommandResponse Help(CommandRequest args, CommandPipeline pipe)
         {
             string helpString = string.Empty;
             if(args.Arguments.Count == 2)
             {
-                helpString = RemotePlusConsole.ShowHelpPage(ServerManager.ServerRemoteService.Commands, args.Arguments[1].Value);
+                helpString = RemotePlusConsole.ShowHelpPage(_store.GetAllCommands(), args.Arguments[1].Value);
             }
             else
             {
-                helpString = RemotePlusConsole.ShowHelp(ServerManager.ServerRemoteService.Commands);
+                helpString = RemotePlusConsole.ShowHelp(_store.GetAllCommands());
             }
-            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(helpString);
+            _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(helpString);
             var response = new CommandResponse((int)CommandStatus.Success);
             response.Metadata.Add("helpText", helpString);
             return response;
         }
         [CommandHelp("Gets the server log.")]
         [HelpPage("logs.txt", Source = HelpSourceType.File)]
-        public static CommandResponse Logs(CommandRequest args, CommandPipeline pipe)
+        public CommandResponse Logs(CommandRequest args, CommandPipeline pipe)
         {
-            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(Console.In.ReadToEnd());
+            _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(Console.In.ReadToEnd());
             return new CommandResponse((int)CommandStatus.Success);
         }
         [CommandHelp("Manages variables on the server.")]
         [HelpPage("vars.txt", Source = HelpSourceType.File)]
-        public static CommandResponse vars(CommandRequest args, CommandPipeline pipe)
+        public CommandResponse vars(CommandRequest args, CommandPipeline pipe)
         {
             if (args.Arguments.Count >= 2)
             {
@@ -99,16 +111,16 @@ namespace RemotePlusServer.Core
                                 t += $"{args.Arguments[i]} ";
                             }
                         }
-                        ServerManager.ServerRemoteService.Variables.Add(args.Arguments[2].Value, t);
-                        ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole($"Variable {args.Arguments[2]} added.");
-                        ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole($"Saving variable file");
-                        ServerManager.ServerRemoteService.Variables.Save();
-                        ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole($"Variable file saved.");
+                        _service.Variables.Add(args.Arguments[2].Value, t);
+                        _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole($"Variable {args.Arguments[2]} added.");
+                        _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole($"Saving variable file");
+                        _service.Variables.Save();
+                        _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole($"Variable file saved.");
                         return new CommandResponse((int)CommandStatus.Success);
                     }
                     else
                     {
-                        ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText("You must provide a value.") { TextColor = Color.Red});
+                        _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText("You must provide a value.") { TextColor = Color.Red});
                         return new CommandResponse((int)CommandStatus.Fail);
                     }
                 }
@@ -116,33 +128,33 @@ namespace RemotePlusServer.Core
                 {
                     StringBuilder sb = new StringBuilder();
                     sb.AppendLine();
-                    foreach (KeyValuePair<string, string> v in ServerManager.ServerRemoteService.Variables)
+                    foreach (KeyValuePair<string, string> v in _service.Variables)
                     {
                         sb.AppendLine($"{v.Key}\t{v.Value}");
                     }
-                    ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(sb.ToString());
+                    _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(sb.ToString());
                     return new CommandResponse((int)CommandStatus.Success);
                 }
                 else
                 {
-                    ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText("Invalid action." ){TextColor = Color.Red });
+                    _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText("Invalid action." ){TextColor = Color.Red });
                     return new CommandResponse((int)CommandStatus.Fail);
                 }
             }
             else
             {
-                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Please provide an action for this command.", LogLevel.Error);
+                _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Please provide an action for this command.", LogLevel.Error);
                 return new CommandResponse((int)CommandStatus.Fail);
             }
         }
         [CommandHelp("Gets the date and time set on the remote server.")]
-        public static CommandResponse dateTime(CommandRequest args, CommandPipeline pipe)
+        public CommandResponse dateTime(CommandRequest args, CommandPipeline pipe)
         {
-            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(DateTime.Now.ToString());
+            _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(DateTime.Now.ToString());
             return new CommandResponse((int)CommandStatus.Success);
         }
         [CommandHelp("Gets the list of processes running on the remote server.")]
-        public static CommandResponse processes(CommandRequest args, CommandPipeline pipe)
+        public CommandResponse processes(CommandRequest args, CommandPipeline pipe)
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendLine();
@@ -157,52 +169,52 @@ namespace RemotePlusServer.Core
                     sb.AppendLine($"This process can be accessed: {ex.Message}");
                 }
             }
-            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(sb.ToString());
+            _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(sb.ToString());
             return new CommandResponse((int)CommandStatus.Success);
         }
         [CommandHelp("Returns the server version.")]
-        public static CommandResponse version(CommandRequest args, CommandPipeline pipe)
+        public CommandResponse version(CommandRequest args, CommandPipeline pipe)
         {
-            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(ServerManager.DefaultSettings.ServerVersion);
+            _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(ServerManager.DefaultSettings.ServerVersion);
             return new CommandResponse((int)CommandStatus.Success);
         }
         [CommandHelp("Executes the EncryptFile service method.")]
-        public static CommandResponse svm_encyptFile(CommandRequest args, CommandPipeline pipe)
+        public CommandResponse svm_encyptFile(CommandRequest args, CommandPipeline pipe)
         {
             try
             {
-                ServerManager.ServerRemoteService.RemoteInterface.EncryptFile(args.Arguments[1].Value, args.Arguments[2].Value);
+                _service.RemoteInterface.EncryptFile(args.Arguments[1].Value, args.Arguments[2].Value);
                 return new CommandResponse((int)CommandStatus.Success);
             }
             catch (IndexOutOfRangeException)
             {
-                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText("You need to provide all the information.") { TextColor = Color.Red });
+                _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText("You need to provide all the information.") { TextColor = Color.Red });
                 return new CommandResponse((int)CommandStatus.Fail);
             }
         }
         [CommandHelp("Executes the DecryptFile service method.")]
-        public static CommandResponse svm_decryptFile(CommandRequest args, CommandPipeline pipe)
+        public CommandResponse svm_decryptFile(CommandRequest args, CommandPipeline pipe)
         {
             try
             {
-                ServerManager.ServerRemoteService.RemoteInterface.DecryptFile(args.Arguments[1].Value, args.Arguments[2].Value);
+                _service.RemoteInterface.DecryptFile(args.Arguments[1].Value, args.Arguments[2].Value);
                 return new CommandResponse((int)CommandStatus.Success);
             }
             catch (IndexOutOfRangeException)
             {
-                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText("You need to provide all the information.") { TextColor = Color.Red });
+                _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText("You need to provide all the information.") { TextColor = Color.Red });
                 return new CommandResponse((int)CommandStatus.Fail);
             }
         }
         [CommandHelp("Wraps around the beep function.")]
         [HelpPage("beep.txt", Source = HelpSourceType.File)]
-        public static CommandResponse svm_beep(CommandRequest args, CommandPipeline pipe)
+        public CommandResponse svm_beep(CommandRequest args, CommandPipeline pipe)
         {
-            ServerManager.ServerRemoteService.RemoteInterface.Beep(int.Parse(args.Arguments[1].Value), int.Parse(args.Arguments[2].Value));
+            _service.RemoteInterface.Beep(int.Parse(args.Arguments[1].Value), int.Parse(args.Arguments[2].Value));
             return new CommandResponse((int)CommandStatus.Success);
         }
         [CommandHelp("Wraps around the speak function.")]
-        public static CommandResponse svm_speak(CommandRequest args, CommandPipeline pipe)
+        public CommandResponse svm_speak(CommandRequest args, CommandPipeline pipe)
         {
             VoiceAge age = VoiceAge.Adult;
             VoiceGender gender = VoiceGender.Male;
@@ -225,7 +237,7 @@ namespace RemotePlusServer.Core
             }
             else
             {
-                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText("You must provide a valid voice gender.") { TextColor = Color.Red });
+                _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText("You must provide a valid voice gender.") { TextColor = Color.Red });
                 return new CommandResponse((int)CommandStatus.Fail);
             }
             if (args.Arguments[2].Value == "va_adult")
@@ -250,7 +262,7 @@ namespace RemotePlusServer.Core
             }
             else
             {
-                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText("You must provide a valid voice age..") { TextColor = Color.Red });
+                _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText("You must provide a valid voice age..") { TextColor = Color.Red });
                 return new CommandResponse((int)CommandStatus.Fail);
             }
             if (args.Arguments[3].Type == TokenType.QouteBody)
@@ -264,12 +276,12 @@ namespace RemotePlusServer.Core
                     message += args.Arguments[i] + " ";
                 }
             }
-            ServerManager.ServerRemoteService.RemoteInterface.Speak(message, gender, age);
+            _service.RemoteInterface.Speak(message, gender, age);
             return new CommandResponse((int)CommandStatus.Success);
         }
         [CommandHelp("Wraps around the showMessageBox function.")]
         [HelpPage("showMessageBox.txt", Source = HelpSourceType.File)]
-        public static CommandResponse svm_showMessageBox(CommandRequest args, CommandPipeline pipe)
+        public CommandResponse svm_showMessageBox(CommandRequest args, CommandPipeline pipe)
         {
             MessageBoxButtons buttons = MessageBoxButtons.OK;
             MessageBoxIcon icon = MessageBoxIcon.None;
@@ -301,7 +313,7 @@ namespace RemotePlusServer.Core
             }
             else
             {
-                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText("Please provide a valid MessageBox button.") { TextColor = Color.Red });
+                _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText("Please provide a valid MessageBox button.") { TextColor = Color.Red });
                 return new CommandResponse((int)CommandStatus.Fail) { CustomStatusMessage = "Invalid messageBox button." };
             }
             if (args.Arguments[2].Value == "i_WARNING")
@@ -338,7 +350,7 @@ namespace RemotePlusServer.Core
             }
             else
             {
-                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText("Please provide a valid MessageBox icon type.") { TextColor = Color.Red });
+                _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText("Please provide a valid MessageBox icon type.") { TextColor = Color.Red });
                 return new CommandResponse((int)CommandStatus.Fail) { CustomStatusMessage = "Invalid MessageBox icon" };
             }
             int message_start = 0;
@@ -386,7 +398,7 @@ namespace RemotePlusServer.Core
             {
                 message = "";
             }
-            var dr = ServerManager.ServerRemoteService.RemoteInterface.ShowMessageBox(message, caption, icon, buttons);
+            var dr = _service.RemoteInterface.ShowMessageBox(message, caption, icon, buttons);
             CommandResponse response = new CommandResponse((int)CommandStatus.Success);
             response.Metadata.Add("Buttons", buttons.ToString());
             response.Metadata.Add("Icon", icon.ToString());
@@ -396,32 +408,32 @@ namespace RemotePlusServer.Core
             return response;
         }
         [CommandHelp("Displays the path of the current server folder.")]
-        public static CommandResponse path(CommandRequest args, CommandPipeline pipe)
+        public CommandResponse path(CommandRequest args, CommandPipeline pipe)
         {
-            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole($"The path to the server is {Environment.CurrentDirectory}");
+            _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole($"The path to the server is {Environment.CurrentDirectory}");
             return new CommandResponse((int)CommandStatus.Success);
         }
         [CommandHelp("Changes the current working directory.")]
-        public static CommandResponse cd(CommandRequest args, CommandPipeline pipe)
+        public CommandResponse cd(CommandRequest args, CommandPipeline pipe)
         {
             if (args.Arguments.Count < 2)
             {
-                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText("You must specify a path to change to.") { TextColor = Color.Red });
+                _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText("You must specify a path to change to.") { TextColor = Color.Red });
                 return new CommandResponse((int)CommandStatus.Fail);
             }
             else
             {
-                ServerManager.ServerRemoteService.RemoteInterface.CurrentPath = args.Arguments[1].Value;
-                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.ChangePrompt(new RemotePlusLibrary.Extension.CommandSystem.PromptBuilder()
+                _service.RemoteInterface.CurrentPath = args.Arguments[1].Value;
+                _service.RemoteInterface.Client.ClientCallback.ChangePrompt(new RemotePlusLibrary.Extension.CommandSystem.PromptBuilder()
                 {
-                    Path = ServerManager.ServerRemoteService.RemoteInterface.CurrentPath,
+                    Path = _service.RemoteInterface.CurrentPath,
                     AdditionalData = "Current Path"
                 });
                 return new CommandResponse((int)CommandStatus.Success);
             }
         }
         [CommandHelp("Prints the message to the screen.")]
-        public static CommandResponse echo(CommandRequest args, CommandPipeline pipe)
+        public CommandResponse echo(CommandRequest args, CommandPipeline pipe)
         {
             string message = "";
             if (args.Arguments[1].Type == TokenType.QouteBody)
@@ -432,16 +444,16 @@ namespace RemotePlusServer.Core
             {
                 message = args.GetBody();
             }
-            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(message + Environment.NewLine);
+            _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(message + Environment.NewLine);
             return new CommandResponse((int)CommandStatus.Success)
             {
                 CustomStatusMessage = message
             };
         }
         [CommandHelp("Loads an extension library dll into the system.")]
-        public static CommandResponse loadExtensionLibrary(CommandRequest args, CommandPipeline pipe)
+        public CommandResponse loadExtensionLibrary(CommandRequest args, CommandPipeline pipe)
         {
-            var clientLogger = new ClientLogger(ServerManager.ServerRemoteService.RemoteInterface.Client);
+            var clientLogger = new ClientLogger(_service.RemoteInterface.Client);
             try
             {
                 string path = string.Empty;
@@ -451,7 +463,7 @@ namespace RemotePlusServer.Core
                 }
                 else
                 {
-                    path = Path.Combine(ServerManager.ServerRemoteService.RemoteInterface.CurrentPath, args.Arguments[1].Value);
+                    path = Path.Combine(_service.RemoteInterface.CurrentPath, args.Arguments[1].Value);
                 }
                 GlobalServices.Logger.AddLogger(clientLogger);
                 ServerManager.DefaultCollection.LoadExtension(path, new ServerInitEnvironment(false));
@@ -462,16 +474,16 @@ namespace RemotePlusServer.Core
             {
                 GlobalServices.Logger.RemoveLogger(clientLogger);
                 GlobalServices.Logger.Log($"Unable to load extension library: {ex.Message}", LogLevel.Error);
-                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText($"Unable to load extension library: {ex.Message}") { TextColor = Color.Red });
+                _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText($"Unable to load extension library: {ex.Message}") { TextColor = Color.Red });
                 return new CommandResponse((int)CommandStatus.Fail);
             }
         }
         [CommandHelp("Loads an extension library from an external url.")]
-        public static CommandResponse loadExtensionLibraryRemote(CommandRequest args, CommandPipeline pipe)
+        public CommandResponse loadExtensionLibraryRemote(CommandRequest args, CommandPipeline pipe)
         {
             if (args.Arguments.Count < 2)
             {
-                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText("You must provide a url.") { TextColor = Color.Red });
+                _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText("You must provide a url.") { TextColor = Color.Red });
                 return new CommandResponse((int)CommandStatus.Fail);
             }
             else
@@ -480,7 +492,7 @@ namespace RemotePlusServer.Core
                 {
                     WebClient client = new WebClient();
                     var extensionData = client.DownloadData(args.Arguments[1].Value);
-                    var clientLogger = new ClientLogger(ServerManager.ServerRemoteService.RemoteInterface.Client);
+                    var clientLogger = new ClientLogger(_service.RemoteInterface.Client);
                     GlobalServices.Logger.AddLogger(clientLogger);
                     ServerManager.DefaultCollection.LoadExtension(extensionData, new ServerInitEnvironment(false));
                     GlobalServices.Logger.RemoveLogger(clientLogger);
@@ -494,7 +506,7 @@ namespace RemotePlusServer.Core
             }
         }
         [CommandHelp("Copies a specified file to a new file.")]
-        public static CommandResponse cp(CommandRequest args, CommandPipeline pipe)
+        public CommandResponse cp(CommandRequest args, CommandPipeline pipe)
         {
             try
             {
@@ -508,7 +520,7 @@ namespace RemotePlusServer.Core
             }
         }
         [CommandHelp("Deletes the specified file. This cannot be reverted.")]
-        public static CommandResponse deleteFile(CommandRequest args, CommandPipeline pipe)
+        public CommandResponse deleteFile(CommandRequest args, CommandPipeline pipe)
         {
             bool autoAccept = args.Arguments.HasFlag("--acceptDisclamer");
             if (File.Exists(args.Arguments[1].Value))
@@ -522,7 +534,7 @@ namespace RemotePlusServer.Core
                         Buttons = MessageBoxButtons.YesNo,
                         Icons = MessageBoxIcon.Warning
                     };
-                    DialogResult result = (DialogResult)Enum.Parse(typeof(DialogResult), (string)ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(rb).Data);
+                    DialogResult result = (DialogResult)Enum.Parse(typeof(DialogResult), (string)_service.RemoteInterface.Client.ClientCallback.RequestInformation(rb).Data);
                     if (result == DialogResult.Yes)
                     {
                         File.Delete(args.Arguments[1].Value);
@@ -530,7 +542,7 @@ namespace RemotePlusServer.Core
                     }
                     else
                     {
-                        ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Operation canceled.");
+                        _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Operation canceled.");
                         return new CommandResponse((int)CommandStatus.Fail);
                     }
                 }
@@ -542,40 +554,40 @@ namespace RemotePlusServer.Core
             }
             else
             {
-                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText("File does not exist.") { TextColor = Color.Red });
+                _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText("File does not exist.") { TextColor = Color.Red });
                 return new CommandResponse((int)CommandStatus.Success);
             }
         }
         [CommandHelp("Reads the specified file and prints the contents to the screen.")]
-        public static CommandResponse echoFile(CommandRequest args, CommandPipeline pipe)
+        public CommandResponse echoFile(CommandRequest args, CommandPipeline pipe)
         {
             if (File.Exists(args.Arguments[1].Value))
             {
-                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(File.ReadAllText(args.Arguments[1].Value));
+                _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(File.ReadAllText(args.Arguments[1].Value));
                 return new CommandResponse((int)CommandStatus.Success);
             }
             else
             {
-                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText("The file does not exist.") { TextColor = Color.Red });
+                _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText("The file does not exist.") { TextColor = Color.Red });
                 return new CommandResponse((int)CommandStatus.Fail);
             }
         }
         [CommandHelp("Lists all the files and directories in the current directory.")]
-        public static CommandResponse ls(CommandRequest args, CommandPipeline pipe)
+        public CommandResponse ls(CommandRequest args, CommandPipeline pipe)
         {
             StringBuilder builder = new StringBuilder();
-            foreach (string file in Directory.GetFiles(ServerManager.ServerRemoteService.RemoteInterface.CurrentPath))
+            foreach (string file in Directory.GetFiles(_service.RemoteInterface.CurrentPath))
             {
-                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText(Path.GetFileName(file) + "\t") { TextColor = Color.LightGray });
+                _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText(Path.GetFileName(file) + "\t") { TextColor = Color.LightGray });
             }
-            foreach (string directory in Directory.GetDirectories(ServerManager.ServerRemoteService.RemoteInterface.CurrentPath))
+            foreach (string directory in Directory.GetDirectories(_service.RemoteInterface.CurrentPath))
             {
-                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText(directory + "\t") { TextColor = Color.Purple });
+                _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText(directory + "\t") { TextColor = Color.Purple });
             }
             return new CommandResponse((int)CommandStatus.Success);
         }
         [CommandHelp("Generates a sample package manifest file")]
-        public static CommandResponse genMan(CommandRequest args, CommandPipeline pipe)
+        public CommandResponse genMan(CommandRequest args, CommandPipeline pipe)
         {
             ScriptPackageManifest m = new ScriptPackageManifest();
             m.PackageName = "TestPackage";
@@ -584,7 +596,7 @@ namespace RemotePlusServer.Core
             return new CommandResponse((int)CommandStatus.Success);
         }
         [CommandHelp("Opens a script package and executes the entry-point script.")]
-        public static CommandResponse scp(CommandRequest args, CommandPipeline pipe)
+        public CommandResponse scp(CommandRequest args, CommandPipeline pipe)
         {
             ScriptPackage package = ScriptPackage.Open(args.Arguments[1].Value);
             try
@@ -596,28 +608,28 @@ namespace RemotePlusServer.Core
             }
             catch (Exception ex)
             {
-                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText($"Unable to execute script package: {ex.Message}") { TextColor = Color.Red });
+                _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText($"Unable to execute script package: {ex.Message}") { TextColor = Color.Red });
                 package = null;
                 return new CommandResponse((int)CommandStatus.Fail);
             }
         }
         [CommandHelp("Clears all variables and functions from the interactive scripts.")]
-        public static CommandResponse resetStaticScript(CommandRequest reqest, CommandPipeline pipe)
+        public CommandResponse resetStaticScript(CommandRequest reqest, CommandPipeline pipe)
         {
             ServerManager.ScriptBuilder.ClearStaticScope();
             return new CommandResponse((int)CommandStatus.Success);
         }
         [CommandHelp("Plays an audio file sent by the client.")]
-        public static CommandResponse playAudio(CommandRequest req, CommandPipeline pipe)
+        public CommandResponse playAudio(CommandRequest req, CommandPipeline pipe)
         {
-            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole($"Going to play audio file.");
+            _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole($"Going to play audio file.");
             ServerManager.DefaultPackageInventorySelector.GetInventory<FilePackage>("DefaultFileInventory").Receive(package =>
             {
                 if(package.FileName.Contains("splash"))
                 {
-                    ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("I like swimming!");
+                    _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("I like swimming!");
                 }
-                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole($"Now playing audio file. Name {package.FileName}");
+                _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole($"Now playing audio file. Name {package.FileName}");
                 SoundPlayer sp = new SoundPlayer(package.Data);
                 sp.PlaySync();
             });
@@ -626,12 +638,42 @@ namespace RemotePlusServer.Core
                 Title = "Select audio file.",
                 Filter = "Wav File (*.wav)|*.wav"
             };
-            var path = ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(requestPathBuilder);
+            var path = _service.RemoteInterface.Client.ClientCallback.RequestInformation(requestPathBuilder);
             if (path.AcquisitionState ==  RequestState.OK)
             {
-                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(new SendLocalFileByteStreamRequestBuilder(path.Data.ToString()));
+                _service.RemoteInterface.Client.ClientCallback.RequestInformation(new SendLocalFileByteStreamRequestBuilder(path.Data.ToString()));
             }
             return new CommandResponse((int)CommandStatus.Success);
+        }
+#endregion Commands
+
+        public override void AddCommands()
+        {
+            Commands.Add("ps", ProcessStartCommand);
+            Commands.Add("help", Help);
+            Commands.Add("logs", Logs);
+            Commands.Add("vars", vars);
+            Commands.Add("dateTime", dateTime);
+            Commands.Add("processes", processes);
+            Commands.Add("version", version);
+            Commands.Add("encrypt", svm_encyptFile);
+            Commands.Add("decrypt", svm_decryptFile);
+            Commands.Add("beep", svm_beep);
+            Commands.Add("speak", svm_speak);
+            Commands.Add("showMessageBox", svm_showMessageBox);
+            Commands.Add("path", path);
+            Commands.Add("cd", cd);
+            Commands.Add("echo", echo);
+            Commands.Add("load-extensionLibrary", loadExtensionLibrary);
+            Commands.Add("cp", cp);
+            Commands.Add("deleteFile", deleteFile);
+            Commands.Add("echoFile", echoFile);
+            Commands.Add("ls", ls);
+            Commands.Add("genMan", genMan);
+            Commands.Add("scp", scp);
+            Commands.Add("resetStaticScript", resetStaticScript);
+            Commands.Add("playAudio", playAudio);
+            Commands.Add("load-extensionLibrary-remote", loadExtensionLibraryRemote);
         }
     }
 }

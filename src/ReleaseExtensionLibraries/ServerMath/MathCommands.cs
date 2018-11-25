@@ -9,17 +9,17 @@ using RemotePlusServer;
 
 namespace ServerMath
 {
-    public static class MathCommands
+    public class MathCommands
     {
         const string MATH = "Math";
         [CommandHelp("Returns the absolute value of a number.")]
-        public static CommandResponse abs(CommandRequest request, CommandPipeline pipe)
+        public CommandResponse abs(CommandRequest request, CommandPipeline pipe)
         {
             var absValue = Math.Abs(long.Parse(request.Arguments[1].Value));
             return new CommandResponse((int)CommandStatus.Success) { CustomStatusMessage = absValue.ToString() };
         }
         [CommandHelp("Returns a number raised by an exponent. a^b")]
-        public static CommandResponse pow(CommandRequest request, CommandPipeline pipe)
+        public CommandResponse pow(CommandRequest request, CommandPipeline pipe)
         {
             return new CommandResponse((int)CommandStatus.Success) { CustomStatusMessage = Math.Pow(double.Parse(request.Arguments[1].Value), double.Parse(request.Arguments[2].Value)).ToString() };
         }

@@ -6,6 +6,8 @@ using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusLibrary.Core.EventSystem;
 using RemotePlusLibrary.ServiceArchitecture;
 using RemotePlusLibrary.FileTransfer.Service.PackageSystem;
+using RemotePlusLibrary.Extension.ExtensionLoader;
+using System.Collections.Generic;
 
 namespace RemotePlusLibrary
 {
@@ -51,7 +53,8 @@ namespace RemotePlusLibrary
         {
             var b = new CommandlineBuilder(services);
             builder?.Invoke(b);
-            return services.AddTransient<ICommandEnvironmnet, TCommandEnvironmentImpl>();
+            services.AddSingleton<ICommandClassStore, DefaultCommandStore>();
+            return services.AddTransient<ICommandEnvironmnet, TCommandEnvironmentImpl>();       
         }
         public static IServiceCollection UseEventBus<TEventBusImpl>(this IServiceCollection services) where TEventBusImpl : IEventBus
         {
@@ -68,6 +71,12 @@ namespace RemotePlusLibrary
             var output = services.AddSingleton<IPackageInventorySelector>(selectorInstance);
             builder?.Invoke(new PackageSelectorBuilder(selectorInstance.PackageInventoryProvider));
             return output;
+        }
+        public static IServiceCollection UseExtensionContainer<TContainerImpl, TLibrary>(this IServiceCollection services, ExtensionLibraryCollectionBase<TLibrary> container)
+            where TContainerImpl : ExtensionLibraryCollectionBase<TLibrary>
+            where TLibrary : ExtensionLibraryBase
+        {
+            return services.AddSingleton(container);
         }
     }
 }

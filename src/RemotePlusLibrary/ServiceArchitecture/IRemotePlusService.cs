@@ -42,10 +42,6 @@ namespace RemotePlusLibrary.ServiceArchitecture
         /// </summary>
         event EventHandler<UnknownMessageReceivedEventArgs> HostUnknownMessageReceived;
         /// <summary>
-        /// The commands that are loaded on the server.
-        /// </summary>
-        Dictionary<string, CommandDelegate> Commands { get; set; }
-        /// <summary>
         /// Provides access to remote operations and variables.
         /// </summary>
         TRemoteInterface RemoteInterface { get; set; }

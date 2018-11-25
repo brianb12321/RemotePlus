@@ -10,6 +10,7 @@ using RemotePlusLibrary.Security.AccountSystem;
 using RemotePlusLibrary.Core.EventSystem;
 using RemotePlusLibrary.Configuration;
 using RemotePlusLibrary.ServiceArchitecture;
+using RemotePlusLibrary.Extension.ExtensionLoader;
 
 namespace RemotePlusServer.Core
 {
@@ -24,7 +25,7 @@ namespace RemotePlusServer.Core
         /// <summary>
         /// The global container that all house the libraries that are loaded into the system.
         /// </summary>
-        public static ServerExtensionLibraryCollection DefaultCollection { get; } = new ServerExtensionLibraryCollection();
+        public static ExtensionLibraryCollectionBase<ServerExtensionLibrary> DefaultCollection => IOCContainer.GetService<ExtensionLibraryCollectionBase<ServerExtensionLibrary>>();
         public static IAccountManager AccountManager => IOCContainer.GetService<IAccountManager>();
         public static Guid ServerGuid { get; set; }
         public static ScriptBuilder ScriptBuilder => IOCContainer.GetService<ScriptBuilder>();

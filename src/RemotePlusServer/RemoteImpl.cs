@@ -23,6 +23,7 @@ using RemotePlusServer.Core;
 using BetterLogger;
 using RemotePlusLibrary.Core.EventSystem;
 using RemotePlusLibrary.Core.EventSystem.Events;
+using RemotePlusLibrary.Core.IOC;
 
 namespace RemotePlusServer
 {
@@ -275,7 +276,7 @@ namespace RemotePlusServer
                 List<CommandDescription> rc = new List<CommandDescription>();
                 GlobalServices.Logger.Log("Requesting commands list.", LogLevel.Info);
                 _interface.Client.ClientCallback.TellMessage("Returning commands list.", LogLevel.Info);
-                foreach (KeyValuePair<string, CommandDelegate> currentCommand in ServerManager.ServerRemoteService.Commands)
+                foreach (KeyValuePair<string, CommandDelegate> currentCommand in IOCContainer.GetService<ICommandClassStore>().GetAllCommands())
                 {
                     rc.Add(new CommandDescription() { Help = RemotePlusConsole.GetCommandHelp(currentCommand.Value), Behavior = RemotePlusConsole.GetCommandBehavior(currentCommand.Value), HelpPage = RemotePlusConsole.GetCommandHelpPage(currentCommand.Value), CommandName = currentCommand.Key });
                 }
@@ -292,7 +293,7 @@ namespace RemotePlusServer
             if (CheckRegisteration("GetCommandsAsStrings"))
             {
                 _interface.Client.ClientCallback.SendSignal(new SignalMessage("operation_completed", ""));
-                return ServerManager.ServerRemoteService.Commands.Keys;
+                return IOCContainer.GetService<ICommandClassStore>().GetAllCommands().Keys;
             }
             else
             {
@@ -365,13 +366,13 @@ namespace RemotePlusServer
         public string GetCommandHelpPage(string command)
         {
             // OperationContext.Current.OperationCompleted += (sender, e) => _interface.Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
-            return RemotePlusConsole.ShowHelpPage(ServerManager.ServerRemoteService.Commands, command);
+            return RemotePlusConsole.ShowHelpPage(IOCContainer.GetService<ICommandClassStore>().GetAllCommands(), command);
         }
 
         public string GetCommandHelpDescription(string command)
         {
             // OperationContext.Current.OperationCompleted += (sender, e) => _interface.Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
-            return RemotePlusConsole.ShowCommandHelpDescription(ServerManager.ServerRemoteService.Commands, command);
+            return RemotePlusConsole.ShowCommandHelpDescription(IOCContainer.GetService<ICommandClassStore>().GetAllCommands(), command);
         }
         public IDirectory GetRemoteFiles(string path, bool usingRequest)
         {

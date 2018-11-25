@@ -30,5 +30,10 @@ namespace RemotePlusLibrary.Extension.CommandSystem
             _services.AddSingleton<ICommandExecutor, TExecuotorImpl>();
             return this;
         }
+        public CommandlineBuilder AddCommandClass<TCommandClass>() where TCommandClass : ICommandClass
+        {
+            _services.AddSingleton<ICommandClass, TCommandClass>();
+            return this;
+        }
     }
 }

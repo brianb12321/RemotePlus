@@ -14,11 +14,14 @@ namespace RemotePlusLibrary.Extension.CommandSystem
         public ITokenProcessor Processor { get; private set; }
 
         public ICommandExecutor Executor { get; private set; }
-        public CommandEnvironment(IParser parser, ITokenProcessor processor, ICommandExecutor executor)
+        public ICommandClassStore CommandClasses { get; }
+
+        public CommandEnvironment(IParser parser, ITokenProcessor processor, ICommandExecutor executor, ICommandClassStore commandClasses)
         {
             Parser = parser;
             Processor = processor;
             Executor = executor;
+            CommandClasses = commandClasses;
         }
     }
 }

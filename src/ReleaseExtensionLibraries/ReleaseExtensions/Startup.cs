@@ -8,6 +8,7 @@ using BetterLogger;
 using RemotePlusLibrary.Core;
 using RemotePlusLibrary.RequestSystem;
 using RemotePlusLibrary.RequestSystem.DefaultRequestBuilders;
+using RemotePlusLibrary.Core.IOC;
 
 namespace ReleaseExtensions
 {
@@ -17,7 +18,7 @@ namespace ReleaseExtensions
         {
             GlobalServices.Logger.Log($"Init position {env.InitPosition}", LogLevel.Debug, "ReleaseExtensions");
             GlobalServices.Logger.Log("Welcome to \"ReleaseExtension.\" This library contains some useful tools that demonstrates the powers of \"RemotePlus\"", LogLevel.Info, "ReleaseExtensions");
-            ServerManager.ServerRemoteService.Commands.Add("releaseExtensionAbout", releaseExtensionAbout);
+            builder.AddCommandClass(new SingleCommand("releaseExtensionAbout", releaseExtensionAbout));
             ServerManager.ScriptBuilder.AddScriptObject("showMessageBox", new Func<string, string, MessageBoxButtons, MessageBoxIcon, DialogResult>(showMessageBoxScriptMethod), "Displays a message box on the client's screen.", RemotePlusLibrary.Scripting.ScriptGlobalType.Function);
         }
         [RemotePlusLibrary.Scripting.IndexScriptObject]

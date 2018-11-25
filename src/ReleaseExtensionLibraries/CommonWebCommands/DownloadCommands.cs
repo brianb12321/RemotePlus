@@ -3,13 +3,20 @@ using System;
 using System.Net;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
 using RemotePlusServer.Core;
+using BetterLogger;
+using System.IO;
 
 namespace CommonWebCommands
 {
-    public static class DownloadCommands
+    public class DownloadCommands : StandordCommandClass
     {
+        public override void AddCommands()
+        {
+            Commands.Add("downloadWeb", downloadWeb);
+        }
+
         [CommandHelp("Downloads a file from the internet and displays it in the console.")]
-        public static CommandResponse downloadWeb(CommandRequest args, CommandPipeline pipe)
+        public  CommandResponse downloadWeb(CommandRequest args, CommandPipeline pipe)
         {
             WebClient client = new WebClient();
             try

@@ -45,7 +45,7 @@ namespace RemotePlusServer.Core.ExtensionSystem
                     {
                         var st = (ILibraryStartup)Activator.CreateInstance(ea.Startup);
                         GlobalServices.Logger.Log("Beginning initialization.", LogLevel.Info, EXTENSION_LOADER);
-                        ServerLibraryBuilder builder = new ServerLibraryBuilder(ea.Name, ea.FriendlyName, ea.Version, ea.LibraryType);
+                        DefaultLibraryBuilder builder = new DefaultLibraryBuilder(ea.Name, ea.FriendlyName, ea.Version, ea.LibraryType);
                         st.Init(builder, env);
                         GlobalServices.Logger.Log("finished initialization.", LogLevel.Info, EXTENSION_LOADER);
                         lib = new ServerExtensionLibrary(a, ea.FriendlyName, ea.Name, ea.LibraryType, guid, deps, version);
@@ -122,7 +122,7 @@ namespace RemotePlusServer.Core.ExtensionSystem
             return deps;
         }
 
-        public void LoadExtensionsInFolder()
+        public static void LoadExtensionsInFolder()
         {
             List<string> excludedFiles = new List<string>();
             GlobalServices.Logger.Log("Loading extensions...", LogLevel.Info, EXTENSION_LOADER);
@@ -147,7 +147,7 @@ namespace RemotePlusServer.Core.ExtensionSystem
                         {
                             GlobalServices.Logger.Log($"Found extension file ({Path.GetFileName(files)})", LogLevel.Info, EXTENSION_LOADER);
                             env.PreviousError = GlobalServices.Logger.ErrorCount > 0;
-                            LoadExtension(files, env);
+                            ServerManager.DefaultCollection.LoadExtension(files, env);
                         }
                         catch (Exception ex)
                         {

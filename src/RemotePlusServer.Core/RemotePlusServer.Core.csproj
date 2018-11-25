@@ -84,7 +84,6 @@
     <Compile Include="ExtensionSystem\ServerExtensionLibrary.cs" />
     <Compile Include="ExtensionSystem\ServerExtensionLibraryCollection.cs" />
     <Compile Include="ExtensionSystem\ServerInitEnvironment.cs" />
-    <Compile Include="ExtensionSystem\ServerLibraryBuilder.cs" />
     <Compile Include="FileTransferServciceInterface.cs" />
     <Compile Include="FileTransferService.cs" />
     <Compile Include="FileTransferServiceBuilder.cs" />

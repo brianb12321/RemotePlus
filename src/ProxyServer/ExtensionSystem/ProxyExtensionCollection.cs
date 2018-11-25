@@ -44,7 +44,7 @@ namespace ProxyServer.ExtensionSystem
                     {
                         var st = (ILibraryStartup)Activator.CreateInstance(ea.Startup);
                         GlobalServices.Logger.Log("Beginning initialization.", LogLevel.Info);
-                        ProxyLibraryBuilder builder = new ProxyLibraryBuilder(ea.Name, ea.FriendlyName, ea.Version, ea.LibraryType);
+                        DefaultLibraryBuilder builder = new DefaultLibraryBuilder(ea.Name, ea.FriendlyName, ea.Version, ea.LibraryType);
                         st.Init(builder, env);
                         GlobalServices.Logger.Log("finished initialization.", LogLevel.Info);
                         lib = new ProxyExtensionLibrary(a, ea.FriendlyName, ea.Name, ea.LibraryType, guid, deps, version);
@@ -121,7 +121,7 @@ namespace ProxyServer.ExtensionSystem
             return deps;
         }
 
-        public void LoadExtensionsInFolder()
+        public static void LoadExtensionsInFolder()
         {
             List<string> excludedFiles = new List<string>();
             GlobalServices.Logger.Log("Loading extensions...", LogLevel.Info);
@@ -146,7 +146,7 @@ namespace ProxyServer.ExtensionSystem
                         {
                             GlobalServices.Logger.Log($"Found extension file ({Path.GetFileName(files)})", LogLevel.Info);
                             env.PreviousError = GlobalServices.Logger.ErrorCount > 0;
-                            LoadExtension(files, env);
+                            ProxyManager.DefaultCollection.LoadExtension(files, env);
                         }
                         catch (Exception ex)
                         {

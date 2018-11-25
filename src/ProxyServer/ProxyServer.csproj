@@ -83,7 +83,6 @@
     <Compile Include="ExtensionSystem\ProxyExtensionCollection.cs" />
     <Compile Include="ExtensionSystem\ProxyExtensionLibrary.cs" />
     <Compile Include="ExtensionSystem\ProxyInitEnvironment.cs" />
-    <Compile Include="ExtensionSystem\ProxyLibraryBuilder.cs" />
     <Compile Include="GlobalErrorHandler.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Internal\_ClientTextWriter.cs" />
@@ -91,6 +90,7 @@
     <Compile Include="ProbeServiceBuilder.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ProxyCommands..cs" />
     <Compile Include="ProxyServerBulderExtensions.cs" />
     <Compile Include="ProxyServerRemoteImpl.cs" />
     <Compile Include="Scripting\Batch\BatchJob.cs" />

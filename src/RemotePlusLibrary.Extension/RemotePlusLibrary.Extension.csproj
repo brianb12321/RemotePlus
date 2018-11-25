@@ -34,9 +34,7 @@
     <Reference Include="BetterLogger">
       <HintPath>..\..\Libs\BetterLogger.dll</HintPath>
     </Reference>
-    <Reference Include="Logging">
-      <HintPath>..\..\Libs\Logging.dll</HintPath>
-    </Reference>
+    <Reference Include="Ninject, Version=3.3.4.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -69,8 +67,13 @@
     <Compile Include="CommandSystem\CommandEnvironment.cs" />
     <Compile Include="CommandSystem\CommandlineBuilder.cs" />
     <Compile Include="CommandSystem\ConsoleText.cs" />
+    <Compile Include="CommandSystem\DefaultCommandStore.cs" />
+    <Compile Include="CommandSystem\ICommandClass.cs" />
+    <Compile Include="CommandSystem\ICommandClassStore.cs" />
     <Compile Include="CommandSystem\ICommandEnvironmnet.cs" />
     <Compile Include="CommandSystem\PromptBuilder.cs" />
+    <Compile Include="CommandSystem\SingleCommand.cs" />
+    <Compile Include="CommandSystem\StandordCommandClass..cs" />
     <Compile Include="CommandSystem\StatusCodeDeliveryMethod.cs" />
     <Compile Include="ExtensionLoader\DependencyException.cs" />
     <Compile Include="ExtensionLoader\DependencyType.cs" />

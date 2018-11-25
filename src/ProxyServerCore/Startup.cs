@@ -2,6 +2,7 @@
 using BetterLogger.Loggers;
 using RemotePlusLibrary.Core.IOC;
 using ProxyServer;
+using ProxyServer.ExtensionSystem;
 using BetterLogger;
 using RemotePlusLibrary;
 using RemotePlusLibrary.ServiceArchitecture;
@@ -18,8 +19,8 @@ namespace ProxyServerCore
         public void AddServices(IServiceCollection services)
         {
             services.UseLogger((logFactory) => logFactory.AddLogger(new ConsoleLogger()));
-            GlobalServerBuilderExtensions.InitializeKnownTypes();
             services.UseServerManager<DefaultServiceManager>()
+                .UseExtensionContainer<ProxyExtensionCollection, ProxyExtensionLibrary>(new ProxyExtensionCollection())
                 .UseScriptingEngine()
                 .UseEventBus<EventBus>()
                 .UseServerControlPage<ServerControls>()
@@ -27,7 +28,8 @@ namespace ProxyServerCore
                 .UseCommandline<CommandEnvironment>(builder =>
                     builder.UseParser<CommandParser>()
                    .UseProcessor<TokenProcessor>()
-                   .UseExecutor<CommandExecutor>())
+                   .UseExecutor<CommandExecutor>()
+                   .AddCommandClass<ProxyCommands>())
                 .UsePackageInventorySelector<StandordPackageInventorySelector>(builder =>
                     builder.AddPackageInventory<FilePackage, StandordPackageInventory>("DefaultFileInventory"));
 
@@ -45,14 +47,15 @@ namespace ProxyServerCore
                     .RouteHostOpeningEvent(ProxyService_HostOpening)
                     .RouteUnknownMessageReceivedEvent(ProxyService_UnknownMessageReceived);
             });
-            ProxyManager.DefaultCollection.LoadExtensionsInFolder();
-            manager.BuildHost<ProxyServerRemoteImpl>();
         }
         public void InitializeServer(IServerBuilder builder)
         {
-            builder.AddDefaultProxyCommands()
+            builder.InitializeKnownTypes()
+                .BuildServiceHost<ProxyServerRemoteImpl>()
                 .InitializeScriptingEngine()
-                .InitializeGlobals();
+                .InitializeGlobals()
+                .InitializeCommands();
+            ProxyExtensionCollection.LoadExtensionsInFolder();
         }
         private static void ProxyService_HostFaulted(object sender, EventArgs e)
         {

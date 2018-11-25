@@ -19,6 +19,7 @@ using static RemotePlusServer.Core.DefaultCommands;
 using System.Speech.Synthesis;
 using System.Reflection;
 using RemotePlusLibrary.RequestSystem.DefaultRequestBuilders;
+using RemotePlusLibrary.ServiceArchitecture;
 
 namespace RemotePlusServer.Core.ServerCore
 {
@@ -80,6 +81,7 @@ namespace RemotePlusServer.Core.ServerCore
                 InitializeGlobals();
             });
         }
+        
         public static void InitializeGlobals()
         {
             try
@@ -144,20 +146,6 @@ namespace RemotePlusServer.Core.ServerCore
             });
         }
         /// <summary>
-        /// Adds a command to the default server.
-        /// </summary>
-        /// <param name="builder"></param>
-        /// <param name="commandName">the name of the command for which the user will type to execute the command.</param>
-        /// <param name="command">The command itself</param>
-        /// <returns></returns>
-        public static IServerBuilder AddCommand(this IServerBuilder builder, string commandName, CommandDelegate command)
-        {
-            return builder.AddTask(() =>
-            {
-                ServerManager.ServerRemoteService.Commands.Add(commandName, command);
-            });
-        }
-        /// <summary>
         /// Searches for extension libraries to load.
         /// </summary>
         /// <param name="builder"></param>
@@ -166,7 +154,7 @@ namespace RemotePlusServer.Core.ServerCore
         {
             return builder.AddTask(() =>
             {
-                ServerManager.DefaultCollection.LoadExtensionsInFolder();
+                ServerExtensionLibraryCollection.LoadExtensionsInFolder();
             });
         }
         /// <summary>
@@ -242,34 +230,6 @@ namespace RemotePlusServer.Core.ServerCore
                     ServerManager.FileTransferService.Host.AddServiceEndpoint(typeof(IMetadataExchange), mexBinding, "http://0.0.0.0:9001/Mex2");
                 }
             });
-        }
-        public static IServerBuilder AddDefaultServerCommands(this IServerBuilder builder)
-        {
-            return builder.AddCommand("ps", ProcessStartCommand)
-            .AddCommand("help", Help)
-            .AddCommand("logs", Logs)
-            .AddCommand("vars", vars)
-            .AddCommand("dateTime", dateTime)
-            .AddCommand("processes", processes)
-            .AddCommand("version", version)
-            .AddCommand("encrypt", svm_encyptFile)
-            .AddCommand("decrypt", svm_decryptFile)
-            .AddCommand("beep", svm_beep)
-            .AddCommand("speak", svm_speak)
-            .AddCommand("showMessageBox", svm_showMessageBox)
-            .AddCommand("path", path)
-            .AddCommand("cd", cd)
-            .AddCommand("echo", echo)
-            .AddCommand("load-extensionLibrary", loadExtensionLibrary)
-            .AddCommand("cp", cp)
-            .AddCommand("deleteFile", deleteFile)
-            .AddCommand("echoFile", echoFile)
-            .AddCommand("ls", ls)
-            .AddCommand("genMan", genMan)
-            .AddCommand("scp", scp)
-            .AddCommand("resetStaticScript", resetStaticScript)
-            .AddCommand("playAudio", playAudio)
-            .AddCommand("load-extensionLibrary-remote", loadExtensionLibraryRemote);
         }
     }
 }

@@ -8,14 +8,22 @@ using System.IO;
 using System;
 using RemotePlusServer.Core;
 using System.Drawing;
+using System.Collections.Generic;
+using RemotePlusLibrary.ServiceArchitecture;
 
 namespace RSPM
 {
-    public static class PackageCommands
+    public class PackageCommands : ICommandClass
     {
+        IRemotePlusService<ServerRemoteInterface> _service;
+        public PackageCommands(IRemotePlusService<ServerRemoteInterface> service)
+        {
+            _service = service;
+        }
+        public Dictionary<string, CommandDelegate> Commands { get; } = new Dictionary<string, CommandDelegate>();
 
         [CommandHelp("Installs a package from the internet.")]
-        public static CommandResponse InstallPackage(CommandRequest req, CommandPipeline pipe)
+        public CommandResponse InstallPackage(CommandRequest req, CommandPipeline pipe)
         {
             try
             {
@@ -26,12 +34,12 @@ namespace RSPM
             }
             catch (Exception ex)
             {
-                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText($"An error occurred during installation: {ex.Message}") { TextColor = Color.Red });
+                _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText($"An error occurred during installation: {ex.Message}") { TextColor = Color.Red });
                 return new CommandResponse((int)CommandStatus.Fail);
             }
         }
         [CommandHelp("Generates a package manifest file for you.")]
-        public static CommandResponse GeneratePackageManifest(CommandRequest req, CommandPipeline pipe)
+        public CommandResponse GeneratePackageManifest(CommandRequest req, CommandPipeline pipe)
         {
             DataContractSerializer xsSubmit = new DataContractSerializer(typeof(PackageDescription));
             var subReq = new PackageDescription();
@@ -50,6 +58,29 @@ namespace RSPM
                 xsSubmit.WriteObject(writer, subReq);
             }
             return new CommandResponse((int)CommandStatus.Success);
+        }
+
+        public void AddCommands()
+        {
+            Commands.Add("Install-Package", InstallPackage);
+            Commands.Add("Generate-Package-Manifest", GeneratePackageManifest);
+        }
+
+        public CommandDelegate Lookup(string commandName)
+        {
+            if(Commands.TryGetValue(commandName, out CommandDelegate command))
+            {
+                return command;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public bool HasCommand(string commandName)
+        {
+            return Commands.ContainsKey(commandName);
         }
     }
 }

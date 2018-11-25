@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.ServiceModel;
 using Ninject;
+using RemotePlusLibrary.Core.IOC;
 
 namespace RemotePlusLibrary.ServiceArchitecture
 {
     public class DefaultServiceManager : IServiceManager
     {
-        private IKernel serviceKernel = new StandardKernel();
         private List<ICommunicationObject> communicationObjects = new List<ICommunicationObject>();
         public void AbortAll()
         {
@@ -21,8 +21,8 @@ namespace RemotePlusLibrary.ServiceArchitecture
             where TService : IRemotePlusService<TImpl>
             where TImpl : new()
         {
-            serviceKernel.Bind<IRemotePlusService<TImpl>>().To(typeof(TService)).InSingletonScope();
-            ICommunicationObject communObject = serviceKernel.Get<IRemotePlusService<TImpl>>().Host;
+            IOCContainer.Provider.Bind<IRemotePlusService<TImpl>>().To(typeof(TService)).InSingletonScope();
+            ICommunicationObject communObject = IOCContainer.Provider.Get<IRemotePlusService<TImpl>>().Host;
             communicationObjects.Add(communObject);
         }
 
@@ -36,12 +36,12 @@ namespace RemotePlusLibrary.ServiceArchitecture
 
         public IRemotePlusService<TImpl> GetService<TImpl>() where TImpl : new()
         {
-            return serviceKernel.Get<IRemotePlusService<TImpl>>();
+            return IOCContainer.Provider.Get<IRemotePlusService<TImpl>>();
         }
 
         public CommunicationState GetState<TInterface>() where TInterface : new()
         {
-            return serviceKernel.Get<IRemotePlusService<TInterface>>().Host.State;
+            return IOCContainer.Provider.Get<IRemotePlusService<TInterface>>().Host.State;
         }
         
         void ConstructServices()
@@ -52,12 +52,12 @@ namespace RemotePlusLibrary.ServiceArchitecture
         {
             var b = builder?.Invoke();
             var service = b.BuildService();
-            serviceKernel.Bind<IRemotePlusService<TServiceImpl>>().ToConstant(service);
+            IOCContainer.Provider.Bind<IRemotePlusService<TServiceImpl>>().ToConstant(service);
         }
 
         public void BuildHost<TImpl>() where TImpl : new()
         {
-            var service = serviceKernel.Get<IRemotePlusService<TImpl>>();
+            var service = IOCContainer.Provider.Get<IRemotePlusService<TImpl>>();
             service.BuildHost();
             communicationObjects.Add(service.Host);
         }

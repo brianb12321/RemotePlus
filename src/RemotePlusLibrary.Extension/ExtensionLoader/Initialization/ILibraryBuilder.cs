@@ -1,4 +1,5 @@
 ﻿using RemotePlusLibrary.Core;
+using RemotePlusLibrary.Extension.CommandSystem;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,5 +17,7 @@ namespace RemotePlusLibrary.Extension.ExtensionLoader.Initialization
         NetworkSide LibraryType { get; }
         void SubscribeToEventBus<TMessage>(Action<TMessage> subscriber) where TMessage : class, ITinyMessage;
         void SubscribeToEventBus<TMessage>(Action<TMessage> subscriber, Func<TMessage, bool> condition) where TMessage : class, ITinyMessage;
+        void AddCommandClass<TCommandClass>() where TCommandClass : ICommandClass;
+        void AddCommandClass(ICommandClass commandClass);
     }
 }

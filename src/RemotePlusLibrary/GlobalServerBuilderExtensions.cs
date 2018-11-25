@@ -1,9 +1,11 @@
 ﻿using BetterLogger;
 using RemotePlusLibrary.Core;
 using RemotePlusLibrary.Core.IOC;
+using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusLibrary.RequestSystem.DefaultRequestBuilders;
 using RemotePlusLibrary.RequestSystem.DefaultRequestBuilders.BaseBuilders;
 using RemotePlusLibrary.Security.AccountSystem;
+using RemotePlusLibrary.ServiceArchitecture;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +17,15 @@ namespace RemotePlusLibrary
 {
     public static class GlobalServerBuilderExtensions
     {
+        public static IServerBuilder BuildServiceHost<TRemoteInterface>(this IServerBuilder builder)
+            where TRemoteInterface : new()
+        {
+            return builder.AddTask(() =>
+            {
+                IServiceManager manager = IOCContainer.GetService<IServiceManager>();
+                manager.BuildHost<TRemoteInterface>();
+            });
+        }
         public static void InitializeKnownTypes()
         {
             GlobalServices.Logger.Log("Adding default known types.", LogLevel.Info);
@@ -44,6 +55,13 @@ namespace RemotePlusLibrary
         public static IServerBuilder InitializeKnownTypesByNamespace(this IServerBuilder builder, string name)
         {
             return builder.AddTask(() => InitializeKnownTypesByNamespace(name));
+        }
+        public static IServerBuilder InitializeCommands(this IServerBuilder builder)
+        {
+            return builder.AddTask(() =>
+            {
+                IOCContainer.GetService<ICommandEnvironmnet>().CommandClasses.InitializeCommands();
+            });
         }
     }
 }

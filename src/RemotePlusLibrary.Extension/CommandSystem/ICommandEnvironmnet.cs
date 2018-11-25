@@ -15,5 +15,6 @@ namespace RemotePlusLibrary.Extension.CommandSystem
         IParser Parser { get; }
         ITokenProcessor Processor { get; }
         ICommandExecutor Executor { get; }
+        ICommandClassStore CommandClasses { get; }
     }
 }

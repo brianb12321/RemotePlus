@@ -16,6 +16,7 @@ using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing;
 using RemotePlusLibrary.Core.EventSystem;
 using RemotePlusLibrary.Core;
+using RemotePlusServer.Core.ExtensionSystem;
 
 namespace DefaultServerCore
 {
@@ -34,6 +35,7 @@ namespace DefaultServerCore
                 });
             });
             services.UseServerManager<DefaultServiceManager>()
+                .UseExtensionContainer<ServerExtensionLibraryCollection, ServerExtensionLibrary>(new ServerExtensionLibraryCollection())
                 .UseServerControlPage<ServerControls>()
                 .UseScriptingEngine()
                 .UseConfigurationDataAccess<ConfigurationHelper>()
@@ -44,7 +46,9 @@ namespace DefaultServerCore
                 .UseCommandline<CommandEnvironment>(builder =>
                     builder.UseParser<CommandParser>()
                            .UseProcessor<TokenProcessor>()
-                           .UseExecutor<CommandExecutor>())
+                           .UseExecutor<CommandExecutor>()
+                           .AddCommandClass<DefaultCommands>()
+                           .AddCommandClass<PackageCommands>())
                 .UsePackageInventorySelector<StandordPackageInventorySelector>(builder =>
                     builder.AddPackageInventory<FilePackage, StandordPackageInventory>("DefaultFileInventory"));
             //Add the services.
@@ -74,24 +78,22 @@ namespace DefaultServerCore
                         .SetBinding(_ConnectionFactory.BuildBinding())
                         .SetPortNumber(ServerManager.DefaultSettings.PortNumber);
             });
-            ServerManager.DefaultCollection.LoadExtensionsInFolder();
-            GlobalServerBuilderExtensions.InitializeKnownTypes();
-            manager.BuildHost<ServerRemoteInterface>();
-            manager.BuildHost<FileTransferServciceInterface>();
         }
 
         void IServerCoreStartup.InitializeServer(IServerBuilder builder)
         {
-            builder.LoadServerConfig()
+            builder.InitializeKnownTypes()
+                .LoadServerConfig()
                 .InitializeDefaultGlobals()
+                .LoadExtensionLibraries()
+                .BuildServiceHost<ServerRemoteInterface>()
+                .BuildServiceHost<FileTransferServciceInterface>()
                 .InitializeScriptingEngine((options) => { })
                 .OpenMexForRemotePlus()
                 .OpenMexForFileTransfer()
                 .InitializeVariables()
                 .AddTask(() => GlobalServices.Logger.Log("Loading Commands.", LogLevel.Info))
-                .AddDefaultServerCommands()
-                .AddCommand("Install-Package", PackageCommands.InstallPackage)
-                .AddCommand("Generate-Package-Manifest", PackageCommands.GeneratePackageManifest);
+                .InitializeCommands();
         }
         #region Server Events
         private void Host_UnknownMessageReceived(object sender, System.ServiceModel.UnknownMessageReceivedEventArgs e)

@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using RemotePlusLibrary.Core;
+using RemotePlusLibrary.Core.IOC;
+using RemotePlusLibrary.Extension.CommandSystem;
 
 namespace RemotePlusLibrary.Extension.ExtensionLoader.Initialization
 {
@@ -26,6 +28,16 @@ namespace RemotePlusLibrary.Extension.ExtensionLoader.Initialization
         public string Version { get; private set; }
 
         public NetworkSide LibraryType { get; private set; }
+
+        public void AddCommandClass<TCommandClass>() where TCommandClass : ICommandClass
+        {
+            IOCContainer.Provider.Bind<ICommandClass>().To(typeof(TCommandClass)).InSingletonScope();
+        }
+
+        public void AddCommandClass(ICommandClass commandClass)
+        {
+            IOCContainer.Provider.Bind<ICommandClass>().ToConstant(commandClass);
+        }
 
         void ILibraryBuilder.SubscribeToEventBus<TMessage>(Action<TMessage> subscriber)
         {

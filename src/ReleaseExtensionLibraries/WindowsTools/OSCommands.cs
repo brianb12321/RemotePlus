@@ -12,13 +12,19 @@ using RemotePlusServer.Core;
 using AudioSwitcher.AudioApi.CoreAudio;
 using System.Drawing;
 using NAudio.CoreAudioApi;
+using BetterLogger;
 
 namespace WindowsTools
 {
-    public static class OSCommands
+    public class OSCommands : StandordCommandClass
     {
+        ILogFactory _logger;
+        public OSCommands(ILogFactory logger)
+        {
+            _logger = logger;
+        }
         [CommandHelp("Sends a key to the remote server.")]
-        public static CommandResponse sendKey(CommandRequest args, CommandPipeline pipe)
+        public CommandResponse sendKey(CommandRequest args, CommandPipeline pipe)
         {
             try
             {
@@ -33,13 +39,13 @@ namespace WindowsTools
             }
         }
         [CommandHelp("Open the disk drive on the remote computer.")]
-        public static CommandResponse openDiskDrive(CommandRequest args, CommandPipeline pipe)
+        public CommandResponse openDiskDrive(CommandRequest args, CommandPipeline pipe)
         {
             Win32Wrapper.OpenDiskDrive(args.Arguments[1].Value, "");
             return new CommandResponse((int)CommandStatus.Success);
         }
         [CommandHelp("Lists all the installed drives on the system.")]
-        public static CommandResponse drives(CommandRequest args, CommandPipeline pipe)
+        public CommandResponse drives(CommandRequest args, CommandPipeline pipe)
         {
             foreach(DriveInfo info in DriveInfo.GetDrives())
             {
@@ -51,19 +57,19 @@ namespace WindowsTools
             return new CommandResponse((int)CommandStatus.Success);
         }
         [CommandHelp("Changes the mouse position to the specified coordinates")]
-        public static CommandResponse setMousePos(CommandRequest args, CommandPipeline pipe)
+        public CommandResponse setMousePos(CommandRequest args, CommandPipeline pipe)
         {
             Cursor.Position = new System.Drawing.Point(int.Parse(args.Arguments[1].Value), int.Parse(args.Arguments[2].Value));
             return new CommandResponse((int)CommandStatus.Success);
         }
         [CommandHelp("Blocks input for a certain amount of time.")]
-        public static CommandResponse blockInputI(CommandRequest args, CommandPipeline pipe)
+        public CommandResponse blockInputI(CommandRequest args, CommandPipeline pipe)
         {
             Win32Wrapper.BlockInputForInterval(int.Parse(args.Arguments[1].Value));
             return new CommandResponse((int)CommandStatus.Success);
         }
         [CommandHelp("Sets the server audio to a specific percentage.")]
-        public static CommandResponse setVolume(CommandRequest args, CommandPipeline pipe)
+        public CommandResponse setVolume(CommandRequest args, CommandPipeline pipe)
         {
             if (args.Arguments.Count < 2)
             {
@@ -86,7 +92,7 @@ namespace WindowsTools
             }
         }
         [CommandHelp("Toggles the mute on the server.")]
-        public static CommandResponse toggleMute(CommandRequest args, CommandPipeline pipe)
+        public CommandResponse toggleMute(CommandRequest args, CommandPipeline pipe)
         {
             MMDeviceEnumerator enumerator = new MMDeviceEnumerator();
             foreach(MMDevice device in enumerator.EnumerateAudioEndPoints(DataFlow.All, DeviceState.All))
@@ -101,6 +107,22 @@ namespace WindowsTools
                 }
             }
             return new CommandResponse((int)CommandStatus.Success);
+        }
+
+        public override void AddCommands()
+        {
+            _logger.Log("Adding OS commands", LogLevel.Info, "WindowsTools");
+            Commands.Add("fileM", Filem.filem_command);
+            Commands.Add("openDiskDrive", openDiskDrive);
+            Commands.Add("drives", drives);
+            Commands.Add("setMousePos", setMousePos);
+            Commands.Add("blockInputI", blockInputI);
+            Commands.Add("setVolume", setVolume);
+            Commands.Add("toggleMute", toggleMute);
+            Commands.Add("sendKey", sendKey);
+            _logger.Log("Adding dskClean command", LogLevel.Info, "WindowsTools");
+            Commands.Add("dskClean", dskClean.dskCleanCommand);
+            _logger.Log("Adding fileM command", LogLevel.Info, "WindowsTools");
         }
     }
 }
