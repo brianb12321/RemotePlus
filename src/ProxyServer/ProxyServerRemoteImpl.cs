@@ -471,9 +471,9 @@ namespace ProxyServer
             ProxyClient.ClientCallback.TellMessageToServerConsoleNoNewLine(serverGuid, Message);
         }
 
-        public void UploadBytesToPackageSystem(byte[] data, int length, string name)
+        public void UploadBytesToResource(byte[] data, int length, string name)
         {
-            SelectedClient.ClientCallback.UploadBytesToPackageSystem(data, length, name);
+            SelectedClient.ClientCallback.UploadBytesToResource(data, length, name);
         }
 
         public Resource GetResource(string resourceIdentifier)

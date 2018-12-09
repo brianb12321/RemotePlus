@@ -8,7 +8,6 @@ using RemotePlusLibrary;
 using RemotePlusLibrary.ServiceArchitecture;
 using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing;
-using RemotePlusLibrary.FileTransfer.Service.PackageSystem;
 using RemotePlusLibrary.Core.EventSystem;
 using RemotePlusLibrary.Core;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
@@ -32,9 +31,7 @@ namespace ProxyServerCore
                     builder.UseLexer<CommandLexer>()
                    .UseParser<CommandParser>()
                    .UseExecutor<CommandExecutor>()
-                   .AddCommandClass<ProxyCommands>())
-                .UsePackageInventorySelector<StandordPackageInventorySelector>(builder =>
-                    builder.AddPackageInventory<FilePackage, StandordPackageInventory>("DefaultFileInventory"));
+                   .AddCommandClass<ProxyCommands>());
 
             //Set up WCF services.
             IServiceManager manager = IOCContainer.GetService<IServiceManager>();

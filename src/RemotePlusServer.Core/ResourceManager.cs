@@ -38,5 +38,10 @@ namespace RemotePlusServer.Core
                 throw new Exception("Resource type does not match.");
             }
         }
+
+        public void RemoveResource(string resourceID)
+        {
+            _store.Remove(resourceID);
+        }
     }
 }

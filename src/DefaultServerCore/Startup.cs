@@ -9,7 +9,6 @@ using BetterLogger.Loggers;
 using RemotePlusLibrary.Configuration;
 using RemotePlusLibrary.Configuration.StandordDataAccess;
 using RemotePlusLibrary.Core.IOC;
-using RemotePlusLibrary.FileTransfer.Service.PackageSystem;
 using RemotePlusLibrary.Security.AccountSystem;
 using RSPM;
 using RemotePlusLibrary.Extension.CommandSystem;
@@ -51,9 +50,7 @@ namespace DefaultServerCore
                            .UseParser<CommandParser>()
                            .UseExecutor<CommandExecutor>()
                            .AddCommandClass<DefaultCommands>()
-                           .AddCommandClass<PackageCommands>())
-                .UsePackageInventorySelector<StandordPackageInventorySelector>(builder =>
-                    builder.AddPackageInventory<FilePackage, StandordPackageInventory>("DefaultFileInventory"));
+                           .AddCommandClass<PackageCommands>());
             //Add the services.
             IServiceManager manager = IOCContainer.GetService<IServiceManager>();
             manager.AddServiceUsingBuilder(() =>

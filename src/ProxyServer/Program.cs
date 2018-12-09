@@ -24,7 +24,6 @@ namespace ProxyServer
         public static IRemotePlusService<ProxyServerRemoteImpl> ProxyService => DefaultServiceManager.GetService<ProxyServerRemoteImpl>();
         public static ScriptBuilder ScriptBuilder => IOCContainer.GetService<ScriptBuilder>();
         public static ExtensionLibraryCollectionBase<ProxyServer.ExtensionSystem.ProxyExtensionLibrary> DefaultCollection => IOCContainer.GetService<ExtensionLibraryCollectionBase<ExtensionSystem.ProxyExtensionLibrary>>();
-        public static RemotePlusLibrary.FileTransfer.Service.PackageSystem.IPackageInventorySelector DefaultPackageInventorySelector => IOCContainer.GetService<RemotePlusLibrary.FileTransfer.Service.PackageSystem.IPackageInventorySelector>();
 
         public NetworkSide ExecutingSide => NetworkSide.Server;
 

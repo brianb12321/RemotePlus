@@ -14,7 +14,6 @@ using RemotePlusLibrary.Scripting.ScriptPackageEngine;
 using System.Drawing;
 using BetterLogger;
 using RemotePlusLibrary.Core;
-using RemotePlusLibrary.FileTransfer.Service.PackageSystem;
 using System.Media;
 using System.Net;
 using RemotePlusLibrary.RequestSystem.DefaultRequestBuilders;
@@ -520,16 +519,6 @@ namespace RemotePlusServer.Core
         public CommandResponse playAudio(CommandRequest req, CommandPipeline pipe)
         {
             _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole($"Going to play audio file.");
-            ServerManager.DefaultPackageInventorySelector.GetInventory<FilePackage>("DefaultFileInventory").Receive(package =>
-            {
-                if(package.FileName.Contains("splash"))
-                {
-                    _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("I like swimming!");
-                }
-                _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole($"Now playing audio file. Name {package.FileName}");
-                SoundPlayer sp = new SoundPlayer(package.Data);
-                sp.PlaySync();
-            });
             var requestPathBuilder = new FileDialogRequestBuilder()
             {
                 Title = "Select audio file.",
@@ -539,6 +528,11 @@ namespace RemotePlusServer.Core
             if (path.AcquisitionState ==  RequestState.OK)
             {
                 _service.RemoteInterface.Client.ClientCallback.RequestInformation(new SendLocalFileByteStreamRequestBuilder(path.Data.ToString()));
+                var audio = _resourceManager.GetResource<MemoryResource>(new ResourceQuery(Path.GetFileName(path.Data.ToString()), Guid.Empty));
+                _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole($"Now playing audio file. Name {audio.FileName}");
+                SoundPlayer sp = new SoundPlayer(audio.Data);
+                sp.PlaySync();
+                _resourceManager.RemoveResource(audio.ResourceIdentifier);
             }
             return new CommandResponse((int)CommandStatus.Success);
         }

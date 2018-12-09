@@ -1,35 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO;
 using System.Runtime.Serialization;
 
 namespace RemotePlusLibrary.Extension.ResourceSystem.ResourceTypes
 {
     [DataContract]
-    public class FileResource : Resource
+    public class MemoryResource : Resource
     {
         [DataMember]
-        public string FilePath { get; set; }
+        public string FileName { get; set; }
         [IgnoreDataMember]
-        public FileStream FileStream { get; set; }
-        public FileResource(string id, string fp) : base(id)
+        public long Length { get; set; }
+        [IgnoreDataMember]
+        public Stream Data { get; set; } = new MemoryStream();
+        public MemoryResource(string id, string fn) : base(id)
         {
-            FilePath = fp;
-        }
-        public void Open()
-        {
-            FileStream = new FileStream(FilePath, FileMode.Open, FileAccess.ReadWrite);
+            FileName = fn;
         }
         public void Close()
         {
-            FileStream.Close();
+            Data.Close();
         }
         public override string ToString()
         {
-            return FilePath;
+            return FileName;
         }
     }
 }

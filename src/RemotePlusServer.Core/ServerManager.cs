@@ -5,7 +5,6 @@ using RemotePlusLibrary.Scripting;
 using RemotePlusServer.Core.ExtensionSystem;
 using System;
 using RemotePlusLibrary.Core.IOC;
-using RemotePlusLibrary.FileTransfer.Service.PackageSystem;
 using RemotePlusLibrary.Security.AccountSystem;
 using RemotePlusLibrary.Core.EventSystem;
 using RemotePlusLibrary.Configuration;
@@ -29,7 +28,6 @@ namespace RemotePlusServer.Core
         public static IAccountManager AccountManager => IOCContainer.GetService<IAccountManager>();
         public static Guid ServerGuid { get; set; }
         public static ScriptBuilder ScriptBuilder => IOCContainer.GetService<ScriptBuilder>();
-        public static IPackageInventorySelector DefaultPackageInventorySelector => IOCContainer.GetService<IPackageInventorySelector>();
         public static bool IsService { get; set; }
         public static IRemotePlusService<FileTransferServciceInterface> FileTransferService => DefaultServiceManager.GetService<FileTransferServciceInterface>();
         public static IEventBus EventBus => IOCContainer.GetService<IEventBus>();

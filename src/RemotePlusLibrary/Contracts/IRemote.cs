@@ -83,7 +83,7 @@ namespace RemotePlusLibrary.Contracts
         IDirectory GetRemoteFiles(string path, bool useRequest);
         [OperationContract]
         [FaultContract(typeof(ServerFault))]
-        void UploadBytesToPackageSystem(byte[] data, int length, string name);
+        void UploadBytesToResource(byte[] data, int length, string name);
         [OperationContract]
         [FaultContract(typeof(ServerFault))]
         [FaultContract(typeof(ProxyFault))]

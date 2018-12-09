@@ -11,5 +11,6 @@ namespace RemotePlusLibrary.Extension.ResourceSystem
         TResource GetResource<TResource>(ResourceQuery query) where TResource : Resource;
         void AddResource<TResource>(TResource resource) where TResource : Resource;
         IEnumerable<Resource> GetAllResources();
+        void RemoveResource(string resourceID);
     }
 }

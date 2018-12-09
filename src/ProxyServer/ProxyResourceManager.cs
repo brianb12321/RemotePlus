@@ -38,5 +38,10 @@ namespace ProxyServer
                 return null;
             }
         }
+
+        public void RemoveResource(string resourceID)
+        {
+            ProxyManager.ResourceStore.Remove(resourceID);
+        }
     }
 }

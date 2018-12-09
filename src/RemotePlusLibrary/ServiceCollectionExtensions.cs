@@ -5,7 +5,6 @@ using RemotePlusLibrary.Core.IOC;
 using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusLibrary.Core.EventSystem;
 using RemotePlusLibrary.ServiceArchitecture;
-using RemotePlusLibrary.FileTransfer.Service.PackageSystem;
 using RemotePlusLibrary.Extension.ExtensionLoader;
 using System.Collections.Generic;
 using System.ServiceModel.Dispatcher;
@@ -65,14 +64,6 @@ namespace RemotePlusLibrary
         public static IServiceCollection UseServerManager<TServerManager>(this IServiceCollection services) where TServerManager : IServiceManager
         {
             return services.AddSingleton<IServiceManager, TServerManager>();
-        }
-        public static IServiceCollection UsePackageInventorySelector<TPackageInventorySelector>(this IServiceCollection services, Action<PackageSelectorBuilder> builder)
-            where TPackageInventorySelector : IPackageInventorySelector, new()
-        {
-            var selectorInstance = new TPackageInventorySelector();
-            var output = services.AddSingleton<IPackageInventorySelector>(selectorInstance);
-            builder?.Invoke(new PackageSelectorBuilder(selectorInstance.PackageInventoryProvider));
-            return output;
         }
         public static IServiceCollection UseExtensionContainer<TContainerImpl, TLibrary>(this IServiceCollection services, ExtensionLibraryCollectionBase<TLibrary> container)
             where TContainerImpl : ExtensionLibraryCollectionBase<TLibrary>

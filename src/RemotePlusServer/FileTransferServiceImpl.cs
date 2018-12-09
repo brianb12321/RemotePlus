@@ -1,6 +1,8 @@
 ﻿using RemotePlusLibrary.Core;
+using RemotePlusLibrary.Core.IOC;
+using RemotePlusLibrary.Extension.ResourceSystem;
+using RemotePlusLibrary.Extension.ResourceSystem.ResourceTypes;
 using RemotePlusLibrary.FileTransfer.Service;
-using RemotePlusLibrary.FileTransfer.Service.PackageSystem;
 using RemotePlusServer.Core;
 using System;
 using System.Collections.Generic;
@@ -70,28 +72,22 @@ namespace RemotePlusServer
         }
         public void SendFile(RemoteFileInfo fileRequest)
         {
-            FilePackage file = new FilePackage();
-            file.FileName = fileRequest.FileName;
+            MemoryResource file = new MemoryResource(Path.GetFileNameWithoutExtension(fileRequest.FileName), fileRequest.FileName);
             file.Length = fileRequest.Length;
             file.Data = CopyData(fileRequest);
             file.Data.Seek(0, SeekOrigin.Begin);
-            ServerManager.DefaultPackageInventorySelector.AddRoute(package =>
-            {
-                ServerManager.DefaultPackageInventorySelector.GetInventory<FilePackage>("DefaultFileInventory").Dispatch((FilePackage)package);
-            });
-            ServerManager.DefaultPackageInventorySelector.Route(file);
+            IOCContainer.GetService<IResourceManager>().AddResource(file);
             fileRequest.Dispose();
         }
 
         public void SendFileUnrouted(RemoteFileInfo fileRequest)
         {
-            FilePackage file = new FilePackage();
+            MemoryResource file = new MemoryResource(Path.GetFileNameWithoutExtension(fileRequest.FileName), fileRequest.FileName);
             file.FileName = fileRequest.FileName;
             file.Length = fileRequest.Length;
-            file.PackageHeader = fileRequest.FileHeader;
             file.Data = CopyData(fileRequest);
             file.Data.Seek(0, SeekOrigin.Begin);
-            ServerManager.DefaultPackageInventorySelector.Route(file);
+            IOCContainer.GetService<IResourceManager>().AddResource(file);
             fileRequest.Dispose();
         }
 

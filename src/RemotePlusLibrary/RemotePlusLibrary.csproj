@@ -64,16 +64,6 @@
   <ItemGroup>
     <Compile Include="FileTransfer\Service\FileTransfer.cs" />
     <Compile Include="FileTransfer\Service\IFile.cs" />
-    <Compile Include="FileTransfer\Service\PackageSystem\BytePackage.cs" />
-    <Compile Include="FileTransfer\Service\PackageSystem\FilePackage.cs" />
-    <Compile Include="FileTransfer\Service\PackageSystem\IPackageInventory.cs" />
-    <Compile Include="FileTransfer\Service\PackageSystem\IPackageInventorySelector.cs" />
-    <Compile Include="FileTransfer\Service\PackageSystem\Package.cs" />
-    <Compile Include="FileTransfer\Service\PackageSystem\PackageListener.cs" />
-    <Compile Include="FileTransfer\Service\PackageSystem\PackageSelectorBuilder.cs" />
-    <Compile Include="FileTransfer\Service\PackageSystem\StandordPackageInventory.cs" />
-    <Compile Include="FileTransfer\Service\PackageSystem\StandordPackageInventorySelector.cs" />
-    <Compile Include="FileTransfer\Service\PackageSystem\StreamPackage.cs" />
     <Compile Include="GlobalServerBuilderExtensions.cs" />
     <Compile Include="RequestSystem\DefaultRequestBuilders\ConsoleMenuRequestBuilder.cs" />
     <Compile Include="RequestSystem\DefaultRequestBuilders\FileDialogRequestBuilder.cs" />
