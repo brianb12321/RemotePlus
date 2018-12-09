@@ -2,27 +2,28 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing
 {
-    public class TokenSet : IList<CommandToken>
+    public class ElementSet : IList<ICommandElement>
     {
-        List<CommandToken> _internalList;
+        List<ICommandElement> _internalList;
 
-        public TokenSet()
+        public ElementSet()
         {
-            _internalList = new List<CommandToken>();
+            _internalList = new List<ICommandElement>();
         }
 
-        public CommandToken this[int index] { get => _internalList[index]; set => _internalList[index] = value; }
+        public ICommandElement this[int index] { get => _internalList[index]; set => _internalList[index] = value; }
 
         public int Count => _internalList.Count;
 
         public bool IsReadOnly => false;
 
-        public void Add(CommandToken token)
+        public void Add(ICommandElement token)
         {
             _internalList.Add(token);
         }
@@ -32,32 +33,32 @@ namespace RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing
             _internalList.Clear();
         }
 
-        public bool Contains(CommandToken token)
+        public bool Contains(ICommandElement token)
         {
             return _internalList.Contains(token);
         }
 
-        public void CopyTo(CommandToken[] array, int arrayIndex)
+        public void CopyTo(ICommandElement[] array, int arrayIndex)
         {
             _internalList.CopyTo(array, arrayIndex);
         }
 
-        public IEnumerator<CommandToken> GetEnumerator()
+        public IEnumerator<ICommandElement> GetEnumerator()
         {
             return _internalList.GetEnumerator();
         }
 
-        public int IndexOf(CommandToken token)
+        public int IndexOf(ICommandElement token)
         {
             return _internalList.IndexOf(token);
         }
 
-        public void Insert(int index, CommandToken token)
+        public void Insert(int index, ICommandElement token)
         {
             _internalList.Insert(index, token);
         }
 
-        public bool Remove(CommandToken token)
+        public bool Remove(ICommandElement token)
         {
             return _internalList.Remove(token);
         }
@@ -71,15 +72,15 @@ namespace RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing
         {
             return _internalList.GetEnumerator();
         }
-        public CommandToken GetFlag(string flag)
+        public ICommandElement GetFlag(string flag)
         {
-            return _internalList.First((t) => t.Value == flag);
+            return _internalList.First((t) => t.Value.ToString() == flag);
         }
         public bool HasFlag(string flag)
         {
             try
             {
-                _internalList.First((t) => t.Value == flag);
+                _internalList.First((t) => t.Value.ToString() == flag);
                 return true;
             }
             catch

@@ -29,7 +29,7 @@ namespace RSPM
             {
                 IPackageManager manager = IOCContainer.GetService<IPackageManager>();
                 manager.LoadPackageSources();
-                manager.InstallPackage(req.Arguments[1].Value);
+                manager.InstallPackage(req.Arguments[1].Value.ToString());
                 return new CommandResponse((int)CommandStatus.Success);
             }
             catch (Exception ex)

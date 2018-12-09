@@ -6,9 +6,9 @@ namespace RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing
     public enum TokenType
     {
         [EnumMember]
-        Variable,
+        Resource,
         [EnumMember]
-        Command,
+        CommandElement,
         [EnumMember]
         QouteBody,
         [EnumMember]

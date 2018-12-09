@@ -50,17 +50,22 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClientSupportedTypes.cs" />
+    <Compile Include="CommandSystem\CommandClasses\CommandParser.cs" />
+    <Compile Include="CommandSystem\CommandClasses\Parsing\CommandElements\AggregateCommandElement.cs" />
+    <Compile Include="CommandSystem\CommandClasses\Parsing\CommandElements\PipelineCommandElement.cs" />
+    <Compile Include="CommandSystem\CommandClasses\Parsing\CommandElements\ResourceQueryCommandElement.cs" />
+    <Compile Include="CommandSystem\CommandClasses\Parsing\CommandElements\StringCommandElement.cs" />
+    <Compile Include="CommandSystem\CommandClasses\Parsing\ICommandElement.cs" />
     <Compile Include="CommandSystem\CommandClasses\Parsing\ICommandExecutor.cs" />
-    <Compile Include="CommandSystem\CommandClasses\Parsing\CommandParser.cs" />
+    <Compile Include="CommandSystem\CommandClasses\Parsing\CommandLexer.cs" />
     <Compile Include="CommandSystem\CommandClasses\CommandPipeline.cs" />
     <Compile Include="CommandSystem\CommandClasses\CommandRequest.cs" />
     <Compile Include="CommandSystem\CommandClasses\CommandResponse.cs" />
     <Compile Include="CommandSystem\CommandClasses\CommandRoutine.cs" />
     <Compile Include="CommandSystem\CommandClasses\Parsing\CommandToken.cs" />
+    <Compile Include="CommandSystem\CommandClasses\Parsing\ILexer.cs" />
     <Compile Include="CommandSystem\CommandClasses\Parsing\IParser.cs" />
-    <Compile Include="CommandSystem\CommandClasses\Parsing\ITokenProcessor.cs" />
     <Compile Include="CommandSystem\CommandClasses\Parsing\ParserException.cs" />
-    <Compile Include="CommandSystem\CommandClasses\Parsing\TokenProcessor.cs" />
     <Compile Include="CommandSystem\CommandClasses\Parsing\TokenSet.cs" />
     <Compile Include="CommandSystem\CommandClasses\Parsing\TokenType.cs" />
     <Compile Include="CommandSystem\CommandDescription.cs" />
@@ -102,6 +107,12 @@
     <Compile Include="ExtensionLoader\InvalidExtensionLibraryException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RequiresDependencyAttribute.cs" />
+    <Compile Include="ResourceSystem\IResourceManager.cs" />
+    <Compile Include="ResourceSystem\Resource.cs" />
+    <Compile Include="ResourceSystem\ResourceStore.cs" />
+    <Compile Include="ResourceSystem\ResourceQuery.cs" />
+    <Compile Include="ResourceSystem\ResourceTypes\FileResource.cs" />
+    <Compile Include="ResourceSystem\ResourceTypes\StringResource.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\RemotePlusLibrary.Configuration\RemotePlusLibrary.Configuration.csproj">

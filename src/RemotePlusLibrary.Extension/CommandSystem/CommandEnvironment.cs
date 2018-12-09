@@ -9,17 +9,16 @@ namespace RemotePlusLibrary.Extension.CommandSystem
 {
     public class CommandEnvironment : ICommandEnvironmnet
     {
-        public IParser Parser { get;private set; }
-
-        public ITokenProcessor Processor { get; private set; }
+        public ILexer Lexer { get;private set; }
 
         public ICommandExecutor Executor { get; private set; }
         public ICommandClassStore CommandClasses { get; }
+        public IParser Parser { get; }
 
-        public CommandEnvironment(IParser parser, ITokenProcessor processor, ICommandExecutor executor, ICommandClassStore commandClasses)
+        public CommandEnvironment(ILexer lexer, ICommandExecutor executor, ICommandClassStore commandClasses, IParser parser)
         {
+            Lexer = lexer;
             Parser = parser;
-            Processor = processor;
             Executor = executor;
             CommandClasses = commandClasses;
         }

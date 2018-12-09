@@ -27,7 +27,7 @@ namespace ProxyServer
         [CommandHelp("Switches the specified server into the active server.")]
         public CommandResponse switchServer(CommandRequest req, CommandPipeline pipe)
         {
-            if (int.TryParse(req.Arguments[1].Value, out int result))
+            if (int.TryParse(req.Arguments[1].Value.ToString(), out int result))
             {
                 _service.RemoteInterface.SelectServer(result);
                 return new CommandResponse((int)CommandStatus.Success);
@@ -55,7 +55,7 @@ namespace ProxyServer
             string helpString = string.Empty;
             if (req.Arguments.Count == 2)
             {
-                helpString = RemotePlusConsole.ShowHelpPage(_store.GetAllCommands(), req.Arguments[1].Value);
+                helpString = RemotePlusConsole.ShowHelpPage(_store.GetAllCommands(), req.Arguments[1].Value.ToString());
             }
             else
             {

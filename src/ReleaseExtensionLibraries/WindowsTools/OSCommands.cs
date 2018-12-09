@@ -28,7 +28,7 @@ namespace WindowsTools
         {
             try
             {
-                SendKeys.SendWait(args.Arguments[1].Value);
+                SendKeys.SendWait(args.Arguments[1].ToString());
                 ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole($"Key {args.Arguments[1]} sent to server.", BetterLogger.LogLevel.Info);
                 return new CommandResponse((int)CommandStatus.Success);
             }   
@@ -41,7 +41,7 @@ namespace WindowsTools
         [CommandHelp("Open the disk drive on the remote computer.")]
         public CommandResponse openDiskDrive(CommandRequest args, CommandPipeline pipe)
         {
-            Win32Wrapper.OpenDiskDrive(args.Arguments[1].Value, "");
+            Win32Wrapper.OpenDiskDrive(args.Arguments[1].ToString(), "");
             return new CommandResponse((int)CommandStatus.Success);
         }
         [CommandHelp("Lists all the installed drives on the system.")]
@@ -59,13 +59,13 @@ namespace WindowsTools
         [CommandHelp("Changes the mouse position to the specified coordinates")]
         public CommandResponse setMousePos(CommandRequest args, CommandPipeline pipe)
         {
-            Cursor.Position = new System.Drawing.Point(int.Parse(args.Arguments[1].Value), int.Parse(args.Arguments[2].Value));
+            Cursor.Position = new System.Drawing.Point(int.Parse(args.Arguments[1].ToString()), int.Parse(args.Arguments[2].ToString()));
             return new CommandResponse((int)CommandStatus.Success);
         }
         [CommandHelp("Blocks input for a certain amount of time.")]
         public CommandResponse blockInputI(CommandRequest args, CommandPipeline pipe)
         {
-            Win32Wrapper.BlockInputForInterval(int.Parse(args.Arguments[1].Value));
+            Win32Wrapper.BlockInputForInterval(int.Parse(args.Arguments[1].ToString()));
             return new CommandResponse((int)CommandStatus.Success);
         }
         [CommandHelp("Sets the server audio to a specific percentage.")]
@@ -78,7 +78,7 @@ namespace WindowsTools
             }
             else
             {
-                if(int.TryParse(args.Arguments[1].Value, out int percent))
+                if(int.TryParse(args.Arguments[1].ToString(), out int percent))
                 {
                     CoreAudioDevice defaultPlaybackDevice = new CoreAudioController().DefaultPlaybackDevice;
                     defaultPlaybackDevice.Volume = percent;
@@ -86,7 +86,7 @@ namespace WindowsTools
                 }
                 else
                 {
-                    ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText("Given value is invalid.") { TextColor = Color.Red });
+                    ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText("Given ToString() is invalid.") { TextColor = Color.Red });
                     return new CommandResponse((int)CommandStatus.Fail);
                 }
             }

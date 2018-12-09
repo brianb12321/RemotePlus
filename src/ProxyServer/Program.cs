@@ -12,11 +12,13 @@ using RemotePlusLibrary.Scripting;
 using RemotePlusLibrary.Extension.ExtensionLoader;
 using RemotePlusLibrary.ServiceArchitecture;
 using RemotePlusLibrary.Core;
+using RemotePlusLibrary.Extension.ResourceSystem;
 
 namespace ProxyServer
 {
     public class ProxyManager : IEnvironment
     {
+        public static ResourceStore ResourceStore = ResourceStore.New();
         public static Guid ProxyGuid { get; } = Guid.NewGuid();
         public static IServiceManager DefaultServiceManager => IOCContainer.GetService<IServiceManager>();
         public static IRemotePlusService<ProxyServerRemoteImpl> ProxyService => DefaultServiceManager.GetService<ProxyServerRemoteImpl>();

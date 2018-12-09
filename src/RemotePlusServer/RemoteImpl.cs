@@ -24,6 +24,7 @@ using BetterLogger;
 using RemotePlusLibrary.Core.EventSystem;
 using RemotePlusLibrary.Core.EventSystem.Events;
 using RemotePlusLibrary.Core.IOC;
+using RemotePlusLibrary.Extension.ResourceSystem;
 
 namespace RemotePlusServer
 {
@@ -470,6 +471,11 @@ namespace RemotePlusServer
                 ServerManager.DefaultPackageInventorySelector.GetInventory<FilePackage>("DefaultFileInventory").Dispatch((FilePackage)package);
             });
             ServerManager.DefaultPackageInventorySelector.Route(fp);
+        }
+
+        public Resource GetResource(string resourceIdentifier)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Speech.Synthesis;
 using System.Windows.Forms;
 using RemotePlusLibrary;
 using RemotePlusLibrary.Contracts;
+using RemotePlusLibrary.Extension.ResourceSystem;
 using RemotePlusLibrary.RequestSystem;
 using RemotePlusLibrary.RequestSystem.DefaultRequestBuilders;
 using RemotePlusLibrary.Scripting;
@@ -76,6 +77,11 @@ namespace RemotePlusServer.Core.Proxies
         public void SendSignal(SignalMessage signal)
         {
             throw new System.NotImplementedException();
+        }
+
+        public Resource GetResource(string resourceIdentifier)
+        {
+            return ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.GetResource(resourceIdentifier);
         }
     }
 }

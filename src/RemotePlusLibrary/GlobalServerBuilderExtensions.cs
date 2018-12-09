@@ -2,6 +2,7 @@
 using RemotePlusLibrary.Core;
 using RemotePlusLibrary.Core.IOC;
 using RemotePlusLibrary.Extension.CommandSystem;
+using RemotePlusLibrary.Extension.ResourceSystem;
 using RemotePlusLibrary.RequestSystem.DefaultRequestBuilders;
 using RemotePlusLibrary.RequestSystem.DefaultRequestBuilders.BaseBuilders;
 using RemotePlusLibrary.Security.AccountSystem;
@@ -32,8 +33,11 @@ namespace RemotePlusLibrary
             DefaultKnownTypeManager.LoadDefaultTypes();
             GlobalServices.Logger.Log("Adding UserAccount to known type list.", LogLevel.Debug);
             DefaultKnownTypeManager.AddType(typeof(UserAccount));
+            DefaultKnownTypeManager.AddType(typeof(ResourceQuery));
             InitializeKnownTypesByNamespace("RemotePlusLibrary.RequestSystem.DefaultRequestBuilders");
             InitializeKnownTypesByNamespace("RemotePlusLibrary.RequestSystem.DefaultRequestBuilders.BaseBuilders");
+            InitializeKnownTypesByNamespace("RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing.CommandElements");
+            InitializeKnownTypesByNamespace("RemotePlusLibrary.Extension.ResourceSystem.ResourceTypes");
         }
         private static void InitializeKnownTypesByNamespace(string name)
         {

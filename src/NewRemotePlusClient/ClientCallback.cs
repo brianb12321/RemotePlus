@@ -17,6 +17,7 @@ using System.ServiceModel;
 using System.Threading;
 using GalaSoft.MvvmLight.Messaging;
 using NewRemotePlusClient.Models;
+using RemotePlusLibrary.Extension.ResourceSystem;
 
 namespace NewRemotePlusClient
 {
@@ -42,6 +43,11 @@ namespace NewRemotePlusClient
         }
 
         public RemotePlusLibrary.Extension.CommandSystem.PromptBuilder GetCurrentPrompt()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Resource GetResource(string resourceIdentifier)
         {
             throw new NotImplementedException();
         }

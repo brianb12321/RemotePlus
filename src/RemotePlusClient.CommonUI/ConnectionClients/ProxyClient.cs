@@ -9,6 +9,7 @@ using RemotePlusLibrary.Configuration.ServerSettings;
 using RemotePlusLibrary.Discovery;
 using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
+using RemotePlusLibrary.Extension.ResourceSystem;
 using RemotePlusLibrary.FileTransfer.BrowserClasses;
 using RemotePlusLibrary.Scripting;
 using RemotePlusLibrary.Security.AccountSystem;
@@ -243,6 +244,11 @@ namespace RemotePlusClient.CommonUI.ConnectionClients
         public void UploadBytesToPackageSystem(byte[] data, int length, string name)
         {
             Channel.UploadBytesToPackageSystem(data, length, name);
+        }
+
+        public Resource GetResource(string resourceIdentifier)
+        {
+            return Channel.GetResource(resourceIdentifier);
         }
     }
 }

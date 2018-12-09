@@ -18,6 +18,7 @@ using RemotePlusLibrary.Security.Authentication;
 using RemotePlusLibrary.Contracts;
 using BetterLogger;
 using RemotePlusLibrary.Core;
+using RemotePlusLibrary.Extension.ResourceSystem;
 
 namespace RemotePlusClient
 {
@@ -213,6 +214,11 @@ namespace RemotePlusClient
         public void TellMessageToServerConsoleNoNewLine(Guid serverGuid, string Message)
         {
             MainF.ConsoleObj.AppendText(Message);
+        }
+
+        public Resource GetResource(string resourceIdentifier)
+        {
+            throw new NotImplementedException();
         }
         #endregion
 

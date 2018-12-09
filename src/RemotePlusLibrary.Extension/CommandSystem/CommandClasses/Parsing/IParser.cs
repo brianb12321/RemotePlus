@@ -6,20 +6,8 @@ using System.Threading.Tasks;
 
 namespace RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing
 {
-    /// <summary>
-    /// Represents a command parser. A parser a class that splits a command into pieces known as a token.
-    /// </summary>
     public interface IParser
     {
-        void ResetCommand(string command);
-        List<List<CommandToken>> ParsedTokens { get; set; }
-        List<List<CommandToken>> Parse(string command, bool prop);
-        List<List<CommandToken>> Parse(bool prop);
-        CommandToken[] GetSubRoutines();
-        CommandToken[] GetSubRoutines(List<List<CommandToken>> tokens);
-        CommandToken[] GetVariables();
-        CommandToken[] GetVariables(List<List<CommandToken>> tokens);
-        CommandToken[] GetQoutedToken();
-        CommandToken[] GetQoutedToken(List<List<CommandToken>> tokens);
+        List<ICommandElement> Parse(IReadOnlyList<CommandToken> tokens);
     }
 }

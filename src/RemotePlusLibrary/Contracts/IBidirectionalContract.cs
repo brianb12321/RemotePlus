@@ -1,4 +1,5 @@
 ﻿using RemotePlusLibrary.Core;
+using RemotePlusLibrary.Extension.ResourceSystem;
 using System;
 using System.Runtime.Serialization.Formatters;
 using System.ServiceModel;
@@ -36,5 +37,8 @@ namespace RemotePlusLibrary.Contracts
         [OperationContract]
         [FaultContract(typeof(ServerFault))]
         void SendSignal(SignalMessage signal);
+        [OperationContract]
+        [FaultContract(typeof(ServerFault))]
+        Resource GetResource(string resourceIdentifier);
     }
 }

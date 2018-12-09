@@ -133,17 +133,17 @@ namespace RemotePlusServer.Core
             GlobalServices.Logger.Log("File decrypted.", LogLevel.Info);
             Client.ClientCallback.TellMessage($"File decrypted. File: {fileName}", LogLevel.Info);
         }
-        public CommandPipeline RunServerCommand(string Command, CommandExecutionMode commandMode)
+        public CommandPipeline RunServerCommand(string command, CommandExecutionMode commandMode)
         {
             CommandPipeline pipe = new CommandPipeline();
             int pos = 0;
             //Makes sure that a script command won't be executed by a script, thus avoiding lots of trouble.
-            if (Command.StartsWith("::") && commandMode == CommandExecutionMode.Client)
+            if (command.StartsWith("::") && commandMode == CommandExecutionMode.Client)
             {
                 //This is script command.
                 try
                 {
-                    ServerManager.ScriptBuilder.ExecuteStringUsingSameScriptScope(Command.TrimStart(':'));
+                    ServerManager.ScriptBuilder.ExecuteStringUsingSameScriptScope(command.TrimStart(':'));
                 }
                 catch (Exception ex)
                 {
@@ -155,29 +155,18 @@ namespace RemotePlusServer.Core
                 try
                 {
                     ICommandEnvironmnet env = IOCContainer.GetService<ICommandEnvironmnet>();
+                    ILexer lexer = env.Lexer;
                     IParser parser = env.Parser;
-                    ITokenProcessor processor = env.Processor;
+                    //ITokenProcessor processor = env.Processor;
                     RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing.ICommandExecutor executor = env.Executor;
-                    parser.ResetCommand(Command);
-                    processor.ConfigureProcessor(ServerManager.ServerRemoteService.Variables, executor);
-                    var tokens = parser.Parse(true);
-                    var newTokens = processor.RunSubRoutines(parser, pipe, pos);
-                    ReplaceTokens(newTokens, parser);
-                    var newVariableTokens = processor.RunVariableReplacement(parser, out bool success);
-                    if (success != true)
-                    {
-                        return pipe;
-                    }
-                    ReplaceTokens(newVariableTokens, parser);
-                    var newQouteTokens = processor.ParseOutQoutes(parser);
-                    ReplaceTokens(newQouteTokens, parser);
+                    //processor.ConfigureProcessor(ServerManager.ServerRemoteService.Variables, executor);
+                    var tokens = lexer.Lex(command);
+                    var elements = parser.Parse(tokens);
+                    //var newTokens = processor.RunSubRoutines(lexer, pipe, pos);
                     //Run the commands
-                    foreach (List<CommandToken> commands in parser.ParsedTokens)
-                    {
-                        var request = new CommandRequest(commands.ToArray());
-                        var routine = new CommandRoutine(request, executor.Execute(request, CommandExecutionMode.Client, pipe));
-                        pipe.Add(pos++, routine);
-                    }
+                    var request = new CommandRequest(elements.ToArray());
+                    var routine = new CommandRoutine(request, executor.Execute(request, CommandExecutionMode.Client, pipe));
+                    pipe.Add(pos++, routine);
                 }
                 catch (ParserException e)
                 {
@@ -188,20 +177,6 @@ namespace RemotePlusServer.Core
                 }
             }
             return pipe;
-        }
-        void ReplaceTokens(IEnumerable<CommandToken> tokens, IParser parser)
-        {
-            foreach (CommandToken token in tokens)
-            {
-                foreach (List<CommandToken> allTokens in parser.ParsedTokens)
-                {
-                    var index = allTokens.IndexOf(token);
-                    if (index != -1)
-                    {
-                        parser.ParsedTokens[parser.ParsedTokens.IndexOf(allTokens)][index] = token;
-                    }
-                }
-            }
         }
     }
 }

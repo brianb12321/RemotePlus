@@ -26,7 +26,7 @@ namespace RemotePlusClientCmd
             string helpString = string.Empty;
             if (args.Arguments.Count == 2)
             {
-                helpString = RemotePlusConsole.ShowHelpPage(LocalCommands, args.Arguments[1].Value);
+                helpString = RemotePlusConsole.ShowHelpPage(LocalCommands, args.Arguments[1].ToString());
             }
             else
             {
@@ -66,7 +66,7 @@ namespace RemotePlusClientCmd
             try
             {
                 GlobalServices.Logger.Log($"Loading extension library. {args.Arguments[1]}", LogLevel.Info);
-                ClientCmdManager.ExtensionLibraries.LoadExtension(args.Arguments[1].Value, new ClientInitEnvironment(false));
+                ClientCmdManager.ExtensionLibraries.LoadExtension(args.Arguments[1].ToString(), new ClientInitEnvironment(false));
                 GlobalServices.Logger.Log("Finished.", LogLevel.Info);
                 return new CommandResponse((int)CommandStatus.Success);
             }
@@ -79,7 +79,7 @@ namespace RemotePlusClientCmd
         [CommandHelp("loads a specified script file.")]
         public CommandResponse loadScriptFIle(CommandRequest args, CommandPipeline pipe)
         {
-            bool success = ClientCmdManager.Remote.ExecuteScript(File.ReadAllText(args.Arguments[1].Value));
+            bool success = ClientCmdManager.Remote.ExecuteScript(File.ReadAllText(args.Arguments[1].ToString()));
             return (success == true ? new CommandResponse((int)CommandStatus.Success) : new CommandResponse((int)CommandStatus.Fail));
         }
     }

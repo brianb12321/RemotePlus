@@ -5,7 +5,7 @@ using RemotePlusClient.CommonUI;
 using System.Windows.Forms;
 using RemotePlusLibrary.Extension.CommandSystem;
 using System.Speech.Synthesis;
-using System.Media;                             
+using System.Media;
 using System.Diagnostics;
 using RemotePlusLibrary.Security.AccountSystem;
 using System.Threading;
@@ -15,6 +15,7 @@ using RemotePlusLibrary.Security.Authentication;
 using RemotePlusLibrary.Client;
 using RemotePlusLibrary.Core;
 using BetterLogger;
+using RemotePlusLibrary.Extension.ResourceSystem;
 
 namespace RemotePlusClientCmd
 {
@@ -45,6 +46,11 @@ namespace RemotePlusClientCmd
         public RemotePlusLibrary.Extension.CommandSystem.PromptBuilder GetCurrentPrompt()
         {
             return ClientCmdManager.prompt;
+        }
+
+        public Resource GetResource(string resourceIdentifier)
+        {
+            throw new NotImplementedException();
         }
 
         public void PlaySound(string FileName)

@@ -45,10 +45,6 @@ namespace RemotePlusLibrary.ServiceArchitecture
         /// Provides access to remote operations and variables.
         /// </summary>
         TRemoteInterface RemoteInterface { get; set; }
-        /// <summary>
-        /// The variables that are defined on the server.
-        /// </summary>
-        VariableManager Variables { get; set; }
         void BuildHost();
         void AddEndpoint<TEndpoint>(TEndpoint endpoint, Binding binding, string endpointName, Action<TEndpoint> setupCallback);
         void Start();

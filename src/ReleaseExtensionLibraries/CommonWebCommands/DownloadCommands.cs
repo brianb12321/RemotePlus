@@ -21,7 +21,7 @@ namespace CommonWebCommands
             WebClient client = new WebClient();
             try
             {
-                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(client.DownloadString(args.Arguments[1].Value));
+                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(client.DownloadString(args.Arguments[1].ToString()));
                 return new CommandResponse((int)CommandStatus.Success);
             }
             catch (Exception ex)

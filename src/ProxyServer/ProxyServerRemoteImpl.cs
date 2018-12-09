@@ -25,6 +25,7 @@ using RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing;
 using BetterLogger;
 using RemotePlusLibrary.Core.IOC;
 using RemotePlusLibrary.RequestSystem.DefaultRequestBuilders;
+using RemotePlusLibrary.Extension.ResourceSystem;
 
 namespace ProxyServer
 {
@@ -396,35 +397,21 @@ namespace ProxyServer
                 try
                 {
                     ICommandEnvironmnet env = IOCContainer.GetService<ICommandEnvironmnet>();
+                    ILexer lexer = env.Lexer;
                     IParser parser = env.Parser;
-                    ITokenProcessor processor = env.Processor;
                     RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing.ICommandExecutor executor = env.Executor;
-                    processor.ConfigureProcessor(ProxyManager.ProxyService.Variables, executor);
                     try
                     {
-                        parser.ResetCommand(command);
-                        var tokens = parser.Parse(true);
-                        var newTokens = processor.RunSubRoutines(parser, pipe, pos);
-                        ReplaceTokens(newTokens, parser);
-                        var newVariableTokens = processor.RunVariableReplacement(parser, out bool success);
-                        if (!success)
-                        {
-                            return pipe;
-                        }
-                        ReplaceTokens(newVariableTokens, parser);
-                        var newQouteTokens = processor.ParseOutQoutes(parser);
-                        ReplaceTokens(newQouteTokens, parser);
+                        var tokens = lexer.Lex(command);
+                        var elements = parser.Parse(tokens);
                         //Run the commands
-                        foreach (List<CommandToken> commands in parser.ParsedTokens)
+                        var request = new CommandRequest(elements.ToArray());
+                        var routine = new CommandRoutine(request, executor.Execute(request, mode, pipe));
+                        if (routine.Output.ResponseCode == 3131)
                         {
-                            var request = new CommandRequest(commands.ToArray());
-                            var routine = new CommandRoutine(request, executor.Execute(request, mode, pipe));
-                            if (routine.Output.ResponseCode == 3131)
-                            {
-                                RunServerCommand(command, CommandExecutionMode.Client);
-                            }
-                            pipe.Add(pos++, routine);
+                            RunServerCommand(command, CommandExecutionMode.Client);
                         }
+                        pipe.Add(pos++, routine);
                     }
                     catch (ParserException e)
                     {
@@ -441,20 +428,6 @@ namespace ProxyServer
                 }
             }
             return pipe;
-        }
-        void ReplaceTokens(IEnumerable<CommandToken> tokens, IParser parser)
-        {
-            foreach (CommandToken token in tokens)
-            {
-                foreach (List<CommandToken> allTokens in parser.ParsedTokens)
-                {
-                    var index = allTokens.IndexOf(token);
-                    if (index != -1)
-                    {
-                        parser.ParsedTokens[parser.ParsedTokens.IndexOf(allTokens)][index] = token;
-                    }
-                }
-            }
         }
         #endregion
         public void Leave(Guid serverGuid)
@@ -501,6 +474,11 @@ namespace ProxyServer
         public void UploadBytesToPackageSystem(byte[] data, int length, string name)
         {
             SelectedClient.ClientCallback.UploadBytesToPackageSystem(data, length, name);
+        }
+
+        public Resource GetResource(string resourceIdentifier)
+        {
+            return ProxyManager.ResourceStore[resourceIdentifier];
         }
     }
 }

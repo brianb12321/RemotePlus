@@ -20,6 +20,8 @@ using System.Speech.Synthesis;
 using System.Reflection;
 using RemotePlusLibrary.RequestSystem.DefaultRequestBuilders;
 using RemotePlusLibrary.ServiceArchitecture;
+using RemotePlusLibrary.Extension.ResourceSystem;
+using RemotePlusLibrary.Extension.ResourceSystem.ResourceTypes;
 
 namespace RemotePlusServer.Core.ServerCore
 {
@@ -130,19 +132,8 @@ namespace RemotePlusServer.Core.ServerCore
         {
             return builder.AddTask(() =>
             {
-                if (File.Exists("Variables.xml"))
-                {
-                    GlobalServices.Logger.Log("Loading variables.", LogLevel.Info);
-                    ServerManager.ServerRemoteService.Variables = VariableManager.Load();
-                }
-                else
-                {
-                    GlobalServices.Logger.Log("There is no variable file. Beginning variable initialization.", LogLevel.Warning);
-                    ServerManager.ServerRemoteService.Variables = VariableManager.New();
-                    ServerManager.ServerRemoteService.Variables.Add("Name", "RemotePlusServer");
-                    GlobalServices.Logger.Log("Saving file.", LogLevel.Info);
-                    ServerManager.ServerRemoteService.Variables.Save();
-                }
+                IResourceManager resourceManager = IOCContainer.GetService<IResourceManager>();
+                resourceManager.AddResource(new StringResource("Name", "RemotePlusServer"));
             });
         }
         /// <summary>

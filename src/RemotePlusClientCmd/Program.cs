@@ -217,21 +217,10 @@ namespace RemotePlusClientCmd
                     {
                         int pos = 0;
                         CommandPipeline pipe = new CommandPipeline();
-                        CommandParser parser = new CommandParser();
-                        parser.ResetCommand(c);
-                        var tokens = parser.Parse(true);
-                        var newTokens = RunSubRoutines(parser, pipe, pos);
-                        foreach (CommandToken token in newTokens)
-                        {
-                            foreach (List<CommandToken> allTokens in parser.ParsedTokens)
-                            {
-                                var index = allTokens.IndexOf(token);
-                                if (index != -1)
-                                {
-                                    parser.ParsedTokens[parser.ParsedTokens.IndexOf(allTokens)][index] = token;
-                                }
-                            }
-                        }
+                        CommandLexer lexer = new CommandLexer();
+                        CommandParser parser = new CommandParser(null);
+                        var tokens = lexer.Lex(c);
+                        var elements = parser.Parse(tokens);
                         //var newVariableTokens = RunVariableReplacement(parser, out bool success);
                         //if (success != true)
                         //{
@@ -250,12 +239,9 @@ namespace RemotePlusClientCmd
                         //}
 
                         //Run the commands
-                        foreach (List<CommandToken> commands in parser.ParsedTokens)
-                        {
-                            var request = new CommandRequest(commands.ToArray());
-                            var routine = new CommandRoutine(request, RunLocalCommand(request, CommandExecutionMode.Client, pipe));
-                            pipe.Add(pos++, routine);
-                        }
+                        var request = new CommandRequest(elements.ToArray());
+                        var routine = new CommandRoutine(request, RunLocalCommand(request, CommandExecutionMode.Client, pipe));
+                        pipe.Add(pos++, routine);
                     }
                     else
                     {
@@ -299,23 +285,6 @@ namespace RemotePlusClientCmd
         //    }
         //    return tokenList.ToArray();
         //}
-
-        private IEnumerable<CommandToken> RunSubRoutines(CommandParser p, CommandPipeline pipe, int position)
-        {
-            foreach (CommandToken routineToken in p.GetSubRoutines())
-            {
-                var commandToExecute = Regex.Match(routineToken.OriginalValue, CommandToken.SUBROUTINE_PATTERN).Groups[1].Value;
-                var parsedCommand = p.Parse(commandToExecute, false);
-                foreach (List<CommandToken> allCommands in parsedCommand)
-                {
-                    var request = new CommandRequest(allCommands.ToArray());
-                    var routine = new CommandRoutine(request, RunLocalCommand(request, CommandExecutionMode.Client, pipe));
-                    routineToken.Value = routine.Output.CustomStatusMessage;
-                    position++;
-                }
-                yield return routineToken;
-            }
-        }
 
         private void WritePrompt()
         {
@@ -411,7 +380,7 @@ namespace RemotePlusClientCmd
                 bool FoundCommand = false;
                 foreach (KeyValuePair<string, CommandDelegate> k in LocalCommands)
                 {
-                    if (request.Arguments[0].Value == k.Key)
+                    if (request.Arguments[0].Value.ToString() == k.Key)
                     {
                         var ba = RemotePlusConsole.GetCommandBehavior(k.Value);
                         if (ba != null)

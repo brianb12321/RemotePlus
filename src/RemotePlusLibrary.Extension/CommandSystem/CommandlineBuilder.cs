@@ -20,9 +20,9 @@ namespace RemotePlusLibrary.Extension.CommandSystem
             _services.AddTransient<IParser, TParserImpl>();
             return this;
         }
-        public CommandlineBuilder UseProcessor<TProcessorImpl>() where TProcessorImpl : ITokenProcessor
+        public CommandlineBuilder UseLexer<TLexerImpl>() where TLexerImpl : ILexer
         {
-            _services.AddTransient<ITokenProcessor, TProcessorImpl>();
+            _services.AddTransient<ILexer, TLexerImpl>();
             return this;
         }
         public CommandlineBuilder UseExecutor<TExecuotorImpl>() where TExecuotorImpl : ICommandExecutor

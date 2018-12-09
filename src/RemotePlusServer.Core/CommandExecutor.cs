@@ -28,13 +28,13 @@ namespace RemotePlusServer.Core
             try
             {
                 _logger.Log($"Executing server command {arguments.Arguments[0]}", LogLevel.Info);
-                if (!_store.HasCommand(arguments.Arguments[0].Value))
+                if (!_store.HasCommand(arguments.Arguments[0].Value.ToString()))
                 {
                     _logger.Log("Failed to find the command.", LogLevel.Debug);
                     ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText("Unknown command. Please type {help} for a list of commands") { TextColor = Color.Red });
                     return new CommandResponse((int)CommandStatus.Fail);
                 }
-                var command = _store.GetCommand(arguments.Arguments[0].Value);
+                var command = _store.GetCommand(arguments.Arguments[0].Value.ToString());
                 var ba = RemotePlusConsole.GetCommandBehavior(command);
                 if (ba != null)
                 {

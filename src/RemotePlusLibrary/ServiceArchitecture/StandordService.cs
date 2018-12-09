@@ -16,7 +16,6 @@ namespace RemotePlusLibrary.ServiceArchitecture
         private string _address;
         private object _singleTon;
         public Dictionary<string, CommandDelegate> Commands { get; set; } = new Dictionary<string, CommandDelegate>();
-        public VariableManager Variables { get; set; }
         public TInterface RemoteInterface { get; set; }
         public List<IServiceBehavior> Behaviors { get; } = new List<IServiceBehavior>();
 

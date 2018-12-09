@@ -4,6 +4,7 @@ using RemotePlusLibrary.Client;
 using RemotePlusLibrary.Contracts;
 using RemotePlusLibrary.Discovery;
 using RemotePlusLibrary.Extension.CommandSystem;
+using RemotePlusLibrary.Extension.ResourceSystem;
 using RemotePlusLibrary.RequestSystem;
 using RemotePlusLibrary.Security.AccountSystem;
 using RemotePlusLibrary.Security.Authentication;
@@ -13,7 +14,7 @@ using System.Windows.Forms;
 
 namespace RemotePlusServer
 {
-    public class RemoteClient : IClient
+    public class RemoteClient : IClient, IBidirectionalContract
     {
         bool useProxy = false;
         IProxyServerRemote proxyChannel = null;
@@ -269,6 +270,18 @@ namespace RemotePlusServer
             else
             {
                 c.TellMessageToServerConsole(Server, text);
+            }
+        }
+
+        public Resource GetResource(string resourceIdentifier)
+        {
+            if (useProxy)
+            {
+                return proxyChannel.GetResource(resourceIdentifier);
+            }
+            else
+            {
+                return c.GetResource(resourceIdentifier);
             }
         }
     }

@@ -26,12 +26,12 @@ namespace ProxyServer
             try
             {
                 _logger.Log($"Executing server command {arguments.Arguments[0]}", LogLevel.Info);
-                if(!_store.HasCommand(arguments.Arguments[0].Value))
+                if(!_store.HasCommand(arguments.Arguments[0].Value.ToString()))
                 {
                     _logger.Log($"Failed to find the command. Passing command to selected server [{ProxyManager.ProxyService.RemoteInterface.SelectedClient.UniqueID}]", LogLevel.Debug);
                     return new CommandResponse(3131);
                 }
-                var command = _store.GetCommand(arguments.Arguments[0].Value);
+                var command = _store.GetCommand(arguments.Arguments[0].Value.ToString());
                 var ba = RemotePlusConsole.GetCommandBehavior(command);
                 if (ba != null)
                 {

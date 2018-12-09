@@ -17,6 +17,7 @@ using RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing;
 using RemotePlusLibrary.Core.EventSystem;
 using RemotePlusLibrary.Core;
 using RemotePlusServer.Core.ExtensionSystem;
+using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
 
 namespace DefaultServerCore
 {
@@ -35,6 +36,7 @@ namespace DefaultServerCore
                 });
             });
             services.UseServerManager<DefaultServiceManager>()
+                .UseResourceManager<ResourceManager>()
                 .UseErrorHandler<GlobalErrorHandler>()
                 .UseExtensionContainer<ServerExtensionLibraryCollection, ServerExtensionLibrary>(new ServerExtensionLibraryCollection())
                 .UseServerControlPage<ServerControls>()
@@ -45,8 +47,8 @@ namespace DefaultServerCore
                 .UsePackageManager<DefaultPackageManager>()
                 .UseEventBus<EventBus>()
                 .UseCommandline<CommandEnvironment>(builder =>
-                    builder.UseParser<CommandParser>()
-                           .UseProcessor<TokenProcessor>()
+                    builder.UseLexer<CommandLexer>()
+                           .UseParser<CommandParser>()
                            .UseExecutor<CommandExecutor>()
                            .AddCommandClass<DefaultCommands>()
                            .AddCommandClass<PackageCommands>())

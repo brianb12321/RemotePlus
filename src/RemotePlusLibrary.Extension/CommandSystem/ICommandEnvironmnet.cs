@@ -12,8 +12,8 @@ namespace RemotePlusLibrary.Extension.CommandSystem
     /// </summary>
     public interface ICommandEnvironmnet
     {
+        ILexer Lexer { get; }
         IParser Parser { get; }
-        ITokenProcessor Processor { get; }
         ICommandExecutor Executor { get; }
         ICommandClassStore CommandClasses { get; }
     }
