@@ -250,5 +250,10 @@ namespace RemotePlusClient.CommonUI.ConnectionClients
         {
             return Channel.GetResource(resourceIdentifier);
         }
+
+        public bool ExecuteProxyScript(string script)
+        {
+            return Channel.ExecuteProxyScript(script);
+        }
     }
 }

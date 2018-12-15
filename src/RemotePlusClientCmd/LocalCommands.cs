@@ -79,6 +79,7 @@ namespace RemotePlusClientCmd
         [CommandHelp("loads a specified script file.")]
         public CommandResponse loadScriptFIle(CommandRequest args, CommandPipeline pipe)
         {
+            if (ClientCmdManager.Proxy != null) ClientCmdManager.Proxy.ExecuteProxyScript(File.ReadAllText(args.Arguments[1].ToString()));
             bool success = ClientCmdManager.Remote.ExecuteScript(File.ReadAllText(args.Arguments[1].ToString()));
             return (success == true ? new CommandResponse((int)CommandStatus.Success) : new CommandResponse((int)CommandStatus.Fail));
         }

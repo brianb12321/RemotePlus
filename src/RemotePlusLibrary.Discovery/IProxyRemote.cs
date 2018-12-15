@@ -12,6 +12,8 @@ namespace RemotePlusLibrary.Discovery
     [ServiceKnownType("GetKnownTypes", typeof(DefaultKnownTypeManager))]
     public interface IProxyRemote : IRemote
     {
+        [OperationContract]
+        bool ExecuteProxyScript(string script);
         [OperationContract(Name = "SelectServerByNumber")]
         void SelectServer(int serverPosition);
         [OperationContract(Name = "SelectServerByGuid")]

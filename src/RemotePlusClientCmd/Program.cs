@@ -30,7 +30,7 @@ namespace RemotePlusClientCmd
         public static ClientExtensionLibraryCollection ExtensionLibraries { get; set; } = new ClientExtensionLibraryCollection();
         public static ServiceClient Remote = null;
         public static PromptBuilder prompt = new PromptBuilder();
-        public ProxyClient Proxy = null;
+        public static ProxyClient Proxy = null;
         public Connection CurrentConnectionData => IOCContainer.GetService<Connection>();
         public IEventBus EventBus => IOCContainer.GetService<IEventBus>();
         public static bool WaitFlag = true;

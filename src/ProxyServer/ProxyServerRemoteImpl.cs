@@ -480,5 +480,10 @@ namespace ProxyServer
         {
             return ProxyManager.ResourceStore[resourceIdentifier];
         }
+
+        public bool ExecuteProxyScript(string script)
+        {
+            return ProxyManager.ScriptBuilder.ExecuteString(script);
+        }
     }
 }
