@@ -1,17 +1,28 @@
 ﻿using RemotePlusLibrary.Extension.ResourceSystem;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace RemotePlusServer.Core
 {
-    public class ResourceManager : IResourceManager
+    public class RemotePlusResourceManager : IResourceManager
     {
         ResourceStore _store = ResourceStore.New();
+        IResourceLoader _loader;
+        public RemotePlusResourceManager(IResourceLoader loader)
+        {
+            _loader = loader;
+        }
         public void AddResource<TResource>(TResource resource) where TResource : Resource
         {
+            if(_store.ContainsKey(resource.ResourceIdentifier))
+            {
+                return;
+            }
             _store.Add(resource.ResourceIdentifier, resource);
         }
 
@@ -39,9 +50,19 @@ namespace RemotePlusServer.Core
             }
         }
 
+        public void Load()
+        {
+            _store = _loader.Load();
+        }
+
         public void RemoveResource(string resourceID)
         {
             _store.Remove(resourceID);
+        }
+
+        public void Save()
+        {
+            _loader.Save(_store);
         }
     }
 }

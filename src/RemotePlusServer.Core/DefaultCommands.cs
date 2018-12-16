@@ -64,39 +64,80 @@ namespace RemotePlusServer.Core
         }
         [CommandHelp("Manages variables on the server.")]
         [HelpPage("vars.txt", Source = HelpSourceType.File)]
-        public CommandResponse vars(CommandRequest args, CommandPipeline pipe)
+        public CommandResponse resex(CommandRequest args, CommandPipeline pipe)
         {
             if (args.Arguments.Count >= 2)
             {
-                if (args.Arguments[1].Value.ToString().ToString() == "new")
+                switch(args.Arguments[1].Value.ToString())
                 {
-                    if (args.Arguments.Count >= 4)
-                    {
-                        _resourceManager.AddResource(new StringResource(args.Arguments[2].Value.ToString(), args.Arguments[3].Value.ToString()));
-                        _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole($"Variable {args.Arguments[2]} added.");
+                    case "new":
+                        if (args.Arguments.Count >= 3)
+                        {
+                            switch (args.Arguments[2].ToString())
+                            {
+                                case "string":
+                                    _resourceManager.AddResource(new StringResource(args.Arguments[3].Value.ToString(), args.Arguments[4].Value.ToString()));
+                                    _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole($"Variable {args.Arguments[3]} added.");
+                                    return new CommandResponse((int)CommandStatus.Success);
+                                case "fileByte":
+                                    ReturnData result = _service.RemoteInterface.Client.ClientCallback.RequestInformation(new FileDialogRequestBuilder()
+                                    {
+                                        Title = "Select file to upload as resource."
+                                    });
+                                    if(result.AcquisitionState == RequestState.OK)
+                                    {
+                                        _service.RemoteInterface.Client.ClientCallback.RequestInformation(new SendLocalFileByteStreamRequestBuilder(args.Arguments[3].ToString(), result.Data.ToString()));
+                                        _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Resource created.");
+                                        return new CommandResponse((int)CommandStatus.Success);
+                                    }
+                                    else
+                                    {
+                                        _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Action canceled.");
+                                        return new CommandResponse((int)CommandStatus.Success);
+                                    }
+                                case "filePointer":
+                                    ReturnData result2 = _service.RemoteInterface.Client.ClientCallback.RequestInformation(new FileDialogRequestBuilder()
+                                    {
+                                        Title = "Select file to upload as resource."
+                                    });
+                                    if (result2.AcquisitionState == RequestState.OK)
+                                    {
+                                        _resourceManager.AddResource<FilePointerResource>(new FilePointerResource(result2.Data.ToString(), args.Arguments[3].Value.ToString()));
+                                        _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Resource created.");
+                                        return new CommandResponse((int)CommandStatus.Success);
+                                    }
+                                    else
+                                    {
+                                        _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Action canceled.");
+                                        return new CommandResponse((int)CommandStatus.Success);
+                                    }
+                                    break;
+                                default:
+                                    _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText("Invalid resource type expected." ) { TextColor = Color.Red });
+                                    return new CommandResponse((int)CommandStatus.Fail);
+                            }
+                        }
+                        else
+                        {
+                            _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText("You must provide a reosurce name") { TextColor = Color.Red });
+                            return new CommandResponse((int)CommandStatus.Fail);
+                        }
+                    case "view":
+                        StringBuilder sb = new StringBuilder();
+                        sb.AppendLine();
+                        foreach (Resource r in _resourceManager.GetAllResources())
+                        {
+                            sb.AppendLine($"{r.ResourceIdentifier}\t{r.ToString()}");
+                        }
+                        _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(sb.ToString());
                         return new CommandResponse((int)CommandStatus.Success);
-                    }
-                    else
-                    {
-                        _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText("You must provide a Value.") { TextColor = Color.Red});
+                    case "save":
+                        _resourceManager.Save();
+                        _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Resource saved");
+                        return new CommandResponse((int)CommandStatus.Success);
+                    default:
+                        _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText("Invalid action.") { TextColor = Color.Red });
                         return new CommandResponse((int)CommandStatus.Fail);
-                    }
-                }
-                else if (args.Arguments[1].Value.ToString() == "view")
-                {
-                    StringBuilder sb = new StringBuilder();
-                    sb.AppendLine();
-                    foreach (Resource r in _resourceManager.GetAllResources())
-                    {
-                        sb.AppendLine($"{r.ResourceIdentifier}\t{r.ToString()}");
-                    }
-                    _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(sb.ToString());
-                    return new CommandResponse((int)CommandStatus.Success);
-                }
-                else
-                {
-                    _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText("Invalid action." ){TextColor = Color.Red });
-                    return new CommandResponse((int)CommandStatus.Fail);
                 }
             }
             else
@@ -518,22 +559,38 @@ namespace RemotePlusServer.Core
         [CommandHelp("Plays an audio file sent by the client.")]
         public CommandResponse playAudio(CommandRequest req, CommandPipeline pipe)
         {
+            bool removeResource = true;
+            ResourceQuery query = null;
+            if(req.Arguments.Count >= 2 && req.Arguments[1].IsOfType<ResourceQuery>())
+            {
+                query = (ResourceQuery)req.Arguments[1].Value;
+                removeResource = false;
+            }
+            else
+            {
+                var requestPathBuilder = new FileDialogRequestBuilder()
+                {
+                    Title = "Select audio file.",
+                    Filter = "Wav File (*.wav)|*.wav"
+                };
+                var path = _service.RemoteInterface.Client.ClientCallback.RequestInformation(requestPathBuilder);
+                if (path.AcquisitionState == RequestState.OK)
+                {
+                    _service.RemoteInterface.Client.ClientCallback.RequestInformation(new SendLocalFileByteStreamRequestBuilder(path.Data.ToString(), path.Data.ToString()));
+                    query = new ResourceQuery(Path.GetFileName(path.Data.ToString()), Guid.Empty);
+                }
+            }
             _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole($"Going to play audio file.");
-            var requestPathBuilder = new FileDialogRequestBuilder()
+            var audio = _resourceManager.GetResource<StreamResource>(query);
+            _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole($"Now playing audio file. Name {audio.FileName}");
+            audio.Open();
+            SoundPlayer sp = new SoundPlayer(audio.Data);
+            sp.PlaySync();
+            if(removeResource)
             {
-                Title = "Select audio file.",
-                Filter = "Wav File (*.wav)|*.wav"
-            };
-            var path = _service.RemoteInterface.Client.ClientCallback.RequestInformation(requestPathBuilder);
-            if (path.AcquisitionState ==  RequestState.OK)
-            {
-                _service.RemoteInterface.Client.ClientCallback.RequestInformation(new SendLocalFileByteStreamRequestBuilder(path.Data.ToString()));
-                var audio = _resourceManager.GetResource<MemoryResource>(new ResourceQuery(Path.GetFileName(path.Data.ToString()), Guid.Empty));
-                _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole($"Now playing audio file. Name {audio.FileName}");
-                SoundPlayer sp = new SoundPlayer(audio.Data);
-                sp.PlaySync();
                 _resourceManager.RemoveResource(audio.ResourceIdentifier);
             }
+            audio.Close();
             return new CommandResponse((int)CommandStatus.Success);
         }
 #endregion Commands
@@ -542,7 +599,7 @@ namespace RemotePlusServer.Core
         {
             Commands.Add("help", Help);
             Commands.Add("logs", Logs);
-            Commands.Add("vars", vars);
+            Commands.Add("resex", resex);
             Commands.Add("dateTime", dateTime);
             Commands.Add("processes", processes);
             Commands.Add("version", version);

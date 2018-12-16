@@ -11,9 +11,12 @@ namespace RemotePlusLibrary.RequestSystem.DefaultRequestBuilders
     [DataContract]
     public class SendLocalFileByteStreamRequestBuilder : FileRequestBuilder
     {
-        public SendLocalFileByteStreamRequestBuilder(string fileName) : base("global_sendByteStreamFilePackage")
+        [DataMember]
+        public string FriendlyName { get; set; }
+        public SendLocalFileByteStreamRequestBuilder(string friendlyName, string fileName) : base("global_sendByteStreamFilePackage")
         {
             FileName = fileName;
+            FriendlyName = friendlyName;
         }
     }
 }

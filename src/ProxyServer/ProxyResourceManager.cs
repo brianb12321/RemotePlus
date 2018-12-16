@@ -9,8 +9,17 @@ namespace ProxyServer
 {
     public class ProxyResourceManager : IResourceManager
     {
+        private IResourceLoader _loader;
+        public ProxyResourceManager(IResourceLoader loader)
+        {
+            _loader = loader;
+        }
         public void AddResource<TResource>(TResource resource) where TResource : Resource
         {
+            if (ProxyManager.ResourceStore.ContainsKey(resource.ResourceIdentifier))
+            {
+                return;
+            }
             ProxyManager.ResourceStore.Add(resource.ResourceIdentifier, resource);
         }
 
@@ -39,9 +48,19 @@ namespace ProxyServer
             }
         }
 
+        public void Load()
+        {
+            ProxyManager.ResourceStore = _loader.Load();
+        }
+
         public void RemoveResource(string resourceID)
         {
             ProxyManager.ResourceStore.Remove(resourceID);
+        }
+
+        public void Save()
+        {
+            _loader.Save(ProxyManager.ResourceStore);
         }
     }
 }

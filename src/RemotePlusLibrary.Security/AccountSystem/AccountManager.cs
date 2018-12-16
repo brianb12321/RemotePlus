@@ -10,6 +10,7 @@ namespace RemotePlusLibrary.Security.AccountSystem
     [Serializable]
     public class AccountManager : IAccountManager
     {
+        private UserAccount currentAccount = null;
         Configuration.IConfigurationDataAccess _loader;
         public AccountManager([Ninject.Named("BinaryDataAccess")] Configuration.IConfigurationDataAccess loader)
         {
@@ -65,6 +66,7 @@ namespace RemotePlusLibrary.Security.AccountSystem
             {
                 if (Account.Verify(cred))
                 {
+                    currentAccount = Account;
                     return Account;
                 }
                 else
@@ -73,6 +75,11 @@ namespace RemotePlusLibrary.Security.AccountSystem
                 }
             }
             return null;
+        }
+
+        public UserAccount GetLoggedInUser()
+        {
+            return currentAccount;
         }
     }
 }

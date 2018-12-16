@@ -33,6 +33,7 @@ namespace RemotePlusLibrary
         /// <param name="services"></param>
         /// <param name="setup">Configures server specific settings like binding.</param>
         /// <returns></returns>
+        [Obsolete("Please use service manager.")]
         public static IServiceCollection AddServer<TServerInterface>(this IServiceCollection services, Func<IRemotePlusService<TServerInterface>> setup) where TServerInterface : class, new()
         {
             var service = setup.Invoke();
@@ -75,8 +76,11 @@ namespace RemotePlusLibrary
         {
             return services.AddTransient<IErrorHandler, TErrorHandler>();
         }
-        public static IServiceCollection UseResourceManager<TResourceManagerImpl>(this IServiceCollection services) where TResourceManagerImpl : IResourceManager
+        public static IServiceCollection UseResourceManager<TResourceManagerImpl, TResourceLoader>(this IServiceCollection services)
+            where TResourceManagerImpl : IResourceManager
+            where TResourceLoader : IResourceLoader
         {
+            services.AddTransient<IResourceLoader, TResourceLoader>();
             return services.AddSingleton<IResourceManager, TResourceManagerImpl>();
         }
     }

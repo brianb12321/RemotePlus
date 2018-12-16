@@ -9,6 +9,7 @@ using RemotePlusLibrary.Security.AccountSystem;
 using RemotePlusLibrary.ServiceArchitecture;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -65,6 +66,23 @@ namespace RemotePlusLibrary
             return builder.AddTask(() =>
             {
                 IOCContainer.GetService<ICommandEnvironmnet>().CommandClasses.InitializeCommands();
+            });
+        }
+        public static IServerBuilder LoadGlobalResources(this IServerBuilder builder)
+        {
+            var resourceManager = IOCContainer.GetService<IResourceManager>();
+            return builder.AddTask(() =>
+            {
+                GlobalServices.Logger.Log("Loading global resources.", LogLevel.Info);
+                try
+                {
+                    resourceManager.Load();
+                }
+                catch (FileNotFoundException)
+                {
+                    GlobalServices.Logger.Log("Global resource file or location does not exist. Creating new resource file or location.", LogLevel.Info);
+                    resourceManager.Save();
+                }
             });
         }
     }

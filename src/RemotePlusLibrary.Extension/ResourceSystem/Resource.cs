@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 namespace RemotePlusLibrary.Extension.ResourceSystem
 {
     [DataContract]
+    [Serializable]
     public abstract class Resource
     {
         [DataMember]

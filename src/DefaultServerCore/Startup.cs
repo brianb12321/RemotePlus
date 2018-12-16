@@ -17,6 +17,7 @@ using RemotePlusLibrary.Core.EventSystem;
 using RemotePlusLibrary.Core;
 using RemotePlusServer.Core.ExtensionSystem;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
+using RemotePlusLibrary.Extension.ResourceSystem;
 
 namespace DefaultServerCore
 {
@@ -35,7 +36,7 @@ namespace DefaultServerCore
                 });
             });
             services.UseServerManager<DefaultServiceManager>()
-                .UseResourceManager<ResourceManager>()
+                .UseResourceManager<RemotePlusResourceManager, FileResourceLoader>()
                 .UseErrorHandler<GlobalErrorHandler>()
                 .UseExtensionContainer<ServerExtensionLibraryCollection, ServerExtensionLibrary>(new ServerExtensionLibraryCollection())
                 .UseServerControlPage<ServerControls>()
@@ -91,6 +92,7 @@ namespace DefaultServerCore
                 .InitializeScriptingEngine((options) => { })
                 .OpenMexForRemotePlus()
                 .OpenMexForFileTransfer()
+                .LoadGlobalResources()
                 .InitializeVariables()
                 .AddTask(() => GlobalServices.Logger.Log("Loading Commands.", LogLevel.Info))
                 .InitializeCommands();

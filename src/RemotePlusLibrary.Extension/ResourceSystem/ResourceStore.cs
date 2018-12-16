@@ -12,6 +12,7 @@ using System.Xml.Serialization;
 namespace RemotePlusLibrary.Extension.ResourceSystem
 {
     [DataContract]
+    [Serializable]
     public class ResourceStore : IDictionary<string, Resource>
     {
         [DataMember]

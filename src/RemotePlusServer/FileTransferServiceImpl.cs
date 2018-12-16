@@ -72,7 +72,7 @@ namespace RemotePlusServer
         }
         public void SendFile(RemoteFileInfo fileRequest)
         {
-            MemoryResource file = new MemoryResource(Path.GetFileNameWithoutExtension(fileRequest.FileName), fileRequest.FileName);
+            MemoryResource file = new MemoryResource(Path.GetFileNameWithoutExtension(fileRequest.FileName), fileRequest.FileName, null);
             file.Length = fileRequest.Length;
             file.Data = CopyData(fileRequest);
             file.Data.Seek(0, SeekOrigin.Begin);
@@ -82,7 +82,7 @@ namespace RemotePlusServer
 
         public void SendFileUnrouted(RemoteFileInfo fileRequest)
         {
-            MemoryResource file = new MemoryResource(Path.GetFileNameWithoutExtension(fileRequest.FileName), fileRequest.FileName);
+            MemoryResource file = new MemoryResource(Path.GetFileNameWithoutExtension(fileRequest.FileName), fileRequest.FileName, null);
             file.FileName = fileRequest.FileName;
             file.Length = fileRequest.Length;
             file.Data = CopyData(fileRequest);

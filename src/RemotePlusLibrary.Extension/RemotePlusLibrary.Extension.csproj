@@ -107,11 +107,15 @@
     <Compile Include="ExtensionLoader\InvalidExtensionLibraryException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RequiresDependencyAttribute.cs" />
+    <Compile Include="ResourceSystem\FileResourceLoader.cs" />
+    <Compile Include="ResourceSystem\IResourceLoader.cs" />
     <Compile Include="ResourceSystem\IResourceManager.cs" />
     <Compile Include="ResourceSystem\Resource.cs" />
     <Compile Include="ResourceSystem\ResourceStore.cs" />
     <Compile Include="ResourceSystem\ResourceQuery.cs" />
-    <Compile Include="ResourceSystem\ResourceTypes\FileResource.cs" />
+    <Compile Include="ResourceSystem\ResourceTypes\FilePointerResource.cs" />
+    <Compile Include="ResourceSystem\ResourceTypes\MemoryResource.cs" />
+    <Compile Include="ResourceSystem\ResourceTypes\StreamResource.cs" />
     <Compile Include="ResourceSystem\ResourceTypes\StringResource.cs" />
   </ItemGroup>
   <ItemGroup>

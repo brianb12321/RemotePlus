@@ -23,7 +23,6 @@ namespace RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing.Comma
         {
             return Value.ToString();
         }
-
         public bool IsOfType<TType>()
         {
             return Value is TType;
