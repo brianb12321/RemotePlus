@@ -15,6 +15,8 @@ namespace RemotePlusLibrary.Extension.ResourceSystem.ResourceTypes
         public FilePointerResource(string fileName, string id) : base(id, fileName)
         {
         }
+        [DataMember]
+        public override string ResourceType => "FilePointer";
 
         public override void Close()
         {
@@ -24,6 +26,7 @@ namespace RemotePlusLibrary.Extension.ResourceSystem.ResourceTypes
         public override void Open()
         {
             Data = new FileStream(FileName, FileMode.OpenOrCreate, FileAccess.ReadWrite);
+            Length = Data.Length;
         }
     }
 }

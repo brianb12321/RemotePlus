@@ -11,6 +11,9 @@ namespace RemotePlusLibrary.Extension.ResourceSystem.ResourceTypes
 
         [DataMember]
         public byte[] RawData { get; set; }
+        [DataMember]
+        public override string ResourceType => "Memory";
+
         public MemoryResource(string id, string fn, byte[] rd) : base(id, fn)
         {
             RawData = rd;
@@ -23,6 +26,7 @@ namespace RemotePlusLibrary.Extension.ResourceSystem.ResourceTypes
         {
             Data = new MemoryStream(RawData);
             Data.Seek(0, SeekOrigin.Begin);
+            Length = Data.Length;
         }
     }
 }

@@ -62,7 +62,7 @@ namespace RemotePlusServer.Core
             _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(Console.In.ReadToEnd());
             return new CommandResponse((int)CommandStatus.Success);
         }
-        [CommandHelp("Manages variables on the server.")]
+        [CommandHelp("Manages resources on the server.")]
         [HelpPage("vars.txt", Source = HelpSourceType.File)]
         public CommandResponse resex(CommandRequest args, CommandPipeline pipe)
         {
@@ -96,10 +96,7 @@ namespace RemotePlusServer.Core
                                         return new CommandResponse((int)CommandStatus.Success);
                                     }
                                 case "filePointer":
-                                    ReturnData result2 = _service.RemoteInterface.Client.ClientCallback.RequestInformation(new FileDialogRequestBuilder()
-                                    {
-                                        Title = "Select file to upload as resource."
-                                    });
+                                    ReturnData result2 = _service.RemoteInterface.Client.ClientCallback.RequestInformation(new SelectFileRequestBuilder());
                                     if (result2.AcquisitionState == RequestState.OK)
                                     {
                                         _resourceManager.AddResource<FilePointerResource>(new FilePointerResource(result2.Data.ToString(), args.Arguments[3].Value.ToString()));
@@ -111,7 +108,6 @@ namespace RemotePlusServer.Core
                                         _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Action canceled.");
                                         return new CommandResponse((int)CommandStatus.Success);
                                     }
-                                    break;
                                 default:
                                     _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText("Invalid resource type expected." ) { TextColor = Color.Red });
                                     return new CommandResponse((int)CommandStatus.Fail);
@@ -123,11 +119,14 @@ namespace RemotePlusServer.Core
                             return new CommandResponse((int)CommandStatus.Fail);
                         }
                     case "view":
+                        var padWidth = _resourceManager.GetAllResources().Select(r => r.ResourceIdentifier).Max(c => c.Length) + 5;
+                        var typePadWidth = _resourceManager.GetAllResources().Select(r => r.ResourceType).Max(c => c.Length) + 5;
                         StringBuilder sb = new StringBuilder();
                         sb.AppendLine();
                         foreach (Resource r in _resourceManager.GetAllResources())
                         {
-                            sb.AppendLine($"{r.ResourceIdentifier}\t{r.ToString()}");
+                            string paddedString = r.ResourceIdentifier.PadRight(padWidth);
+                            sb.AppendLine($"{r.ResourceType.PadRight(typePadWidth)}: {paddedString}{r.ToString()}");
                         }
                         _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(sb.ToString());
                         return new CommandResponse((int)CommandStatus.Success);
@@ -135,6 +134,38 @@ namespace RemotePlusServer.Core
                         _resourceManager.Save();
                         _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Resource saved");
                         return new CommandResponse((int)CommandStatus.Success);
+                    case "delete":
+                        _resourceManager.RemoveResource(args.Arguments[2].ToString());
+                        _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Resource removed.");
+                        return new CommandResponse((int)CommandStatus.Success);
+                    case "modify":
+                        if (args.Arguments.Count >= 3)
+                        {
+                            switch (args.Arguments[2].ToString())
+                            {
+                                case "name":
+                                    if(args.Arguments[3].IsOfType<ResourceQuery>())
+                                    {
+                                        var resource = _resourceManager.GetResource<Resource>((ResourceQuery)args.Arguments[3].Value);
+                                        resource.ResourceIdentifier = args.Arguments[4].ToString();
+                                        _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Resource name modified.");
+                                        return new CommandResponse((int)CommandStatus.Success);
+                                    }
+                                    else
+                                    {
+                                        _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText("Please pass in resource query.") { TextColor = Color.Red });
+                                        return new CommandResponse((int)CommandStatus.Fail);
+                                    }
+                                default:
+                                    _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText("Invalid resource value expected.") { TextColor = Color.Red });
+                                    return new CommandResponse((int)CommandStatus.Fail);
+                            }
+                        }
+                        else
+                        {
+                            _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText("You must provide the value to edit.") { TextColor = Color.Red });
+                            return new CommandResponse((int)CommandStatus.Fail);
+                        }
                     default:
                         _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText("Invalid action.") { TextColor = Color.Red });
                         return new CommandResponse((int)CommandStatus.Fail);
@@ -578,6 +609,10 @@ namespace RemotePlusServer.Core
                 {
                     _service.RemoteInterface.Client.ClientCallback.RequestInformation(new SendLocalFileByteStreamRequestBuilder(path.Data.ToString(), path.Data.ToString()));
                     query = new ResourceQuery(Path.GetFileName(path.Data.ToString()), Guid.Empty);
+                }
+                else
+                {
+                    return new CommandResponse((int)CommandStatus.Fail);
                 }
             }
             _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole($"Going to play audio file.");

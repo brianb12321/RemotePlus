@@ -20,9 +20,13 @@ namespace RemotePlusLibrary.Extension.ResourceSystem.ResourceTypes
         [DataMember]
         public string FileName { get; set; }
         [IgnoreDataMember]
-        public long Length { get; set; }
+        [NonSerialized]
+        private long _length;
+        public long Length { get => _length; set => _length = value; }
         [IgnoreDataMember]
-        public Stream Data { get; set; }
+        [NonSerialized]
+        private Stream _data;
+        public Stream Data { get => _data; set => _data = value; }
         public override string ToString()
         {
             return FileName;

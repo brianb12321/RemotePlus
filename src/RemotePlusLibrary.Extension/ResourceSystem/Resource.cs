@@ -13,6 +13,8 @@ namespace RemotePlusLibrary.Extension.ResourceSystem
     {
         [DataMember]
         public string ResourceIdentifier { get; set; }
+        [DataMember]
+        public abstract string ResourceType { get; }
         public abstract override string ToString();
         protected Resource(string id)
         {
