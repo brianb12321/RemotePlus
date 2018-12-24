@@ -88,8 +88,11 @@ namespace RemotePlusLibrary.RequestSystem
         }
         public static void DisposeCurrentRequest()
         {
-            current.Dispose();
-            current = null;
+            if(current != null)
+            {
+                current.Dispose();
+                current = null;
+            }
         }
     }
 }

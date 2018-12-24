@@ -42,10 +42,10 @@ namespace CommonWebCommands
                 return new CommandResponse((int)CommandStatus.Fail);
             }
         }
-        [CommandHelp("Downloads a file to the specified location.")]
+        [CommandHelp("Downloads a file from the internet.")]
         public CommandResponse wget(CommandRequest args, CommandPipeline pipe)
         {
-            if(args.Arguments.Count <= 2)
+            if(args.Arguments.Count < 2)
             {
                 _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText("You must specify a destination location.") { TextColor = Color.Red });
                 return new CommandResponse((int)CommandStatus.Fail);
@@ -81,6 +81,7 @@ namespace CommonWebCommands
                 }
                 catch (AggregateException ex)
                 {
+                    _service.RemoteInterface.Client.ClientCallback.DisposeCurrentRequest();
                     _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText($"Unable to download web resource. Message: {ex.GetBaseException().Message}") { TextColor = Color.Red });
                     return new CommandResponse((int)CommandStatus.Fail);
                 }
