@@ -485,5 +485,14 @@ namespace ProxyServer
         {
             return ProxyManager.ScriptBuilder.ExecuteString(script);
         }
+
+        public void UpdateRequest(Guid serverGuid, UpdateRequestBuilder message)
+        {
+            ProxyClient.ClientCallback.UpdateRequest(serverGuid, message);
+        }
+        public void DisposeCurrentRequest(Guid serverGuid)
+        {
+            ProxyClient.ClientCallback.DisposeCurrentRequest(serverGuid);
+        }
     }
 }

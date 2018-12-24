@@ -105,7 +105,14 @@ namespace RemotePlusClientCmd
             t.Join();
             return data;
         }
-
+        public void UpdateRequest(Guid serverGuid, UpdateRequestBuilder message)
+        {
+            RequestStore.Update(message);
+        }
+        public void DisposeCurrentRequest(Guid serverGuid)
+        {
+            RequestStore.DisposeCurrentRequest();
+        }
         public void RunProgram(string Program, string Argument, bool shell, bool ignore)
         {
             var p = Process.Start(Program, Argument);
@@ -118,13 +125,6 @@ namespace RemotePlusClientCmd
         public void SendSignal(SignalMessage message)
         {
             //ClientCmdManager.WaitFlag = true;
-            switch (message.Message)
-            {
-                case "r_fileTransfer":
-                    RequestStore.GetCurrent().Update(message.Value);
-                    break;
-            }
-            //ClientCmdManager.WaitFlag = false;
         }
 
         public DialogResult ShowMessageBox(string Message, string Caption, MessageBoxIcon Icon, MessageBoxButtons Buttons)

@@ -11,7 +11,9 @@ namespace RemotePlusLibrary.RequestSystem
     /// <summary>
     /// The default implementation of <see cref="IDataRequest{TBuilder}"/>
     /// </summary>
-    public abstract class StandordRequest<TBuilder> : IDataRequest<TBuilder> where TBuilder : RequestBuilder
+    public abstract class StandordRequest<TBuilder, TUpdateBuilder> : IDataRequest<TBuilder, TUpdateBuilder>
+        where TBuilder : RequestBuilder
+        where TUpdateBuilder : UpdateRequestBuilder
     {
         public abstract string URI { get; }
         public abstract bool ShowProperties { get; }
@@ -37,7 +39,30 @@ namespace RemotePlusLibrary.RequestSystem
         {
             throw new RequestException($"The request builder is invalid for request: {URI}");
         }
+        protected virtual void UpdateBuilderInvalid(UpdateRequestBuilder message)
+        {
 
-        public abstract void Update(string message);
+        }
+
+        public virtual void Update(TUpdateBuilder message)
+        {
+            
+        }
+
+        public void StartUpdate(UpdateRequestBuilder message)
+        {
+            if (message is TUpdateBuilder)
+            {
+                Update((TUpdateBuilder)message);
+            }
+            else
+            {
+                UpdateBuilderInvalid(message);
+            }
+        }
+
+        public virtual void Dispose()
+        {
+        }
     }
 }

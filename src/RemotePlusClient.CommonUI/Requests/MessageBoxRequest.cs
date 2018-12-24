@@ -11,7 +11,7 @@ using System.Windows.Forms;
 
 namespace RemotePlusClient.CommonUI.Requests
 {
-    public sealed class MessageBoxRequest : StandordRequest<MessageBoxRequestBuilder>
+    public sealed class MessageBoxRequest : StandordRequest<MessageBoxRequestBuilder, UpdateRequestBuilder>
     {
         public override bool ShowProperties => false;
 
@@ -34,11 +34,6 @@ namespace RemotePlusClient.CommonUI.Requests
             {
                 return RawDataResponse.Cancel();
             }
-        }
-
-        public override void Update(string message)
-        {
-            throw new NotImplementedException();
         }
     }
 }

@@ -33,6 +33,10 @@ namespace RemotePlusLibrary.Contracts
         UserCredentials RequestAuthentication(Guid serverGuid, AuthenticationRequest Request);
         [OperationContract]
         ReturnData RequestInformation(Guid serverGuid, RequestBuilder builder);
+        [OperationContract]
+        void UpdateRequest(Guid serverGuid, UpdateRequestBuilder message);
+        [OperationContract]
+        void DisposeCurrentRequest(Guid serverGuid);
         [OperationContract(IsOneWay = true)]
         void RegistirationComplete(Guid serverGuid);
         [OperationContract(IsOneWay = true)]

@@ -6,7 +6,7 @@ using RemotePlusLibrary.RequestSystem.DefaultRequestBuilders;
 
 namespace RemotePlusClientCmd.Requests
 {
-    public class RCmdTextBox : StandordRequest<RCmdTextBoxBuilder>
+    public class RCmdTextBox : StandordRequest<RCmdTextBoxBuilder, UpdateRequestBuilder>
     {
         public override string URI => "rcmd_textBox";
 
@@ -17,11 +17,6 @@ namespace RemotePlusClientCmd.Requests
         public override string Description => "Provides a simple command line based text box";
 
         public override NetworkSide SupportedSides => NetworkSide.Client;
-
-        public override void Update(string message)
-        {
-            throw new NotImplementedException();
-        }
 
         public override RawDataResponse RequestData(RCmdTextBoxBuilder builder, NetworkSide executingSide)
         {

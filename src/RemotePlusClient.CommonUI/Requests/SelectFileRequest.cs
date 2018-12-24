@@ -6,10 +6,11 @@ using RemotePlusLibrary.RequestSystem.DefaultRequestBuilders;
 using RemotePlusClient.CommonUI.Connection;
 using System.Windows.Forms;
 using RemotePlusLibrary.Core;
+using RemotePlusLibrary.RequestSystem.DefaultUpdateRequestBuilders;
 
 namespace RemotePlusClient.CommonUI.Requests
 {
-    public class SelectFileRequest : StandordRequest<SelectFileRequestBuilder>
+    public class SelectFileRequest : StandordRequest<SelectFileRequestBuilder, SelectFileUpdateBuilder>
     {
         FindRemoteFileDialog fd = null;
         public override bool ShowProperties => false;
@@ -36,9 +37,9 @@ namespace RemotePlusClient.CommonUI.Requests
             }
         }
 
-        public override void Update(string message)
+        public override void Update(SelectFileUpdateBuilder message)
         {
-            fd.Counter = int.Parse(message, System.Globalization.CultureInfo.InvariantCulture);
+            fd.Counter = message.Counter;
         }
     }
 }

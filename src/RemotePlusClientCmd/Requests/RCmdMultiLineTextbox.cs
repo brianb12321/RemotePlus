@@ -11,7 +11,7 @@ using RemotePlusLibrary.RequestSystem.DefaultRequestBuilders;
 namespace RemotePlusClientCmd.Requests
 {
     //Interface: rcmd_multitextBox
-    public class RCmdMultiLineTextbox : StandordRequest<RCmdMultilineRequestBuilder>
+    public class RCmdMultiLineTextbox : StandordRequest<RCmdMultilineRequestBuilder, UpdateRequestBuilder>
     {
         public override bool ShowProperties => false;
 
@@ -46,11 +46,6 @@ namespace RemotePlusClientCmd.Requests
                     return RawDataResponse.Success(sb.ToString());
                 }
             }
-        }
-
-        public override void Update(string message)
-        {
-            throw new NotImplementedException();
         }
     }
 }

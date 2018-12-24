@@ -6,7 +6,7 @@ using System.Windows.Forms;
 
 namespace RemotePlusClient.CommonUI.Requests
 {
-    public sealed class ColorRequest : StandordRequest<RequestBuilder>
+    public sealed class ColorRequest : StandordRequest<RequestBuilder, UpdateRequestBuilder>
     {
         public override bool ShowProperties => false;
 
@@ -29,11 +29,6 @@ namespace RemotePlusClient.CommonUI.Requests
             {
                 return RawDataResponse.Cancel(Color.Black.ToString());
             }
-        }
-
-        public override void Update(string message)
-        {
-            throw new NotImplementedException();
         }
     }
 }

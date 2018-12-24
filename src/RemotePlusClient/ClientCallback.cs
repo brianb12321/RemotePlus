@@ -164,7 +164,10 @@ namespace RemotePlusClient
             t.Join();
             return data;
         }
-
+        public void UpdateRequest(Guid serverGuid, UpdateRequestBuilder message)
+        {
+            RequestStore.Update(message);
+        }
         public void RegistirationComplete(Guid serverGuid)
         {
             //Role.RoleNames = MainF.Remote.GetServerRoleNames().ToArray();
@@ -176,9 +179,6 @@ namespace RemotePlusClient
             {
                 case "fileTransfer":
                     ((RemoteFileBrowser)((MainF)Form.ActiveForm).TopPages["Remote File Browser"]).Counter = int.Parse(message.Value);
-                    break;
-                case "r_fileTransfer":
-                    RequestStore.GetCurrent().Update(message.Value);
                     break;
             }
         }
@@ -220,7 +220,11 @@ namespace RemotePlusClient
         {
             throw new NotImplementedException();
         }
-        #endregion
 
+        public void DisposeCurrentRequest(Guid serverGuid)
+        {
+            RequestStore.DisposeCurrentRequest();
+        }
+        #endregion
     }
 }

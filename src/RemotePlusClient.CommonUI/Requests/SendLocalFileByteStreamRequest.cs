@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace RemotePlusClient.CommonUI.Requests
 {
-    public class SendLocalFileByteStreamRequest : StandordRequest<SendLocalFileByteStreamRequestBuilder>
+    public class SendLocalFileByteStreamRequest : StandordRequest<SendLocalFileByteStreamRequestBuilder, UpdateRequestBuilder>
     {
         IRemote _remote;
         public SendLocalFileByteStreamRequest(IRemote remote)
@@ -42,11 +42,6 @@ namespace RemotePlusClient.CommonUI.Requests
                 GlobalServices.Logger.Log($"An error occurred in sending byte data to the server. Error: " + ex, BetterLogger.LogLevel.Error);
                 return RawDataResponse.Cancel();
             }
-        }
-
-        public override void Update(string message)
-        {
-            throw new NotImplementedException();
         }
     }
 }

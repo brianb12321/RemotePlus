@@ -13,7 +13,7 @@ using RemotePlusLibrary.RequestSystem.DefaultRequestBuilders;
 
 namespace RemotePlusClientCmd.Requests
 {
-    public class SelectableConsoleMenu : StandordRequest<SMenuRequestBuilder>
+    public class SelectableConsoleMenu : StandordRequest<SMenuRequestBuilder, UpdateRequestBuilder>
     {
         public override bool ShowProperties => false;
 
@@ -95,11 +95,6 @@ namespace RemotePlusClientCmd.Requests
         {
             cm.Close();
             selectedItem = mi.Text.ToCharArray()[0];
-        }
-
-        public override void Update(string message)
-        {
-            throw new NotImplementedException();
         }
     }
 }

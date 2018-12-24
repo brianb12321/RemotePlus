@@ -39,6 +39,7 @@ namespace RemotePlusLibrary
             InitializeKnownTypesByNamespace("RemotePlusLibrary.RequestSystem.DefaultRequestBuilders.BaseBuilders");
             InitializeKnownTypesByNamespace("RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing.CommandElements");
             InitializeKnownTypesByNamespace("RemotePlusLibrary.Extension.ResourceSystem.ResourceTypes");
+            InitializeKnownTypesByNamespace("RemotePlusLibrary.RequestSystem.DefaultUpdateRequestBuilders");
         }
         private static void InitializeKnownTypesByNamespace(string name)
         {

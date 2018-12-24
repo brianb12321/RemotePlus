@@ -13,14 +13,19 @@ using AudioSwitcher.AudioApi.CoreAudio;
 using System.Drawing;
 using NAudio.CoreAudioApi;
 using BetterLogger;
+using RemotePlusLibrary.ServiceArchitecture;
+using RemotePlusLibrary.RequestSystem.DefaultRequestBuilders;
+using RemotePlusLibrary.RequestSystem.DefaultUpdateRequestBuilders;
 
 namespace WindowsTools
 {
     public class OSCommands : StandordCommandClass
     {
         ILogFactory _logger;
-        public OSCommands(ILogFactory logger)
+        IRemotePlusService<ServerRemoteInterface> _service;
+        public OSCommands(ILogFactory logger, IRemotePlusService<ServerRemoteInterface> service)
         {
+            _service = service;
             _logger = logger;
         }
         [CommandHelp("Sends a key to the remote server.")]
@@ -108,7 +113,37 @@ namespace WindowsTools
             }
             return new CommandResponse((int)CommandStatus.Success);
         }
-
+        [CommandHelp("Writes specified amount of random data to disk.")]
+        public CommandResponse hugeFile(CommandRequest args, CommandPipeline pipe)
+        {
+            StreamWriter sw = null;
+            try
+            {
+                Random r = new Random();
+                sw = new StreamWriter(args.Arguments[1].ToString());
+                int max = int.Parse(args.Arguments[2].ToString());
+                _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Beginning write operation.");
+                _service.RemoteInterface.Client.ClientCallback.RequestInformation(new ProgressRequestBuilder()
+                {
+                    Message = "Writing to disk.",
+                    Maximum = max
+                });
+                for (int i = 0; i <= max; i++)
+                {
+                    sw.WriteLine(r.Next(0, int.MaxValue));
+                    _service.RemoteInterface.Client.ClientCallback.UpdateRequest(new ProgressUpdateBuilder(i)
+                    {
+                        Text = $"{i} / {max} written."
+                    });
+                }
+                _service.RemoteInterface.Client.ClientCallback.DisposeCurrentRequest();
+                return new CommandResponse((int)CommandStatus.Success);
+            }
+            finally
+            {
+                if(sw != null) sw.Dispose();
+            }
+        }
         public override void AddCommands()
         {
             _logger.Log("Adding OS commands", LogLevel.Info, "WindowsTools");
@@ -120,6 +155,7 @@ namespace WindowsTools
             Commands.Add("setVolume", setVolume);
             Commands.Add("toggleMute", toggleMute);
             Commands.Add("sendKey", sendKey);
+            Commands.Add("hugeFile", hugeFile);
             _logger.Log("Adding dskClean command", LogLevel.Info, "WindowsTools");
             Commands.Add("dskClean", dskClean.dskCleanCommand);
             _logger.Log("Adding fileM command", LogLevel.Info, "WindowsTools");

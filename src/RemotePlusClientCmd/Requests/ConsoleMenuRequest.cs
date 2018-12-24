@@ -10,7 +10,7 @@ using RemotePlusLibrary.RequestSystem.DefaultRequestBuilders;
 
 namespace RemotePlusClientCmd.Requests
 {
-    public class ConsoleMenuRequest : StandordRequest<ConsoleMenuRequestBuilder>
+    public class ConsoleMenuRequest : StandordRequest<ConsoleMenuRequestBuilder, UpdateRequestBuilder>
     {
         public override bool ShowProperties => false;
 
@@ -21,11 +21,6 @@ namespace RemotePlusClientCmd.Requests
         public override string URI => "rcmd_smenu";
 
         public override NetworkSide SupportedSides => NetworkSide.Client;
-
-        public override void Update(string message)
-        {
-            throw new NotImplementedException();
-        }
 
         public override RawDataResponse RequestData(ConsoleMenuRequestBuilder builder, NetworkSide executingSide)
         {

@@ -157,7 +157,28 @@ namespace RemotePlusServer
                 return c.RequestInformation(Server, builder);
             }
         }
-
+        public void UpdateRequest(UpdateRequestBuilder message)
+        {
+            if (useProxy)
+            {
+                proxyChannel.UpdateRequest(Server, message);
+            }
+            else
+            {
+                c.UpdateRequest(Server, message);
+            }
+        }
+        public void DisposeCurrentRequest()
+        {
+            if (useProxy)
+            {
+                proxyChannel.DisposeCurrentRequest(Server);
+            }
+            else
+            {
+                c.DisposeCurrentRequest(Server);
+            }
+        }
         public void RunProgram(string Program, string Argument, bool shell, bool ignore)
         {
             if (useProxy)

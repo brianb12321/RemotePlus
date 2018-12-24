@@ -11,7 +11,7 @@ using RemotePlusLibrary.RequestSystem.DefaultRequestBuilders;
 namespace RemotePlusClientCmd.Requests
 {
     //Interface: rcmd_messageBox
-    public class RCmdMessageBox : StandordRequest<RCmdMessageBoxBuilder>
+    public class RCmdMessageBox : StandordRequest<RCmdMessageBoxBuilder, UpdateRequestBuilder>
     {
         public override bool ShowProperties => false;
 
@@ -22,11 +22,6 @@ namespace RemotePlusClientCmd.Requests
         public override string URI => "rcmd_messageBox";
 
         public override NetworkSide SupportedSides => NetworkSide.Client;
-
-        public override void Update(string message)
-        {
-            throw new NotImplementedException();
-        }
 
         public override RawDataResponse RequestData(RCmdMessageBoxBuilder builder, NetworkSide executingSide)
         {

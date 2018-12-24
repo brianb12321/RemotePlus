@@ -87,6 +87,7 @@ namespace RemotePlusClientCmd
             RequestStore.Add(new Requests.RCmdMessageBox());
             RequestStore.Add(new Requests.RCmdTextBox());
             RequestStore.Add(new Requests.RCmdMultiLineTextbox());
+            RequestStore.Add(new Requests.ConsoleProgressRequest());
             InitializeDefaultKnownTypes();
             State = EnvironmentState.Running;
             if (args.Length == 0)

@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace RemotePlusClient.CommonUI.Requests
 {
-    public class SelectLocalFileRequest : StandordRequest<FileDialogRequestBuilder>
+    public class SelectLocalFileRequest : StandordRequest<FileDialogRequestBuilder, UpdateRequestBuilder>
     {
         public override bool ShowProperties => false;
 
@@ -35,11 +35,6 @@ namespace RemotePlusClient.CommonUI.Requests
             {
                 return RawDataResponse.Cancel();
             }
-        }
-
-        public override void Update(string message)
-        {
-            throw new NotImplementedException();
         }
     }
 }

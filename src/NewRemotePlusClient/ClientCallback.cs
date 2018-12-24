@@ -93,6 +93,10 @@ namespace NewRemotePlusClient
         {
             throw new NotImplementedException();
         }
+        public void DisposeCurrentRequest(Guid serverGuid)
+        {
+            throw new NotImplementedException();
+        }
 
         public void RunProgram(string Program, string Argument, bool shell, bool ignore)
         {
@@ -156,6 +160,11 @@ namespace NewRemotePlusClient
         public void TellMessageToServerConsoleNoNewLine(Guid serverGuid, string Message)
         {
             
+        }
+
+        public void UpdateRequest(Guid serverGuid, UpdateRequestBuilder message)
+        {
+            throw new NotImplementedException();
         }
     }
 }

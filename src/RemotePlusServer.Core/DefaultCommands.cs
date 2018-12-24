@@ -22,6 +22,8 @@ using Ninject;
 using RemotePlusLibrary.ServiceArchitecture;
 using RemotePlusLibrary.Extension.ResourceSystem;
 using RemotePlusLibrary.Extension.ResourceSystem.ResourceTypes;
+using RemotePlusLibrary.RequestSystem.DefaultUpdateRequestBuilders;
+using System.Threading;
 
 namespace RemotePlusServer.Core
 {
@@ -540,6 +542,22 @@ namespace RemotePlusServer.Core
                 return new CommandResponse((int)CommandStatus.Fail);
             }
         }
+        [CommandHelp("Tests the progress bar.")]
+        public CommandResponse pg(CommandRequest args, CommandPipeline pipe)
+        {
+            _service.RemoteInterface.Client.ClientCallback.RequestInformation(new ProgressRequestBuilder()
+            {
+                Message = "Testing"
+            });
+            Thread.Sleep(3000);
+            for(int i = 0; i <= 100; i++)
+            {
+                _service.RemoteInterface.Client.ClientCallback.UpdateRequest(new ProgressUpdateBuilder(i));
+                Thread.Sleep(200);
+            }
+            _service.RemoteInterface.Client.ClientCallback.DisposeCurrentRequest();
+            return new CommandResponse((int)CommandStatus.Success);
+        }
         [CommandHelp("Lists all the files and directories in the current directory.")]
         public CommandResponse ls(CommandRequest args, CommandPipeline pipe)
         {
@@ -656,6 +674,7 @@ namespace RemotePlusServer.Core
             Commands.Add("resetStaticScript", resetStaticScript);
             Commands.Add("playAudio", playAudio);
             Commands.Add("load-extensionLibrary-remote", loadExtensionLibraryRemote);
+            Commands.Add("pg", pg);
         }
     }
 }

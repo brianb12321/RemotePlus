@@ -1,9 +1,10 @@
 ﻿using RemotePlusLibrary.Core;
 using RemotePlusLibrary.Extension.ExtensionLoader;
+using System;
 
 namespace RemotePlusLibrary.RequestSystem
 {
-    public interface IRequestAdapter
+    public interface IRequestAdapter : IDisposable
     {
         string URI { get; }
         /// <summary>
@@ -22,7 +23,7 @@ namespace RemotePlusLibrary.RequestSystem
         /// Determines whether a request can be executed on a specified side.
         /// </summary>
         NetworkSide SupportedSides { get; }
-        void Update(string message);
+        void StartUpdate(UpdateRequestBuilder message);
         RawDataResponse StartRequestData(RequestBuilder builder, NetworkSide executingSide);
     }
 }

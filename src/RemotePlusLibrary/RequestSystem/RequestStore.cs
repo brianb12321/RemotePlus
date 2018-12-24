@@ -14,7 +14,9 @@ namespace RemotePlusLibrary.RequestSystem
         {
 
         }
-        public static void Add<TBuilder>(IDataRequest<TBuilder> requestForm) where TBuilder : RequestBuilder
+        public static void Add<TBuilder, TUpdateBuilder>(IDataRequest<TBuilder, TUpdateBuilder> requestForm)
+            where TBuilder : RequestBuilder
+            where TUpdateBuilder : UpdateRequestBuilder
         {
             requestForms.Add(requestForm);
         }
@@ -34,7 +36,7 @@ namespace RemotePlusLibrary.RequestSystem
                 if (request != null)
                 {
                     current = request;
-                    var rd = request.StartRequestData(builder, GlobalServices.RunningEnvironment.ExecutingSide);
+                    var rd = current.StartRequestData(builder, GlobalServices.RunningEnvironment.ExecutingSide);
                     if (rd.State == RequestState.OK)
                     {
                         return new ReturnData(rd.RawData, RequestState.OK);
@@ -76,9 +78,18 @@ namespace RemotePlusLibrary.RequestSystem
                 }
             }
         }
+        public static void Update(UpdateRequestBuilder message)
+        {
+            current.StartUpdate(message);
+        }
         public static IRequestAdapter GetCurrent()
         {
             return current;
+        }
+        public static void DisposeCurrentRequest()
+        {
+            current.Dispose();
+            current = null;
         }
     }
 }
