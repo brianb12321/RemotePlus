@@ -19,6 +19,10 @@ namespace WindowsTools
         {
             builder.AddCommandClass<OSCommands>();
             GlobalServices.Logger.Log($"Init position {env.InitPosition}", LogLevel.Debug, "WindowsTools");
+        }
+
+        public void PostInit()
+        {
             GlobalServices.EventBus.Subscribe<LoginEvent>(e => ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Welcome to WindowsTools!"), e => e.LoginSuccessful);
         }
     }

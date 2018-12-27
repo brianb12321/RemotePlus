@@ -171,7 +171,12 @@ namespace NewRemotePlusClient
 
         public void PublishEvent(ITinyMessage message)
         {
-            GlobalServices.EventBus.Publish(message);
+            GlobalServices.EventBus.PublishPrivate(message);
+        }
+
+        public bool HasKnownType(string name)
+        {
+            return DefaultKnownTypeManager.HasName(name);
         }
     }
 }

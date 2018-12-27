@@ -89,5 +89,10 @@ namespace RemotePlusServer.Core.Proxies
         {
             ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.PublishEvent(message);
         }
+
+        public bool HasKnownType(string name)
+        {
+            return ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.HasKnownType(name);
+        }
     }
 }

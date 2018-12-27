@@ -1,4 +1,4 @@
-﻿using ArduinoRemoteExtensions.Events;
+﻿using ArduinoRemoteExtensionsLib.Events;
 using RemotePlusLibrary.Core;
 using RemotePlusLibrary.Extension.ExtensionLoader.Initialization;
 using System;
@@ -16,6 +16,11 @@ namespace ArduinoRemoteExtensions
             GlobalServices.Logger.Log("Starting up Arduino Remote Extensions", BetterLogger.LogLevel.Info);
             builder.AddCommandClass<ArduinoRemoteCommands>();
             DefaultKnownTypeManager.AddType(typeof(ArduinoEvent));
+        }
+
+        public void PostInit()
+        {
+            
         }
     }
 }

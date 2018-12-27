@@ -85,17 +85,17 @@ namespace DefaultServerCore
             builder.InitializeKnownTypes()
                 .LoadServerConfig()
                 .InitializeDefaultGlobals()
-                .AddEventBus()
-                .LoadExtensionLibraries()
-                .BuildServiceHost<ServerRemoteInterface>()
-                .BuildServiceHost<FileTransferServciceInterface>()
                 .InitializeScriptingEngine((options) => { })
                 .OpenMexForRemotePlus()
                 .OpenMexForFileTransfer()
                 .LoadGlobalResources()
                 .InitializeVariables()
-                .AddTask(() => GlobalServices.Logger.Log("Loading Commands.", LogLevel.Info))
-                .InitializeCommands();
+                .LoadExtensionLibraries();
+        }
+        public void PostInitializeServer(IServerBuilder builder)
+        {
+            builder.BuildServiceHost<ServerRemoteInterface>()
+                .BuildServiceHost<FileTransferServciceInterface>();
         }
         #region Server Events
         private void Host_UnknownMessageReceived(object sender, System.ServiceModel.UnknownMessageReceivedEventArgs e)

@@ -319,5 +319,17 @@ namespace RemotePlusServer
                 c.PublishEvent(message);
             }
         }
+
+        public bool HasKnownType(string name)
+        {
+            if(useProxy)
+            {
+                return proxyChannel.HasKnownType(name);
+            }
+            else
+            {
+                return c.HasKnownType(name);
+            }
+        }
     }
 }

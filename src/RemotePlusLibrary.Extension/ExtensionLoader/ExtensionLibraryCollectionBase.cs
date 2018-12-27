@@ -14,5 +14,12 @@ namespace RemotePlusLibrary.Extension.ExtensionLoader
         }
         public abstract void LoadExtension(string path, IInitEnvironment env);
         public abstract void LoadExtension(byte[] data, IInitEnvironment env);
+        public void RunPostInit()
+        {
+            foreach(ExtensionLibraryBase lib in Libraries.Values)
+            {
+                lib.Startup.PostInit();
+            }
+        }
     }
 }

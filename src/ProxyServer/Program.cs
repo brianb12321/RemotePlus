@@ -13,6 +13,7 @@ using RemotePlusLibrary.Extension.ExtensionLoader;
 using RemotePlusLibrary.ServiceArchitecture;
 using RemotePlusLibrary.Core;
 using RemotePlusLibrary.Extension.ResourceSystem;
+using ProxyServer.ExtensionSystem;
 
 namespace ProxyServer
 {
@@ -40,7 +41,12 @@ namespace ProxyServer
         {
             var a = Assembly.GetExecutingAssembly().GetName();
             Console.WriteLine($"Welcome to {a.Name}, version: {a.Version.ToString()}\n\n");
-            InitializeServerCore();
+            var core = InitializeServerCore();
+            ProxyExtensionCollection.LoadExtensionsInFolder();
+            IOCContainer.GetService<ICommandEnvironmnet>().CommandClasses.InitializeCommands();
+            RunPostServerCoreInitialization(core);
+            GlobalServices.Logger.Log("Running post init on all extensions.", LogLevel.Info);
+            DefaultCollection.RunPostInit();
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             //BUG: if no form is injected, it will display a blank screen to the user.
@@ -48,7 +54,16 @@ namespace ProxyServer
             State = EnvironmentState.Running;
             Application.Run(f);
         }
-        private void InitializeServerCore()
+
+        private void RunPostServerCoreInitialization(IServerCoreStartup core)
+        {
+            ServerBuilder sb = new ServerBuilder();
+            core.PostInitializeServer(sb);
+            var postServerInit = sb.Build();
+            postServerInit.RunTasks();
+        }
+
+        private IServerCoreStartup InitializeServerCore()
         {
             bool foundCore = false;
             foreach (string coreFile in Directory.GetFiles(Environment.CurrentDirectory))
@@ -64,7 +79,7 @@ namespace ProxyServer
                         core.InitializeServer(sb);
                         var serverInit = sb.Build();
                         serverInit.RunTasks();
-                        break;
+                        return core;
                     }
                 }
             }
@@ -75,7 +90,9 @@ namespace ProxyServer
                 Console.ResetColor();
                 State = EnvironmentState.Closing;
                 Environment.Exit(-1);
+                return null;
             }
+            return null;
         }
         
         internal static void RunInServerMode()

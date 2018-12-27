@@ -16,5 +16,10 @@ namespace CommonWebCommands
             builder.AddCommandClass<WebCommands>();
             builder.AddCommandClass<DownloadCommands>();
         }
+
+        public void PostInit()
+        {
+            
+        }
     }
 }

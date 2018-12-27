@@ -261,5 +261,10 @@ namespace RemotePlusClient.CommonUI.ConnectionClients
         {
             Channel.PublishEvent(message);
         }
+
+        public bool HasKnownType(string name)
+        {
+            return Channel.HasKnownType(name);
+        }
     }
 }

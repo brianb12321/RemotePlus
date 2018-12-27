@@ -41,6 +41,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -51,11 +52,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ArduinoRemoteCommands.cs" />
-    <Compile Include="Events\ArduinoEvent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ArduinoRemoteExtensionsLib\ArduinoRemoteExtensionsLib.csproj">
+      <Project>{0c297d84-7ac0-41b0-bea8-63f0916758d7}</Project>
+      <Name>ArduinoRemoteExtensionsLib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\src\RemotePlusLibrary.Configuration\RemotePlusLibrary.Configuration.csproj">
       <Project>{8a8a5888-1ce7-46ed-b8de-1ac7671f3426}</Project>
       <Name>RemotePlusLibrary.Configuration</Name>

@@ -10,5 +10,6 @@ namespace RemotePlusLibrary.Core.IOC
     {
         void InitializeServer(IServerBuilder builder);
         void AddServices(IServiceCollection services);
+        void PostInitializeServer(IServerBuilder builder);
     }
 }

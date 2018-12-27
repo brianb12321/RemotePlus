@@ -43,5 +43,8 @@ namespace RemotePlusLibrary.Contracts
         [OperationContract]
         [FaultContract(typeof(ServerFault))]
         void PublishEvent(TinyMessenger.ITinyMessage message);
+        [OperationContract]
+        [FaultContract(typeof(ServerFault))]
+        bool HasKnownType(string name);
     }
 }

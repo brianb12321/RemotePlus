@@ -1,4 +1,5 @@
-﻿using RemotePlusLibrary.Core.IOC;
+﻿using RemotePlusLibrary.Core;
+using RemotePlusLibrary.Core.IOC;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,5 +11,6 @@ namespace RemotePlusLibrary.Extension.ExtensionLoader.Initialization
     public interface ILibraryStartup
     {
         void Init(ILibraryBuilder builder, IInitEnvironment env);
+        void PostInit();
     }
 }

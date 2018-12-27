@@ -209,6 +209,7 @@ namespace ProxyServer
                 var closedClient = ConnectedServers.First(s => s.Channel == tempClient.Channel);
                 GlobalServices.Logger.Log($"Server [{closedClient.UniqueID}] closed without proper shutdown.", LogLevel.Info);
                 ConnectedServers.Remove(closedClient);
+                PublishEvent(new ServerDisconnectedEvent(closedClient.UniqueID, true, this));
                 if (SelectedClient == closedClient)
                 {
                     Task.Run(() =>
@@ -457,6 +458,7 @@ namespace ProxyServer
                     });
                 }
             }
+            PublishEvent(new ServerDisconnectedEvent(foundServer.UniqueID, false, this));
         }
 
         public void TellMessageToServerConsole(Guid serverGuid, string Message, LogLevel level)
@@ -502,9 +504,28 @@ namespace ProxyServer
         {
             foreach(var clients in ConnectedServers)
             {
-                clients.ClientCallback.PublishEvent(message);
+                if (clients.ClientCallback.HasKnownType(message.GetType().Name))
+                {
+                    clients.ClientCallback.PublishEvent(message);
+                }
             }
-            ProxyClient?.ClientCallback?.PublishEvent(message);
+            try
+            {
+                bool? hasKnownType = ProxyClient?.ClientCallback?.HasKnownType(message.GetType().Name);
+                if (hasKnownType.HasValue && hasKnownType.Value)
+                {
+                    ProxyClient?.ClientCallback?.PublishEvent(message);
+                }
+            }
+            catch (ObjectDisposedException)
+            {
+
+            }
+        }
+
+        public bool HasKnownType(string name)
+        {
+            return SelectedClient.ClientCallback.HasKnownType(name);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using System;
+﻿ using System;
 using System.ServiceModel;
 using System.IO;
 using BetterLogger;
@@ -12,6 +12,8 @@ using RemotePlusServer.Core;
 using RemotePlusLibrary.Core.IOC;
 using RemotePlusLibrary.Extension.ExtensionLoader;
 using RemotePlusLibrary.Core.EventSystem;
+using RemotePlusServer.Core.ExtensionSystem;
+using RemotePlusLibrary.Extension.CommandSystem;
 
 namespace RemotePlusServer
 {
@@ -43,7 +45,15 @@ namespace RemotePlusServer
                 sw = new Stopwatch();
                 sw.Start();
                 Console.WriteLine("Starting server core to setup and initialize services.");
-                LoadServerCoreExtension();
+                var core = LoadServerCoreExtension();
+                if (ServerManager.DefaultSettings.DiscoverySettings.DiscoveryBehavior == ProxyConnectionMode.Connect)
+                {
+                    SetupProxyClient();
+                }
+                IOCContainer.GetService<ICommandEnvironmnet>().CommandClasses.InitializeCommands();
+                RunPostServerInitialization(core);
+                GlobalServices.Logger.Log("Running post init on all extensions.", LogLevel.Info);
+                ServerManager.DefaultCollection.RunPostInit();
                 if (CheckPrerequisites())
                 {
                     Application.EnableVisualStyles();
@@ -74,7 +84,16 @@ namespace RemotePlusServer
             //new RemotePlusWindowsService().StartforDebugging();
 #endif
         }
-        private static void LoadServerCoreExtension()
+
+        private void RunPostServerInitialization(IServerCoreStartup core)
+        {
+            ServerBuilder sb = new ServerBuilder();
+            core.PostInitializeServer(sb);
+            var postServerInit = sb.Build();
+            postServerInit.RunTasks();
+        }
+
+        private static IServerCoreStartup LoadServerCoreExtension()
         {
             bool foundCore = false;
             foreach(string coreFile in Directory.GetFiles(Environment.CurrentDirectory))
@@ -90,7 +109,7 @@ namespace RemotePlusServer
                         core.InitializeServer(sb);
                         var serverInit = sb.Build();
                         serverInit.RunTasks();
-                        break;
+                        return core;
                     }
                 }
             }
@@ -100,7 +119,9 @@ namespace RemotePlusServer
                 Console.WriteLine("FATAL ERROR: A server core is not present. Cannot start server.");
                 Console.ResetColor();
                 Environment.Exit(-1);
+                return null;
             }
+            return null;
         }
 
         static bool CheckPrerequisites()
@@ -140,20 +161,24 @@ namespace RemotePlusServer
         public ServerStartup()
         {
         }
-
+        public static void SetupProxyClient()
+        {
+            _remote.SetRemoteInterface(ServerManager.ServerRemoteService);
+            proxyChannelFactory = new DuplexChannelFactory<IProxyServerRemote>(_remote, _ConnectionFactory.BuildBinding(), new EndpointAddress(ServerManager.DefaultSettings.DiscoverySettings.Connection.ProxyServerURL));
+            proxyChannel = proxyChannelFactory.CreateChannel();
+            IOCContainer.Provider.Bind<IProxyServerRemote>().ToConstant(proxyChannel);
+            IOCContainer.Provider.Bind<IEventBus>().To(typeof(ProxyEventBus)).InSingletonScope();
+        }
         public static void RunInServerMode()
         {
             if (ServerManager.DefaultSettings.DiscoverySettings.DiscoveryBehavior == ProxyConnectionMode.Connect)
             {
-                _remote.SetRemoteInterface(ServerManager.ServerRemoteService);
                 GlobalServices.Logger.Log("The server will be part of a proxy cluster. Please use the proxy server to connect to this server.", LogLevel.Info);
-                proxyChannelFactory = new DuplexChannelFactory<IProxyServerRemote>(_remote, _ConnectionFactory.BuildBinding(), new EndpointAddress(ServerManager.DefaultSettings.DiscoverySettings.Connection.ProxyServerURL));
-                proxyChannel = proxyChannelFactory.CreateChannel();
                 proxyChannel.Register();
-                IOCContainer.Provider.Bind<IProxyServerRemote>().ToConstant(proxyChannel);
             }
             else
             {
+                IOCContainer.Provider.Bind<IEventBus>().To(typeof(EventBus)).InSingletonScope();
                 ServerManager.ServerRemoteService.Start();
                 ServerManager.FileTransferService.Start();
             }

@@ -24,6 +24,7 @@ using RemotePlusLibrary.Extension.ResourceSystem;
 using RemotePlusLibrary.Extension.ResourceSystem.ResourceTypes;
 using RemotePlusLibrary.Core.EventSystem;
 using RemotePlusLibrary.Discovery;
+using System.ServiceModel;
 
 namespace RemotePlusServer.Core.ServerCore
 {
@@ -85,7 +86,13 @@ namespace RemotePlusServer.Core.ServerCore
                 InitializeGlobals();
             });
         }
-        
+        public static IServerBuilder LoadExtensionLibraries(this IServerBuilder builder)
+        {
+            return builder.AddTask(() =>
+            {
+                ServerExtensionLibraryCollection.LoadExtensionsInFolder();
+            });
+        }
         public static void InitializeGlobals()
         {
             try
@@ -136,32 +143,6 @@ namespace RemotePlusServer.Core.ServerCore
             {
                 IResourceManager resourceManager = IOCContainer.GetService<IResourceManager>();
                 resourceManager.AddResource(new StringResource("Name", "RemotePlusServer"));
-            });
-        }
-        /// <summary>
-        /// Searches for extension libraries to load.
-        /// </summary>
-        /// <param name="builder"></param>
-        /// <returns></returns>
-        public static IServerBuilder LoadExtensionLibraries(this IServerBuilder builder)
-        {
-            return builder.AddTask(() =>
-            {
-                ServerExtensionLibraryCollection.LoadExtensionsInFolder();
-            });
-        }
-        public static IServerBuilder AddEventBus(this IServerBuilder builder)
-        {
-            return builder.AddTask(() =>
-            {
-                if(ServerManager.DefaultSettings.DiscoverySettings.DiscoveryBehavior == ProxyConnectionMode.Connect)
-                {
-                    IOCContainer.Provider.Bind<IEventBus>().To(typeof(EventBus));
-                }
-                else
-                {
-                    IOCContainer.Provider.Bind<IEventBus>().To(typeof(ProxyEventBus));
-                }
             });
         }
         /// <summary>

@@ -39,5 +39,10 @@ namespace ReleaseExtensions
             ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("ReleaseExtension is a test of the extension system.", LogLevel.Info);
             return new CommandResponse((int)CommandStatus.Success);
         }
+
+        public void PostInit()
+        {
+            
+        }
     }
 }

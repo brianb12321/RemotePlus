@@ -8,11 +8,9 @@ using System.Threading.Tasks;
 namespace RemotePlusLibrary.Discovery.Events
 {
     [DataContract]
-    public class ServerAddedEvent : TinyMessenger.TinyMessageBase
+    public class ServerAddedEvent : ServerEvent
     {
-        [DataMember]
-        public Guid ServerGuid { get; set; }
-        public ServerAddedEvent(Guid serverGuid, object sender) : base(sender)
+        public ServerAddedEvent(Guid serverGuid, object sender) : base(serverGuid, sender)
         {
             ServerGuid = serverGuid;
         }

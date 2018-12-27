@@ -47,7 +47,7 @@ namespace ProxyServer.ExtensionSystem
                         DefaultLibraryBuilder builder = new DefaultLibraryBuilder(ea.Name, ea.FriendlyName, ea.Version, ea.LibraryType);
                         st.Init(builder, env);
                         GlobalServices.Logger.Log("finished initialization.", LogLevel.Info);
-                        lib = new ProxyExtensionLibrary(a, ea.FriendlyName, ea.Name, ea.LibraryType, guid, deps, version);
+                        lib = new ProxyExtensionLibrary(a, ea.FriendlyName, ea.Name, ea.LibraryType, guid, deps, version, st);
                     }
                 }
                 else

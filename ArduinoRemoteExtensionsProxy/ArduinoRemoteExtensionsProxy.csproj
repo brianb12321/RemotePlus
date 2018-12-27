@@ -4,22 +4,21 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{FC3EB84C-D1B0-4B5C-9406-DFFA9BC5A5FC}</ProjectGuid>
+    <ProjectGuid>{604310B3-1F1C-440E-BCEA-88ADC0701D8A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>RemotePlusLibrary.Discovery</RootNamespace>
-    <AssemblyName>RemotePlusLibrary.Discovery</AssemblyName>
-    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
+    <RootNamespace>ArduinoRemoteExtensionsProxy</RootNamespace>
+    <AssemblyName>ArduinoRemoteExtensionsProxy</AssemblyName>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
     <TargetFrameworkProfile />
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\src\ProxyServer\bin\Debug\extensions\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -33,13 +32,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BetterLogger">
-      <HintPath>..\..\Libs\BetterLogger.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -48,40 +42,48 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Events\ServerDisconnectedEvent.cs" />
-    <Compile Include="Events\ServerEvent.cs" />
-    <Compile Include="Events\ServerMessageEvent.cs" />
-    <Compile Include="IProxyRemote.cs" />
-    <Compile Include="IProxyServerRemote.cs" />
-    <Compile Include="IRemoteWithProxy.cs" />
+    <Compile Include="Startup.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ProxyEventBus.cs" />
-    <Compile Include="Events\ServerAddedEvent.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\RemotePlusLibrary.Configuration\RemotePlusLibrary.Configuration.csproj">
-      <Project>{8A8A5888-1CE7-46ED-B8DE-1AC7671F3426}</Project>
+    <ProjectReference Include="..\ArduinoRemoteExtensionsLib\ArduinoRemoteExtensionsLib.csproj">
+      <Project>{0c297d84-7ac0-41b0-bea8-63f0916758d7}</Project>
+      <Name>ArduinoRemoteExtensionsLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\src\RemotePlusLibrary.Configuration\RemotePlusLibrary.Configuration.csproj">
+      <Project>{8a8a5888-1ce7-46ed-b8de-1ac7671f3426}</Project>
       <Name>RemotePlusLibrary.Configuration</Name>
+      <Private>False</Private>
     </ProjectReference>
-    <ProjectReference Include="..\RemotePlusLibrary.Core\RemotePlusLibrary.Core.csproj">
-      <Project>{0334629B-6302-42A8-B159-F8646B4D8650}</Project>
+    <ProjectReference Include="..\src\RemotePlusLibrary.Core\RemotePlusLibrary.Core.csproj">
+      <Project>{0334629b-6302-42a8-b159-f8646b4d8650}</Project>
       <Name>RemotePlusLibrary.Core</Name>
+      <Private>False</Private>
     </ProjectReference>
-    <ProjectReference Include="..\RemotePlusLibrary.Extension\RemotePlusLibrary.Extension.csproj">
-      <Project>{2AA5E768-7E0A-4B0C-A0D1-F79153902DF9}</Project>
+    <ProjectReference Include="..\src\RemotePlusLibrary.Discovery\RemotePlusLibrary.Discovery.csproj">
+      <Project>{fc3eb84c-d1b0-4b5c-9406-dffa9bc5a5fc}</Project>
+      <Name>RemotePlusLibrary.Discovery</Name>
+      <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\src\RemotePlusLibrary.Extension\RemotePlusLibrary.Extension.csproj">
+      <Project>{2aa5e768-7e0a-4b0c-a0d1-f79153902df9}</Project>
       <Name>RemotePlusLibrary.Extension</Name>
+      <Private>False</Private>
     </ProjectReference>
-    <ProjectReference Include="..\RemotePlusLibrary.Scripting\RemotePlusLibrary.Scripting.csproj">
-      <Project>{5C399F78-C133-4F9B-9758-C36A4B7FAE98}</Project>
+    <ProjectReference Include="..\src\RemotePlusLibrary.Scripting\RemotePlusLibrary.Scripting.csproj">
+      <Project>{5c399f78-c133-4f9b-9758-c36a4b7fae98}</Project>
       <Name>RemotePlusLibrary.Scripting</Name>
+      <Private>False</Private>
     </ProjectReference>
-    <ProjectReference Include="..\RemotePlusLibrary.Security\RemotePlusLibrary.Security.csproj">
-      <Project>{E4E0BB7E-B995-4EBE-8EFB-3C09BF64A3A2}</Project>
+    <ProjectReference Include="..\src\RemotePlusLibrary.Security\RemotePlusLibrary.Security.csproj">
+      <Project>{e4e0bb7e-b995-4ebe-8efb-3c09bf64a3a2}</Project>
       <Name>RemotePlusLibrary.Security</Name>
+      <Private>False</Private>
     </ProjectReference>
-    <ProjectReference Include="..\RemotePlusLibrary\RemotePlusLibrary.csproj">
+    <ProjectReference Include="..\src\RemotePlusLibrary\RemotePlusLibrary.csproj">
       <Project>{00c22a1f-d3df-4193-aaa8-9907d08e2511}</Project>
       <Name>RemotePlusLibrary</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

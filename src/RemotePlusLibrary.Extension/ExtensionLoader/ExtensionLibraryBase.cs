@@ -23,13 +23,15 @@ namespace RemotePlusLibrary.Extension.ExtensionLoader
         public Guid Guid { get; }
         public Version Version { get; }
         private Assembly _assembly;
+        public ILibraryStartup Startup { get; }
         protected ExtensionLibraryBase(Assembly assembly,
             string friendlyName,
             string name,
             NetworkSide type,
             Guid g,
             RequiresDependencyAttribute[] deps,
-            Version v)
+            Version v,
+            ILibraryStartup startup)
         {
             _assembly = assembly;
             FriendlyName = friendlyName;
@@ -38,6 +40,7 @@ namespace RemotePlusLibrary.Extension.ExtensionLoader
             Guid = g;
             Version = v;
             Dependencies = deps.ToList();
+            Startup = startup;
         }
 
         public static Guid ParseGuid(string guid)

@@ -97,6 +97,8 @@ namespace RemotePlusClientCmd
             RequestStore.Add(new Requests.RCmdMultiLineTextbox());
             RequestStore.Add(new Requests.ConsoleProgressRequest());
             InitializeDefaultKnownTypes();
+            GlobalServices.Logger.Log("Running post init on all extensions.", LogLevel.Info);
+            ExtensionLibraries.RunPostInit();
             State = EnvironmentState.Running;
             if (args.Length == 0)
             {
@@ -197,7 +199,22 @@ namespace RemotePlusClientCmd
                 CurrentConnectionData.RemoteConnection = Proxy;
                 EventBus.Subscribe<ServerAddedEvent>(e =>
                 {
-                    applicationIcon.ShowBalloonTip(2000, $"{e.ServerGuid} joined the proxy server.", "Proxy Server", ToolTipIcon.Info);
+                    applicationIcon.ShowBalloonTip(2000, "Server Joined", $"{e.ServerGuid} joined the proxy server.", ToolTipIcon.Info);
+                });
+                EventBus.Subscribe<ServerDisconnectedEvent>(e =>
+                {
+                    if(e.Faulted)
+                    {
+                        applicationIcon.ShowBalloonTip(2000, "Server Disconnected", $"{e.ServerGuid} disconnected suddenly.", ToolTipIcon.Error);
+                    }
+                    else
+                    {
+                        applicationIcon.ShowBalloonTip(2000, "Server Disconnected", $"{e.ServerGuid} disconnected gracefully.", ToolTipIcon.Info);
+                    }
+                });
+                EventBus.Subscribe<ServerMessageEvent>(e =>
+                {
+                    applicationIcon.ShowBalloonTip(1000, "Server Message", $"{e.ServerGuid}: {e.Message}", ToolTipIcon.Info);
                 });
             }
             else
@@ -206,7 +223,7 @@ namespace RemotePlusClientCmd
                 CurrentConnectionData.BaseAddress = ea.Uri.Host;
                 CurrentConnectionData.Port = ea.Uri.Port;
                 Remote = new ServiceClient(new ClientCallback(), _ConnectionFactory.BuildBinding(), ea);
-                RequestStore.Add(new RemotePlusClient.CommonUI.Requests.SendLocalFileByteStreamRequest(Remote));
+                RequestStore.Add(new SendLocalFileByteStreamRequest(Remote));
                 Remote.Register(ro);
                 CurrentConnectionData.RemoteConnection = Remote;
             }

@@ -64,13 +64,6 @@ namespace RemotePlusLibrary
         {
             return builder.AddTask(() => InitializeKnownTypesByNamespace(name));
         }
-        public static IServerBuilder InitializeCommands(this IServerBuilder builder)
-        {
-            return builder.AddTask(() =>
-            {
-                IOCContainer.GetService<ICommandEnvironmnet>().CommandClasses.InitializeCommands();
-            });
-        }
         public static IServerBuilder LoadGlobalResources(this IServerBuilder builder)
         {
             var resourceManager = IOCContainer.GetService<IResourceManager>();
