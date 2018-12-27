@@ -12,6 +12,7 @@ using RemotePlusLibrary.Contracts;
 using RemotePlusLibrary.Configuration.ServerSettings;
 using RemotePlusLibrary.FileTransfer.BrowserClasses;
 using RemotePlusLibrary.Extension.ResourceSystem;
+using TinyMessenger;
 
 namespace RemotePlusClient.CommonUI.ConnectionClients
 {
@@ -215,6 +216,11 @@ namespace RemotePlusClient.CommonUI.ConnectionClients
         public Resource GetResource(string resourceIdentifier)
         {
             return Channel.GetResource(resourceIdentifier);
+        }
+
+        public void PublishEvent(ITinyMessage message)
+        {
+            Channel.PublishEvent(message);
         }
     }
 }

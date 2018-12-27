@@ -40,6 +40,8 @@ namespace RemotePlusLibrary
             InitializeKnownTypesByNamespace("RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing.CommandElements");
             InitializeKnownTypesByNamespace("RemotePlusLibrary.Extension.ResourceSystem.ResourceTypes");
             InitializeKnownTypesByNamespace("RemotePlusLibrary.RequestSystem.DefaultUpdateRequestBuilders");
+            InitializeKnownTypesByNamespace("RemotePlusLibrary.Core.EventSystem.Events");
+            InitializeKnownTypesByNamespace("RemotePlusLibrary.Discovery.Events");
         }
         private static void InitializeKnownTypesByNamespace(string name)
         {

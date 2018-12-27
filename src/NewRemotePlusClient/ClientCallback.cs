@@ -18,6 +18,8 @@ using System.Threading;
 using GalaSoft.MvvmLight.Messaging;
 using NewRemotePlusClient.Models;
 using RemotePlusLibrary.Extension.ResourceSystem;
+using TinyMessenger;
+using RemotePlusLibrary.Core;
 
 namespace NewRemotePlusClient
 {
@@ -165,6 +167,11 @@ namespace NewRemotePlusClient
         public void UpdateRequest(Guid serverGuid, UpdateRequestBuilder message)
         {
             throw new NotImplementedException();
+        }
+
+        public void PublishEvent(ITinyMessage message)
+        {
+            GlobalServices.EventBus.Publish(message);
         }
     }
 }

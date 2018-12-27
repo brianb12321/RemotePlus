@@ -11,6 +11,7 @@ using RemotePlusLibrary.Configuration.ServerSettings;
 using RemotePlusServer.Core;
 using RemotePlusLibrary.Core.IOC;
 using RemotePlusLibrary.Extension.ExtensionLoader;
+using RemotePlusLibrary.Core.EventSystem;
 
 namespace RemotePlusServer
 {
@@ -20,7 +21,6 @@ namespace RemotePlusServer
     public class ServerStartup : IEnvironment
     {
         static Stopwatch sw = new Stopwatch();
-        static Guid ServerGuid = Guid.NewGuid();
         public static RemoteImpl _remote = null;
         public NetworkSide ExecutingSide => NetworkSide.Server;
 
@@ -150,6 +150,7 @@ namespace RemotePlusServer
                 proxyChannelFactory = new DuplexChannelFactory<IProxyServerRemote>(_remote, _ConnectionFactory.BuildBinding(), new EndpointAddress(ServerManager.DefaultSettings.DiscoverySettings.Connection.ProxyServerURL));
                 proxyChannel = proxyChannelFactory.CreateChannel();
                 proxyChannel.Register();
+                IOCContainer.Provider.Bind<IProxyServerRemote>().ToConstant(proxyChannel);
             }
             else
             {
@@ -161,7 +162,7 @@ namespace RemotePlusServer
         {
             if (ServerManager.DefaultSettings.DiscoverySettings.DiscoveryBehavior == ProxyConnectionMode.Connect && proxyChannelFactory != null)
             {
-                proxyChannel.Leave(ServerGuid);
+                proxyChannel.Leave(ServerManager.ServerGuid);
                 proxyChannelFactory.Close();
             }
             ServerManager.DefaultServiceManager.CloseAll();

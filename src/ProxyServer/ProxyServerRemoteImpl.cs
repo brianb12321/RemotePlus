@@ -26,6 +26,8 @@ using BetterLogger;
 using RemotePlusLibrary.Core.IOC;
 using RemotePlusLibrary.RequestSystem.DefaultRequestBuilders;
 using RemotePlusLibrary.Extension.ResourceSystem;
+using TinyMessenger;
+using RemotePlusLibrary.Discovery.Events;
 
 namespace ProxyServer
 {
@@ -224,6 +226,7 @@ namespace ProxyServer
                 }
             };
             tempClient.ClientCallback.ServerRegistered(tempClient.UniqueID);
+            PublishEvent(new ServerAddedEvent(tempClient.UniqueID, this));
             GlobalServices.Logger.Log($"Server [{tempClient.UniqueID}] joined the proxy cluster.", LogLevel.Info);
         }
 
@@ -493,6 +496,15 @@ namespace ProxyServer
         public void DisposeCurrentRequest(Guid serverGuid)
         {
             ProxyClient.ClientCallback.DisposeCurrentRequest(serverGuid);
+        }
+
+        public void PublishEvent(ITinyMessage message)
+        {
+            foreach(var clients in ConnectedServers)
+            {
+                clients.ClientCallback.PublishEvent(message);
+            }
+            ProxyClient?.ClientCallback?.PublishEvent(message);
         }
     }
 }

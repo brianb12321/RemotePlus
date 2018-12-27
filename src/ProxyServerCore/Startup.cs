@@ -21,11 +21,11 @@ namespace ProxyServerCore
         {
             services.UseLogger((logFactory) => logFactory.AddLogger(new ConsoleLogger()));
             services.UseServerManager<DefaultServiceManager>()
+                .AddSingleton<IEventBus, EventBus>()
                 .UseResourceManager<ProxyResourceManager, FileResourceLoader>()
                 .UseErrorHandler<GlobalErrorHandler>()
                 .UseExtensionContainer<ProxyExtensionCollection, ProxyExtensionLibrary>(new ProxyExtensionCollection())
                 .UseScriptingEngine()
-                .UseEventBus<EventBus>()
                 .UseServerControlPage<ServerControls>()
                 .UseConfigurationDataAccess<RemotePlusLibrary.Configuration.StandordDataAccess.ConfigurationHelper>()
                 .UseCommandline<CommandEnvironment>(builder =>

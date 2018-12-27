@@ -58,10 +58,6 @@ namespace RemotePlusLibrary
             services.AddSingleton<ICommandClassStore, DefaultCommandStore>();
             return services.AddTransient<ICommandEnvironmnet, TCommandEnvironmentImpl>();       
         }
-        public static IServiceCollection UseEventBus<TEventBusImpl>(this IServiceCollection services) where TEventBusImpl : IEventBus
-        {
-            return services.AddSingleton<IEventBus, TEventBusImpl>();
-        }
         public static IServiceCollection UseServerManager<TServerManager>(this IServiceCollection services) where TServerManager : IServiceManager
         {
             return services.AddSingleton<IServiceManager, TServerManager>();

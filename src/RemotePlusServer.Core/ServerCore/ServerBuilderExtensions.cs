@@ -22,6 +22,8 @@ using RemotePlusLibrary.RequestSystem.DefaultRequestBuilders;
 using RemotePlusLibrary.ServiceArchitecture;
 using RemotePlusLibrary.Extension.ResourceSystem;
 using RemotePlusLibrary.Extension.ResourceSystem.ResourceTypes;
+using RemotePlusLibrary.Core.EventSystem;
+using RemotePlusLibrary.Discovery;
 
 namespace RemotePlusServer.Core.ServerCore
 {
@@ -146,6 +148,20 @@ namespace RemotePlusServer.Core.ServerCore
             return builder.AddTask(() =>
             {
                 ServerExtensionLibraryCollection.LoadExtensionsInFolder();
+            });
+        }
+        public static IServerBuilder AddEventBus(this IServerBuilder builder)
+        {
+            return builder.AddTask(() =>
+            {
+                if(ServerManager.DefaultSettings.DiscoverySettings.DiscoveryBehavior == ProxyConnectionMode.Connect)
+                {
+                    IOCContainer.Provider.Bind<IEventBus>().To(typeof(EventBus));
+                }
+                else
+                {
+                    IOCContainer.Provider.Bind<IEventBus>().To(typeof(ProxyEventBus));
+                }
             });
         }
         /// <summary>

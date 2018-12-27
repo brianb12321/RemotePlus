@@ -11,6 +11,7 @@ using RemotePlusLibrary.Security.Authentication;
 using System;
 using System.Speech.Synthesis;
 using System.Windows.Forms;
+using TinyMessenger;
 
 namespace RemotePlusServer
 {
@@ -18,11 +19,12 @@ namespace RemotePlusServer
     {
         bool useProxy = false;
         IProxyServerRemote proxyChannel = null;
-        public RemoteClient(IRemoteClient client, bool up, IProxyServerRemote pc)
+        public RemoteClient(IRemoteClient client, bool up, IProxyServerRemote pc, Guid guid)
         {
             c = client;
             useProxy = up;
             proxyChannel = pc;
+            Server = guid;
         }
         IRemoteClient c = null;
         public Guid Server = Guid.NewGuid();
@@ -303,6 +305,18 @@ namespace RemotePlusServer
             else
             {
                 return c.GetResource(resourceIdentifier);
+            }
+        }
+
+        public void PublishEvent(ITinyMessage message)
+        {
+            if (useProxy)
+            {
+                proxyChannel.PublishEvent(message);
+            }
+            else
+            {
+                c.PublishEvent(message);
             }
         }
     }

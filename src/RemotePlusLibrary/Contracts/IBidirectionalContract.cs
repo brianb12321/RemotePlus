@@ -40,5 +40,8 @@ namespace RemotePlusLibrary.Contracts
         [OperationContract]
         [FaultContract(typeof(ServerFault))]
         Resource GetResource(string resourceIdentifier);
+        [OperationContract]
+        [FaultContract(typeof(ServerFault))]
+        void PublishEvent(TinyMessenger.ITinyMessage message);
     }
 }

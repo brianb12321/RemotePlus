@@ -21,6 +21,7 @@ using RemotePlusClient.CommonUI.Connection;
 using RemotePlusLibrary.Core.EventSystem;
 using RemotePlusLibrary.RequestSystem;
 using RemotePlusClient.CommonUI.Requests;
+using RemotePlusLibrary.Discovery.Events;
 
 namespace RemotePlusClientCmd
 {
@@ -31,6 +32,7 @@ namespace RemotePlusClientCmd
         public static ServiceClient Remote = null;
         public static PromptBuilder prompt = new PromptBuilder();
         public static ProxyClient Proxy = null;
+        private static NotifyIcon applicationIcon;
         public Connection CurrentConnectionData => IOCContainer.GetService<Connection>();
         public IEventBus EventBus => IOCContainer.GetService<IEventBus>();
         public static bool WaitFlag = true;
@@ -47,14 +49,20 @@ namespace RemotePlusClientCmd
         }
         public void Start(string[] args)
         {
-            IOCContainer.Provider.Bind<Connection>().ToSelf().InSingletonScope();
-            IOCContainer.Provider.Bind<RemotePlusLibrary.Configuration.IConfigurationDataAccess>().To(typeof(RemotePlusLibrary.Configuration.StandordDataAccess.ConfigurationHelper)).InSingletonScope().Named("DefaultConfigDataAccess");
-            IOCContainer.Provider.Bind<IEventBus>().To(typeof(EventBus)).InSingletonScope();
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
             var blf = new BaseLogFactory();
             blf.AddLogger(new ConsoleLogger());
             IOCContainer.Provider.Bind<ILogFactory>().ToConstant(blf);
+            applicationIcon = new NotifyIcon();
+            applicationIcon.Icon = SystemIcons.Application;
+            applicationIcon.Visible = true;
+            IOCContainer.Provider.Bind<Connection>().ToSelf().InSingletonScope();
+            IOCContainer.Provider.Bind<RemotePlusLibrary.Configuration.IConfigurationDataAccess>().To(typeof(RemotePlusLibrary.Configuration.StandordDataAccess.ConfigurationHelper)).InSingletonScope().Named("DefaultConfigDataAccess");
+            IOCContainer.Provider.Bind<IEventBus>().To(typeof(EventBus)).InSingletonScope();
+            EventBus.RemoveEventProxy();
             Console.ResetColor();
-            Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
             //Application.ThreadException += (Sender, e) => CatchException(e.Exception);
             AppDomain.CurrentDomain.UnhandledException += (sender, e) =>
             {
@@ -69,13 +77,13 @@ namespace RemotePlusClientCmd
                 if (e.IsTerminating)
                 {
                     Environment.Exit(-1);
+                    applicationIcon.Dispose();
                 }
             };
+            Application.ApplicationExit += (sender, e) => applicationIcon.Dispose();
             ShowBanner();
             LoadExtensions();
             InitCommands();
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
             RequestStore.Add(new RequestStringRequest());
             RequestStore.Add(new ColorRequest());
             RequestStore.Add(new MessageBoxRequest());
@@ -187,6 +195,10 @@ namespace RemotePlusClientCmd
                 };
                 Proxy.ProxyRegister();
                 CurrentConnectionData.RemoteConnection = Proxy;
+                EventBus.Subscribe<ServerAddedEvent>(e =>
+                {
+                    applicationIcon.ShowBalloonTip(2000, $"{e.ServerGuid} joined the proxy server.", "Proxy Server", ToolTipIcon.Info);
+                });
             }
             else
             {

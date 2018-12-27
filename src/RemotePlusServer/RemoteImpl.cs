@@ -25,6 +25,7 @@ using RemotePlusLibrary.Core.EventSystem.Events;
 using RemotePlusLibrary.Core.IOC;
 using RemotePlusLibrary.Extension.ResourceSystem;
 using RemotePlusLibrary.Extension.ResourceSystem.ResourceTypes;
+using TinyMessenger;
 
 namespace RemotePlusServer
 {
@@ -138,12 +139,12 @@ namespace RemotePlusServer
         {
             if (ServerManager.DefaultSettings.DiscoverySettings.DiscoveryBehavior == ProxyConnectionMode.Connect)
             {
-                _interface.Client = Client<RemoteClient>.Build(ServerStartup.proxyChannel.RegisterClient(), new RemoteClient(null, true, ServerStartup.proxyChannel));
+                _interface.Client = Client<RemoteClient>.Build(ServerStartup.proxyChannel.RegisterClient(), new RemoteClient(null, true, ServerStartup.proxyChannel, ServerManager.ServerGuid));
             }
             else
             {
                 var callback = OperationContext.Current.GetCallbackChannel<IRemoteClient>();
-                _interface.Client = Client<RemoteClient>.Build(callback.RegisterClient(), new RemoteClient(callback, false, null));
+                _interface.Client = Client<RemoteClient>.Build(callback.RegisterClient(), new RemoteClient(callback, false, null, Guid.NewGuid()));
             }
         }
 
@@ -469,6 +470,11 @@ namespace RemotePlusServer
         public Resource GetResource(string resourceIdentifier)
         {
             throw new NotImplementedException();
+        }
+
+        public void PublishEvent(ITinyMessage message)
+        {
+            GlobalServices.EventBus.Publish(message);
         }
     }
 }

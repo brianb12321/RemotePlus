@@ -7,6 +7,7 @@ using RemotePlusLibrary.Extension.ResourceSystem;
 using RemotePlusLibrary.RequestSystem;
 using RemotePlusLibrary.RequestSystem.DefaultRequestBuilders;
 using RemotePlusLibrary.Scripting;
+using TinyMessenger;
 
 namespace RemotePlusServer.Core.Proxies
 {
@@ -82,6 +83,11 @@ namespace RemotePlusServer.Core.Proxies
         public Resource GetResource(string resourceIdentifier)
         {
             return ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.GetResource(resourceIdentifier);
+        }
+
+        public void PublishEvent(ITinyMessage message)
+        {
+            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.PublishEvent(message);
         }
     }
 }

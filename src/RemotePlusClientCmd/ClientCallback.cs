@@ -16,6 +16,7 @@ using RemotePlusLibrary.Client;
 using RemotePlusLibrary.Core;
 using BetterLogger;
 using RemotePlusLibrary.Extension.ResourceSystem;
+using TinyMessenger;
 
 namespace RemotePlusClientCmd
 {
@@ -173,6 +174,11 @@ namespace RemotePlusClientCmd
         public void TellMessageToServerConsoleNoNewLine(Guid serverGuid, string Message)
         {
             Console.Write(Message);
+        }
+
+        public void PublishEvent(ITinyMessage message)
+        {
+            GlobalServices.EventBus.Publish(message);
         }
     }
 }

@@ -19,6 +19,7 @@ using RemotePlusLibrary.Contracts;
 using BetterLogger;
 using RemotePlusLibrary.Core;
 using RemotePlusLibrary.Extension.ResourceSystem;
+using TinyMessenger;
 
 namespace RemotePlusClient
 {
@@ -224,6 +225,11 @@ namespace RemotePlusClient
         public void DisposeCurrentRequest(Guid serverGuid)
         {
             RequestStore.DisposeCurrentRequest();
+        }
+
+        public void PublishEvent(ITinyMessage message)
+        {
+            GlobalServices.EventBus.Publish(message);
         }
         #endregion
     }

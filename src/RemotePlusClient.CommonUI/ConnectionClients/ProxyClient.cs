@@ -13,6 +13,7 @@ using RemotePlusLibrary.Extension.ResourceSystem;
 using RemotePlusLibrary.FileTransfer.BrowserClasses;
 using RemotePlusLibrary.Scripting;
 using RemotePlusLibrary.Security.AccountSystem;
+using TinyMessenger;
 
 namespace RemotePlusClient.CommonUI.ConnectionClients
 {
@@ -254,6 +255,11 @@ namespace RemotePlusClient.CommonUI.ConnectionClients
         public bool ExecuteProxyScript(string script)
         {
             return Channel.ExecuteProxyScript(script);
+        }
+
+        public void PublishEvent(ITinyMessage message)
+        {
+            Channel.PublishEvent(message);
         }
     }
 }

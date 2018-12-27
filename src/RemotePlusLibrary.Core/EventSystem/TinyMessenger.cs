@@ -15,6 +15,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 
 namespace TinyMessenger
@@ -34,13 +35,16 @@ namespace TinyMessenger
     /// <summary>
     /// Base class for messages that provides weak refrence storage of the sender
     /// </summary>
+    [DataContract]
     public abstract class TinyMessageBase : ITinyMessage
     {
         /// <summary>
         /// Store a WeakReference to the sender just in case anyone is daft enough to
         /// keep the message around and prevent the sender from being collected.
         /// </summary>
+        [IgnoreDataMember]
         private WeakReference _Sender;
+        [IgnoreDataMember]
         public object Sender
         {
             get
@@ -66,11 +70,13 @@ namespace TinyMessenger
     /// Generic message with user specified content
     /// </summary>
     /// <typeparam name="TContent">Content type to store</typeparam>
+    [DataContract]
     public class GenericTinyMessage<TContent> : TinyMessageBase
     {
         /// <summary>
         /// Contents of the message
         /// </summary>
+        [DataMember]
         public TContent Content { get; protected set; }
 
         /// <summary>
@@ -89,16 +95,19 @@ namespace TinyMessenger
     /// Basic "cancellable" generic message
     /// </summary>
     /// <typeparam name="TContent">Content type to store</typeparam>
+    [DataContract]
     public class CancellableGenericTinyMessage<TContent> : TinyMessageBase
     {
         /// <summary>
         /// Cancel action
         /// </summary>
+        [IgnoreDataMember]
         public Action Cancel { get; protected set; }
 
         /// <summary>
         /// Contents of the message
         /// </summary>
+        [DataMember]
         public TContent Content { get; protected set; }
 
         /// <summary>
@@ -668,6 +677,10 @@ namespace TinyMessenger
         {
             PublishInternal<TMessage>(message);
         }
+        public void Publish(ITinyMessage message)
+        {
+            PublishInternalNonGeneric(message);
+        }
 
         /// <summary>
         /// Publish a message to any subscribers asynchronously
@@ -759,6 +772,36 @@ namespace TinyMessenger
             {
                 List<SubscriptionItem> currentSubscriptions;
                 if (!_Subscriptions.TryGetValue(typeof(TMessage), out currentSubscriptions))
+                    return;
+
+                currentlySubscribed = (from sub in currentSubscriptions
+                                       where sub.Subscription.ShouldAttemptDelivery(message)
+                                       select sub).ToList();
+            }
+
+            currentlySubscribed.ForEach(sub =>
+            {
+                try
+                {
+                    sub.Proxy.Deliver(message, sub.Subscription);
+                }
+                catch (Exception)
+                {
+                    // Ignore any errors and carry on
+                    // TODO - add to a list of erroring subs and remove them?
+                }
+            });
+        }
+        private void PublishInternalNonGeneric(ITinyMessage message)
+        {
+            if (message == null)
+                throw new ArgumentNullException("message");
+
+            List<SubscriptionItem> currentlySubscribed;
+            lock (_SubscriptionsPadlock)
+            {
+                List<SubscriptionItem> currentSubscriptions;
+                if (!_Subscriptions.TryGetValue(message.GetType(), out currentSubscriptions))
                     return;
 
                 currentlySubscribed = (from sub in currentSubscriptions

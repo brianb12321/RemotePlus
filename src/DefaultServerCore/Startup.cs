@@ -45,7 +45,6 @@ namespace DefaultServerCore
                 .AddSingletonNamed<IConfigurationDataAccess, BinarySerializationHelper>("BinaryDataAccess")
                 .UseAuthentication<AccountManager>()
                 .UsePackageManager<DefaultPackageManager>()
-                .UseEventBus<EventBus>()
                 .UseCommandline<CommandEnvironment>(builder =>
                     builder.UseLexer<CommandLexer>()
                            .UseParser<CommandParser>()
@@ -86,6 +85,7 @@ namespace DefaultServerCore
             builder.InitializeKnownTypes()
                 .LoadServerConfig()
                 .InitializeDefaultGlobals()
+                .AddEventBus()
                 .LoadExtensionLibraries()
                 .BuildServiceHost<ServerRemoteInterface>()
                 .BuildServiceHost<FileTransferServciceInterface>()
