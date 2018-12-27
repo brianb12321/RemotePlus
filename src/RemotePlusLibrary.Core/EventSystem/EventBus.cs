@@ -53,5 +53,15 @@ namespace RemotePlusLibrary.Core.EventSystem
         {
             LoggerEventProxy.Instance.DeliveringEvent -= Instance_DeliveringEvent;
         }
+
+        void IEventBus.PublishPrivate<TMessage>(TMessage message)
+        {
+            Publish(message);
+        }
+
+        public void PublishPrivate(ITinyMessage message)
+        {
+            Publish(message);
+        }
     }
 }

@@ -13,12 +13,11 @@ namespace RemotePlusLibrary.Discovery
     {
         private ILogFactory _factory;
         private IRemoteWithProxy _proxy;
-        private IEventBus _bus;
-        public ProxyEventBus(IEventBus bus, ILogFactory factory, IRemoteWithProxy proxy)
+        private TinyMessengerHub _hub = null;
+        public ProxyEventBus(ILogFactory factory, IRemoteWithProxy proxy)
         {
             _factory = factory;
             _proxy = proxy;
-            _bus = bus;
             LoggerEventProxy.Instance.DeliveringEvent += Instance_DeliveringEvent;
         }
 
@@ -29,35 +28,45 @@ namespace RemotePlusLibrary.Discovery
 
         public TinyMessageSubscriptionToken Subscribe<TMessage>(Action<TMessage> subscriber) where TMessage : class, ITinyMessage
         {
-            var token = _bus.Subscribe(subscriber);
+            var token = _hub.Subscribe(subscriber, LoggerEventProxy.Instance);
             _factory.Log($"Subscriber of type '{typeof(TMessage).Name}' added to event bus.", LogLevel.Info, "EventBus");
             return token;
         }
         public TinyMessageSubscriptionToken Subscribe<TMessage>(Action<TMessage> subscriber, Func<TMessage, bool> condition) where TMessage : class, ITinyMessage
         {
-            var token = _bus.Subscribe(subscriber, condition);
+            var token = _hub.Subscribe(subscriber, condition, LoggerEventProxy.Instance);
             _factory.Log($"Subscriber '{typeof(TMessage).Name}' added to event bus.", LogLevel.Info, "EventBus");
             return token;
         }
         public void Publish<TMessage>(TMessage message) where TMessage : class, ITinyMessage
         {
-            _bus.Publish(message);
+            _hub.Publish(message);
             _proxy.PublishEvent(message);
         }
         public void UnSubscribe<TMessage>(TinyMessageSubscriptionToken token) where TMessage : class, ITinyMessage
         {
-            _bus.UnSubscribe<TMessage>(token);
+            _hub.Unsubscribe<TMessage>(token);
         }
 
         public void Publish(ITinyMessage message)
         {
-            _bus.Publish(message);
+            _hub.Publish(message);
             _proxy.PublishEvent(message);
         }
 
         public void RemoveEventProxy()
         {
             LoggerEventProxy.Instance.DeliveringEvent -= Instance_DeliveringEvent;
+        }
+
+        void IEventBus.PublishPrivate<TMessage>(TMessage message)
+        {
+            _hub.Publish(message);
+        }
+
+        public void PublishPrivate(ITinyMessage message)
+        {
+            _hub.Publish(message);
         }
     }
 }

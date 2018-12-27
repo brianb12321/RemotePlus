@@ -16,6 +16,8 @@ namespace RemotePlusLibrary.Core.EventSystem
         TinyMessageSubscriptionToken Subscribe<TMessage>(Action<TMessage> subscriber, Func<TMessage, bool> condition) where TMessage : class, ITinyMessage;
         void Publish<TMessage>(TMessage message) where TMessage : class, ITinyMessage;
         void Publish(ITinyMessage message);
+        void PublishPrivate<TMessage>(TMessage message) where TMessage : class, ITinyMessage;
+        void PublishPrivate(ITinyMessage message);
         void UnSubscribe<TMessage>(TinyMessageSubscriptionToken token) where TMessage : class, ITinyMessage;
         void RemoveEventProxy();
     }
