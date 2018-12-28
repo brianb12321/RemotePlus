@@ -625,7 +625,7 @@ namespace RemotePlusServer.Core
                 var path = _service.RemoteInterface.Client.ClientCallback.RequestInformation(requestPathBuilder);
                 if (path.AcquisitionState == RequestState.OK)
                 {
-                    _service.RemoteInterface.Client.ClientCallback.RequestInformation(new SendLocalFileByteStreamRequestBuilder(path.Data.ToString(), path.Data.ToString()));
+                    _service.RemoteInterface.Client.ClientCallback.RequestInformation(new SendLocalFileByteStreamRequestBuilder(Path.GetFileName(path.Data.ToString()), path.Data.ToString()));
                     query = new ResourceQuery(Path.GetFileName(path.Data.ToString()), Guid.Empty);
                 }
                 else
