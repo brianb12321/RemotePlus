@@ -427,7 +427,7 @@ namespace RemotePlusServer
             }
         }
 
-        public bool ExecuteScript(string script)
+        public object ExecuteScript(string script)
         {
             try
             {

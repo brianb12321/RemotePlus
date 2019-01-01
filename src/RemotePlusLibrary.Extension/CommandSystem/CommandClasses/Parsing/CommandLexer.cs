@@ -21,6 +21,23 @@ namespace RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing
                 {
                     case ' ':
                         break;
+                    case '{':
+                        StringBuilder scriptBuilder = new StringBuilder();
+                        for (int j = i + 1; j < command.Length; j++)
+                        {
+                            if (command[j] == '}' && (command.Length == j + 1 || char.IsWhiteSpace(command[j + 1])))
+                            {
+                                tokens.Add(new CommandToken(scriptBuilder.ToString(), TokenType.Script));
+                                i++;
+                                break;
+                            }
+                            else
+                            {
+                                scriptBuilder.Append(command[j]);
+                                i++;
+                            }
+                        }
+                        break;
                     case '$':
                         StringBuilder sb3 = new StringBuilder();
                         for(int j = i + 1; j < command.Length; j++)

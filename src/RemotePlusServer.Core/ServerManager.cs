@@ -27,7 +27,7 @@ namespace RemotePlusServer.Core
         public static ExtensionLibraryCollectionBase<ServerExtensionLibrary> DefaultCollection => IOCContainer.GetService<ExtensionLibraryCollectionBase<ServerExtensionLibrary>>();
         public static IAccountManager AccountManager => IOCContainer.GetService<IAccountManager>();
         public static Guid ServerGuid { get; set; }
-        public static ScriptBuilder ScriptBuilder => IOCContainer.GetService<ScriptBuilder>();
+        public static IScriptingEngine ScriptBuilder => IOCContainer.GetService<IScriptingEngine>();
         public static bool IsService { get; set; }
         public static IRemotePlusService<FileTransferServciceInterface> FileTransferService => DefaultServiceManager.GetService<FileTransferServciceInterface>();
         public static IEventBus EventBus => IOCContainer.GetService<IEventBus>();

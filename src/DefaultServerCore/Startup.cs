@@ -18,6 +18,7 @@ using RemotePlusLibrary.Core;
 using RemotePlusServer.Core.ExtensionSystem;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
 using RemotePlusLibrary.Extension.ResourceSystem;
+using RemotePlusLibrary.Scripting;
 
 namespace DefaultServerCore
 {
@@ -40,7 +41,7 @@ namespace DefaultServerCore
                 .UseErrorHandler<GlobalErrorHandler>()
                 .UseExtensionContainer<ServerExtensionLibraryCollection, ServerExtensionLibrary>(new ServerExtensionLibraryCollection())
                 .UseServerControlPage<ServerControls>()
-                .UseScriptingEngine()
+                .UseScriptingEngine<ScriptBuilder>()
                 .UseConfigurationDataAccess<ConfigurationHelper>()
                 .AddSingletonNamed<IConfigurationDataAccess, BinarySerializationHelper>("BinaryDataAccess")
                 .UseAuthentication<AccountManager>()

@@ -53,7 +53,7 @@ namespace ProxyServer
             {
                 return ProxyManager.ProxyService.RemoteInterface.ExecuteProxyCommand(command, RemotePlusLibrary.Extension.CommandSystem.CommandExecutionMode.Script);
             }), "Sends the specified command to the proxy server.", RemotePlusLibrary.Scripting.ScriptGlobalType.Function);
-            ProxyManager.ScriptBuilder.AddScriptObject("runScriptOnServer", new Func<string, bool>(script =>
+            ProxyManager.ScriptBuilder.AddScriptObject("runScriptOnServer", new Func<string, object>(script =>
             {
                 return ProxyManager.ProxyService.RemoteInterface.ExecuteScript(script);
             }), "Runs a script to the selected server.", RemotePlusLibrary.Scripting.ScriptGlobalType.Function);

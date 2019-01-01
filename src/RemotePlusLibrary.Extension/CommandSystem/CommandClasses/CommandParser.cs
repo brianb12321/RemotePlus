@@ -1,6 +1,7 @@
 ﻿using RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing.CommandElements;
 using RemotePlusLibrary.Extension.ResourceSystem;
+using RemotePlusLibrary.Scripting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,9 +13,11 @@ namespace RemotePlusLibrary.Extension.CommandSystem.CommandClasses
     public class CommandParser : IParser
     {
         IResourceManager _resourceManager;
-        public CommandParser(IResourceManager resM)
+        IScriptingEngine _scriptingEngine;
+        public CommandParser(IResourceManager resM, IScriptingEngine scriptingEngine)
         {
             _resourceManager = resM;
+            _scriptingEngine = scriptingEngine;
         }
         public List<ICommandElement> Parse(IReadOnlyList<CommandToken> tokens)
         {
@@ -25,21 +28,30 @@ namespace RemotePlusLibrary.Extension.CommandSystem.CommandClasses
                 var token = tokens[i];
                 switch(token.TokenType)
                 {
+                    case TokenType.Script:
+                        object result = _scriptingEngine.ExecuteStringUsingSameScriptScope(token.OriginalValue);
+                        var scriptCommandElement = new ScriptCommandElement(result);
+                        _buffer.Add(scriptCommandElement);
+                        _elements.Add(scriptCommandElement);
+                        break;
                     case TokenType.CommandElement:
-                        _buffer.Add(new StringCommandElement(tokens[i].OriginalValue));
-                        _elements.Add(new StringCommandElement(tokens[i].OriginalValue));
+                        var stringCommandElement = new StringCommandElement(tokens[i].OriginalValue);
+                        _buffer.Add(stringCommandElement);
+                        _elements.Add(stringCommandElement);
                         break;
                     case TokenType.QouteBody:
-                        _buffer.Add(new StringCommandElement(tokens[i].OriginalValue));
-                        _elements.Add(new StringCommandElement(tokens[i].OriginalValue));
+                        var qouteBodyCommandElement = new StringCommandElement(tokens[i].OriginalValue);
+                        _buffer.Add(qouteBodyCommandElement);
+                        _elements.Add(qouteBodyCommandElement);
                         break;
                     case TokenType.SubRoutine:
                         _elements.Add(new AggregateCommandElement(_buffer));
                         _buffer.Clear();
                         break;
                     case TokenType.Resource:
-                        _buffer.Add(new ResourceQueryCommandElement(new ResourceQuery(tokens[i].OriginalValue, Guid.Empty)));
-                        _elements.Add(new ResourceQueryCommandElement(new ResourceQuery(tokens[i].OriginalValue, Guid.Empty)));
+                        var resourceQoueryCommandElement = new ResourceQueryCommandElement(new ResourceQuery(tokens[i].OriginalValue, Guid.Empty));
+                        _buffer.Add(resourceQoueryCommandElement);
+                        _elements.Add(resourceQoueryCommandElement);
                         break;
                 }
             }

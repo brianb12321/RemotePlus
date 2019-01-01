@@ -23,7 +23,7 @@ namespace ProxyServer
         public static Guid ProxyGuid { get; } = Guid.NewGuid();
         public static IServiceManager DefaultServiceManager => IOCContainer.GetService<IServiceManager>();
         public static IRemotePlusService<ProxyServerRemoteImpl> ProxyService => DefaultServiceManager.GetService<ProxyServerRemoteImpl>();
-        public static ScriptBuilder ScriptBuilder => IOCContainer.GetService<ScriptBuilder>();
+        public static IScriptingEngine ScriptBuilder => IOCContainer.GetService<IScriptingEngine>();
         public static ExtensionLibraryCollectionBase<ProxyServer.ExtensionSystem.ProxyExtensionLibrary> DefaultCollection => IOCContainer.GetService<ExtensionLibraryCollectionBase<ExtensionSystem.ProxyExtensionLibrary>>();
 
         public NetworkSide ExecutingSide => NetworkSide.Server;

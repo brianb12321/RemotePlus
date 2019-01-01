@@ -22,7 +22,7 @@ namespace RemotePlusLibrary.Extension.ResourceSystem
         }
         public override string ToString()
         {
-            return IOCContainer.GetService<IResourceManager>().GetResource<Resource>(this).ToString();
+            return $"${ResourceIdentifier}";
         }
     }
 }

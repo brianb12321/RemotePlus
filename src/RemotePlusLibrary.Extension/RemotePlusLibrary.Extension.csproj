@@ -56,6 +56,7 @@
     <Compile Include="CommandSystem\CommandClasses\Parsing\CommandElements\AggregateCommandElement.cs" />
     <Compile Include="CommandSystem\CommandClasses\Parsing\CommandElements\PipelineCommandElement.cs" />
     <Compile Include="CommandSystem\CommandClasses\Parsing\CommandElements\ResourceQueryCommandElement.cs" />
+    <Compile Include="CommandSystem\CommandClasses\Parsing\CommandElements\ScriptCommandElement.cs" />
     <Compile Include="CommandSystem\CommandClasses\Parsing\CommandElements\StringCommandElement.cs" />
     <Compile Include="CommandSystem\CommandClasses\Parsing\ICommandElement.cs" />
     <Compile Include="CommandSystem\CommandClasses\Parsing\ICommandExecutor.cs" />
@@ -128,6 +129,10 @@
     <ProjectReference Include="..\RemotePlusLibrary.Core\RemotePlusLibrary.Core.csproj">
       <Project>{0334629B-6302-42A8-B159-F8646B4D8650}</Project>
       <Name>RemotePlusLibrary.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RemotePlusLibrary.Scripting\RemotePlusLibrary.Scripting.csproj">
+      <Project>{5C399F78-C133-4F9B-9758-C36A4B7FAE98}</Project>
+      <Name>RemotePlusLibrary.Scripting</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

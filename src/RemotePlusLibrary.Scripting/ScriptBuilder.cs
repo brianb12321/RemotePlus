@@ -12,13 +12,13 @@ using System.Threading.Tasks;
 
 namespace RemotePlusLibrary.Scripting
 {
-    public class ScriptBuilder
+    public class ScriptBuilder : IScriptingEngine
     {
         private  Dictionary<string, ScriptGlobal> globals = new Dictionary<string, ScriptGlobal>();
         public const string SCRIPT_LOG_CONSTANT = "Script Engine";
         public ScriptEngine ScriptingEngine { get; private set; }
         public ScriptScope _templateScope = null;
-        void InitializeGlobals()
+        public void InitializeGlobals()
         {
             foreach (KeyValuePair<string, ScriptGlobal> global in globals)
             {
@@ -38,6 +38,10 @@ namespace RemotePlusLibrary.Scripting
             var newGlobal = new ScriptGlobal(scriptObject) { Information = new ScriptGlobalInformation() { Name = objectName, Description = description, Type = objectType } };
             FillMembersRecurs(newGlobal);
             globals.Add(objectName, newGlobal);
+            if(ScriptingEngine != null)
+            {
+                ScriptingEngine.GetBuiltinModule().SetVariable(objectName, newGlobal.Global);
+            }
         }
         public void ImportModule(string module)
         {
@@ -96,22 +100,38 @@ namespace RemotePlusLibrary.Scripting
             _templateScope = ScriptingEngine.CreateScope();
             InitializeGlobals();
         }
-        public bool ExecuteString(string script)
+        public object ExecuteString(string script)
         {
-            var source = ScriptingEngine.CreateScriptSourceFromString(script);
-            source.Execute(_templateScope);
-            return true;
+            try
+            {
+                var source = ScriptingEngine.CreateScriptSourceFromString(script);
+                return source.Execute(_templateScope);
+            }
+            catch (Exception ex)
+            {
+                throw new ScriptException($"There was an error while executing a script. Error: {ex.Message}", ex);
+            }
         }
         ScriptScope staticScope = null;
-        public bool ExecuteStringUsingSameScriptScope(string script)
+        public object ExecuteStringUsingSameScriptScope(string script)
         {
-            var source = ScriptingEngine.CreateScriptSourceFromString(script);
-            if (staticScope ==  null)
+            try
             {
-                staticScope = _templateScope;
+                if (string.IsNullOrWhiteSpace(script))
+                {
+                    throw new Exception("Script is empty.");
+                }
+                var source = ScriptingEngine.CreateScriptSourceFromString(script);
+                if (staticScope == null)
+                {
+                    staticScope = _templateScope;
+                }
+                return source.Execute(staticScope);
             }
-            source.Execute(staticScope);
-            return true;
+            catch (Exception ex)
+            {
+                throw new ScriptException($"There was an error while executing a script. Error: {ex.Message}", ex);
+            }
         }
         public void ClearStaticScope()
         {

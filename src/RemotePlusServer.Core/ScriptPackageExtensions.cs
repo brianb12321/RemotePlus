@@ -12,7 +12,7 @@ namespace RemotePlusServer.Core
 {
     public static class ScriptPackageExtensions
     {
-        public static bool ExecuteScript(this ScriptPackage package)
+        public static object ExecuteScript(this ScriptPackage package)
         {
             Guid g = Guid.NewGuid();
             ServerCore.ServerBuilderExtensions.InitializeGlobals();

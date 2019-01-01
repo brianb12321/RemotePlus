@@ -95,6 +95,6 @@ namespace RemotePlusLibrary.Contracts
         [OperationContract]
         [FaultContract(typeof(ServerFault))]
         [FaultContract(typeof(ProxyFault))]
-        bool ExecuteScript(string script);
+        object ExecuteScript(string script);
     }
 }

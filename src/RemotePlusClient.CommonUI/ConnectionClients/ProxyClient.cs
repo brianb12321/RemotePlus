@@ -178,7 +178,7 @@ namespace RemotePlusClient.CommonUI.ConnectionClients
             base.Open();
         }
 
-        public bool ExecuteScript(string script)
+        public object ExecuteScript(string script)
         {
             return Channel.ExecuteScript(script);
         }
@@ -252,7 +252,7 @@ namespace RemotePlusClient.CommonUI.ConnectionClients
             return Channel.GetResource(resourceIdentifier);
         }
 
-        public bool ExecuteProxyScript(string script)
+        public object ExecuteProxyScript(string script)
         {
             return Channel.ExecuteProxyScript(script);
         }

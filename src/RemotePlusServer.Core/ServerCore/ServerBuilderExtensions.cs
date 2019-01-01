@@ -143,6 +143,7 @@ namespace RemotePlusServer.Core.ServerCore
             {
                 IResourceManager resourceManager = IOCContainer.GetService<IResourceManager>();
                 resourceManager.AddResource(new StringResource("Name", "RemotePlusServer"));
+                ServerManager.ScriptBuilder.AddScriptObject<Func<string, ResourceQuery>>("resq", (name) => new ResourceQuery(name, Guid.Empty), "Generates a new resource query.", ScriptGlobalType.Function);
             });
         }
         /// <summary>

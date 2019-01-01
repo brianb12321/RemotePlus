@@ -248,7 +248,7 @@ namespace RemotePlusClientCmd
                         int pos = 0;
                         CommandPipeline pipe = new CommandPipeline();
                         CommandLexer lexer = new CommandLexer();
-                        CommandParser parser = new CommandParser(null);
+                        CommandParser parser = new CommandParser(null, null);
                         var tokens = lexer.Lex(c);
                         var elements = parser.Parse(tokens);
                         //var newVariableTokens = RunVariableReplacement(parser, out bool success);

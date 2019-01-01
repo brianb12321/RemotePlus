@@ -14,6 +14,8 @@ namespace RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing
         [EnumMember]
         SubRoutine,
         [EnumMember]
-        VariableCommand
+        VariableCommand,
+        [EnumMember]
+        Script
     }
 }

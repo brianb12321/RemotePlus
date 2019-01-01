@@ -72,11 +72,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IndexScriptObjectAttribute.cs" />
+    <Compile Include="IScriptingEngine.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ScriptBuilder.cs" />
+    <Compile Include="ScriptException.cs" />
     <Compile Include="ScriptGlobal.cs" />
     <Compile Include="ScriptGlobalInformation.cs" />
     <Compile Include="ScriptGlobalTypecs.cs" />
+    <Compile Include="ScriptingServiceCollectionExtensions.cs" />
     <Compile Include="ScriptPackageEngine\ScriptPackage.cs" />
     <Compile Include="ScriptPackageEngine\ScriptPackageManifest.cs" />
   </ItemGroup>
@@ -84,6 +87,10 @@
     <ProjectReference Include="..\RemotePlusLibrary.Configuration\RemotePlusLibrary.Configuration.csproj">
       <Project>{8a8a5888-1ce7-46ed-b8de-1ac7671f3426}</Project>
       <Name>RemotePlusLibrary.Configuration</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RemotePlusLibrary.Core\RemotePlusLibrary.Core.csproj">
+      <Project>{0334629B-6302-42A8-B159-F8646B4D8650}</Project>
+      <Name>RemotePlusLibrary.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

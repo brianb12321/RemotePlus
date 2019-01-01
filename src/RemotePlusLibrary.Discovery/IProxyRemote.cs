@@ -13,7 +13,7 @@ namespace RemotePlusLibrary.Discovery
     public interface IProxyRemote : IRemote
     {
         [OperationContract]
-        bool ExecuteProxyScript(string script);
+        object ExecuteProxyScript(string script);
         [OperationContract(Name = "SelectServerByNumber")]
         void SelectServer(int serverPosition);
         [OperationContract(Name = "SelectServerByGuid")]

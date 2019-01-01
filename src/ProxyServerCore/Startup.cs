@@ -12,6 +12,7 @@ using RemotePlusLibrary.Core.EventSystem;
 using RemotePlusLibrary.Core;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
 using RemotePlusLibrary.Extension.ResourceSystem;
+using RemotePlusLibrary.Scripting;
 
 namespace ProxyServerCore
 {
@@ -25,7 +26,7 @@ namespace ProxyServerCore
                 .UseResourceManager<ProxyResourceManager, FileResourceLoader>()
                 .UseErrorHandler<GlobalErrorHandler>()
                 .UseExtensionContainer<ProxyExtensionCollection, ProxyExtensionLibrary>(new ProxyExtensionCollection())
-                .UseScriptingEngine()
+                .UseScriptingEngine<ScriptBuilder>()
                 .UseServerControlPage<ServerControls>()
                 .UseConfigurationDataAccess<RemotePlusLibrary.Configuration.StandordDataAccess.ConfigurationHelper>()
                 .UseCommandline<CommandEnvironment>(builder =>

@@ -1,4 +1,5 @@
-﻿using RemotePlusLibrary.Extension.ResourceSystem;
+﻿using RemotePlusLibrary.Core.IOC;
+using RemotePlusLibrary.Extension.ResourceSystem;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,7 +22,7 @@ namespace RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing.Comma
         }
         public override string ToString()
         {
-            return Value.ToString();
+            return IOCContainer.GetService<IResourceManager>().GetResource<Resource>(Query).ToString();
         }
         public bool IsOfType<TType>()
         {

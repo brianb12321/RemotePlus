@@ -184,7 +184,7 @@ namespace RemotePlusClient.CommonUI.ConnectionClients
             base.Open();
         }
 
-        public bool ExecuteScript(string script)
+        public object ExecuteScript(string script)
         {
             return Channel.ExecuteScript(script);
         }

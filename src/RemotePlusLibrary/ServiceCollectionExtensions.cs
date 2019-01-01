@@ -43,10 +43,6 @@ namespace RemotePlusLibrary
         {
             return services.AddTransient<Form, TServerControl>();
         }
-        public static IServiceCollection UseScriptingEngine(this IServiceCollection services)
-        {
-            return services.AddSingleton<Scripting.ScriptBuilder>();
-        }
         public static IServiceCollection UseConfigurationDataAccess<TDataAccessImpl>(this IServiceCollection services)
         {
             return services.AddSingletonNamed<Configuration.IConfigurationDataAccess, TDataAccessImpl>("DefaultConfigDataAccess");

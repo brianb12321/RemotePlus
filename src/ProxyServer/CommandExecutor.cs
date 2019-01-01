@@ -21,6 +21,10 @@ namespace ProxyServer
         }
         public CommandResponse Execute(CommandRequest arguments, CommandExecutionMode commandMode, CommandPipeline pipe)
         {
+            if (arguments.Arguments.Count == 0 || string.IsNullOrEmpty(arguments.Arguments[0].ToString()))
+            {
+                return new CommandResponse((int)CommandStatus.Success);
+            }
             bool throwFlag = false;
             StatusCodeDeliveryMethod scdm = StatusCodeDeliveryMethod.DoNotDeliver;
             try

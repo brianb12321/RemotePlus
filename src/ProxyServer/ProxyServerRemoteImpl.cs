@@ -28,6 +28,7 @@ using RemotePlusLibrary.RequestSystem.DefaultRequestBuilders;
 using RemotePlusLibrary.Extension.ResourceSystem;
 using TinyMessenger;
 using RemotePlusLibrary.Discovery.Events;
+using System.Drawing;
 
 namespace ProxyServer
 {
@@ -63,7 +64,7 @@ namespace ProxyServer
             SelectedClient.ClientCallback.EncryptFile(fileName, password);
         }
 
-        public bool ExecuteScript(string script)
+        public object ExecuteScript(string script)
         {
             return SelectedClient.ClientCallback.ExecuteScript(script);
         }
@@ -373,28 +374,10 @@ namespace ProxyServer
         {
             CommandPipeline pipe = new CommandPipeline();
             int pos = 0;
-            if (command.StartsWith("::") && mode == CommandExecutionMode.Client)
-            {
-                try
-                {
-                    ProxyManager.ScriptBuilder.ExecuteStringUsingSameScriptScope(command.TrimStart(':'));
-                }
-                catch (Exception ex)
-                {
-                    ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyManager.ProxyGuid, $"Could not execute script file: {ex.Message}", LogLevel.Error, ScriptBuilder.SCRIPT_LOG_CONSTANT);
-                }
-            }
             //Sends the command directly to the selected server.
-            else if(command.StartsWith("=>"))
+            if(command.StartsWith("=>"))
             {
-                try
-                {
-                    return SelectedClient.ClientCallback.RunServerCommand(command.Remove(0, 2), mode);
-                }
-                catch (Exception ex)
-                {
-                    ProxyClient.ClientCallback.TellMessageToServerConsole(SelectedClient.UniqueID, $"Could not execute script file: {ex.Message}", LogLevel.Error, ScriptBuilder.SCRIPT_LOG_CONSTANT);
-                }
+                return RunServerCommand(command.Remove(0, 2), mode);
             }
             else
             {
@@ -427,7 +410,7 @@ namespace ProxyServer
                 }
                 catch (Exception ex)
                 {
-                    ProxyClient.ClientCallback.TellMessageToServerConsole(SelectedClient.UniqueID, $"There was an error in the command: {ex.Message}", LogLevel.Error, "Proxy Server");
+                    ProxyClient.ClientCallback.TellMessageToServerConsole(SelectedClient.UniqueID, $"There was an error executing the command: {ex.Message}", LogLevel.Error, "Proxy Server");
                     return pipe;
                 }
             }
@@ -486,7 +469,7 @@ namespace ProxyServer
             return ProxyManager.ResourceStore[resourceIdentifier];
         }
 
-        public bool ExecuteProxyScript(string script)
+        public object ExecuteProxyScript(string script)
         {
             return ProxyManager.ScriptBuilder.ExecuteString(script);
         }

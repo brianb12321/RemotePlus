@@ -78,6 +78,6 @@ namespace RemotePlusLibrary.Discovery
         ScriptGlobalInformation[] GetScriptGlobals();
         [OperationContract]
         [FaultContract(typeof(ServerFault))]
-        bool ExecuteScript(string script);
+        object ExecuteScript(string script);
     }
 }

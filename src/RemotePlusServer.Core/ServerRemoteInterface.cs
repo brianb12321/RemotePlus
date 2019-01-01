@@ -137,44 +137,34 @@ namespace RemotePlusServer.Core
         {
             CommandPipeline pipe = new CommandPipeline();
             int pos = 0;
-            //Makes sure that a script command won't be executed by a script, thus avoiding lots of trouble.
-            if (command.StartsWith("::") && commandMode == CommandExecutionMode.Client)
+            try
             {
-                //This is script command.
-                try
-                {
-                    ServerManager.ScriptBuilder.ExecuteStringUsingSameScriptScope(command.TrimStart(':'));
-                }
-                catch (Exception ex)
-                {
-                    Client.ClientCallback.TellMessageToServerConsole($"Could not execute script file: {ex.Message}", LogLevel.Error, ScriptBuilder.SCRIPT_LOG_CONSTANT);
-                }
+                ICommandEnvironmnet env = IOCContainer.GetService<ICommandEnvironmnet>();
+                ILexer lexer = env.Lexer;
+                IParser parser = env.Parser;
+                //ITokenProcessor processor = env.Processor;
+                RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing.ICommandExecutor executor = env.Executor;
+                //processor.ConfigureProcessor(ServerManager.ServerRemoteService.Variables, executor);
+                var tokens = lexer.Lex(command);
+                var elements = parser.Parse(tokens);
+                //var newTokens = processor.RunSubRoutines(lexer, pipe, pos);
+                //Run the commands
+                var request = new CommandRequest(elements.ToArray());
+                var routine = new CommandRoutine(request, executor.Execute(request, CommandExecutionMode.Client, pipe));
+                pipe.Add(pos++, routine);
             }
-            else
+            catch (ScriptException ex)
             {
-                try
-                {
-                    ICommandEnvironmnet env = IOCContainer.GetService<ICommandEnvironmnet>();
-                    ILexer lexer = env.Lexer;
-                    IParser parser = env.Parser;
-                    //ITokenProcessor processor = env.Processor;
-                    RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing.ICommandExecutor executor = env.Executor;
-                    //processor.ConfigureProcessor(ServerManager.ServerRemoteService.Variables, executor);
-                    var tokens = lexer.Lex(command);
-                    var elements = parser.Parse(tokens);
-                    //var newTokens = processor.RunSubRoutines(lexer, pipe, pos);
-                    //Run the commands
-                    var request = new CommandRequest(elements.ToArray());
-                    var routine = new CommandRoutine(request, executor.Execute(request, CommandExecutionMode.Client, pipe));
-                    pipe.Add(pos++, routine);
-                }
-                catch (ParserException e)
-                {
-                    string parseErrorMessage = $"Unable to parse command: {e.Message}";
-                    GlobalServices.Logger.Log(parseErrorMessage, LogLevel.Error, "Server Host");
-                    Client.ClientCallback.TellMessageToServerConsole(new ConsoleText(parseErrorMessage) { TextColor = Color.Red });
-                    return pipe;
-                }
+                string scriptErrorMessage = $"{ex.Message}";
+                GlobalServices.Logger.Log(scriptErrorMessage, LogLevel.Error, ScriptBuilder.SCRIPT_LOG_CONSTANT);
+                Client.ClientCallback.TellMessageToServerConsole(new ConsoleText(scriptErrorMessage) { TextColor = Color.Red });
+            }
+            catch (ParserException e)
+            {
+                string parseErrorMessage = $"Unable to parse command: {e.Message}";
+                GlobalServices.Logger.Log(parseErrorMessage, LogLevel.Error, "Server Host");
+                Client.ClientCallback.TellMessageToServerConsole(new ConsoleText(parseErrorMessage) { TextColor = Color.Red });
+                return pipe;
             }
             return pipe;
         }
