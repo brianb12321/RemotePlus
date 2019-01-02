@@ -25,6 +25,7 @@ using RemotePlusLibrary.Extension.ResourceSystem.ResourceTypes;
 using RemotePlusLibrary.Core.EventSystem;
 using RemotePlusLibrary.Discovery;
 using System.ServiceModel;
+using System.Windows.Forms;
 
 namespace RemotePlusServer.Core.ServerCore
 {
@@ -129,6 +130,10 @@ namespace RemotePlusServer.Core.ServerCore
                 GlobalServices.Logger.Log("Redirecting STDOUT to duplex channel.", LogLevel.Debug, "Scripting Engine");
                 ServerManager.ScriptBuilder.ScriptingEngine.Runtime.IO.SetOutput(new MemoryStream(), new Internal._ClientTextWriter());
                 //ServerManager.ScriptBuilder.ScriptingEngine.Runtime.IO.SetInput(new MemoryStream(), new Internal._ClientTextReader(), Encoding.ASCII);
+                GlobalServices.Logger.Log("Setting sys.path.", LogLevel.Debug, "Scripting Engine");
+                ICollection<string> paths = ServerManager.ScriptBuilder.ScriptingEngine.GetSearchPaths();
+                paths.Add(AppDomain.CurrentDomain.BaseDirectory + "\\PythonStdLib");
+                ServerManager.ScriptBuilder.ScriptingEngine.SetSearchPaths(paths);
                 GlobalServices.Logger.Log("Finished starting scripting engine.", LogLevel.Info);
             });
         }

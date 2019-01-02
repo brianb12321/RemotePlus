@@ -612,7 +612,7 @@ namespace RemotePlusServer.Core
             ResourceQuery query = null;
             if(req.Arguments.Count >= 2 && req.Arguments[1].IsOfType<ResourceQuery>())
             {
-                query = (ResourceQuery)req.Arguments[1];
+                query = (ResourceQuery)req.Arguments[1].Value;
                 removeResource = false;
             }
             else

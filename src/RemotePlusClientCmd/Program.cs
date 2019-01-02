@@ -22,6 +22,8 @@ using RemotePlusLibrary.Core.EventSystem;
 using RemotePlusLibrary.RequestSystem;
 using RemotePlusClient.CommonUI.Requests;
 using RemotePlusLibrary.Discovery.Events;
+using System.Text;
+using System.Linq;
 
 namespace RemotePlusClientCmd
 {
@@ -36,6 +38,7 @@ namespace RemotePlusClientCmd
         public Connection CurrentConnectionData => IOCContainer.GetService<Connection>();
         public IEventBus EventBus => IOCContainer.GetService<IEventBus>();
         public static bool WaitFlag = true;
+        public int _cursorStop;
         public bool ProxyEnabled { get; private set; }
         public NetworkSide ExecutingSide => NetworkSide.Client;
 
@@ -237,9 +240,9 @@ namespace RemotePlusClientCmd
                 {
                     WritePrompt();
                     Console.ForegroundColor = ConsoleColor.Yellow;
-                    var c = Console.ReadLine();
+                    string c = Console.ReadLine();
                     Console.ResetColor();
-                    if(string.IsNullOrEmpty(c))
+                    if (string.IsNullOrEmpty(c))
                     {
                         c = " ";
                     }
@@ -290,7 +293,6 @@ namespace RemotePlusClientCmd
             Remote.Close();
 #pragma warning restore CS0162 // Unreachable code detected
         }
-
 
         //private CommandToken[] RunVariableReplacement(CommandParser p, out bool success)
         //{

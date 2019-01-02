@@ -5,6 +5,7 @@ using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusLibrary.Extension.ResourceSystem;
 using RemotePlusLibrary.RequestSystem.DefaultRequestBuilders;
 using RemotePlusLibrary.RequestSystem.DefaultRequestBuilders.BaseBuilders;
+using RemotePlusLibrary.Scripting;
 using RemotePlusLibrary.Security.AccountSystem;
 using RemotePlusLibrary.ServiceArchitecture;
 using System;
