@@ -21,6 +21,24 @@ namespace RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing
                 {
                     case ' ':
                         break;
+                    case '|':
+                        StringBuilder pipeBuilder = new StringBuilder();
+                        for(int j = i + 2; j <= command.Length; j++)
+                        {
+                            if(command.Length == j)
+                            {
+                                List<CommandToken> newTokens = Lex(pipeBuilder.ToString());
+                                tokens.Add(new AggregateCommandToken(newTokens, TokenType.Pipe));
+                                i++;
+                                break;
+                            }
+                            else
+                            {
+                                pipeBuilder.Append(command[j]);
+                                i++;
+                            }
+                        }
+                        break;
                     case '{':
                         StringBuilder scriptBuilder = new StringBuilder();
                         for (int j = i + 1; j < command.Length; j++)
@@ -54,24 +72,46 @@ namespace RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing
                         }
                         tokens.Add(new CommandToken(sb3.ToString(), TokenType.Resource));
                         break;
-                    case '&':
-                        tokens.Add(new CommandToken(command[i].ToString(), TokenType.SubRoutine));
-                        break;
                     case '"':
+                        bool ignoreQoute = false;
+                        bool ignoreBackslash = false;
                         StringBuilder sb = new StringBuilder();
                         for(int j = i + 1; j < command.Length; j++)
                         {
-                            if(command[j] != '"')
+                            if(command[j] == '\\' && ignoreBackslash)
                             {
                                 sb.Append(command[j]);
+                                ignoreBackslash = false;
+                                ignoreQoute = false;
                                 i++;
                             }
-                            else
+                            else if(command[j] == '\\')
+                            {
+                                ignoreQoute = true;
+                                ignoreBackslash = true;
+                                i++;
+                            }
+                            else if(command[j] == '"' && ignoreQoute)
+                            {
+                                sb.Append(command[j]);
+                                ignoreQoute = false;
+                                ignoreBackslash = false;
+                                i++;
+                            }
+                            else if(command[j] == '"' && !ignoreQoute)
                             {
                                 tokens.Add(new CommandToken(sb.ToString(), TokenType.QouteBody));
                                 i++;
                                 break;
                             }
+                            else
+                            {
+                                sb.Append(command[j]);
+                                ignoreQoute = false;
+                                ignoreBackslash = false;
+                                i++;
+                            }
+                            
                         }
                         break;
                     default:

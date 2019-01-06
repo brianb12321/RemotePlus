@@ -53,7 +53,7 @@
   <ItemGroup>
     <Compile Include="ClientSupportedTypes.cs" />
     <Compile Include="CommandSystem\CommandClasses\CommandParser.cs" />
-    <Compile Include="CommandSystem\CommandClasses\Parsing\CommandElements\AggregateCommandElement.cs" />
+    <Compile Include="CommandSystem\CommandClasses\Parsing\AggregateCommandToken.cs" />
     <Compile Include="CommandSystem\CommandClasses\Parsing\CommandElements\PipelineCommandElement.cs" />
     <Compile Include="CommandSystem\CommandClasses\Parsing\CommandElements\ResourceQueryCommandElement.cs" />
     <Compile Include="CommandSystem\CommandClasses\Parsing\CommandElements\ScriptCommandElement.cs" />
@@ -74,6 +74,7 @@
     <Compile Include="CommandSystem\CommandDescription.cs" />
     <Compile Include="CommandSystem\CommandEnvironment.cs" />
     <Compile Include="CommandSystem\CommandlineBuilder.cs" />
+    <Compile Include="CommandSystem\CommandLogEventArgs.cs" />
     <Compile Include="CommandSystem\ConsoleText.cs" />
     <Compile Include="CommandSystem\DefaultCommandStore.cs" />
     <Compile Include="CommandSystem\ICommandClass.cs" />

@@ -392,13 +392,47 @@ namespace ProxyServer
                         var tokens = lexer.Lex(command);
                         var elements = parser.Parse(tokens);
                         //Run the commands
-                        var request = new CommandRequest(elements.ToArray());
-                        var routine = new CommandRoutine(request, executor.Execute(request, mode, pipe));
-                        if (routine.Output.ResponseCode == 3131)
+                        if(elements.Count <= 1)
                         {
-                            RunServerCommand(command, CommandExecutionMode.Client);
+                            var request = new CommandRequest(elements[0].ToArray());
+                            var routine = new CommandRoutine(request, executor.Execute(request, mode, pipe));
+                            if (routine.Output.ResponseCode == 3131)
+                            {
+                                RunServerCommand(command, CommandExecutionMode.Client);
+                            }
+                            pipe.Add(pos++, routine);
                         }
-                        pipe.Add(pos++, routine);
+                        else
+                        {
+                            CommandResponse result = null;
+                            foreach (List<ICommandElement> currentCommand in elements)
+                            {
+                                if (elements.IndexOf(currentCommand) == 0)
+                                {
+                                    CommandRequest firstRequest = new CommandRequest(currentCommand.ToArray());
+                                    var firstRoutine = new CommandRoutine(firstRequest, executor.Execute(firstRequest, CommandExecutionMode.Client, pipe));
+                                    if (firstRoutine.Output.ResponseCode == 3131)
+                                    {
+                                        RunServerCommand(command, CommandExecutionMode.Client);
+                                        break;
+                                    }
+                                    result = firstRoutine.Output;
+                                    pipe.Add(pos++, firstRoutine);
+                                }
+                                else
+                                {
+                                    CommandRequest request = new CommandRequest(currentCommand.ToArray());
+                                    request.LastCommand = result;
+                                    var routine = new CommandRoutine(request, executor.Execute(request, CommandExecutionMode.Client, pipe));
+                                    if (routine.Output.ResponseCode == 3131)
+                                    {
+                                        ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyManager.ProxyGuid, new ConsoleText("Unable to execute proxy command: command not found.") { TextColor = Color.Red });
+                                    }
+                                    result = routine.Output;
+                                    pipe.Add(pos++, routine);
+                                }
+                            }
+                        }
                     }
                     catch (ParserException e)
                     {

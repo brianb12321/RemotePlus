@@ -7,6 +7,7 @@ using RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing;
 using RemotePlusLibrary.Core;
 using System;
 using System.Collections.Generic;
+using RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing.CommandElements;
 
 namespace ProxyServer
 {
@@ -21,8 +22,13 @@ namespace ProxyServer
         }
         public CommandResponse Execute(CommandRequest arguments, CommandExecutionMode commandMode, CommandPipeline pipe)
         {
-            if (arguments.Arguments.Count == 0 || string.IsNullOrEmpty(arguments.Arguments[0].ToString()))
+            if (arguments.Arguments.Count == 0)
             {
+                return new CommandResponse((int)CommandStatus.Success);
+            }
+            else if(arguments.Arguments[0] is ScriptCommandElement)
+            {
+                ((ScriptCommandElement)arguments.Arguments[0]).Execute();
                 return new CommandResponse((int)CommandStatus.Success);
             }
             bool throwFlag = false;

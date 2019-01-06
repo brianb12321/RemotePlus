@@ -1,5 +1,6 @@
 ﻿using RemotePlusLibrary.Core.IOC;
 using RemotePlusLibrary.Extension.ResourceSystem;
+using RemotePlusLibrary.Scripting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,10 +13,10 @@ namespace RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing.Comma
     [DataContract]
     public class ScriptCommandElement : ICommandElement
     {
-        public ScriptCommandElement(object value)
+        private string _script = string.Empty;
+        public ScriptCommandElement(string script)
         {
-            Value = value ?? string.Empty;
-            StringValue = Value.ToString();
+            _script = script;
         }
         [IgnoreDataMember]
         public object Value { get; private set; }
@@ -26,13 +27,21 @@ namespace RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing.Comma
         {
             return Value is TType;
         }
+        public void Execute()
+        {
+            Value = IOCContainer.GetService<IScriptingEngine>().ExecuteStringUsingSameScriptScope(_script);
+            if(Value != null)
+            {
+                StringValue = Value.ToString();
+            }
+            else
+            {
+                StringValue = string.Empty;
+            }
+        }
         public override string ToString()
         {
-            //This class is special
-            if(Value is ResourceQuery)
-            {
-                return IOCContainer.GetService<IResourceManager>().GetResource<Resource>((ResourceQuery)Value).ToString();
-            }
+            Execute();
             return Value.ToString();
         }
     }

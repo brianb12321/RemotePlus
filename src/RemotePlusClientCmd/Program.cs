@@ -272,9 +272,34 @@ namespace RemotePlusClientCmd
                         //}
 
                         //Run the commands
-                        var request = new CommandRequest(elements.ToArray());
-                        var routine = new CommandRoutine(request, RunLocalCommand(request, CommandExecutionMode.Client, pipe));
-                        pipe.Add(pos++, routine);
+                        if(elements.Count <= 1)
+                        {
+                            var request = new CommandRequest(elements[0].ToArray());
+                            var routine = new CommandRoutine(request, RunLocalCommand(request, CommandExecutionMode.Client, pipe));
+                            pipe.Add(pos++, routine);
+                        }
+                        else
+                        {
+                            CommandResponse result = null;
+                            foreach (List<ICommandElement> currentCommand in elements)
+                            {
+                                if (elements.IndexOf(currentCommand) == 0)
+                                {
+                                    CommandRequest firstRequest = new CommandRequest(currentCommand.ToArray());
+                                    var firstRoutine = new CommandRoutine(firstRequest, RunLocalCommand(firstRequest, CommandExecutionMode.Client, pipe));
+                                    result = firstRoutine.Output;
+                                    pipe.Add(pos++, firstRoutine);
+                                }
+                                else
+                                {
+                                    CommandRequest request = new CommandRequest(currentCommand.ToArray());
+                                    request.LastCommand = result;
+                                    var routine = new CommandRoutine(request, RunLocalCommand(request, CommandExecutionMode.Client, pipe));
+                                    result = routine.Output;
+                                    pipe.Add(pos++, routine);
+                                }
+                            }
+                        }
                     }
                     else
                     {

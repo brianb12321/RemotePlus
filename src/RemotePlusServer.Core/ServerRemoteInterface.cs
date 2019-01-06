@@ -135,38 +135,9 @@ namespace RemotePlusServer.Core
         }
         public CommandPipeline RunServerCommand(string command, CommandExecutionMode commandMode)
         {
-            CommandPipeline pipe = new CommandPipeline();
-            int pos = 0;
-            try
-            {
-                ICommandEnvironmnet env = IOCContainer.GetService<ICommandEnvironmnet>();
-                ILexer lexer = env.Lexer;
-                IParser parser = env.Parser;
-                //ITokenProcessor processor = env.Processor;
-                RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing.ICommandExecutor executor = env.Executor;
-                //processor.ConfigureProcessor(ServerManager.ServerRemoteService.Variables, executor);
-                var tokens = lexer.Lex(command);
-                var elements = parser.Parse(tokens);
-                //var newTokens = processor.RunSubRoutines(lexer, pipe, pos);
-                //Run the commands
-                var request = new CommandRequest(elements.ToArray());
-                var routine = new CommandRoutine(request, executor.Execute(request, CommandExecutionMode.Client, pipe));
-                pipe.Add(pos++, routine);
-            }
-            catch (ScriptException ex)
-            {
-                string scriptErrorMessage = $"{ex.Message}";
-                GlobalServices.Logger.Log(scriptErrorMessage, LogLevel.Error, ScriptBuilder.SCRIPT_LOG_CONSTANT);
-                Client.ClientCallback.TellMessageToServerConsole(new ConsoleText(scriptErrorMessage) { TextColor = Color.Red });
-            }
-            catch (ParserException e)
-            {
-                string parseErrorMessage = $"Unable to parse command: {e.Message}";
-                GlobalServices.Logger.Log(parseErrorMessage, LogLevel.Error, "Server Host");
-                Client.ClientCallback.TellMessageToServerConsole(new ConsoleText(parseErrorMessage) { TextColor = Color.Red });
-                return pipe;
-            }
-            return pipe;
+            ICommandEnvironmnet env = IOCContainer.GetService<ICommandEnvironmnet>();
+            env.CommandLogged += (sender, e) => Client.ClientCallback.TellMessageToServerConsole(e.Text);
+            return env.Execute(command, commandMode);
         }
     }
 }

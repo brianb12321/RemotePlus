@@ -51,7 +51,8 @@ namespace DefaultServerCore
                            .UseParser<CommandParser>()
                            .UseExecutor<CommandExecutor>()
                            .AddCommandClass<DefaultCommands>()
-                           .AddCommandClass<PackageCommands>());
+                           .AddCommandClass<PackageCommands>()
+                           .AddCommandClass<SpecialCommands>());
             //Add the services.
             IServiceManager manager = IOCContainer.GetService<IServiceManager>();
             manager.AddServiceUsingBuilder(() =>

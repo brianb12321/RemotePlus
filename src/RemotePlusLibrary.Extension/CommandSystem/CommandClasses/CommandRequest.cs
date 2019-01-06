@@ -16,6 +16,10 @@ namespace RemotePlusLibrary.Extension.CommandSystem.CommandClasses
     {
         [DataMember]
         public ElementSet Arguments { get; set; }
+        [DataMember]
+        public CommandResponse LastCommand { get; set; }
+        [DataMember]
+        public bool HasLastCommand { get; set; }
         public CommandRequest(ICommandElement[] args)
         {
             Arguments = new ElementSet();

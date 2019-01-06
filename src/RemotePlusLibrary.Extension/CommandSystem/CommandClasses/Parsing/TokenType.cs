@@ -16,6 +16,8 @@ namespace RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing
         [EnumMember]
         VariableCommand,
         [EnumMember]
-        Script
+        Script,
+        [EnumMember]
+        Pipe
     }
 }

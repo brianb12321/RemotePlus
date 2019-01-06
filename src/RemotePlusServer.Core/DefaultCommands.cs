@@ -336,7 +336,7 @@ namespace RemotePlusServer.Core
             else
             {
                 _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText("Please provide a valid MessageBox button.") { TextColor = Color.Red });
-                return new CommandResponse((int)CommandStatus.Fail) { CustomStatusMessage = "Invalid messageBox button." };
+                return new CommandResponse((int)CommandStatus.Fail) { ReturnData = "Invalid messageBox button." };
             }
             if (args.Arguments[2].ToString() == "i_WARNING")
             {
@@ -373,7 +373,7 @@ namespace RemotePlusServer.Core
             else
             {
                 _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText("Please provide a valid MessageBox icon type.") { TextColor = Color.Red });
-                return new CommandResponse((int)CommandStatus.Fail) { CustomStatusMessage = "Invalid MessageBox icon" };
+                return new CommandResponse((int)CommandStatus.Fail) { ReturnData = "Invalid MessageBox icon" };
             }
             caption = args.Arguments[3].ToString();
             message = args.Arguments[4].ToString();
@@ -384,6 +384,7 @@ namespace RemotePlusServer.Core
             response.Metadata.Add("Caption", caption);
             response.Metadata.Add("Message", message);
             response.Metadata.Add("Response", dr.ToString());
+            response.ReturnData = dr.ToString();
             return response;
         }
         [CommandHelp("Displays the path of the current server folder.")]
@@ -402,7 +403,7 @@ namespace RemotePlusServer.Core
             }
             else
             {
-                _service.RemoteInterface.CurrentPath = args.Arguments[1].ToString();
+                Environment.CurrentDirectory = args.Arguments[1].ToString();
                 _service.RemoteInterface.Client.ClientCallback.ChangePrompt(new RemotePlusLibrary.Extension.CommandSystem.PromptBuilder()
                 {
                     Path = _service.RemoteInterface.CurrentPath,
@@ -414,10 +415,20 @@ namespace RemotePlusServer.Core
         [CommandHelp("Prints the message to the screen.")]
         public CommandResponse echo(CommandRequest args, CommandPipeline pipe)
         {
-            _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(args.Arguments[1].ToString() + Environment.NewLine);
+            string stringToPrint = string.Empty;
+            if (args.Arguments.Count == 1 && args.HasLastCommand)
+            {
+                stringToPrint = args.LastCommand.ToString() + Environment.NewLine;
+                _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(stringToPrint);
+            }
+            else
+            {
+                stringToPrint = args.Arguments[1].ToString() + Environment.NewLine;
+                _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(stringToPrint);
+            }
             return new CommandResponse((int)CommandStatus.Success)
             {
-                CustomStatusMessage = args.Arguments[1].ToString()
+                ReturnData = stringToPrint
             };
         }
         [CommandHelp("Loads an extension library dll into the system.")]

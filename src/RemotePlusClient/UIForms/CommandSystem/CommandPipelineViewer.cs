@@ -34,7 +34,7 @@ namespace RemotePlusClient.UIForms.CommandSystem
                 treeView1.Nodes.Add(tn);
                 treeView1.Nodes[p.Key].Nodes.Add($"Command: {p.Value.Input.GetFullCommand()}");
                 treeView1.Nodes[p.Key].Nodes.Add($"Status Code: {p.Value.Output.ResponseCode}");
-                treeView1.Nodes[p.Key].Nodes.Add($"Status Message: {p.Value.Output.CustomStatusMessage}");
+                treeView1.Nodes[p.Key].Nodes.Add($"Return Data: {p.Value.Output.ReturnData}");
                 treeView1.Nodes[p.Key].Nodes.Add("Metadata", "Metadata");
                 foreach(KeyValuePair<string, string> m in p.Value.Output.Metadata)
                 {

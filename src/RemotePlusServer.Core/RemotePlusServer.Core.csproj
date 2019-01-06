@@ -106,6 +106,7 @@
     <Compile Include="ServerRemoteInterface.cs" />
     <Compile Include="ServerRemotePlusService.cs" />
     <Compile Include="ServiceCollection.cs" />
+    <Compile Include="SpecialCommands.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\RemotePlusLibrary.Configuration\RemotePlusLibrary.Configuration.csproj">
