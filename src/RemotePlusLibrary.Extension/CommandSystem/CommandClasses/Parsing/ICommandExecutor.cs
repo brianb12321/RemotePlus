@@ -11,6 +11,7 @@ namespace RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing
     /// </summary>
     public interface ICommandExecutor
     {
+        event EventHandler<CommandEventArgs> CommandNotFound;
         /// <summary>
         /// Instructs the server to begin execution of a command.
         /// </summary>

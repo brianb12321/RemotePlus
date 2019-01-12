@@ -47,6 +47,10 @@ namespace RemotePlusLibrary.Extension.CommandSystem.CommandClasses
                         List<List<ICommandElement>> newElements = Parse(aggregate.Tokens.AsReadOnly());
                         _finalList.AddRange(newElements);
                         break;
+                    case TokenType.ExecutionResource:
+                        var executionResourceQueryCommandElement = new ExecutionResourceQueryCommandElement(new ResourceQuery(tokens[i].OriginalValue, Guid.Empty));
+                        _elements.Add(executionResourceQueryCommandElement);
+                        break;
                     case TokenType.Resource:
                         var resourceQoueryCommandElement = new ResourceQueryCommandElement(new ResourceQuery(tokens[i].OriginalValue, Guid.Empty));
                         _elements.Add(resourceQoueryCommandElement);

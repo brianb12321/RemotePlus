@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace RemotePlusLibrary.Extension.CommandSystem
 {
     /// <summary>
-    /// Provides the parser, processor, and executor
+    /// Exposes methods and events for interacting with the command-line environment.
     /// </summary>
     public interface ICommandEnvironmnet
     {

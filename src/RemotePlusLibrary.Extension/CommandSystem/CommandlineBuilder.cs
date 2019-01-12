@@ -27,7 +27,7 @@ namespace RemotePlusLibrary.Extension.CommandSystem
         }
         public CommandlineBuilder UseExecutor<TExecuotorImpl>() where TExecuotorImpl : ICommandExecutor
         {
-            _services.AddSingleton<ICommandExecutor, TExecuotorImpl>();
+            _services.AddTransient<ICommandExecutor, TExecuotorImpl>();
             return this;
         }
         public CommandlineBuilder AddCommandClass<TCommandClass>() where TCommandClass : ICommandClass

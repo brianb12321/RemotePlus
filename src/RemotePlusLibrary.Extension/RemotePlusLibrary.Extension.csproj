@@ -54,6 +54,7 @@
     <Compile Include="ClientSupportedTypes.cs" />
     <Compile Include="CommandSystem\CommandClasses\CommandParser.cs" />
     <Compile Include="CommandSystem\CommandClasses\Parsing\AggregateCommandToken.cs" />
+    <Compile Include="CommandSystem\CommandClasses\Parsing\CommandElements\ExecutionResourceQueryCommandElement.cs" />
     <Compile Include="CommandSystem\CommandClasses\Parsing\CommandElements\PipelineCommandElement.cs" />
     <Compile Include="CommandSystem\CommandClasses\Parsing\CommandElements\ResourceQueryCommandElement.cs" />
     <Compile Include="CommandSystem\CommandClasses\Parsing\CommandElements\ScriptCommandElement.cs" />
@@ -73,6 +74,7 @@
     <Compile Include="CommandSystem\CommandClasses\Parsing\TokenType.cs" />
     <Compile Include="CommandSystem\CommandDescription.cs" />
     <Compile Include="CommandSystem\CommandEnvironment.cs" />
+    <Compile Include="CommandSystem\CommandEventArgs.cs" />
     <Compile Include="CommandSystem\CommandlineBuilder.cs" />
     <Compile Include="CommandSystem\CommandLogEventArgs.cs" />
     <Compile Include="CommandSystem\ConsoleText.cs" />
@@ -117,6 +119,7 @@
     <Compile Include="ResourceSystem\Resource.cs" />
     <Compile Include="ResourceSystem\ResourceStore.cs" />
     <Compile Include="ResourceSystem\ResourceQuery.cs" />
+    <Compile Include="ResourceSystem\ResourceTypes\CommandResource.cs" />
     <Compile Include="ResourceSystem\ResourceTypes\FilePointerResource.cs" />
     <Compile Include="ResourceSystem\ResourceTypes\MemoryResource.cs" />
     <Compile Include="ResourceSystem\ResourceTypes\StreamResource.cs" />

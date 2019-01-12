@@ -8,6 +8,8 @@ namespace RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing
         [EnumMember]
         Resource,
         [EnumMember]
+        ExecutionResource,
+        [EnumMember]
         CommandElement,
         [EnumMember]
         QouteBody,

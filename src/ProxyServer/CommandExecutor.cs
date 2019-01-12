@@ -8,6 +8,7 @@ using RemotePlusLibrary.Core;
 using System;
 using System.Collections.Generic;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing.CommandElements;
+using System.Drawing;
 
 namespace ProxyServer
 {
@@ -20,6 +21,9 @@ namespace ProxyServer
             _store = store;
             _logger = logger;
         }
+
+        public event EventHandler<CommandEventArgs> CommandNotFound;
+
         public CommandResponse Execute(CommandRequest arguments, CommandExecutionMode commandMode, CommandPipeline pipe)
         {
             if (arguments.Arguments.Count == 0)
@@ -29,7 +33,10 @@ namespace ProxyServer
             else if(arguments.Arguments[0] is ScriptCommandElement)
             {
                 ((ScriptCommandElement)arguments.Arguments[0]).Execute();
-                return new CommandResponse((int)CommandStatus.Success);
+                return new CommandResponse((int)CommandStatus.Success)
+                {
+                    ReturnData = arguments.Arguments[0].Value
+                };
             }
             bool throwFlag = false;
             StatusCodeDeliveryMethod scdm = StatusCodeDeliveryMethod.DoNotDeliver;
@@ -38,8 +45,10 @@ namespace ProxyServer
                 _logger.Log($"Executing server command {arguments.Arguments[0]}", LogLevel.Info);
                 if(!_store.HasCommand(arguments.Arguments[0].Value.ToString()))
                 {
-                    _logger.Log($"Failed to find the command. Passing command to selected server [{ProxyManager.ProxyService.RemoteInterface.SelectedClient.UniqueID}]", LogLevel.Debug);
-                    return new CommandResponse(3131);
+                    _logger.Log("Failed to find the command.", LogLevel.Debug);
+                    ProxyManager.ProxyService.RemoteInterface.ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyManager.ProxyGuid, new ConsoleText("Unknown proxy command. Please type {proxyHelp} for a list of commands") { TextColor = Color.Red });
+                    CommandNotFound?.Invoke(this, new CommandEventArgs(arguments));
+                    return new CommandResponse((int)CommandStatus.Fail);
                 }
                 var command = _store.GetCommand(arguments.Arguments[0].Value.ToString());
                 var ba = RemotePlusConsole.GetCommandBehavior(command);

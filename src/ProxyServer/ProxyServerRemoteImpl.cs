@@ -167,7 +167,6 @@ namespace ProxyServer
                 sb.AppendLine($"There are {ConnectedServers.Count} server(s) connected to the proxy server.");
                 sb.AppendLine("To view all the servers connected, enter {proxyViewServers} into the console.");
                 sb.AppendLine("To switch the selected server, enter {proxySwitchServer} into the console.");
-                sb.AppendLine("Any command that is not part of the proxy server will be executed on the selected server.");
                 sb.AppendLine($"Proxy server GUID: {ProxyManager.ProxyGuid}");
                 sb.AppendLine();
                 sb.AppendLine();
@@ -372,8 +371,6 @@ namespace ProxyServer
         #region Command Methods
         public CommandPipeline ExecuteProxyCommand(string command, CommandExecutionMode mode)
         {
-            CommandPipeline pipe = new CommandPipeline();
-            int pos = 0;
             //Sends the command directly to the selected server.
             if(command.StartsWith("=>"))
             {
@@ -381,74 +378,10 @@ namespace ProxyServer
             }
             else
             {
-                try
-                {
-                    ICommandEnvironmnet env = IOCContainer.GetService<ICommandEnvironmnet>();
-                    ILexer lexer = env.Lexer;
-                    IParser parser = env.Parser;
-                    RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing.ICommandExecutor executor = env.Executor;
-                    try
-                    {
-                        var tokens = lexer.Lex(command);
-                        var elements = parser.Parse(tokens);
-                        //Run the commands
-                        if(elements.Count <= 1)
-                        {
-                            var request = new CommandRequest(elements[0].ToArray());
-                            var routine = new CommandRoutine(request, executor.Execute(request, mode, pipe));
-                            if (routine.Output.ResponseCode == 3131)
-                            {
-                                RunServerCommand(command, CommandExecutionMode.Client);
-                            }
-                            pipe.Add(pos++, routine);
-                        }
-                        else
-                        {
-                            CommandResponse result = null;
-                            foreach (List<ICommandElement> currentCommand in elements)
-                            {
-                                if (elements.IndexOf(currentCommand) == 0)
-                                {
-                                    CommandRequest firstRequest = new CommandRequest(currentCommand.ToArray());
-                                    var firstRoutine = new CommandRoutine(firstRequest, executor.Execute(firstRequest, CommandExecutionMode.Client, pipe));
-                                    if (firstRoutine.Output.ResponseCode == 3131)
-                                    {
-                                        RunServerCommand(command, CommandExecutionMode.Client);
-                                        break;
-                                    }
-                                    result = firstRoutine.Output;
-                                    pipe.Add(pos++, firstRoutine);
-                                }
-                                else
-                                {
-                                    CommandRequest request = new CommandRequest(currentCommand.ToArray());
-                                    request.LastCommand = result;
-                                    var routine = new CommandRoutine(request, executor.Execute(request, CommandExecutionMode.Client, pipe));
-                                    if (routine.Output.ResponseCode == 3131)
-                                    {
-                                        ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyManager.ProxyGuid, new ConsoleText("Unable to execute proxy command: command not found.") { TextColor = Color.Red });
-                                    }
-                                    result = routine.Output;
-                                    pipe.Add(pos++, routine);
-                                }
-                            }
-                        }
-                    }
-                    catch (ParserException e)
-                    {
-                        string parseErrorMessage = $"Unable to parse command: {e.Message}";
-                        GlobalServices.Logger.Log(parseErrorMessage, LogLevel.Error, "Server Host");
-                        ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyManager.ProxyGuid, parseErrorMessage, LogLevel.Error);
-                        return pipe;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    ProxyClient.ClientCallback.TellMessageToServerConsole(SelectedClient.UniqueID, $"There was an error executing the command: {ex.Message}", LogLevel.Error, "Proxy Server");
-                    return pipe;
-                }
+                var environment = IOCContainer.GetService<ICommandEnvironmnet>();
+                environment.CommandLogged += (sender, e) => ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyManager.ProxyGuid, e.Text);
+                return environment.Execute(command, mode);
             }
-            return pipe;
         }
         #endregion
         public void Leave(Guid serverGuid)

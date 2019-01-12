@@ -70,7 +70,22 @@ namespace RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing
                                 break;
                             }
                         }
-                        tokens.Add(new CommandToken(sb3.ToString(), TokenType.Resource));
+                        if(sb3.Length < 2)
+                        {
+                            tokens.Add(new CommandToken(sb3.ToString(), TokenType.Resource));
+                        }
+                        else
+                        {
+                            if (sb3[sb3.Length - 2] == '(' && sb3[sb3.Length - 1] == ')')
+                            {
+                                sb3.Length -= 2;
+                                tokens.Add(new CommandToken(sb3.ToString(), TokenType.ExecutionResource));
+                            }
+                            else
+                            {
+                                tokens.Add(new CommandToken(sb3.ToString(), TokenType.Resource));
+                            }
+                        }
                         break;
                     case '"':
                         bool ignoreQoute = false;

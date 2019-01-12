@@ -22,6 +22,9 @@ namespace RemotePlusServer.Core
             _store = store;
             _logger = logger;
         }
+
+        public event EventHandler<CommandEventArgs> CommandNotFound;
+
         public CommandResponse Execute(CommandRequest arguments, CommandExecutionMode commandMode, CommandPipeline pipe)
         {
             if(arguments.Arguments.Count == 0)
@@ -31,7 +34,10 @@ namespace RemotePlusServer.Core
             else if (arguments.Arguments[0] is ScriptCommandElement)
             {
                 ((ScriptCommandElement)arguments.Arguments[0]).Execute();
-                return new CommandResponse((int)CommandStatus.Success);
+                return new CommandResponse((int)CommandStatus.Success)
+                {
+                    ReturnData = arguments.Arguments[0].Value
+                };
             }
             bool throwFlag = false;
             StatusCodeDeliveryMethod scdm = StatusCodeDeliveryMethod.DoNotDeliver;
@@ -42,6 +48,7 @@ namespace RemotePlusServer.Core
                 {
                     _logger.Log("Failed to find the command.", LogLevel.Debug);
                     ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText("Unknown command. Please type {help} for a list of commands") { TextColor = Color.Red });
+                    CommandNotFound?.Invoke(this, new CommandEventArgs(arguments));
                     return new CommandResponse((int)CommandStatus.Fail);
                 }
                 var command = _store.GetCommand(arguments.Arguments[0].Value.ToString());

@@ -76,18 +76,11 @@ namespace RemotePlusLibrary.Extension.CommandSystem
                 }
 
             }
-            catch (ScriptException ex)
+            catch (Exception ex)
             {
-                string scriptErrorMessage = $"{ex.Message}";
+                string scriptErrorMessage = $"An error occurred before the executor phase: {ex.Message}";
                 GlobalServices.Logger.Log(scriptErrorMessage, LogLevel.Error, ScriptBuilder.SCRIPT_LOG_CONSTANT);
                 CommandLogged?.Invoke(this, new CommandLogEventArgs(new ConsoleText(scriptErrorMessage) { TextColor = Color.Red }));
-            }
-            catch (ParserException e)
-            {
-                string parseErrorMessage = $"Unable to parse command: {e.Message}";
-                GlobalServices.Logger.Log(parseErrorMessage, LogLevel.Error, "Server Host");
-                CommandLogged?.Invoke(this, new CommandLogEventArgs(new ConsoleText(parseErrorMessage) { TextColor = Color.Red }));
-                return pipe;
             }
             return pipe;
         }

@@ -62,9 +62,8 @@ namespace ProxyServer
                 helpString = RemotePlusConsole.ShowHelp(_store.GetAllCommands());
             }
             _service.RemoteInterface.ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyManager.ProxyGuid, helpString);
-            _service.RemoteInterface.ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyManager.ProxyGuid, "\nAny commands not listed on this list will be executed on the selected server.\n");
             var response = new CommandResponse((int)CommandStatus.Success);
-            response.Metadata.Add("helpText", helpString);
+            response.ReturnData = helpString;
             return response;
         }
         [CommandHelp("Establish registration with the selected server.")]
