@@ -29,7 +29,7 @@ namespace WindowsTools
         [CommandBehavior(SupportClients = RemotePlusLibrary.Extension.ClientSupportedTypes.CommandLine,
             ClientRejectionMessage = "FileM is not supported for GUI clients yet.",
             CommandDevelepmentState = RemotePlusLibrary.Extension.ExtensionDevelopmentState.InDevelopment)]
-        public static CommandResponse filem_command(CommandRequest args, CommandPipeline pipe)
+        public static CommandResponse filem_command(CommandRequest args, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
         {
             //if(ServerManager.ServerRemoteService.RemoteInterface.Client.ClientType != ClientType.CommandLine)
             //{

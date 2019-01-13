@@ -21,6 +21,37 @@ namespace RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing
                 {
                     case ' ':
                         break;
+                    case '>':
+                        bool appendMode = false;
+                        StringBuilder outputRouteStringBuilder = new StringBuilder();
+                        if(command[i + 1] == '>')
+                        {
+                            appendMode = true;
+                        }
+                        for(int j = (appendMode) ? i + 3 : i + 2; j <= command.Length; j++)
+                        {
+                            if(command.Length == j)
+                            {
+                                if (appendMode == true)
+                                {
+                                    tokens.Add(new CommandToken(outputRouteStringBuilder.ToString(), TokenType.AppendFileRedirect));
+                                    i++;
+                                    break;
+                                }
+                                else
+                                {
+                                    tokens.Add(new CommandToken(outputRouteStringBuilder.ToString(), TokenType.FileRedirect));
+                                    i++;
+                                    break;
+                                }
+                            }
+                            else
+                            {
+                                outputRouteStringBuilder.Append(command[j]);
+                                i++;
+                            }
+                        }
+                        break;
                     case '|':
                         StringBuilder pipeBuilder = new StringBuilder();
                         for(int j = i + 2; j <= command.Length; j++)

@@ -99,6 +99,7 @@ namespace RemotePlusClientCmd
             RequestStore.Add(new Requests.RCmdTextBox());
             RequestStore.Add(new Requests.RCmdMultiLineTextbox());
             RequestStore.Add(new Requests.ConsoleProgressRequest());
+            RequestStore.Add(new Requests.ConsoleReadLineRequest());
             InitializeDefaultKnownTypes();
             GlobalServices.Logger.Log("Running post init on all extensions.", LogLevel.Info);
             ExtensionLibraries.RunPostInit();
@@ -240,7 +241,7 @@ namespace RemotePlusClientCmd
                 {
                     WritePrompt();
                     Console.ForegroundColor = ConsoleColor.Yellow;
-                    string c = Console.ReadLine();
+                    string c = ConsoleHelper.LongReadLine();
                     Console.ResetColor();
                     if (string.IsNullOrEmpty(c))
                     {
@@ -248,12 +249,11 @@ namespace RemotePlusClientCmd
                     }
                     if (c.ToCharArray()[0] == '#')
                     {
-                        int pos = 0;
                         CommandPipeline pipe = new CommandPipeline();
                         CommandLexer lexer = new CommandLexer();
                         CommandParser parser = new CommandParser(null, null);
                         var tokens = lexer.Lex(c);
-                        var elements = parser.Parse(tokens);
+                        var elements = parser.Parse(tokens, null);
                         //var newVariableTokens = RunVariableReplacement(parser, out bool success);
                         //if (success != true)
                         //{
@@ -276,7 +276,7 @@ namespace RemotePlusClientCmd
                         {
                             var request = new CommandRequest(elements[0].ToArray());
                             var routine = new CommandRoutine(request, RunLocalCommand(request, CommandExecutionMode.Client, pipe));
-                            pipe.Add(pos++, routine);
+                            pipe.Add(routine);
                         }
                         else
                         {
@@ -288,7 +288,7 @@ namespace RemotePlusClientCmd
                                     CommandRequest firstRequest = new CommandRequest(currentCommand.ToArray());
                                     var firstRoutine = new CommandRoutine(firstRequest, RunLocalCommand(firstRequest, CommandExecutionMode.Client, pipe));
                                     result = firstRoutine.Output;
-                                    pipe.Add(pos++, firstRoutine);
+                                    pipe.Add(firstRoutine);
                                 }
                                 else
                                 {
@@ -296,7 +296,7 @@ namespace RemotePlusClientCmd
                                     request.LastCommand = result;
                                     var routine = new CommandRoutine(request, RunLocalCommand(request, CommandExecutionMode.Client, pipe));
                                     result = routine.Output;
-                                    pipe.Add(pos++, routine);
+                                    pipe.Add(routine);
                                 }
                             }
                         }
@@ -319,30 +319,7 @@ namespace RemotePlusClientCmd
 #pragma warning restore CS0162 // Unreachable code detected
         }
 
-        //private CommandToken[] RunVariableReplacement(CommandParser p, out bool success)
-        //{
-        //    success = true;
-        //    List<CommandToken> tokenList = new List<CommandToken>();
-        //    var variableTokens = p.GetVariables();
-        //    foreach (CommandToken variableToken in variableTokens)
-        //    {
-        //        var variablename = variableToken.OriginalValue.Remove(0, 1);
-        //        if (ServerManager.ServerRemoteService.Variables.ContainsKey(variablename))
-        //        {
-        //            var variableValue = ServerManager.ServerRemoteService.Variables[variablename];
-        //            variableToken.Value = variableValue;
-        //            success = true;
-        //            tokenList.Add(variableToken);
-        //        }
-        //        else
-        //        {
-        //            Logger.Log(new UILogItem(LogLevel.Error, $"Variable {variablename} does not exist", "Server Host"));
-        //            success = false;
-        //        }
-        //    }
-        //    return tokenList.ToArray();
-        //}
-
+        
         private void WritePrompt()
         {
             Console.ResetColor();
@@ -462,7 +439,7 @@ namespace RemotePlusClientCmd
                             }
                         }
                         FoundCommand = true;
-                        var sc = k.Value(request, pipe);
+                        var sc = k.Value(request, pipe, null);
                         if (scdm == StatusCodeDeliveryMethod.TellMessage)
                         {
                             GlobalServices.Logger.Log($"Command {k.Key} finished with status code {sc.ToString()}", LogLevel.Info);

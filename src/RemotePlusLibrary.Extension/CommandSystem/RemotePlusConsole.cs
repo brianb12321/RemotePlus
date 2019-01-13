@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace RemotePlusLibrary.Extension.CommandSystem
 {
-    public delegate CommandResponse CommandDelegate(CommandRequest request, CommandPipeline pipeline);
+    public delegate CommandResponse CommandDelegate(CommandRequest request, CommandPipeline pipeline, ICommandEnvironment currentEnvironment);
     public static class RemotePlusConsole
     {
         public static string ShowHelp(IDictionary<string, CommandDelegate> commands)

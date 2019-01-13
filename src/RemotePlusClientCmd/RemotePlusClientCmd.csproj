@@ -94,6 +94,7 @@
     <Compile Include="ClientExtensionSystem\ClientExtensionLibraryCollection.cs" />
     <Compile Include="ClientExtensionSystem\ClientInitEnvironment.cs" />
     <Compile Include="CommandLineOptions.cs" />
+    <Compile Include="ConsoleHelper.cs" />
     <Compile Include="ErrorDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -110,6 +111,7 @@
     </Compile>
     <Compile Include="Requests\ConsoleMenuRequest.cs" />
     <Compile Include="Requests\ConsoleProgressRequest.cs" />
+    <Compile Include="Requests\ConsoleReadLineRequest.cs" />
     <Compile Include="Requests\RCmdMessageBox.cs" />
     <Compile Include="Requests\RCmdMultiLineTextbox.cs" />
     <Compile Include="Requests\RCmdTextBox.cs" />

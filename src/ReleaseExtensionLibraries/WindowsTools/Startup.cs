@@ -17,7 +17,7 @@ namespace WindowsTools
             builder.AddCommandClass<OSCommands>();
             GlobalServices.Logger.Log($"Init position {env.InitPosition}", LogLevel.Debug, "WindowsTools");
             IScriptingEngine engine = IOCContainer.GetService<IScriptingEngine>();
-            engine.AddScriptObject<Func<int, string>>("randChars", ScriptFunctions.randChars, "Generates a random viewable ASCI character.", ScriptGlobalType.Function);
+            engine.AddScriptObject<Func<long, string>>("randChars", ScriptFunctions.randChars, "Generates a random viewable ASCI character.", ScriptGlobalType.Function);
         }
 
         public void PostInit()

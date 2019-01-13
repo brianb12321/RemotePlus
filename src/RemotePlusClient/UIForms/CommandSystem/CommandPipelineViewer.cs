@@ -27,18 +27,19 @@ namespace RemotePlusClient.UIForms.CommandSystem
         public void UpdatePipeline(CommandPipeline pipe)
         {
             ClearTreeView();
-            foreach(KeyValuePair<int, CommandRoutine> p in pipe)
+            foreach(CommandRoutine p in pipe)
             {
-                TreeNode tn = new TreeNode($"position {p.Key}");
-                tn.Tag = p.Value;
+                int position = pipe.IndexOf(p);
+                TreeNode tn = new TreeNode($"position {position}");
+                tn.Tag = position;
                 treeView1.Nodes.Add(tn);
-                treeView1.Nodes[p.Key].Nodes.Add($"Command: {p.Value.Input.GetFullCommand()}");
-                treeView1.Nodes[p.Key].Nodes.Add($"Status Code: {p.Value.Output.ResponseCode}");
-                treeView1.Nodes[p.Key].Nodes.Add($"Return Data: {p.Value.Output.ReturnData}");
-                treeView1.Nodes[p.Key].Nodes.Add("Metadata", "Metadata");
-                foreach(KeyValuePair<string, string> m in p.Value.Output.Metadata)
+                treeView1.Nodes[position].Nodes.Add($"Command: {p.Input.GetFullCommand()}");
+                treeView1.Nodes[position].Nodes.Add($"Status Code: {p.Output.ResponseCode}");
+                treeView1.Nodes[position].Nodes.Add($"Return Data: {p.Output.ReturnData}");
+                treeView1.Nodes[position].Nodes.Add("Metadata", "Metadata");
+                foreach(KeyValuePair<string, string> m in p.Output.Metadata)
                 {
-                    treeView1.Nodes[p.Key].Nodes["Metadata"].Nodes.Add($"{m.Key}: {m.Value}");
+                    treeView1.Nodes[position].Nodes["Metadata"].Nodes.Add($"{m.Key}: {m.Value}");
                 }
             }
         }

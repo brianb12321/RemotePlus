@@ -24,7 +24,7 @@ namespace ProxyServer
 
         public event EventHandler<CommandEventArgs> CommandNotFound;
 
-        public CommandResponse Execute(CommandRequest arguments, CommandExecutionMode commandMode, CommandPipeline pipe)
+        public CommandResponse Execute(CommandRequest arguments, CommandExecutionMode commandMode, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
         {
             if (arguments.Arguments.Count == 0)
             {
@@ -46,7 +46,7 @@ namespace ProxyServer
                 if(!_store.HasCommand(arguments.Arguments[0].Value.ToString()))
                 {
                     _logger.Log("Failed to find the command.", LogLevel.Debug);
-                    ProxyManager.ProxyService.RemoteInterface.ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyManager.ProxyGuid, new ConsoleText("Unknown proxy command. Please type {proxyHelp} for a list of commands") { TextColor = Color.Red });
+                    currentEnvironment.WriteLine(new ConsoleText("Unknown proxy command. Please type {proxyHelp} for a list of commands") { TextColor = Color.Red });
                     CommandNotFound?.Invoke(this, new CommandEventArgs(arguments));
                     return new CommandResponse((int)CommandStatus.Fail);
                 }
@@ -91,7 +91,7 @@ namespace ProxyServer
                     }
                 }
                 _logger.Log("Found command, and executing.", LogLevel.Debug);
-                var sc = command(arguments, pipe);
+                var sc = command(arguments, pipe, currentEnvironment);
                 if (scdm == StatusCodeDeliveryMethod.TellMessage)
                 {
                     ProxyManager.ProxyService.RemoteInterface.ProxyClient.ClientCallback.TellMessage(ProxyManager.ProxyGuid, $"Command {arguments.Arguments[0]} finished with status code {sc.ToString()}", LogLevel.Info);
@@ -111,7 +111,7 @@ namespace ProxyServer
                 else
                 {
                     _logger.Log("command failed: " + ex.Message, LogLevel.Info);
-                    ProxyManager.ProxyService.RemoteInterface.ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyManager.ProxyGuid, "Error whie executing command: " + ex.Message, LogLevel.Error);
+                    currentEnvironment.WriteLine(new ConsoleText("Error whie executing proxy command: " + ex.Message) { TextColor = Color.Red });
                     return new CommandResponse((int)CommandStatus.Fail);
                 }
             }

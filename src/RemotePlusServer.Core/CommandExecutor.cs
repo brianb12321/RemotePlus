@@ -25,7 +25,7 @@ namespace RemotePlusServer.Core
 
         public event EventHandler<CommandEventArgs> CommandNotFound;
 
-        public CommandResponse Execute(CommandRequest arguments, CommandExecutionMode commandMode, CommandPipeline pipe)
+        public CommandResponse Execute(CommandRequest arguments, CommandExecutionMode commandMode, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
         {
             if(arguments.Arguments.Count == 0)
             {
@@ -47,7 +47,7 @@ namespace RemotePlusServer.Core
                 if (!_store.HasCommand(arguments.Arguments[0].Value.ToString()))
                 {
                     _logger.Log("Failed to find the command.", LogLevel.Debug);
-                    ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText("Unknown command. Please type {help} for a list of commands") { TextColor = Color.Red });
+                    currentEnvironment.WriteLine(new ConsoleText("Unknown command. Please type {help} for a list of commands") { TextColor = Color.Red });
                     CommandNotFound?.Invoke(this, new CommandEventArgs(arguments));
                     return new CommandResponse((int)CommandStatus.Fail);
                 }
@@ -92,7 +92,7 @@ namespace RemotePlusServer.Core
                     }
                 }
                 _logger.Log("Found command, and executing.", LogLevel.Debug);
-                var sc = command(arguments, pipe);
+                var sc = command(arguments, pipe, currentEnvironment);
                 if (scdm == StatusCodeDeliveryMethod.TellMessage)
                 {
                     ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessage($"Command {arguments.Arguments[0]} finished with status code {sc.ToString()}", LogLevel.Info);
@@ -114,7 +114,7 @@ namespace RemotePlusServer.Core
                     //Dispose any requests
                     ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.DisposeCurrentRequest();
                     _logger.Log("command failed: " + ex.Message, LogLevel.Info);
-                    ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText("Error whie executing command: " + ex.Message) { TextColor = Color.Red });
+                    currentEnvironment.WriteLine(new ConsoleText("Error whie executing command: " + ex.Message) { TextColor = Color.Red });
                     return new CommandResponse((int)CommandStatus.Fail);
                 }
             }

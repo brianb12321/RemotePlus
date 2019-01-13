@@ -43,7 +43,7 @@ namespace ProxyServer
             Console.WriteLine($"Welcome to {a.Name}, version: {a.Version.ToString()}\n\n");
             var core = InitializeServerCore();
             ProxyExtensionCollection.LoadExtensionsInFolder();
-            IOCContainer.GetService<ICommandEnvironmnet>().CommandClasses.InitializeCommands();
+            IOCContainer.GetService<ICommandEnvironment>().CommandClasses.InitializeCommands();
             RunPostServerCoreInitialization(core);
             GlobalServices.Logger.Log("Running post init on all extensions.", LogLevel.Info);
             DefaultCollection.RunPostInit();

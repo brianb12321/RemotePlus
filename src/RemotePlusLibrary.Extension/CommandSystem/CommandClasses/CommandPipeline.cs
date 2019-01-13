@@ -9,86 +9,61 @@ using System.Threading.Tasks;
 namespace RemotePlusLibrary.Extension.CommandSystem.CommandClasses
 {
     [CollectionDataContract]
-    public class CommandPipeline : IDictionary<int, CommandRoutine>
+    public class CommandPipeline : IList<CommandRoutine>
     {
-        private Dictionary<int, CommandRoutine> _internalDictionary;
-        private Dictionary<int, CommandRoutine> _subRoutines;
+        private List<CommandRoutine> _internalList;
         public CommandPipeline()
         {
-            _internalDictionary = new Dictionary<int, CommandRoutine>();
-            _subRoutines = new Dictionary<int, CommandRoutine>();
+            _internalList = new List<CommandRoutine>();
         }
 
         #region IDictionary
-        public CommandRoutine this[int commandPosition] { get => _internalDictionary[commandPosition]; set => _internalDictionary[commandPosition] = value; }
-        [DataMember]
-        public ICollection<int> Keys => _internalDictionary.Keys;
+        public CommandRoutine this[int commandPosition] { get => _internalList[commandPosition]; set => _internalList[commandPosition] = value; }
         [DataMember]
 
-        public ICollection<CommandRoutine> Values => _internalDictionary.Values;
-        [DataMember]
-
-        public int Count => _internalDictionary.Count;
+        public int Count => _internalList.Count;
         [DataMember]
 
         public bool IsReadOnly => true;
 
-        public void Add(int commandPosition, CommandRoutine routine)
+        public void Add(CommandRoutine routine)
         {
-            _internalDictionary.Add(commandPosition, routine);
-        }
-        public void AddSubRoutine(int commandPosition, CommandRoutine sub)
-        {
-            _subRoutines.Add(commandPosition, sub);
-        }
-        public void Add(KeyValuePair<int, CommandRoutine> commands)
-        {
-            _internalDictionary.Add(commands.Key, commands.Value);
+            _internalList.Add(routine);
         }
 
         public void Clear()
         {
-            _internalDictionary.Clear();
+            _internalList.Clear();
         }
 
-        public bool Contains(KeyValuePair<int, CommandRoutine> command)
+        public bool Contains(CommandRoutine command)
         {
-            return _internalDictionary.Contains(command);
+            return _internalList.Contains(command);
         }
 
-        public bool ContainsKey(int commandPosition)
+        public void CopyTo(CommandRoutine[] array, int arrayIndex)
         {
-            return _internalDictionary.ContainsKey(commandPosition);
+            _internalList.Add(array[arrayIndex]);
         }
 
-        public void CopyTo(KeyValuePair<int, CommandRoutine>[] array, int arrayIndex)
+        public IEnumerator<CommandRoutine> GetEnumerator()
         {
-            _internalDictionary.Add(array[arrayIndex].Key, array[arrayIndex].Value);
+            return _internalList.GetEnumerator();
         }
 
-        public IEnumerator<KeyValuePair<int, CommandRoutine>> GetEnumerator()
+        public void RemoveAt(int commandPosition)
         {
-            return _internalDictionary.GetEnumerator();
+            _internalList.RemoveAt(commandPosition);
         }
 
-        public bool Remove(int commandPosition)
+        public bool Remove(CommandRoutine item)
         {
-            return _internalDictionary.Remove(commandPosition);
-        }
-
-        public bool Remove(KeyValuePair<int, CommandRoutine> item)
-        {
-            return _internalDictionary.Remove(item.Key);
-        }
-
-        public bool TryGetValue(int commandPosition, out CommandRoutine value)
-        {
-            return _internalDictionary.TryGetValue(commandPosition, out value);
+            return _internalList.Remove(item);
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return _internalDictionary.GetEnumerator();
+            return _internalList.GetEnumerator();
         }
 #endregion IDictionary
 
@@ -99,6 +74,16 @@ namespace RemotePlusLibrary.Extension.CommandSystem.CommandClasses
         public CommandRoutine GetLatest()
         {
             return this[Count - 1];
+        }
+
+        public int IndexOf(CommandRoutine item)
+        {
+            return _internalList.IndexOf(item);
+        }
+
+        public void Insert(int index, CommandRoutine routine)
+        {
+            _internalList.Insert(index, routine);
         }
     }
 }

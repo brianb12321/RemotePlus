@@ -19,6 +19,6 @@ namespace RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing
         /// <param name="commandMode">Determines the type of the caller</param>
         /// <param name="pipe">The pipeline to append to</param>
         /// <returns></returns>
-        CommandResponse Execute(CommandRequest arguments, CommandExecutionMode commandMode, CommandPipeline pipe);
+        CommandResponse Execute(CommandRequest arguments, CommandExecutionMode commandMode, CommandPipeline pipe, ICommandEnvironment currentEnvironment);
     }
 }

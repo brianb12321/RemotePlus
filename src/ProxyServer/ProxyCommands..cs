@@ -25,7 +25,7 @@ namespace ProxyServer
         }
 
         [CommandHelp("Switches the specified server into the active server.")]
-        public CommandResponse switchServer(CommandRequest req, CommandPipeline pipe)
+        public CommandResponse switchServer(CommandRequest req, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
         {
             if (int.TryParse(req.Arguments[1].Value.ToString(), out int result))
             {
@@ -39,7 +39,7 @@ namespace ProxyServer
             }
         }
         [CommandHelp("Lists all the servers connected to the proxy.")]
-        public CommandResponse viewServers(CommandRequest req, CommandPipeline pipe)
+        public CommandResponse viewServers(CommandRequest req, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
         {
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < _service.RemoteInterface.ConnectedServers.Count; i++)
@@ -50,7 +50,7 @@ namespace ProxyServer
             return new CommandResponse((int)CommandStatus.Success);
         }
         [CommandHelp("Shows help screen.")]
-        public CommandResponse help(CommandRequest req, CommandPipeline pipe)
+        public CommandResponse help(CommandRequest req, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
         {
             string helpString = string.Empty;
             if (req.Arguments.Count == 2)
@@ -67,13 +67,13 @@ namespace ProxyServer
             return response;
         }
         [CommandHelp("Establish registration with the selected server.")]
-        public CommandResponse register(CommandRequest req, CommandPipeline pipe)
+        public CommandResponse register(CommandRequest req, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
         {
             _service.RemoteInterface.Register(new RegisterationObject());
             return new CommandResponse((int)CommandStatus.Success);
         }
         [CommandHelp("Clears all variables and functions from the interactive scripts.")]
-        public CommandResponse resetStaticScript(CommandRequest reqest, CommandPipeline pipe)
+        public CommandResponse resetStaticScript(CommandRequest reqest, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
         {
             ProxyManager.ScriptBuilder.ClearStaticScope();
             return new CommandResponse((int)CommandStatus.Success);

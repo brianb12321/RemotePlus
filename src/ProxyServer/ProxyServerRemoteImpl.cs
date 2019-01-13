@@ -29,6 +29,7 @@ using RemotePlusLibrary.Extension.ResourceSystem;
 using TinyMessenger;
 using RemotePlusLibrary.Discovery.Events;
 using System.Drawing;
+using ProxyServer.Internal;
 
 namespace ProxyServer
 {
@@ -378,9 +379,17 @@ namespace ProxyServer
             }
             else
             {
-                var environment = IOCContainer.GetService<ICommandEnvironmnet>();
+                var environment = IOCContainer.GetService<ICommandEnvironment>();
                 environment.CommandLogged += (sender, e) => ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyManager.ProxyGuid, e.Text);
-                return environment.Execute(command, mode);
+                environment.MultilineEntry += (sender, e) =>
+                {
+                    string input = ProxyClient.ClientCallback.RequestInformation(ProxyManager.ProxyGuid, new ConsoleReadLineRequestBuilder(e.Prelude.ToString()) { LineColor = ConsoleColor.Yellow }).Data.ToString();
+                    e.ReceivedValue = input;
+                };
+                environment.SetOut(new _ClientTextWriter(ProxyManager.ProxyGuid));
+                var pipe = environment.Execute(command, mode);
+                environment.Dispose();
+                return pipe;
             }
         }
         #endregion

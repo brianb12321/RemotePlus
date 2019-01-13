@@ -28,7 +28,7 @@ namespace CommonWebCommands
         }
 
         [CommandHelp("Downloads a file from the internet and displays it in the console.")]
-        public CommandResponse downloadWeb(CommandRequest args, CommandPipeline pipe)
+        public CommandResponse downloadWeb(CommandRequest args, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
         {
             WebClient client = new WebClient();
             try
@@ -43,11 +43,11 @@ namespace CommonWebCommands
             }
         }
         [CommandHelp("Downloads a file from the internet.")]
-        public CommandResponse wget(CommandRequest args, CommandPipeline pipe)
+        public CommandResponse wget(CommandRequest args, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
         {
             if(args.Arguments.Count < 2)
             {
-                _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText("You must specify a destination location.") { TextColor = Color.Red });
+                currentEnvironment.WriteLine(new ConsoleText("You must specify a destination location.") { TextColor = Color.Red });
                 return new CommandResponse((int)CommandStatus.Fail);
             }
             else
@@ -56,11 +56,11 @@ namespace CommonWebCommands
                 {
                     if (!Uri.IsWellFormedUriString(args.Arguments[1].ToString(), UriKind.Absolute))
                     {
-                        _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText("Web address is invalid.") { TextColor = Color.Red });
+                        currentEnvironment.WriteLine(new ConsoleText("Web address is invalid.") { TextColor = Color.Red });
                         return new CommandResponse((int)CommandStatus.Fail);
                     }
-                    _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole($"Starting download for {args.Arguments[1].ToString()}");
-                    _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Opening connection...");
+                    currentEnvironment.WriteLine($"Starting download for {args.Arguments[1].ToString()}");
+                    currentEnvironment.WriteLine("Opening connection...");
                     WebClient client = new WebClient();
                     client.DownloadProgressChanged += (sender, e) =>
                     {
@@ -76,13 +76,13 @@ namespace CommonWebCommands
                     Task t = client.DownloadFileTaskAsync(args.Arguments[1].ToString(), args.Arguments[2].ToString());
                     t.Wait();
                     _service.RemoteInterface.Client.ClientCallback.DisposeCurrentRequest();
-                    _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("File downloaded succesfully.");
+                    currentEnvironment.WriteLine("File downloaded succesfully.");
                     return new CommandResponse((int)CommandStatus.Success);
                 }
                 catch (AggregateException ex)
                 {
                     _service.RemoteInterface.Client.ClientCallback.DisposeCurrentRequest();
-                    _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText($"Unable to download web resource. Message: {ex.GetBaseException().Message}") { TextColor = Color.Red });
+                    currentEnvironment.WriteLine(new ConsoleText($"Unable to download web resource. Message: {ex.GetBaseException().Message}") { TextColor = Color.Red });
                     return new CommandResponse((int)CommandStatus.Fail);
                 }
             }

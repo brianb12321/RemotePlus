@@ -14,12 +14,14 @@ namespace RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing
         [EnumMember]
         QouteBody,
         [EnumMember]
-        SubRoutine,
-        [EnumMember]
         VariableCommand,
         [EnumMember]
         Script,
         [EnumMember]
-        Pipe
+        Pipe,
+        [EnumMember]
+        FileRedirect,
+        [EnumMember]
+        AppendFileRedirect
     }
 }

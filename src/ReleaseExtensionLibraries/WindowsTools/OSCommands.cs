@@ -29,56 +29,56 @@ namespace WindowsTools
             _logger = logger;
         }
         [CommandHelp("Sends a key to the remote server.")]
-        public CommandResponse sendKey(CommandRequest args, CommandPipeline pipe)
+        public CommandResponse sendKey(CommandRequest args, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
         {
             try
             {
                 SendKeys.SendWait(args.Arguments[1].ToString());
-                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole($"Key {args.Arguments[1]} sent to server.", BetterLogger.LogLevel.Info);
+                currentEnvironment.WriteLine($"Key {args.Arguments[1]} sent to server.");
                 return new CommandResponse((int)CommandStatus.Success);
             }   
             catch (Exception ex)
             {
-                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole($"Unable to send key {args.Arguments[1]} to the server. Error: {ex.Message}", BetterLogger.LogLevel.Error);
+                currentEnvironment.WriteLine(new ConsoleText($"Unable to send key {args.Arguments[1]} to the server. Error: {ex.Message}") { TextColor = Color.Red });
                 return new CommandResponse((int)CommandStatus.Fail);
             }
         }
         [CommandHelp("Open the disk drive on the remote computer.")]
-        public CommandResponse openDiskDrive(CommandRequest args, CommandPipeline pipe)
+        public CommandResponse openDiskDrive(CommandRequest args, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
         {
             Win32Wrapper.OpenDiskDrive(args.Arguments[1].ToString(), "");
             return new CommandResponse((int)CommandStatus.Success);
         }
         [CommandHelp("Lists all the installed drives on the system.")]
-        public CommandResponse drives(CommandRequest args, CommandPipeline pipe)
+        public CommandResponse drives(CommandRequest args, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
         {
             foreach(DriveInfo info in DriveInfo.GetDrives())
             {
                 if (info.IsReady)
                 {
-                    ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole($"Name: {info.Name}\nSystem Type: {info.DriveFormat}\nDrive Type: {info.DriveType}\n\n");
+                    currentEnvironment.WriteLine($"Name: {info.Name}\nSystem Type: {info.DriveFormat}\nDrive Type: {info.DriveType}\n\n");
                 }
             }
             return new CommandResponse((int)CommandStatus.Success);
         }
         [CommandHelp("Changes the mouse position to the specified coordinates")]
-        public CommandResponse setMousePos(CommandRequest args, CommandPipeline pipe)
+        public CommandResponse setMousePos(CommandRequest args, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
         {
             Cursor.Position = new System.Drawing.Point(int.Parse(args.Arguments[1].ToString()), int.Parse(args.Arguments[2].ToString()));
             return new CommandResponse((int)CommandStatus.Success);
         }
         [CommandHelp("Blocks input for a certain amount of time.")]
-        public CommandResponse blockInputI(CommandRequest args, CommandPipeline pipe)
+        public CommandResponse blockInputI(CommandRequest args, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
         {
             Win32Wrapper.BlockInputForInterval(int.Parse(args.Arguments[1].ToString()));
             return new CommandResponse((int)CommandStatus.Success);
         }
         [CommandHelp("Sets the server audio to a specific percentage.")]
-        public CommandResponse setVolume(CommandRequest args, CommandPipeline pipe)
+        public CommandResponse setVolume(CommandRequest args, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
         {
             if (args.Arguments.Count < 2)
             {
-                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText("You must specify a percentage.") { TextColor = Color.Red });
+                currentEnvironment.WriteLine(new ConsoleText("You must specify a percentage.") { TextColor = Color.Red });
                 return new CommandResponse((int)CommandStatus.Fail);
             }
             else
@@ -91,13 +91,13 @@ namespace WindowsTools
                 }
                 else
                 {
-                    ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText("Given ToString() is invalid.") { TextColor = Color.Red });
+                    currentEnvironment.WriteLine(new ConsoleText("Given ToString() is invalid.") { TextColor = Color.Red });
                     return new CommandResponse((int)CommandStatus.Fail);
                 }
             }
         }
         [CommandHelp("Toggles the mute on the server.")]
-        public CommandResponse toggleMute(CommandRequest args, CommandPipeline pipe)
+        public CommandResponse toggleMute(CommandRequest args, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
         {
             MMDeviceEnumerator enumerator = new MMDeviceEnumerator();
             foreach(MMDevice device in enumerator.EnumerateAudioEndPoints(DataFlow.All, DeviceState.All))
@@ -114,7 +114,7 @@ namespace WindowsTools
             return new CommandResponse((int)CommandStatus.Success);
         }
         [CommandHelp("Writes specified amount of random data to disk.")]
-        public CommandResponse hugeFile(CommandRequest args, CommandPipeline pipe)
+        public CommandResponse hugeFile(CommandRequest args, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
         {
             StreamWriter sw = null;
             try

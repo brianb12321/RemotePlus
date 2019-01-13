@@ -15,13 +15,13 @@ namespace RemotePlusClientCmd
     partial class ClientCmdManager
     {
         [CommandHelp("Shows the banner.")]
-        CommandResponse banner(CommandRequest args, CommandPipeline pipe)
+        CommandResponse banner(CommandRequest args, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
         {
             ClientCmdManager.ShowBanner();
             return new CommandResponse((int)CommandStatus.Success);
         }
         [CommandHelp("Shows help for local commands.")]
-        CommandResponse Help(CommandRequest args, CommandPipeline pipe)
+        CommandResponse Help(CommandRequest args, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
         {
             string helpString = string.Empty;
             if (args.Arguments.Count == 2)
@@ -38,19 +38,19 @@ namespace RemotePlusClientCmd
             return response;
         }
         [CommandHelp("Clears the console screen.")]
-        CommandResponse clearScreen(CommandRequest args, CommandPipeline pipe)
+        CommandResponse clearScreen(CommandRequest args, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
         {
             Console.Clear();
             return new CommandResponse((int)CommandStatus.Success);
         }
         [CommandHelp("Closes the connection to the server.")]
-        CommandResponse close(CommandRequest args, CommandPipeline pipe)
+        CommandResponse close(CommandRequest args, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
         {
             GlobalServices.RunningEnvironment.Close();
             return new CommandResponse((int)CommandStatus.Success);
         }
         [CommandHelp("Changes the console title.")]
-        CommandResponse title(CommandRequest args, CommandPipeline pipe)
+        CommandResponse title(CommandRequest args, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
         {
             StringBuilder sb = new StringBuilder();
             for(int i = 1; i < args.Arguments.Count; i++)
@@ -61,7 +61,7 @@ namespace RemotePlusClientCmd
             return new CommandResponse((int)CommandStatus.Success);
         }
         [CommandHelp("Loads the specified client command library.")]
-        CommandResponse load_CommandFile(CommandRequest args, CommandPipeline pipe)
+        CommandResponse load_CommandFile(CommandRequest args, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
         {
             try
             {
@@ -77,7 +77,7 @@ namespace RemotePlusClientCmd
             }
         }
         [CommandHelp("loads a specified script file.")]
-        public CommandResponse loadScriptFIle(CommandRequest args, CommandPipeline pipe)
+        public CommandResponse loadScriptFIle(CommandRequest args, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
         {
             if (ClientCmdManager.Proxy != null) ClientCmdManager.Proxy.ExecuteProxyScript(File.ReadAllText(args.Arguments[1].ToString()));
             ClientCmdManager.Remote.ExecuteScript(File.ReadAllText(args.Arguments[1].ToString()));

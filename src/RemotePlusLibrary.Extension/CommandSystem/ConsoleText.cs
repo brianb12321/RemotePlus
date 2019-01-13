@@ -22,5 +22,9 @@ namespace RemotePlusLibrary.Extension.CommandSystem
         {
             Text = text;
         }
+        public override string ToString()
+        {
+            return Text;
+        }
     }
 }

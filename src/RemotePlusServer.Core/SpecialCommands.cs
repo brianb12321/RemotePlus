@@ -12,14 +12,6 @@ namespace RemotePlusServer.Core
 {
     public class SpecialCommands : StandordCommandClass
     {
-        IRemotePlusService<ServerRemoteInterface> _service;
-        ICommandEnvironmnet _env;
-        public SpecialCommands(ICommandEnvironmnet env, IRemotePlusService<ServerRemoteInterface> service)
-        {
-            _env = env;
-            _service = service;
-            _env.CommandLogged += (sender, e) => _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(e.Text);
-        }
         private bool parseCondition(CommandRequest args, List<Predicate<CommandResponse>> _predicates, int startIndex)
         {
             switch (args.Arguments[startIndex].ToString())
@@ -39,11 +31,11 @@ namespace RemotePlusServer.Core
             }
         }
         [CommandBehavior(IndexCommandInHelp = false)]
-        public CommandResponse _if(CommandRequest args, CommandPipeline pipe)
+        public CommandResponse _if(CommandRequest args, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
         {
             if(!args.HasLastCommand)
             {
-                _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText("If can only be used when in a pipeline.") { TextColor = Color.Red });
+                currentEnvironment.WriteLine(new ConsoleText("If can only be used when in a pipeline.") { TextColor = Color.Red });
                 return new CommandResponse((int)CommandStatus.Fail);
             }
             bool negateCondition = false;
@@ -54,7 +46,7 @@ namespace RemotePlusServer.Core
             int PREDICATE = checkIndex + 1;
             if (COMMAND_LENGTH < checkIndex)
             {
-                _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText("You must provide a condition.") { TextColor = Color.Red });
+                currentEnvironment.WriteLine(new ConsoleText("You must provide a condition.") { TextColor = Color.Red });
                 return new CommandResponse((int)CommandStatus.Fail);
             }
             if (args.Arguments[1].ToString().Equals("not"))
@@ -64,13 +56,13 @@ namespace RemotePlusServer.Core
             }
             if(COMMAND_LENGTH < PREDICATE)
             {
-                _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText("You must provide a predicate.") { TextColor = Color.Red });
+                currentEnvironment.WriteLine(new ConsoleText("You must provide a predicate.") { TextColor = Color.Red });
                 return new CommandResponse((int)CommandStatus.Fail);
             }
             List<Predicate<CommandResponse>> _predicates = new List<Predicate<CommandResponse>>();
             if(!parseCondition(args, _predicates, checkIndex))
             {
-                _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText("The condition you provided does not exist.") { TextColor = Color.Red });
+                currentEnvironment.WriteLine(new ConsoleText("The condition you provided does not exist.") { TextColor = Color.Red });
                 return new CommandResponse((int)CommandStatus.Fail);
             }
             bool success = false;
@@ -115,7 +107,7 @@ namespace RemotePlusServer.Core
                 {
                     if (COMMAND_LENGTH < checkIndex + 3)
                     {
-                        _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText("Please provide an action.") { TextColor = Color.Red });
+                        currentEnvironment.WriteLine(new ConsoleText("Please provide an action.") { TextColor = Color.Red });
                         return new CommandResponse((int)CommandStatus.Fail);
                     }
                     else
@@ -126,7 +118,7 @@ namespace RemotePlusServer.Core
                     {
                         if (COMMAND_LENGTH < checkIndex + 5)
                         {
-                            _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText("Please provide an else action.") { TextColor = Color.Red });
+                            currentEnvironment.WriteLine(new ConsoleText("Please provide an else action.") { TextColor = Color.Red });
                             return new CommandResponse((int)CommandStatus.Fail);
                         }
                         else
@@ -137,7 +129,7 @@ namespace RemotePlusServer.Core
                 }
                 if (success)
                 {
-                    var pipeline = _env.Execute(thenStatement, CommandExecutionMode.Client);
+                    var pipeline = currentEnvironment.Execute(thenStatement, CommandExecutionMode.Client);
                     var lastCommand = pipeline.GetLatest();
                     return new CommandResponse(lastCommand.Output.ResponseCode)
                     {
@@ -147,7 +139,7 @@ namespace RemotePlusServer.Core
                 }
                 else
                 {
-                    var pipeline = _env.Execute(elseStatement, CommandExecutionMode.Client);
+                    var pipeline = currentEnvironment.Execute(elseStatement, CommandExecutionMode.Client);
                     var lastCommand = pipeline.GetLatest();
                     return new CommandResponse(lastCommand.Output.ResponseCode)
                     {

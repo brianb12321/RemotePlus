@@ -24,7 +24,7 @@ namespace ProxyServer
                 ProxyManager.ScriptBuilder.InitializeEngine();
                 GlobalServices.Logger.Log($"Engine started. IronPython version {ProxyManager.ScriptBuilder.ScriptingEngine.LanguageVersion.ToString()}", LogLevel.Info, "Scripting Engine");
                 GlobalServices.Logger.Log("Redirecting STDOUT to duplex channel.", LogLevel.Debug, "Scripting Engine");
-                ProxyManager.ScriptBuilder.ScriptingEngine.Runtime.IO.SetOutput(new MemoryStream(), new Internal._ClientTextWriter());
+                ProxyManager.ScriptBuilder.ScriptingEngine.Runtime.IO.SetOutput(new MemoryStream(), new Internal._ClientTextWriter(ProxyManager.ProxyGuid));
                 //ServerManager.ScriptBuilder.ScriptingEngine.Runtime.IO.SetInput(new MemoryStream(), new Internal._ClientTextReader(), Encoding.ASCII);
                 GlobalServices.Logger.Log("Finished starting scripting engine.", LogLevel.Info);
             });

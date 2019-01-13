@@ -54,7 +54,7 @@ namespace RemotePlusServer
                 {
                     IOCContainer.Provider.Bind<IEventBus>().To(typeof(EventBus)).InSingletonScope();
                 }
-                IOCContainer.GetService<ICommandEnvironmnet>().CommandClasses.InitializeCommands();
+                IOCContainer.GetService<ICommandEnvironment>().CommandClasses.InitializeCommands();
                 RunPostServerInitialization(core);
                 GlobalServices.Logger.Log("Running post init on all extensions.", LogLevel.Info);
                 ServerManager.DefaultCollection.RunPostInit();

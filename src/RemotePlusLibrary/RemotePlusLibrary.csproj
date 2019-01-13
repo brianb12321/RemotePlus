@@ -69,6 +69,7 @@
     <Compile Include="FileTransfer\Service\IFile.cs" />
     <Compile Include="GlobalServerBuilderExtensions.cs" />
     <Compile Include="RequestSystem\DefaultRequestBuilders\ConsoleMenuRequestBuilder.cs" />
+    <Compile Include="RequestSystem\DefaultRequestBuilders\ConsoleReadLineRequestBuilder.cs" />
     <Compile Include="RequestSystem\DefaultRequestBuilders\ProgressRequestBuilder.cs" />
     <Compile Include="RequestSystem\DefaultRequestBuilders\FileDialogRequestBuilder.cs" />
     <Compile Include="RequestSystem\DefaultRequestBuilders\BaseBuilders\FileRequestBuilder.cs" />
@@ -151,6 +152,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Contracts\IO\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

@@ -77,11 +77,13 @@
     <Compile Include="CommandSystem\CommandEventArgs.cs" />
     <Compile Include="CommandSystem\CommandlineBuilder.cs" />
     <Compile Include="CommandSystem\CommandLogEventArgs.cs" />
+    <Compile Include="CommandSystem\ConsoleColorEventArgs.cs" />
     <Compile Include="CommandSystem\ConsoleText.cs" />
     <Compile Include="CommandSystem\DefaultCommandStore.cs" />
     <Compile Include="CommandSystem\ICommandClass.cs" />
     <Compile Include="CommandSystem\ICommandClassStore.cs" />
     <Compile Include="CommandSystem\ICommandEnvironmnet.cs" />
+    <Compile Include="CommandSystem\MultiLineEntryEventArgs.cs" />
     <Compile Include="CommandSystem\PromptBuilder.cs" />
     <Compile Include="CommandSystem\SingleCommand.cs" />
     <Compile Include="CommandSystem\StandordCommandClass..cs" />

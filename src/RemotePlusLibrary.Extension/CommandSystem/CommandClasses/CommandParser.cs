@@ -1,9 +1,11 @@
-﻿using RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing;
+﻿using RemotePlusLibrary.Core.IOC;
+using RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing.CommandElements;
 using RemotePlusLibrary.Extension.ResourceSystem;
 using RemotePlusLibrary.Scripting;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,7 +21,7 @@ namespace RemotePlusLibrary.Extension.CommandSystem.CommandClasses
             _resourceManager = resM;
             _scriptingEngine = scriptingEngine;
         }
-        public List<List<ICommandElement>> Parse(IReadOnlyList<CommandToken> tokens)
+        public List<List<ICommandElement>> Parse(IReadOnlyList<CommandToken> tokens, ICommandEnvironment env)
         {
             List<List<ICommandElement>> _finalList = new List<List<ICommandElement>>();
             List<ICommandElement> _elements = new List<ICommandElement>();
@@ -44,8 +46,16 @@ namespace RemotePlusLibrary.Extension.CommandSystem.CommandClasses
                         _finalList.Add(_elements);
                         _elements = new List<ICommandElement>();
                         AggregateCommandToken aggregate = tokens[i] as AggregateCommandToken;
-                        List<List<ICommandElement>> newElements = Parse(aggregate.Tokens.AsReadOnly());
+                        List<List<ICommandElement>> newElements = Parse(aggregate.Tokens.AsReadOnly(), env);
                         _finalList.AddRange(newElements);
+                        break;
+                    case TokenType.FileRedirect:
+                        StreamWriter sw = new StreamWriter(tokens[i].OriginalValue, false);
+                        env.SetOut(sw);
+                        break;
+                    case TokenType.AppendFileRedirect:
+                        StreamWriter swAppend = new StreamWriter(tokens[i].OriginalValue, true);
+                        env.SetOut(swAppend);
                         break;
                     case TokenType.ExecutionResource:
                         var executionResourceQueryCommandElement = new ExecutionResourceQueryCommandElement(new ResourceQuery(tokens[i].OriginalValue, Guid.Empty));

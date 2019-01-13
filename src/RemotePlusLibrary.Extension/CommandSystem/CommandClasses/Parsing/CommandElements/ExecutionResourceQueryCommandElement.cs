@@ -19,7 +19,7 @@ namespace RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing.Comma
         public override string ToString()
         {
             var resource = IOCContainer.GetService<IResourceManager>().GetResource<Resource>(Query);
-            var environment = IOCContainer.GetService<ICommandEnvironmnet>();
+            var environment = IOCContainer.GetService<ICommandEnvironment>();
             var result = environment.Execute(resource.ToString(), CommandExecutionMode.Client);
             return result.GetLatest().Output.ReturnData.ToString();
         }

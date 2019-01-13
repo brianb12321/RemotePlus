@@ -23,7 +23,7 @@ namespace RSPM
         public Dictionary<string, CommandDelegate> Commands { get; } = new Dictionary<string, CommandDelegate>();
 
         [CommandHelp("Installs a package from the internet.")]
-        public CommandResponse InstallPackage(CommandRequest req, CommandPipeline pipe)
+        public CommandResponse InstallPackage(CommandRequest req, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
         {
             try
             {
@@ -39,7 +39,7 @@ namespace RSPM
             }
         }
         [CommandHelp("Generates a package manifest file for you.")]
-        public CommandResponse GeneratePackageManifest(CommandRequest req, CommandPipeline pipe)
+        public CommandResponse GeneratePackageManifest(CommandRequest req, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
         {
             DataContractSerializer xsSubmit = new DataContractSerializer(typeof(PackageDescription));
             var subReq = new PackageDescription();

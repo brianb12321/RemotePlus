@@ -34,9 +34,9 @@ namespace ReleaseExtensions
             return (DialogResult)Enum.Parse(typeof(DialogResult), ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(rb).Data.ToString());
         }
         [CommandHelp("Describes about the ReleaseExtensionsLibrary.")]
-        CommandResponse releaseExtensionAbout(CommandRequest args, CommandPipeline pipe)
+        CommandResponse releaseExtensionAbout(CommandRequest args, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
         {
-            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("ReleaseExtension is a test of the extension system.", LogLevel.Info);
+            currentEnvironment.WriteLine("ReleaseExtension is a test of the extension system.");
             return new CommandResponse((int)CommandStatus.Success);
         }
 

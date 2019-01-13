@@ -15,6 +15,7 @@ using System.Drawing;
 using System.IO;
 using System.Speech.Synthesis;
 using System.Windows.Forms;
+using RemotePlusServer.Internal;
 
 namespace RemotePlusServer.Core
 {
@@ -135,9 +136,18 @@ namespace RemotePlusServer.Core
         }
         public CommandPipeline RunServerCommand(string command, CommandExecutionMode commandMode)
         {
-            ICommandEnvironmnet env = IOCContainer.GetService<ICommandEnvironmnet>();
+            ICommandEnvironment env = IOCContainer.GetService<ICommandEnvironment>();
             env.CommandLogged += (sender, e) => Client.ClientCallback.TellMessageToServerConsole(e.Text);
-            return env.Execute(command, commandMode);
+            env.MultilineEntry += (sender, e) =>
+            {
+                string input = Client.ClientCallback.RequestInformation(new RemotePlusLibrary.RequestSystem.DefaultRequestBuilders.ConsoleReadLineRequestBuilder(e.Prelude.ToString()) { LineColor = ConsoleColor.Yellow }).Data.ToString();
+                e.ReceivedValue = input;
+            };
+            env.SetOut(new _ClientTextWriter());
+            
+            var pipe = env.Execute(command, commandMode);
+            env.Dispose();
+            return pipe;
         }
     }
 }

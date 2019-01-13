@@ -47,12 +47,12 @@ namespace RemotePlusLibrary
         {
             return services.AddSingletonNamed<Configuration.IConfigurationDataAccess, TDataAccessImpl>("DefaultConfigDataAccess");
         }
-        public static IServiceCollection UseCommandline<TCommandEnvironmentImpl>(this IServiceCollection services, Action<CommandlineBuilder> builder) where TCommandEnvironmentImpl : ICommandEnvironmnet
+        public static IServiceCollection UseCommandline<TCommandEnvironmentImpl>(this IServiceCollection services, Action<CommandlineBuilder> builder) where TCommandEnvironmentImpl : ICommandEnvironment
         {
             var b = new CommandlineBuilder(services);
             builder?.Invoke(b);
             services.AddSingleton<ICommandClassStore, DefaultCommandStore>();
-            return services.AddTransient<ICommandEnvironmnet, TCommandEnvironmentImpl>();       
+            return services.AddTransient<ICommandEnvironment, TCommandEnvironmentImpl>();       
         }
         public static IServiceCollection UseServerManager<TServerManager>(this IServiceCollection services) where TServerManager : IServiceManager
         {

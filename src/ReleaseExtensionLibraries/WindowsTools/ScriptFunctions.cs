@@ -8,11 +8,11 @@ namespace WindowsTools
 {
     public class ScriptFunctions
     {
-        public static string randChars(int numOfChars)
+        public static string randChars(long numOfChars)
         {
             Random r = new Random();
             StringBuilder chars = new StringBuilder();
-            for(int i = 0; i <= numOfChars; i++)
+            for(long i = 0; i <= numOfChars; i++)
             {
                 chars.Append((char)r.Next(32, 126));
             }
