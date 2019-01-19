@@ -14,21 +14,18 @@ namespace ProxyServer
         {
             _loader = loader;
         }
-        public void AddResource<TResource>(TResource resource) where TResource : Resource
+        public void AddResource<TResource>(string path, TResource resource) where TResource : Resource
         {
-            if (ProxyManager.ResourceStore.ContainsKey(resource.ResourceIdentifier))
+            if (ProxyManager.ResourceStore.HasResourceByPath(resource.ResourceIdentifier))
             {
                 return;
             }
-            ProxyManager.ResourceStore.Add(resource.ResourceIdentifier, resource);
+            ProxyManager.ResourceStore.AddResourceByPath(resource, path);
         }
 
         public IEnumerable<Resource> GetAllResources()
         {
-            foreach (Resource r in ProxyManager.ResourceStore.Values)
-            {
-                yield return r;
-            }
+            return ProxyManager.ResourceStore.GetAllResources();
         }
 
         public TResource GetResource<TResource>(ResourceQuery query) where TResource : Resource
@@ -55,7 +52,7 @@ namespace ProxyServer
 
         public void RemoveResource(string resourceID)
         {
-            ProxyManager.ResourceStore.Remove(resourceID);
+            ProxyManager.ResourceStore.DeleteResourceByPath(resourceID);
         }
 
         public void Save()

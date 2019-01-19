@@ -76,7 +76,7 @@ namespace RemotePlusServer
             file.Length = fileRequest.Length;
             file.Data = CopyData(fileRequest);
             file.Data.Seek(0, SeekOrigin.Begin);
-            IOCContainer.GetService<IResourceManager>().AddResource(file);
+            IOCContainer.GetService<IResourceManager>().AddResource("temp", file);
             fileRequest.Dispose();
         }
 
@@ -87,7 +87,7 @@ namespace RemotePlusServer
             file.Length = fileRequest.Length;
             file.Data = CopyData(fileRequest);
             file.Data.Seek(0, SeekOrigin.Begin);
-            IOCContainer.GetService<IResourceManager>().AddResource(file);
+            IOCContainer.GetService<IResourceManager>().AddResource("temp", file);
             fileRequest.Dispose();
         }
 

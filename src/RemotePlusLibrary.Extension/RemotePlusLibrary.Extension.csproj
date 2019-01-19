@@ -119,6 +119,7 @@
     <Compile Include="ResourceSystem\IResourceLoader.cs" />
     <Compile Include="ResourceSystem\IResourceManager.cs" />
     <Compile Include="ResourceSystem\Resource.cs" />
+    <Compile Include="ResourceSystem\ResourceDirectory.cs" />
     <Compile Include="ResourceSystem\ResourceStore.cs" />
     <Compile Include="ResourceSystem\ResourceQuery.cs" />
     <Compile Include="ResourceSystem\ResourceTypes\CommandResource.cs" />

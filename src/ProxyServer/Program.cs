@@ -19,7 +19,7 @@ namespace ProxyServer
 {
     public class ProxyManager : IEnvironment
     {
-        public static ResourceStore ResourceStore = ResourceStore.New();
+        public static ResourceStore ResourceStore;
         public static Guid ProxyGuid { get; } = Guid.NewGuid();
         public static IServiceManager DefaultServiceManager => IOCContainer.GetService<IServiceManager>();
         public static IRemotePlusService<ProxyServerRemoteImpl> ProxyService => DefaultServiceManager.GetService<ProxyServerRemoteImpl>();
@@ -34,6 +34,7 @@ namespace ProxyServer
         static void Main(string[] args)
         {
             IOCContainer.Provider.Bind<IEnvironment>().ToConstant(new ProxyManager());
+            ResourceStore = ResourceStore.New();
             GlobalServices.RunningEnvironment.Start(args);
         }
 

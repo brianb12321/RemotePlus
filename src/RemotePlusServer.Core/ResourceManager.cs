@@ -17,21 +17,18 @@ namespace RemotePlusServer.Core
         {
             _loader = loader;
         }
-        public void AddResource<TResource>(TResource resource) where TResource : Resource
+        public void AddResource<TResource>(string path, TResource resource) where TResource : Resource
         {
-            if(_store.ContainsKey(resource.ResourceIdentifier))
+            if(_store.HasResourceByPath(path))
             {
                 return;
             }
-            _store.Add(resource.ResourceIdentifier, resource);
+            _store.AddResourceByPath(resource, path);
         }
 
         public IEnumerable<Resource> GetAllResources()
         {
-            foreach(Resource r in _store.Values)
-            {
-                yield return r;
-            }
+            return _store.GetAllResources();
         }
 
         public TResource GetResource<TResource>(ResourceQuery query) where TResource : Resource
@@ -57,7 +54,7 @@ namespace RemotePlusServer.Core
 
         public void RemoveResource(string resourceID)
         {
-            _store.Remove(resourceID);
+            _store.DeleteResourceByPath(resourceID);
         }
 
         public void Save()

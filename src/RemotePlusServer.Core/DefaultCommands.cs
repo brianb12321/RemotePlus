@@ -78,7 +78,7 @@ namespace RemotePlusServer.Core
                             switch (args.Arguments[2].ToString())
                             {
                                 case "string":
-                                    _resourceManager.AddResource(new StringResource(args.Arguments[3].ToString(), args.Arguments[4].ToString()));
+                                    _resourceManager.AddResource("/custom", new StringResource(args.Arguments[3].ToString(), args.Arguments[4].ToString()));
                                     currentEnvironment.WriteLine($"Variable {args.Arguments[3]} added.");
                                     return new CommandResponse((int)CommandStatus.Success);
                                 case "fileByte":
@@ -101,7 +101,7 @@ namespace RemotePlusServer.Core
                                     ReturnData result2 = _service.RemoteInterface.Client.ClientCallback.RequestInformation(new SelectFileRequestBuilder());
                                     if (result2.AcquisitionState == RequestState.OK)
                                     {
-                                        _resourceManager.AddResource<FilePointerResource>(new FilePointerResource(result2.Data.ToString(), args.Arguments[3].ToString()));
+                                        _resourceManager.AddResource<FilePointerResource>("/custom", new FilePointerResource(result2.Data.ToString(), args.Arguments[3].ToString()));
                                         currentEnvironment.WriteLine("Resource created.");
                                         return new CommandResponse((int)CommandStatus.Success);
                                     }
@@ -121,13 +121,13 @@ namespace RemotePlusServer.Core
                             return new CommandResponse((int)CommandStatus.Fail);
                         }
                     case "view":
-                        var padWidth = _resourceManager.GetAllResources().Select(r => r.ResourceIdentifier).Max(c => c.Length) + 5;
+                        var padWidth = _resourceManager.GetAllResources().Select(r => r.Path).Max(c => c.Length) + 5;
                         var typePadWidth = _resourceManager.GetAllResources().Select(r => r.ResourceType).Max(c => c.Length) + 5;
                         StringBuilder sb = new StringBuilder();
                         sb.AppendLine();
                         foreach (Resource r in _resourceManager.GetAllResources())
                         {
-                            string paddedString = r.ResourceIdentifier.PadRight(padWidth);
+                            string paddedString = r.Path.PadRight(padWidth);
                             sb.AppendLine($"{r.ResourceType.PadRight(typePadWidth)}: {paddedString}{r.ToString()}");
                         }
                         currentEnvironment.WriteLine(sb.ToString());

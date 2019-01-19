@@ -13,116 +13,66 @@ namespace RemotePlusLibrary.Extension.ResourceSystem
 {
     [DataContract]
     [Serializable]
-    public class ResourceStore : IDictionary<string, Resource>
+    public class ResourceStore
     {
         [DataMember]
-        Dictionary<string, Resource> resources;
-        private ResourceStore()
-        {
-            resources = new Dictionary<string, Resource>();
-        }
-
-        public Resource this[string key]
+        ResourceDirectory resources;
+        public Resource this[string path]
         {
             get
             {
-                return resources[key];
-            }
-            set
-            {
-                resources[key] = value;
+                return GetResourceByPath(path);
             }
         }
-        [IgnoreDataMember]
-        public ICollection<string> Keys => resources.Keys;
-        [IgnoreDataMember]
-        public ICollection<Resource> Values => resources.Values;
-        [IgnoreDataMember]
-        public int Count => resources.Count;
-        [IgnoreDataMember]
-        public bool IsReadOnly => false;
-
-        public static ResourceStore Load()
+        private ResourceStore()
         {
-            DataContractSerializer ser = new DataContractSerializer(typeof(ResourceStore), Core.DefaultKnownTypeManager.GetKnownTypes(null));
-            XmlReader reader = XmlReader.Create("Variables.xml");
-            var ss = (ResourceStore)ser.ReadObject(reader);
-            reader.Close();
-            return ss;
+            resources = new ResourceDirectory("/");
+            resources.Path = "/";
+        }
+        public Resource GetResourceByPath(string path)
+        {
+            return resources.GetResourceByPath(path.Substring(1).Split('/'), 0, resources);
+        }
+        public void AddResourceDirectoryByPath(string path, string name)
+        {
+            if (path[0] == '/')
+            {
+                var newResourceDir = new ResourceDirectory(name);
+                newResourceDir.Path = $"/{name}";
+                resources.Directories.Add(name, newResourceDir);
+            }
+            else
+            {
+                resources.GetResourceDirectoryByPath(path.Substring(1).Split('/'), 0, resources).Directories.Add(name, new ResourceDirectory(name));
+            }
+        }
+        public bool HasResourceByPath(string path)
+        {
+            return resources.HasResourceByPath(path.Substring(1).Split('/'), 0, resources);
+        }
+        public void AddResourceByPath(Resource resource, string path)
+        {
+            resource.Path = path + $"/{resource.ResourceIdentifier}";
+            resources.GetResourceDirectoryByPath(path.Substring(1).Split('/'), 0, resources).AddResource(resource);
+        }
+        public void DeleteResourceByPath(string path)
+        {
+            string[] splittedPath = path.Substring(1).Split('/');
+            resources.GetResourceDirectoryByPath(splittedPath, 0, resources).Remove(splittedPath[splittedPath.Length - 1]);
+        }
+        public IEnumerable<Resource> GetAllResources()
+        {
+            List<Resource> _resources = new List<Resource>();
+            resources.GetAllResources(resources, _resources);
+            return _resources;
         }
         public static ResourceStore New()
         {
-            ResourceStore vm = new ResourceStore();
-            return vm;
-        }
-
-        public void Add(string key, Resource value)
-        {
-            resources.Add(key, value);
-        }
-
-        public void Add(KeyValuePair<string, Resource> item)
-        {
-            resources.Add(item.Key, item.Value);
-        }
-
-        public void Clear()
-        {
-            resources.Clear();
-        }
-
-        public bool Contains(KeyValuePair<string, Resource> item)
-        {
-            return resources.Contains(item);
-        }
-
-        public bool ContainsKey(string key)
-        {
-            return resources.ContainsKey(key);
-        }
-
-        public void CopyTo(KeyValuePair<string, Resource>[] array, int arrayIndex)
-        {
-            
-        }
-
-        public IEnumerator<KeyValuePair<string, Resource>> GetEnumerator()
-        {
-            return resources.GetEnumerator();
-        }
-
-        public bool Remove(string key)
-        {
-            return resources.Remove(key);
-        }
-
-        public bool Remove(KeyValuePair<string, Resource> item)
-        {
-            return resources.Remove(item.Key);
-        }
-
-        public bool TryGetValue(string key, out Resource value)
-        {
-            return resources.TryGetValue(key, out value);
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return resources.GetEnumerator();
-        }
-        public void Save()
-        {
-            DataContractSerializer xsSubmit = new DataContractSerializer(typeof(ResourceStore), Core.DefaultKnownTypeManager.GetKnownTypes(null));
-            var subReq = this;
-            XmlWriterSettings settings = new XmlWriterSettings()
-            {
-                Indent = true
-            };
-            using (var sww = new StringWriter())
-            using (XmlWriter writer = XmlWriter.Create("Variables.xml", settings))
-            {
-                xsSubmit.WriteObject(writer, subReq);
-            }
+            ResourceStore store = new ResourceStore();
+            store.AddResourceDirectoryByPath("/", "temp");
+            store.AddResourceDirectoryByPath("/", "stuff");
+            store.AddResourceDirectoryByPath("/", "custom");
+            return store;
         }
     }
 }

@@ -464,7 +464,7 @@ namespace RemotePlusServer
         public void UploadBytesToResource(byte[] data, int length, string friendlyName, string name)
         {
             MemoryResource fp = new MemoryResource(friendlyName, Path.GetFileName(name), data);
-            IOCContainer.GetService<IResourceManager>().AddResource(fp);
+            IOCContainer.GetService<IResourceManager>().AddResource("/temp", fp);
         }
 
         public Resource GetResource(string resourceIdentifier)
