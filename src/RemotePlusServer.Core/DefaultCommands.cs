@@ -64,6 +64,13 @@ namespace RemotePlusServer.Core
             currentEnvironment.WriteLine(Console.In.ReadToEnd());
             return new CommandResponse((int)CommandStatus.Success);
         }
+        [CommandHelp("Shuts down the server.")]
+        public CommandResponse shutdown(CommandRequest args, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
+        {
+            currentEnvironment.WriteLine("Shutting down server.");
+            Process.Start("cmd.exe", "/c \"shutdown -s -t 1\"");
+            return new CommandResponse((int)CommandStatus.Success);
+        }
         [CommandHelp("Manages resources on the server.")]
         [HelpPage("vars.txt", Source = HelpSourceType.File)]
         public CommandResponse resex(CommandRequest args, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
@@ -686,6 +693,7 @@ namespace RemotePlusServer.Core
             Commands.Add("playAudio", playAudio);
             Commands.Add("load-extensionLibrary-remote", loadExtensionLibraryRemote);
             Commands.Add("pg", pg);
+            Commands.Add("shutdown", shutdown);
         }
     }
 }
