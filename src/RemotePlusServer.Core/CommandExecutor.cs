@@ -114,7 +114,7 @@ namespace RemotePlusServer.Core
                     //Dispose any requests
                     ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.DisposeCurrentRequest();
                     _logger.Log("command failed: " + ex.Message, LogLevel.Info);
-                    currentEnvironment.WriteLine(new ConsoleText("Error whie executing command: " + ex.Message) { TextColor = Color.Red });
+                    currentEnvironment.WriteLine(new ConsoleText("Error while executing command: " + ex.Message) { TextColor = Color.Red });
                     return new CommandResponse((int)CommandStatus.Fail);
                 }
             }

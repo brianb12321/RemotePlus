@@ -69,7 +69,7 @@ namespace RemotePlusLibrary.Discovery
         IDirectory GetRemoteFiles(string path, bool useRequest);
         [OperationContract]
         [FaultContract(typeof(ServerFault))]
-        void UploadBytesToResource(byte[] data, int length, string friendlyName, string name);
+        void UploadBytesToResource(byte[] data, int length, string friendlyName, string name, string path);
         [OperationContract]
         [FaultContract(typeof(ServerFault))]
         string ReadFileAsString(string fileName);

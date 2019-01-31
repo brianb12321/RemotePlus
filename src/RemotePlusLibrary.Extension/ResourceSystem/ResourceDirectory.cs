@@ -8,7 +8,7 @@ namespace RemotePlusLibrary.Extension.ResourceSystem
 {
     [DataContract]
     [Serializable]
-    public class ResourceDirectory
+    public class ResourceDirectory : ISerializable
     {
         [DataMember]
         public string Name { get; set; }
@@ -22,6 +22,14 @@ namespace RemotePlusLibrary.Extension.ResourceSystem
         {
             Name = name;
         }
+        public ResourceDirectory(SerializationInfo info, StreamingContext context)
+        {
+            Directories = (Dictionary<string, ResourceDirectory>)info.GetValue("Directories", typeof(Dictionary<string, ResourceDirectory>));
+            Resources = (Dictionary<string, Resource>)info.GetValue("_storedResources", typeof(Dictionary<string, Resource>));
+            Name = (string)info.GetValue("Name", typeof(string));
+            Path = (string)info.GetValue("Path", typeof(string));
+        }
+        
         public void AddDirectory(ResourceDirectory directory)
         {
             Directories.Add(directory.Name, directory);
@@ -111,6 +119,17 @@ namespace RemotePlusLibrary.Extension.ResourceSystem
                 if (dir.Directories.ContainsKey(path[position]))
                 {
                     ResourceDirectory foundIt = dir.Directories.Values.FirstOrDefault(d => d.Name == path[position]);
+                    if (path.Length - 1 == position)
+                    {
+                        if(foundIt != null)
+                        {
+                            return foundIt;
+                        }
+                        else
+                        {
+                            throw new KeyNotFoundException();
+                        }
+                    }
                     if (foundIt != null)
                     {
                         var foundResourceDir = GetResourceDirectoryByPath(path, ++position, foundIt);
@@ -149,6 +168,22 @@ namespace RemotePlusLibrary.Extension.ResourceSystem
         public override string ToString()
         {
             return Path;
+        }
+
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            Dictionary<string, Resource> _temp = new Dictionary<string, Resource>();
+            foreach(Resource r in Resources.Values)
+            {
+                if(r.SaveToFile)
+                {
+                    _temp.Add(r.ResourceIdentifier, r);
+                }
+            }
+            info.AddValue("_storedResources", _temp);
+            info.AddValue("Directories", Directories);
+            info.AddValue("Path", Path);
+            info.AddValue("Name", Name);
         }
     }
 }

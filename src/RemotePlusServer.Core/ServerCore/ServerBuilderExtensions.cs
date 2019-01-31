@@ -1,11 +1,9 @@
 ﻿using BetterLogger;
-using RemotePlusLibrary;
 using RemotePlusLibrary.Configuration.ServerSettings;
 using RemotePlusLibrary.Core;
 using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
 using RemotePlusLibrary.Core.IOC;
-using RemotePlusLibrary.RequestSystem;
 using RemotePlusLibrary.Scripting;
 using RemotePlusLibrary.Security.AccountSystem;
 using RemotePlusServer.Core.ExtensionSystem;
@@ -14,18 +12,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.ServiceModel.Description;
-using Ninject;
-using static RemotePlusServer.Core.DefaultCommands;
 using System.Speech.Synthesis;
-using System.Reflection;
-using RemotePlusLibrary.RequestSystem.DefaultRequestBuilders;
-using RemotePlusLibrary.ServiceArchitecture;
 using RemotePlusLibrary.Extension.ResourceSystem;
 using RemotePlusLibrary.Extension.ResourceSystem.ResourceTypes;
-using RemotePlusLibrary.Core.EventSystem;
-using RemotePlusLibrary.Discovery;
-using System.ServiceModel;
-using System.Windows.Forms;
+using RemotePlusLibrary.Extension.ResourceSystem.ResourceTypes.Devices;
+using System.Linq;
 
 namespace RemotePlusServer.Core.ServerCore
 {
@@ -147,7 +138,11 @@ namespace RemotePlusServer.Core.ServerCore
             return builder.AddTask(() =>
             {
                 IResourceManager resourceManager = IOCContainer.GetService<IResourceManager>();
-                resourceManager.AddResource("/custom", new StringResource("Name", "RemotePlusServer"));
+                resourceManager.AddResource("/serverProperties", new StringResource("Name", "RemotePlusServer"));
+                IDeviceSearcher searcher = new DefaultDeviceSearcher();
+                resourceManager.AddResource("/dev/utils", new TTSDevice());
+                searcher.Get<KeyboardDevice>("keyboard").ToList().ForEach(d => resourceManager.AddResource("/dev/io", d));
+                searcher.Get<MouseDevice>("mouse").ToList().ForEach(d => resourceManager.AddResource("/dev/io", d));
                 ServerManager.ScriptBuilder.AddScriptObject<Func<string, ResourceQuery>>("resq", (name) => new ResourceQuery(name, Guid.Empty), "Generates a new resource query.", ScriptGlobalType.Function);
             });
         }

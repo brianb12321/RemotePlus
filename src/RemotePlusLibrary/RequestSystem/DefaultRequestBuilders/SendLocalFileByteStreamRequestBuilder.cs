@@ -13,6 +13,8 @@ namespace RemotePlusLibrary.RequestSystem.DefaultRequestBuilders
     {
         [DataMember]
         public string FriendlyName { get; set; }
+        [DataMember]
+        public string PathToSave { get; set; }
         public SendLocalFileByteStreamRequestBuilder(string friendlyName, string fileName) : base("global_sendByteStreamFilePackage")
         {
             FileName = fileName;

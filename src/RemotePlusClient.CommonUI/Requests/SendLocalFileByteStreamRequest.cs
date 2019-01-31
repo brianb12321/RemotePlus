@@ -34,7 +34,7 @@ namespace RemotePlusClient.CommonUI.Requests
             try
             {
                 byte[] data = File.ReadAllBytes(builder.FileName);
-                _remote.UploadBytesToResource(data, data.Length, builder.FriendlyName, builder.FileName);
+                _remote.UploadBytesToResource(data, data.Length, builder.FriendlyName, builder.FileName, builder.PathToSave);
                 return RawDataResponse.Success(null);
             }
             catch (Exception ex)

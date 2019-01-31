@@ -1,4 +1,5 @@
 ﻿using RemotePlusLibrary.Extension.ResourceSystem;
+using RemotePlusLibrary.Extension.ResourceSystem.ResourceTypes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +17,15 @@ namespace ProxyServer
         }
         public void AddResource<TResource>(string path, TResource resource) where TResource : Resource
         {
-            if (ProxyManager.ResourceStore.HasResourceByPath(resource.ResourceIdentifier))
+            if (resource is IODevice)
+            {
+                bool success = (resource as IODevice).Init();
+                if (!success)
+                {
+                    throw new Exception($"Device {resource.ResourceIdentifier} failed to initialize");
+                }
+            }
+            if (ProxyManager.ResourceStore.HasResourceByPath(resource.ResourceIdentifier) || ProxyManager.ResourceStore.HasResourceByPathAndObject(path, resource))
             {
                 return;
             }
@@ -48,6 +57,13 @@ namespace ProxyServer
         public void Load()
         {
             ProxyManager.ResourceStore = _loader.Load();
+        }
+
+        public void MoveResource(string originalPath, string newPath)
+        {
+            Resource r = ProxyManager.ResourceStore.GetResourceByPath(originalPath);
+            ProxyManager.ResourceStore.AddResourceByPath(r, newPath);
+            ProxyManager.ResourceStore.DeleteResourceByPath(originalPath);
         }
 
         public void RemoveResource(string resourceID)
