@@ -73,9 +73,9 @@ namespace RemotePlusServer
         public void SendFile(RemoteFileInfo fileRequest)
         {
             MemoryResource file = new MemoryResource(Path.GetFileNameWithoutExtension(fileRequest.FileName), fileRequest.FileName, null);
-            file.Length = fileRequest.Length;
-            file.Data = CopyData(fileRequest);
-            file.Data.Seek(0, SeekOrigin.Begin);
+            Stream destination = file.OpenWriteStream();
+            Stream original = CopyData(fileRequest);
+            original.CopyTo(destination);
             IOCContainer.GetService<IResourceManager>().AddResource("temp", file);
             fileRequest.Dispose();
         }
@@ -84,9 +84,9 @@ namespace RemotePlusServer
         {
             MemoryResource file = new MemoryResource(Path.GetFileNameWithoutExtension(fileRequest.FileName), fileRequest.FileName, null);
             file.FileName = fileRequest.FileName;
-            file.Length = fileRequest.Length;
-            file.Data = CopyData(fileRequest);
-            file.Data.Seek(0, SeekOrigin.Begin);
+            Stream destination = file.OpenWriteStream();
+            Stream original = CopyData(fileRequest);
+            original.CopyTo(destination);
             IOCContainer.GetService<IResourceManager>().AddResource("temp", file);
             fileRequest.Dispose();
         }

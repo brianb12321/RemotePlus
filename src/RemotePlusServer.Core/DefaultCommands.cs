@@ -24,6 +24,7 @@ using RemotePlusLibrary.Extension.ResourceSystem;
 using RemotePlusLibrary.Extension.ResourceSystem.ResourceTypes;
 using RemotePlusLibrary.RequestSystem.DefaultUpdateRequestBuilders;
 using System.Threading;
+using RemotePlusLibrary.Extension.ResourceSystem.ResourceTypes.Devices;
 
 namespace RemotePlusServer.Core
 {
@@ -88,7 +89,7 @@ namespace RemotePlusServer.Core
                                     });
                                     if(result.AcquisitionState == RequestState.OK)
                                     {
-                                        _service.RemoteInterface.Client.ClientCallback.RequestInformation(new SendLocalFileByteStreamRequestBuilder(args.Arguments[3].ToString(), result.Data.ToString()));
+                                        _service.RemoteInterface.Client.ClientCallback.RequestInformation(new SendLocalFileByteStreamRequestBuilder(args.Arguments[3].ToString(), result.Data.ToString()) { PathToSave = "/custom"});
                                         currentEnvironment.WriteLine("Resource created.");
                                         return new CommandResponse((int)CommandStatus.Success);
                                     }
@@ -121,16 +122,23 @@ namespace RemotePlusServer.Core
                             return new CommandResponse((int)CommandStatus.Fail);
                         }
                     case "view":
+                        //Will run into issues when we have lots of resources to enumerate.
                         var padWidth = _resourceManager.GetAllResources().Select(r => r.Path).Max(c => c.Length) + 5;
                         var typePadWidth = _resourceManager.GetAllResources().Select(r => r.ResourceType).Max(c => c.Length) + 5;
-                        StringBuilder sb = new StringBuilder();
-                        sb.AppendLine();
+                        currentEnvironment.WriteLine();
                         foreach (Resource r in _resourceManager.GetAllResources())
                         {
                             string paddedString = r.Path.PadRight(padWidth);
-                            sb.AppendLine($"{r.ResourceType.PadRight(typePadWidth)}: {paddedString}{r.ToString()}");
+                            if (r is IODevice)
+                            {
+                                currentEnvironment.WriteLine(new ConsoleText($"{r.ResourceType.PadRight(typePadWidth)}: {paddedString}{r.ToString()}") { TextColor = Color.Yellow });
+                            }
+                            else
+                            {
+                                currentEnvironment.WriteLine($"{r.ResourceType.PadRight(typePadWidth)}: {paddedString}{r.ToString()}");
+                            }
                         }
-                        currentEnvironment.WriteLine(sb.ToString());
+                        currentEnvironment.WriteLine();
                         return new CommandResponse((int)CommandStatus.Success);
                     case "save":
                         _resourceManager.Save();
@@ -299,6 +307,72 @@ namespace RemotePlusServer.Core
             }
             message = args.Arguments[3].ToString();
             _service.RemoteInterface.Speak(message, gender, age);
+            return new CommandResponse((int)CommandStatus.Success);
+        }
+        [CommandHelp("Manages and displays all devices in RemotePlus")]
+        public CommandResponse devCtl(CommandRequest args, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
+        {
+            if(args.Arguments.Count >= 2)
+            {
+                switch(args.Arguments[1].ToString())
+                {
+                    case "/view":
+                        if (args.Arguments.Count >= 3)
+                        {
+                            if(args.Arguments[args.Arguments.Count - 1].IsOfType<ResourceQuery>())
+                            {
+                                IODevice device = _resourceManager.GetResource<IODevice>((ResourceQuery)args.Arguments[2].Value);
+                                var padWidth = device.DeviceProperties.Select(r => r.Value.Name).Max(c => c.Length) + 5;
+                                currentEnvironment.WriteLine($"{device.ToString()}");
+                                currentEnvironment.WriteLine(new string('=', device.ToString().Length));
+                                foreach(DeviceProperty prop in device.DeviceProperties.Values)
+                                {
+                                    currentEnvironment.WriteLine($"{prop.Name.PadRight(padWidth)}: {prop.Value}");
+                                }
+                                currentEnvironment.WriteLine();
+                            }
+                            else
+                            {
+                                currentEnvironment.WriteLine(new ConsoleText("You must specify device using resource query.") { TextColor = Color.Red });
+                            }
+                        }
+                        else
+                        {
+                            currentEnvironment.WriteLine(new ConsoleText("No device has been specified.") { TextColor = Color.Red });
+                        }
+                        break;
+                    case "/edit":
+                        if(args.Arguments.Count >= 3)
+                        {
+                            if(args.Arguments.Count >= 4)
+                            {
+                                if(args.Arguments[args.Arguments.Count - 1].IsOfType<ResourceQuery>())
+                                {
+                                    IODevice device = _resourceManager.GetResource<IODevice>((ResourceQuery)args.Arguments[args.Arguments.Count - 1].Value);
+                                    bool success = device.DeviceProperties[args.Arguments[2].ToString()].SetValue(args.Arguments[3].ToString());
+                                    if (!success) currentEnvironment.WriteLine(new ConsoleText("Property failed to change.") { TextColor = Color.Red });
+                                }
+                                else
+                                {
+                                    currentEnvironment.WriteLine(new ConsoleText("You must specify device using resource query.") { TextColor = Color.Red });
+                                }
+                            }
+                            else
+                            {
+                                currentEnvironment.WriteLine(new ConsoleText("You must specify value to change.") { TextColor = Color.Red });
+                            }
+                        }
+                        else
+                        {
+                            currentEnvironment.WriteLine(new ConsoleText("You must specify property to change.") { TextColor = Color.Red });
+                        }
+                        break;
+                }
+            }
+            else
+            {
+                currentEnvironment.WriteLine(new ConsoleText("No switch has been specified.") { TextColor = Color.Red });
+            }
             return new CommandResponse((int)CommandStatus.Success);
         }
         [CommandHelp("Wraps around the showMessageBox function.")]
@@ -645,10 +719,9 @@ namespace RemotePlusServer.Core
                 }
             }
             currentEnvironment.WriteLine($"Going to play audio file.");
-            var audio = _resourceManager.GetResource<StreamResource>(query);
-            currentEnvironment.WriteLine($"Now playing audio file. Name {audio.FileName}");
-            audio.Open();
-            SoundPlayer sp = new SoundPlayer(audio.Data);
+            var audio = _resourceManager.GetResource<IOResource>(query);
+            currentEnvironment.WriteLine($"Now playing audio file. Name {audio.ToString()}");
+            SoundPlayer sp = new SoundPlayer(audio.OpenReadStream());
             sp.PlaySync();
             if(removeResource)
             {
@@ -671,6 +744,7 @@ namespace RemotePlusServer.Core
             Commands.Add("decrypt", svm_decryptFile);
             Commands.Add("beep", svm_beep);
             Commands.Add("speak", svm_speak);
+            Commands.Add("devCtl", devCtl);
             Commands.Add("showMessageBox", svm_showMessageBox);
             Commands.Add("path", path);
             Commands.Add("cd", cd);

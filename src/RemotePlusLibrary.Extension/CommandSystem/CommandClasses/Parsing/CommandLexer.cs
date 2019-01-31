@@ -23,16 +23,35 @@ namespace RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing
                         break;
                     case '>':
                         bool appendMode = false;
+                        bool resourceRedirection = false;
                         StringBuilder outputRouteStringBuilder = new StringBuilder();
                         if(command[i + 1] == '>')
                         {
                             appendMode = true;
                         }
-                        for(int j = (appendMode) ? i + 3 : i + 2; j <= command.Length; j++)
+                        //Check if resource redirection is enabled.
+                        if (command[(appendMode) ? i + 3 : i + 2] == '$')
+                        {
+                            resourceRedirection = true;
+                        }
+                        for (int j = (appendMode) ? i + 3 : i + 2; j <= command.Length; j++)
                         {
                             if(command.Length == j)
                             {
-                                if (appendMode == true)
+                                if(resourceRedirection)
+                                {
+                                    if(appendMode)
+                                    {
+                                        tokens.Add(new CommandToken(outputRouteStringBuilder.ToString(), TokenType.AppendResourceRedirect));
+                                    }
+                                    else
+                                    {
+                                        tokens.Add(new CommandToken(outputRouteStringBuilder.ToString(), TokenType.ResourceRedirect));
+                                    }
+                                    i++;
+                                    break;
+                                }
+                                else if (appendMode == true)
                                 {
                                     tokens.Add(new CommandToken(outputRouteStringBuilder.ToString(), TokenType.AppendFileRedirect));
                                     i++;

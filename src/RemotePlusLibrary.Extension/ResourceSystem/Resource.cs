@@ -17,6 +17,8 @@ namespace RemotePlusLibrary.Extension.ResourceSystem
         public string Path { get; set; }
         [DataMember]
         public abstract string ResourceType { get; }
+        [DataMember]
+        public abstract bool SaveToFile { get; set; }
         public abstract override string ToString();
         protected Resource(string id)
         {

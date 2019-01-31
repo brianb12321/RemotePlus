@@ -242,9 +242,9 @@ namespace RemotePlusClient.CommonUI.ConnectionClients
             Channel.SendSignal(signal);
         }
 
-        public void UploadBytesToResource(byte[] data, int length, string friendlyName, string name)
+        public void UploadBytesToResource(byte[] data, int length, string friendlyName, string name, string path)
         {
-            Channel.UploadBytesToResource(data, length, friendlyName, name);
+            Channel.UploadBytesToResource(data, length, friendlyName, name, path);
         }
 
         public Resource GetResource(string resourceIdentifier)

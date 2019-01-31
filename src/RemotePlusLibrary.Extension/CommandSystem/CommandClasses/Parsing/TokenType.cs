@@ -22,6 +22,10 @@ namespace RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing
         [EnumMember]
         FileRedirect,
         [EnumMember]
-        AppendFileRedirect
+        AppendFileRedirect,
+        [EnumMember]
+        ResourceRedirect,
+        [EnumMember]
+        AppendResourceRedirect
     }
 }

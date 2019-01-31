@@ -2,6 +2,7 @@
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing.CommandElements;
 using RemotePlusLibrary.Extension.ResourceSystem;
+using RemotePlusLibrary.Extension.ResourceSystem.ResourceTypes;
 using RemotePlusLibrary.Scripting;
 using System;
 using System.Collections.Generic;
@@ -56,6 +57,17 @@ namespace RemotePlusLibrary.Extension.CommandSystem.CommandClasses
                     case TokenType.AppendFileRedirect:
                         StreamWriter swAppend = new StreamWriter(tokens[i].OriginalValue, true);
                         env.SetOut(swAppend);
+                        break;
+                    case TokenType.ResourceRedirect:
+                        IOResource resource = _resourceManager.GetResource<IOResource>(new ResourceQuery(tokens[i].OriginalValue.Substring(1), Guid.Empty));
+                        StreamWriter tw = new StreamWriter(resource.OpenWriteStream());
+                        env.SetOut(tw);
+                        break;
+                    case TokenType.AppendResourceRedirect:
+                        IOResource appendResource = _resourceManager.GetResource<IOResource>(new ResourceQuery(tokens[i].OriginalValue.Substring(1), Guid.Empty));
+                        StreamWriter atw = new StreamWriter(appendResource.OpenWriteStream());
+                        atw.BaseStream.Seek(0, SeekOrigin.End);
+                        env.SetOut(atw);
                         break;
                     case TokenType.ExecutionResource:
                         var executionResourceQueryCommandElement = new ExecutionResourceQueryCommandElement(new ResourceQuery(tokens[i].OriginalValue, Guid.Empty));

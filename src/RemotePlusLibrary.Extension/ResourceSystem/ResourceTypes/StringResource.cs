@@ -15,6 +15,9 @@ namespace RemotePlusLibrary.Extension.ResourceSystem.ResourceTypes
         public string Value { get; set; }
         [DataMember]
         public override string ResourceType => "String";
+        [DataMember]
+
+        public override bool SaveToFile { get; set; } = true;
 
         public override string ToString()
         {

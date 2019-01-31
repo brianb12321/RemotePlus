@@ -1,4 +1,5 @@
 ﻿using RemotePlusLibrary.Extension.ResourceSystem;
+using RemotePlusLibrary.Extension.ResourceSystem.ResourceTypes;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -19,9 +20,17 @@ namespace RemotePlusServer.Core
         }
         public void AddResource<TResource>(string path, TResource resource) where TResource : Resource
         {
-            if(_store.HasResourceByPath(path))
+            if(_store.HasResourceByPathAndObject(path, resource))
             {
                 return;
+            }
+            if(resource is IODevice)
+            {
+                bool success = (resource as IODevice).Init();
+                if(!success)
+                {
+                    throw new Exception($"Device {resource.ResourceIdentifier} failed to initialize");
+                }
             }
             _store.AddResourceByPath(resource, path);
         }
@@ -50,6 +59,13 @@ namespace RemotePlusServer.Core
         public void Load()
         {
             _store = _loader.Load();
+        }
+
+        public void MoveResource(string originalPath, string newPath)
+        {
+            Resource r =_store.GetResourceByPath(originalPath);
+            _store.AddResourceByPath(r, newPath);
+            _store.DeleteResourceByPath(originalPath);
         }
 
         public void RemoveResource(string resourceID)

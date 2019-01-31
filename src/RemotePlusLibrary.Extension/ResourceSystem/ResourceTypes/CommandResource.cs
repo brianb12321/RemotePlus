@@ -19,6 +19,7 @@ namespace RemotePlusLibrary.Extension.ResourceSystem.ResourceTypes
         public override string ResourceType => "Command";
         [DataMember]
         public string Command { get; set; }
+        public override bool SaveToFile { get; set; } = true;
 
         public override string ToString()
         {
