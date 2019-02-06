@@ -31,6 +31,21 @@ namespace ProxyServer
             }
             ProxyManager.ResourceStore.AddResourceByPath(resource, path);
         }
+        public TResource[] GetAllResourcesByType<TResource>(string path) where TResource : Resource
+        {
+            return ProxyManager.ResourceStore.GetResourceDirectoryByPath(path).Resources.Values
+                .Where(r => r is TResource)
+                .Select(r => (TResource)r)
+                .ToArray();
+        }
+        public void AddResourceDirectory(string path, string name)
+        {
+            if (ProxyManager.ResourceStore.HasResourceDirectoryByPath(path + $"/{name}"))
+            {
+                return;
+            }
+            ProxyManager.ResourceStore.AddResourceDirectoryByPath(path, name);
+        }
 
         public IEnumerable<Resource> GetAllResources()
         {

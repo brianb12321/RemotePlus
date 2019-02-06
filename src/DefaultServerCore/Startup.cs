@@ -13,12 +13,12 @@ using RemotePlusLibrary.Security.AccountSystem;
 using RSPM;
 using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing;
-using RemotePlusLibrary.Core.EventSystem;
 using RemotePlusLibrary.Core;
 using RemotePlusServer.Core.ExtensionSystem;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
 using RemotePlusLibrary.Extension.ResourceSystem;
 using RemotePlusLibrary.Scripting;
+using RemotePlusLibrary.SubSystem.Audio;
 
 namespace DefaultServerCore
 {
@@ -52,7 +52,8 @@ namespace DefaultServerCore
                            .UseExecutor<CommandExecutor>()
                            .AddCommandClass<DefaultCommands>()
                            .AddCommandClass<PackageCommands>()
-                           .AddCommandClass<SpecialCommands>());
+                           .AddCommandClass<SpecialCommands>()
+                           .AddCommandClass<AudioCommands>());
             //Add the services.
             IServiceManager manager = IOCContainer.GetService<IServiceManager>();
             manager.AddServiceUsingBuilder(() =>
@@ -91,6 +92,7 @@ namespace DefaultServerCore
                 .OpenMexForRemotePlus()
                 .OpenMexForFileTransfer()
                 .LoadGlobalResources()
+                .AddAudioDevices()
                 .InitializeVariables()
                 .LoadExtensionLibraries();
         }

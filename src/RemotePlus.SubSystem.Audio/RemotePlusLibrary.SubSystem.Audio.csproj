@@ -4,21 +4,21 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{97FBBC51-9569-4128-B1BC-989CC832D00F}</ProjectGuid>
+    <ProjectGuid>{59D8C4D8-1EF6-4F48-8B8A-A4EF29170DD0}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DefaultServerCore</RootNamespace>
-    <AssemblyName>DefaultServerCore</AssemblyName>
+    <RootNamespace>RemotePlusLibrary.SubSystem.Audio</RootNamespace>
+    <AssemblyName>RemotePlus.SubSystem.Audio</AssemblyName>
     <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
+    <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\RemotePlusServer\bin\Debug\</OutputPath>
+    <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -32,14 +32,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BetterLogger">
-      <HintPath>..\..\Libs\BetterLogger.dll</HintPath>
+    <Reference Include="NAudio, Version=1.8.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\NAudio.1.8.5\lib\net35\NAudio.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Numerics" />
-    <Reference Include="System.ServiceModel" />
-    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -48,19 +46,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Startup.cs" />
+    <Compile Include="AudioCommands.cs" />
+    <Compile Include="AudioDevice.cs" />
+    <Compile Include="AudioOutDevice.cs" />
+    <Compile Include="AudioServerBuilderExtensions.cs" />
+    <Compile Include="OutDevices\DirectSoundOutDevice.cs" />
+    <Compile Include="OutDevices\WasapiOutDevice.cs" />
+    <Compile Include="OutDevices\WaveOutDevice.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\RemotePlus.SubSystem.Audio\RemotePlusLibrary.SubSystem.Audio.csproj">
-      <Project>{59d8c4d8-1ef6-4f48-8b8a-a4ef29170dd0}</Project>
-      <Name>RemotePlusLibrary.SubSystem.Audio</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\RSPM\RSPM.csproj">
-      <Project>{d451d8d4-dc69-42a8-baac-97363c35f478}</Project>
-      <Name>RSPM</Name>
-      <Private>True</Private>
-    </ProjectReference>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\RemotePlusLibrary.Configuration\RemotePlusLibrary.Configuration.csproj">
       <Project>{8a8a5888-1ce7-46ed-b8de-1ac7671f3426}</Project>
       <Name>RemotePlusLibrary.Configuration</Name>
@@ -90,12 +88,8 @@
       <Name>RemotePlusLibrary</Name>
     </ProjectReference>
     <ProjectReference Include="..\RemotePlusServer.Core\RemotePlusServer.Core.csproj">
-      <Project>{5669a80c-19d9-4dbe-bf5a-bbfcbf947634}</Project>
+      <Project>{5669A80C-19D9-4DBE-BF5A-BBFCBF947634}</Project>
       <Name>RemotePlusServer.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\RemotePlusServer\RemotePlusServer.csproj">
-      <Project>{4e41f31e-dce5-4b9c-a2d6-20bf6acd9c84}</Project>
-      <Name>RemotePlusServer</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

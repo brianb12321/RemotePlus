@@ -697,46 +697,7 @@ namespace RemotePlusServer.Core
             ServerManager.ScriptBuilder.ClearStaticScope();
             return new CommandResponse((int)CommandStatus.Success);
         }
-        [CommandHelp("Plays an audio file sent by the client.")]
-        public CommandResponse playAudio(CommandRequest req, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
-        {
-            bool removeResource = true;
-            ResourceQuery query = null;
-            if(req.Arguments.Count >= 2 && req.Arguments[1].IsOfType<ResourceQuery>())
-            {
-                query = (ResourceQuery)req.Arguments[1].Value;
-                removeResource = false;
-            }
-            else
-            {
-                var requestPathBuilder = new FileDialogRequestBuilder()
-                {
-                    Title = "Select audio file.",
-                    Filter = "Wav File (*.wav)|*.wav"
-                };
-                var path = _service.RemoteInterface.Client.ClientCallback.RequestInformation(requestPathBuilder);
-                if (path.AcquisitionState == RequestState.OK)
-                {
-                    _service.RemoteInterface.Client.ClientCallback.RequestInformation(new SendLocalFileByteStreamRequestBuilder(Path.GetFileName(path.Data.ToString()), path.Data.ToString()));
-                    query = new ResourceQuery(Path.GetFileName(path.Data.ToString()), Guid.Empty);
-                }
-                else
-                {
-                    return new CommandResponse((int)CommandStatus.Fail);
-                }
-            }
-            currentEnvironment.WriteLine($"Going to play audio file.");
-            var audio = _resourceManager.GetResource<IOResource>(query);
-            currentEnvironment.WriteLine($"Now playing audio file. Name {audio.ToString()}");
-            SoundPlayer sp = new SoundPlayer(audio.OpenReadStream());
-            sp.PlaySync();
-            if(removeResource)
-            {
-                _resourceManager.RemoveResource(audio.ResourceIdentifier);
-            }
-            audio.Close();
-            return new CommandResponse((int)CommandStatus.Success);
-        }
+        
 #endregion Commands
 
         public override void AddCommands()
@@ -764,7 +725,6 @@ namespace RemotePlusServer.Core
             Commands.Add("genMan", genMan);
             Commands.Add("scp", scp);
             Commands.Add("resetStaticScript", resetStaticScript);
-            Commands.Add("playAudio", playAudio);
             Commands.Add("load-extensionLibrary-remote", loadExtensionLibraryRemote);
             Commands.Add("pg", pg);
             Commands.Add("shutdown", shutdown);

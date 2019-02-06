@@ -60,11 +60,13 @@ namespace RemotePlusLibrary.Extension.CommandSystem.CommandClasses
                         break;
                     case TokenType.ResourceRedirect:
                         IOResource resource = _resourceManager.GetResource<IOResource>(new ResourceQuery(tokens[i].OriginalValue.Substring(1), Guid.Empty));
+                        resource.BeginIO();
                         StreamWriter tw = new StreamWriter(resource.OpenWriteStream());
                         env.SetOut(tw);
                         break;
                     case TokenType.AppendResourceRedirect:
                         IOResource appendResource = _resourceManager.GetResource<IOResource>(new ResourceQuery(tokens[i].OriginalValue.Substring(1), Guid.Empty));
+                        appendResource.BeginIO();
                         StreamWriter atw = new StreamWriter(appendResource.OpenWriteStream());
                         atw.BaseStream.Seek(0, SeekOrigin.End);
                         env.SetOut(atw);

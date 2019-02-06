@@ -18,13 +18,15 @@ namespace RemotePlusLibrary.Extension.ResourceSystem
         public Dictionary<string, Resource> Resources { get; set; } = new Dictionary<string, Resource>();
         [DataMember]
         public Dictionary<string, ResourceDirectory> Directories { get; set; } = new Dictionary<string, ResourceDirectory>();
+        [DataMember]
+        public bool SaveToFile { get; set; } = true;
         public ResourceDirectory(string name)
         {
             Name = name;
         }
         public ResourceDirectory(SerializationInfo info, StreamingContext context)
         {
-            Directories = (Dictionary<string, ResourceDirectory>)info.GetValue("Directories", typeof(Dictionary<string, ResourceDirectory>));
+            Directories = (Dictionary<string, ResourceDirectory>)info.GetValue("_storedDirectories", typeof(Dictionary<string, ResourceDirectory>));
             Resources = (Dictionary<string, Resource>)info.GetValue("_storedResources", typeof(Dictionary<string, Resource>));
             Name = (string)info.GetValue("Name", typeof(string));
             Path = (string)info.GetValue("Path", typeof(string));
@@ -173,6 +175,7 @@ namespace RemotePlusLibrary.Extension.ResourceSystem
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             Dictionary<string, Resource> _temp = new Dictionary<string, Resource>();
+            Dictionary<string, ResourceDirectory> _tempDirs = new Dictionary<string, ResourceDirectory>();
             foreach(Resource r in Resources.Values)
             {
                 if(r.SaveToFile)
@@ -181,7 +184,14 @@ namespace RemotePlusLibrary.Extension.ResourceSystem
                 }
             }
             info.AddValue("_storedResources", _temp);
-            info.AddValue("Directories", Directories);
+            foreach(ResourceDirectory dir in Directories.Values)
+            {
+                if(dir.SaveToFile)
+                {
+                    _tempDirs.Add(dir.Name, dir);
+                }
+            }
+            info.AddValue("_storedDirectories", _tempDirs);
             info.AddValue("Path", Path);
             info.AddValue("Name", Name);
         }

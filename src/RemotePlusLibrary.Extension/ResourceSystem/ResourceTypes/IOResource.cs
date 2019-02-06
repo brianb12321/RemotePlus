@@ -20,6 +20,7 @@ namespace RemotePlusLibrary.Extension.ResourceSystem.ResourceTypes
         public abstract void Write(byte[] data, int offset, int length);
         public abstract int Read(byte[] buffer, int offset, int length);
         public abstract void Close();
+        public abstract void BeginIO();
 
         public void Dispose()
         {

@@ -10,6 +10,7 @@ using RemotePlusLibrary.Core;
 using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing;
+using RemotePlusLibrary.Extension.ResourceSystem.ResourceTypes;
 using RemotePlusLibrary.Scripting;
 
 namespace RemotePlusLibrary.Extension.CommandSystem
@@ -160,7 +161,6 @@ namespace RemotePlusLibrary.Extension.CommandSystem
         {
             Out = writer;
         }
-
         public void SetIn(TextReader reader)
         {
             In = reader;

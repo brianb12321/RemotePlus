@@ -42,6 +42,12 @@ namespace RemotePlusLibrary.Extension.ResourceSystem.ResourceTypes.Devices
         {
             new KeyboardStream().Write(data, offset, length);
         }
+
+        public override void BeginIO()
+        {
+            
+        }
+
         private class KeyboardStream : Stream
         {
             public override bool CanRead => false;

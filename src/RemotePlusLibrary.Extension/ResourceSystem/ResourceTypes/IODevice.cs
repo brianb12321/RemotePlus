@@ -23,9 +23,9 @@ namespace RemotePlusLibrary.Extension.ResourceSystem.ResourceTypes
         public string DeviceID => DeviceProperties["DeviceID"].ToString();
         protected IODevice(string id, string name, string description, string deviceID) : base(id)
         {
-            DeviceProperties.Add("Name", new DeviceProperty(false, "Name", name));
-            DeviceProperties.Add("Description", new DeviceProperty(false, "Description", description));
-            DeviceProperties.Add("DeviceID", new DeviceProperty(false, "DeviceID", deviceID));
+            DeviceProperties.Add("Name", new DeviceProperty(true, false, "Name", name));
+            DeviceProperties.Add("Description", new DeviceProperty(true, false, "Description", description));
+            DeviceProperties.Add("DeviceID", new DeviceProperty(true, false, "DeviceID", deviceID));
         }
 
         public override string ResourceType => "IODevice";

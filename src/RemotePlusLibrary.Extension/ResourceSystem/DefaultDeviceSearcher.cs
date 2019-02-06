@@ -46,6 +46,12 @@ namespace RemotePlusLibrary.Extension.ResourceSystem
                 return _dev.ToArray();
             });
         }
+
+        public void Add(string name, Func<string, IODevice[]> searcher)
+        {
+            _searchers.Add(name, searcher);
+        }
+
         public TDeviceType[] Get<TDeviceType>(string name) where TDeviceType : IODevice
         {
             return (TDeviceType[])_searchers[name](name);

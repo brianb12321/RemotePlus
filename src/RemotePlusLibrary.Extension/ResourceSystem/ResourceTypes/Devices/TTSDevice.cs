@@ -39,7 +39,7 @@ namespace RemotePlusLibrary.Extension.ResourceSystem.ResourceTypes.Devices
         public override bool Init()
         {
             base.Init();
-            DeviceProperties.Add("Rate", new DeviceProperty(true, "Rate", 6));
+            DeviceProperties.Add("Rate", new DeviceProperty(true, true, "Rate", 6));
             DeviceProperties["Rate"].PropertyChanged += (sender, e) =>
             {
                 if (int.TryParse(e.ToString(), out int result)) return true;
@@ -67,6 +67,11 @@ namespace RemotePlusLibrary.Extension.ResourceSystem.ResourceTypes.Devices
         public override void Write(byte[] data, int offset, int length)
         {
             new TTSStream(Rate).Write(data, offset, length);
+        }
+
+        public override void BeginIO()
+        {
+            
         }
     }
     public class TTSStream : Stream

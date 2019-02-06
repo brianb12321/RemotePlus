@@ -35,9 +35,26 @@ namespace RemotePlusServer.Core
             _store.AddResourceByPath(resource, path);
         }
 
+        public void AddResourceDirectory(string path, string name)
+        {
+            if(_store.HasResourceDirectoryByPath(path + $"/{name}"))
+            {
+                return;
+            }
+            _store.AddResourceDirectoryByPath(path, name);
+        }
+
         public IEnumerable<Resource> GetAllResources()
         {
             return _store.GetAllResources();
+        }
+
+        public TResource[] GetAllResourcesByType<TResource>(string path) where TResource : Resource
+        {
+            return _store.GetResourceDirectoryByPath(path).Resources.Values
+                .Where(r => r is TResource)
+                .Select(r => (TResource)r)
+                .ToArray();
         }
 
         public TResource GetResource<TResource>(ResourceQuery query) where TResource : Resource
@@ -68,9 +85,9 @@ namespace RemotePlusServer.Core
             _store.DeleteResourceByPath(originalPath);
         }
 
-        public void RemoveResource(string resourceID)
+        public void RemoveResource(string resourcePath)
         {
-            _store.DeleteResourceByPath(resourceID);
+            _store.DeleteResourceByPath(resourcePath);
         }
 
         public void Save()

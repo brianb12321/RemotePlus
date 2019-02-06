@@ -53,5 +53,10 @@ namespace RemotePlusLibrary.Extension.ResourceSystem.ResourceTypes
             MemoryStream memStream = new MemoryStream(RawData);
             memStream.Write(data, offset, length);
         }
+
+        public override void BeginIO()
+        {
+            
+        }
     }
 }

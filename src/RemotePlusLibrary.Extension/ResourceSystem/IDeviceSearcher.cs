@@ -10,5 +10,6 @@ namespace RemotePlusLibrary.Extension.ResourceSystem
     public interface IDeviceSearcher
     {
         TDeviceType[] Get<TDeviceType>(string name) where TDeviceType : IODevice;
+        void Add(string name, Func<string, IODevice[]> searcher);
     }
 }

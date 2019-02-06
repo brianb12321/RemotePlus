@@ -4,6 +4,7 @@ using System.Runtime.Serialization;
 namespace RemotePlusLibrary.Extension.ResourceSystem.ResourceTypes
 {
     public delegate bool DevicePropertyChangedEventHandler(object sender, object value);
+    public delegate object DevicePropertyReadEventHandler();
     [Serializable]
     [DataContract]
     public class DeviceProperty
@@ -11,20 +12,41 @@ namespace RemotePlusLibrary.Extension.ResourceSystem.ResourceTypes
         [DataMember]
         public string Name { get; private set; }
         [DataMember]
-        public object Value { get; private set; }
+        private object _value = null;
+        [DataMember]
+        public object Value
+        {
+            get
+            {
+                if(StaticData)
+                {
+                    return _value;
+                }
+                return PropertyRead.Invoke();
+            }
+            private set
+            {
+                _value = value;
+            }
+        }
         [DataMember]
         public bool CanEdit { get; private set; }
+        [DataMember]
+        public bool StaticData { get; private set; }
         public event DevicePropertyChangedEventHandler PropertyChanged;
-        public DeviceProperty(bool editable, string name)
+        public event DevicePropertyReadEventHandler PropertyRead;
+        public DeviceProperty(bool staticData, bool editable, string name)
         {
             CanEdit = editable;
             Name = name;
+            StaticData = staticData;
         }
-        public DeviceProperty(bool editable, string name, object value)
+        public DeviceProperty(bool staticData, bool editable, string name, object value)
         {
             Name = name;
             Value = value;
             CanEdit = editable;
+            StaticData = staticData;
         }
         public bool SetValue(object value)
         {

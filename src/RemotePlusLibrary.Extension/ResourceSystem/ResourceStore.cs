@@ -33,6 +33,10 @@ namespace RemotePlusLibrary.Extension.ResourceSystem
         {
             return resources.GetResourceByPath(path.Substring(1).Split('/'), 0, resources);
         }
+        public ResourceDirectory GetResourceDirectoryByPath(string path)
+        {
+            return resources.GetResourceDirectoryByPath(path.Substring(1).Split('/'), 0, resources);
+        }
         public void AddResourceDirectoryByPath(string path, string name)
         {
             if (path.Count() == 1 && path[0] == '/')
@@ -53,6 +57,18 @@ namespace RemotePlusLibrary.Extension.ResourceSystem
         public bool HasResourceByPathAndObject(string path, Resource res)
         {
             return resources.HasResourceByPath(((path.Substring(1) + $"/{res.ResourceIdentifier}").Split('/')), 0, resources);
+        }
+        public bool HasResourceDirectoryByPath(string path)
+        {
+            try
+            {
+                resources.GetResourceDirectoryByPath(path.Substring(1).Split('/'), 0, resources);
+                return true;
+            }
+            catch (KeyNotFoundException)
+            {
+                return false;
+            }
         }
         public void AddResourceByPath(Resource resource, string path)
         {

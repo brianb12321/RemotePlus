@@ -57,6 +57,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArduinoRemoteExtensionsLib"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArduinoRemoteExtensionsProxy", "ArduinoRemoteExtensionsProxy\ArduinoRemoteExtensionsProxy.csproj", "{604310B3-1F1C-440E-BCEA-88ADC0701D8A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemotePlusLibrary.SubSystem.Audio", "src\RemotePlus.SubSystem.Audio\RemotePlusLibrary.SubSystem.Audio.csproj", "{59D8C4D8-1EF6-4F48-8B8A-A4EF29170DD0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -355,6 +357,18 @@ Global
 		{604310B3-1F1C-440E-BCEA-88ADC0701D8A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{604310B3-1F1C-440E-BCEA-88ADC0701D8A}.Release|x86.ActiveCfg = Release|Any CPU
 		{604310B3-1F1C-440E-BCEA-88ADC0701D8A}.Release|x86.Build.0 = Release|Any CPU
+		{59D8C4D8-1EF6-4F48-8B8A-A4EF29170DD0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{59D8C4D8-1EF6-4F48-8B8A-A4EF29170DD0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{59D8C4D8-1EF6-4F48-8B8A-A4EF29170DD0}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{59D8C4D8-1EF6-4F48-8B8A-A4EF29170DD0}.Debug|x86.Build.0 = Debug|Any CPU
+		{59D8C4D8-1EF6-4F48-8B8A-A4EF29170DD0}.DebugLocal|Any CPU.ActiveCfg = Debug|Any CPU
+		{59D8C4D8-1EF6-4F48-8B8A-A4EF29170DD0}.DebugLocal|Any CPU.Build.0 = Debug|Any CPU
+		{59D8C4D8-1EF6-4F48-8B8A-A4EF29170DD0}.DebugLocal|x86.ActiveCfg = Debug|Any CPU
+		{59D8C4D8-1EF6-4F48-8B8A-A4EF29170DD0}.DebugLocal|x86.Build.0 = Debug|Any CPU
+		{59D8C4D8-1EF6-4F48-8B8A-A4EF29170DD0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{59D8C4D8-1EF6-4F48-8B8A-A4EF29170DD0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{59D8C4D8-1EF6-4F48-8B8A-A4EF29170DD0}.Release|x86.ActiveCfg = Release|Any CPU
+		{59D8C4D8-1EF6-4F48-8B8A-A4EF29170DD0}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

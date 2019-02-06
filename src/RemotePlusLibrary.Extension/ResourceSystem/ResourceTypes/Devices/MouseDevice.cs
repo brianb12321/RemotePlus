@@ -14,6 +14,11 @@ namespace RemotePlusLibrary.Extension.ResourceSystem.ResourceTypes.Devices
         }
         public override string ResourceType => "Mouse";
 
+        public override void BeginIO()
+        {
+            
+        }
+
         public override void Close()
         {
             

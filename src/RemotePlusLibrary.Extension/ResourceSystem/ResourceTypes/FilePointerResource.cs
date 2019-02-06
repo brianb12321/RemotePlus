@@ -21,6 +21,11 @@ namespace RemotePlusLibrary.Extension.ResourceSystem.ResourceTypes
 
         public override bool SaveToFile { get; set; } = true;
 
+        public override void BeginIO()
+        {
+            
+        }
+
         public override void Close()
         {
             
