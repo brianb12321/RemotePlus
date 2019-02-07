@@ -65,7 +65,18 @@ namespace RemotePlusLibrary.SubSystem.Audio
         {
             base.Init();
             DeviceProperties.Add("PlaybackState", new RemotePlusLibrary.Extension.ResourceSystem.ResourceTypes.DeviceProperty(false, false, "PlaybackState"));
+            DeviceProperties.Add("WavePlayerVolume", new Extension.ResourceSystem.ResourceTypes.DeviceProperty(false, true, "WavePlayerVolume"));
             DeviceProperties["PlaybackState"].PropertyRead += () => PlayerDevice?.PlaybackState ?? PlaybackState.Stopped;
+            DeviceProperties["WavePlayerVolume"].PropertyRead += () => PlayerDevice?.Volume;
+            DeviceProperties["WavePlayerVolume"].PropertyChanged += (sender, value) =>
+            {
+                if (!float.TryParse(value.ToString(), out float result)) return false;
+                else
+                {
+                    PlayerDevice.Volume = result;
+                    return true;
+                }
+            };
             return true;
         }
     }
