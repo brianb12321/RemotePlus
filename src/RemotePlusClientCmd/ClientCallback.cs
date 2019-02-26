@@ -100,7 +100,7 @@ namespace RemotePlusClientCmd
         public ReturnData RequestInformation(Guid guid, RequestBuilder builder)
         {
             ReturnData data = null;
-            Thread t = new Thread((p) => data = RequestStore.Show((RequestBuilder)p));
+            Thread t = new Thread((p) => data = RequestStore.Show(guid, (RequestBuilder)p));
             t.SetApartmentState(ApartmentState.STA);
             t.Start(builder);
             t.Join();
@@ -108,7 +108,7 @@ namespace RemotePlusClientCmd
         }
         public void UpdateRequest(Guid serverGuid, UpdateRequestBuilder message)
         {
-            RequestStore.Update(message);
+            RequestStore.Update(serverGuid, message);
         }
         public void DisposeCurrentRequest(Guid serverGuid)
         {

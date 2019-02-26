@@ -25,6 +25,8 @@ namespace RemotePlusLibrary.RequestSystem
         public AcquisitionMode AcqMode { get; set; } = AcquisitionMode.None;
         [DataMember]
         public object Data { get; private set; }
+        [DataMember]
+        public Guid RequestingServer { get; set; }
 
         public RequestBuilder(string i)
         {

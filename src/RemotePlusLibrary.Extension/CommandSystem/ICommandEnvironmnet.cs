@@ -32,6 +32,7 @@ namespace RemotePlusLibrary.Extension.CommandSystem
         void WriteLine();
         void Write(string text);
         void Write(ConsoleText text);
+        string ReadLine();
         void SetOut(TextWriter writer);
         void SetIn(TextReader reader);
     }

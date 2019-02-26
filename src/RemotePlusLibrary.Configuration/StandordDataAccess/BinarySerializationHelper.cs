@@ -24,11 +24,14 @@ namespace RemotePlusLibrary.Configuration.StandordDataAccess
         }
         public TConfigModel LoadConfig<TConfigModel>(string filePath)
         {
-            FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+            return LoadConfig<TConfigModel>(new FileStream(filePath, FileMode.Open, FileAccess.Read));
+        }
+
+        public TConfigModel LoadConfig<TConfigModel>(Stream configStream)
+        {
             BinaryFormatter bf = new BinaryFormatter();
-            var obj = (TConfigModel)bf.Deserialize(fs);
-            fs.Flush();
-            fs.Close();
+            var obj = (TConfigModel)bf.Deserialize(configStream);
+            configStream.Close();
             return obj;
         }
     }

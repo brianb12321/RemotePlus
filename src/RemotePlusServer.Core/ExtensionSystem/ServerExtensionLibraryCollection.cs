@@ -6,6 +6,7 @@ using RemotePlusLibrary.Extension.ExtensionLoader.Initialization;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 
 namespace RemotePlusServer.Core.ExtensionSystem
@@ -62,6 +63,7 @@ namespace RemotePlusServer.Core.ExtensionSystem
             }
             Libraries.Add(lib.Name, lib);
         }
+
         public override void LoadExtension(string path, IInitEnvironment env)
         {
             Assembly a = Assembly.LoadFrom(path);

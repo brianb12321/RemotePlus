@@ -62,6 +62,9 @@
     <Reference Include="Microsoft.Scripting.Metadata, Version=1.2.2.0, Culture=neutral, PublicKeyToken=7f709c5b713576e1, processorArchitecture=MSIL">
       <HintPath>..\..\packages\DynamicLanguageRuntime.1.2.2\lib\net45\Microsoft.Scripting.Metadata.dll</HintPath>
     </Reference>
+    <Reference Include="NDesk.Options, Version=0.2.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\NDesk.Options.0.2.1\lib\NDesk.Options.dll</HintPath>
+    </Reference>
     <Reference Include="Ninject, Version=3.3.4.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Ninject.3.3.4\lib\net45\Ninject.dll</HintPath>
     </Reference>
@@ -78,6 +81,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClientLogger.cs" />
@@ -89,6 +93,7 @@
     <Compile Include="FileTransferServciceInterface.cs" />
     <Compile Include="FileTransferService.cs" />
     <Compile Include="FileTransferServiceBuilder.cs" />
+    <Compile Include="Internal\_ClientTextReader.cs" />
     <Compile Include="Internal\_ClientTextWriter.cs" />
     <Compile Include="MainRemotePlusServiceBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

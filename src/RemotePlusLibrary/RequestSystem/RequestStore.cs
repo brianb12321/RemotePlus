@@ -28,10 +28,11 @@ namespace RemotePlusLibrary.RequestSystem
         {
             return requestForms.FirstOrDefault(r => r.URI.ToUpper() == name.ToUpper());
         }
-        public static ReturnData Show(RequestBuilder builder)
+        public static ReturnData Show(Guid server, RequestBuilder builder)
         {
             try
             {
+                builder.RequestingServer = server;
                 var request = requestForms.FirstOrDefault(r => r.URI.ToUpper() == builder.Interface.ToUpper());
                 if (request != null)
                 {
@@ -67,6 +68,7 @@ namespace RemotePlusLibrary.RequestSystem
             }
             catch (Exception e)
             {
+                GlobalServices.Logger.Log($"An error occurred while processing a request: {e}", BetterLogger.LogLevel.Error);
                 if (builder.AcqMode == AcquisitionMode.ThrowIfException)
                 {
                     return new ReturnData(e, RequestState.Exception);
@@ -78,8 +80,9 @@ namespace RemotePlusLibrary.RequestSystem
                 }
             }
         }
-        public static void Update(UpdateRequestBuilder message)
+        public static void Update(Guid server, UpdateRequestBuilder message)
         {
+            message.RequestingServer = server;
             current.StartUpdate(message);
         }
         public static IRequestAdapter GetCurrent()

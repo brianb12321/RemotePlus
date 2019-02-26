@@ -1,5 +1,6 @@
 ﻿using RemotePlusLibrary.Core.IOC;
 using RemotePlusLibrary.Extension.ResourceSystem;
+using RemotePlusLibrary.SubSystem.Audio.InDevices;
 using RemotePlusLibrary.SubSystem.Audio.OutDevices;
 using System;
 using System.Collections.Generic;
@@ -20,6 +21,7 @@ namespace RemotePlusLibrary.SubSystem.Audio
                 WaveOutDevice.Searcher("waveOut").ToList().ForEach(d => resourceManager.AddResource("/dev/audio", d));
                 DirectSoundOutDevice.Searcher("directSoundOut").ToList().ForEach(d => resourceManager.AddResource("/dev/audio", d));
                 WasapiOutDevice.Searcher("wasapiOut").ToList().ForEach(d => resourceManager.AddResource("/dev/audio", d));
+                WaveInDevice.Searcher("waveIn").ToList().ForEach(d => resourceManager.AddResource("/dev/audio", d));
             });
         }
     }

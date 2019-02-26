@@ -22,7 +22,7 @@ namespace RemotePlusLibrary.Extension.CommandSystem.CommandClasses
             _resourceManager = resM;
             _scriptingEngine = scriptingEngine;
         }
-        public List<List<ICommandElement>> Parse(IReadOnlyList<CommandToken> tokens, ICommandEnvironment env)
+        public (CommandEnvironmentOptions Options, List<List<ICommandElement>> Elements) Parse(IReadOnlyList<CommandToken> tokens, ICommandEnvironment env)
         {
             List<List<ICommandElement>> _finalList = new List<List<ICommandElement>>();
             List<ICommandElement> _elements = new List<ICommandElement>();
@@ -43,11 +43,21 @@ namespace RemotePlusLibrary.Extension.CommandSystem.CommandClasses
                         var qouteBodyCommandElement = new StringCommandElement(tokens[i].OriginalValue);
                         _elements.Add(qouteBodyCommandElement);
                         break;
+                    case TokenType.InRedirect:
+                        StreamReader sr = new StreamReader(tokens[i].OriginalValue);
+                        env.SetIn(sr);
+                        break;
+                    case TokenType.InResourceRedirect:
+                        IOResource inResource = _resourceManager.GetResource<IOResource>(new ResourceQuery(tokens[i].OriginalValue.Substring(1), Guid.Empty));
+                        inResource.BeginIO();
+                        StreamReader tr = new StreamReader(inResource.OpenReadStream());
+                        env.SetIn(tr);
+                        break;
                     case TokenType.Pipe:
                         _finalList.Add(_elements);
                         _elements = new List<ICommandElement>();
                         AggregateCommandToken aggregate = tokens[i] as AggregateCommandToken;
-                        List<List<ICommandElement>> newElements = Parse(aggregate.Tokens.AsReadOnly(), env);
+                        List<List<ICommandElement>> newElements = Parse(aggregate.Tokens.AsReadOnly(), env).Elements;
                         _finalList.AddRange(newElements);
                         break;
                     case TokenType.FileRedirect:
@@ -86,7 +96,7 @@ namespace RemotePlusLibrary.Extension.CommandSystem.CommandClasses
             {
                 _finalList.Add(_elements);
             }
-            return _finalList;
+            return (new CommandEnvironmentOptions(), _finalList);
         }
     }
 }

@@ -22,6 +22,10 @@ namespace RemotePlusLibrary.Configuration.ServerSettings
     [DataContract]
     public class ServerSettings
     {
+        #region Config
+        [DataMember]
+        public bool UseDefaultUserIfNoneExists { get; set; } = true;
+        #endregion
         #region Constants
         /// <summary>
         /// The path to the server settings file.

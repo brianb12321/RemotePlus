@@ -12,6 +12,8 @@ namespace RemotePlusLibrary.RequestSystem
     {
         [DataMember]
         public string UpdateURI { get; set; }
+        [DataMember]
+        public Guid RequestingServer { get; set; }
         protected UpdateRequestBuilder(string uri)
         {
             UpdateURI = uri;

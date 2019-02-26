@@ -8,6 +8,6 @@ namespace RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing
 {
     public interface IParser
     {
-        List<List<ICommandElement>> Parse(IReadOnlyList<CommandToken> tokens, ICommandEnvironment env);
+        (CommandEnvironmentOptions Options, List<List<ICommandElement>> Elements) Parse(IReadOnlyList<CommandToken> tokens, ICommandEnvironment env);
     }
 }

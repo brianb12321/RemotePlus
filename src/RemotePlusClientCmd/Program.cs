@@ -253,7 +253,7 @@ namespace RemotePlusClientCmd
                         CommandLexer lexer = new CommandLexer();
                         CommandParser parser = new CommandParser(null, null);
                         var tokens = lexer.Lex(c);
-                        var elements = parser.Parse(tokens, null);
+                        var (options, elements) = parser.Parse(tokens, null);
                         //var newVariableTokens = RunVariableReplacement(parser, out bool success);
                         //if (success != true)
                         //{

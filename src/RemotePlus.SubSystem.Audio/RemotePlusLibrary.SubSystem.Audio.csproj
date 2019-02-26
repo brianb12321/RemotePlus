@@ -35,6 +35,15 @@
     <Reference Include="NAudio, Version=1.8.5.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\NAudio.1.8.5\lib\net35\NAudio.dll</HintPath>
     </Reference>
+    <Reference Include="NDesk.Options, Version=0.2.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\NDesk.Options.0.2.1\lib\NDesk.Options.dll</HintPath>
+    </Reference>
+    <Reference Include="SoundTouch.Net, Version=1.9.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\SoundTouch.Net.1.9.2.2\lib\net40\SoundTouch.Net.dll</HintPath>
+    </Reference>
+    <Reference Include="SoundTouch.Net.NAudio, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\SoundTouch.Net.NAudio.1.0.0\lib\net461\SoundTouch.Net.NAudio.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -48,8 +57,11 @@
   <ItemGroup>
     <Compile Include="AudioCommands.cs" />
     <Compile Include="AudioDevice.cs" />
+    <Compile Include="AudioInDevice.cs" />
     <Compile Include="AudioOutDevice.cs" />
+    <Compile Include="AudioOutDeviceExtensions.cs" />
     <Compile Include="AudioServerBuilderExtensions.cs" />
+    <Compile Include="InDevices\WaveInDevice.cs" />
     <Compile Include="OutDevices\DirectSoundOutDevice.cs" />
     <Compile Include="OutDevices\WasapiOutDevice.cs" />
     <Compile Include="OutDevices\WaveOutDevice.cs" />
@@ -92,5 +104,6 @@
       <Name>RemotePlusServer.Core</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

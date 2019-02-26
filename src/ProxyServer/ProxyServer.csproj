@@ -84,6 +84,7 @@
     <Compile Include="ExtensionSystem\ProxyInitEnvironment.cs" />
     <Compile Include="GlobalErrorHandler.cs" />
     <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="Internal\_ClientTextReader.cs" />
     <Compile Include="Internal\_ClientTextWriter.cs" />
     <Compile Include="ProbeService.cs" />
     <Compile Include="ProbeServiceBuilder.cs" />

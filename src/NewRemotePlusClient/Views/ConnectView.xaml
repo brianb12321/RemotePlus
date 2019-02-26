@@ -6,13 +6,38 @@
         xmlns:local="clr-namespace:NewRemotePlusClient.Views"
         mc:Ignorable="d"
         x:Name="ConnectWindow"
-        Title="Connect To Server" Height="450" Width="800" Background="{DynamicResource BackgroundBrush}">
+        Title="Connect To Server" Height="350" Width="800" Background="{DynamicResource BackgroundBrush}">
     <StackPanel>
-        <StackPanel Orientation="Horizontal">
-            <TextBlock Foreground="{DynamicResource TextBrush}">Address</TextBlock>
+        <TextBlock FontWeight="Bold" FontSize="20" Padding="5" Margin="5">Connect to RemotePlus</TextBlock>
+        <TextBlock Height="175" Margin="10">
+            A address is required in order to connect to a remote server.<LineBreak />
+            The address has the following three or four parts:<LineBreak />
+            1. The protocal. The default protocal is tcp.<LineBreak />
+            2. The hostname. The hostname is the part that identifies the computer to connect to.<LineBreak />
+            3. The port. The port is the number that a server listens to. This is configured by the server. The default port is 9000<LineBreak />
+            4 (optional). The name of the service. This is followed by a forward slash.<LineBreak />
+            <LineBreak />
+            example:<LineBreak />
+                net.tcp://ocalhost:9000/Romote<LineBreak />
+        </TextBlock>
+        <StackPanel Orientation="Horizontal" Margin="10">
+            <StackPanel.Resources>
+                <Style TargetType="{x:Type TextBox}">
+                    <Setter Property="Margin" Value="10,0,0,0"/>
+                </Style>
+            </StackPanel.Resources>
+            <TextBlock Foreground="{DynamicResource TextBrush}" >Address</TextBlock>
             <TextBox Width="400" Text="{Binding Address.Address, UpdateSourceTrigger=PropertyChanged}"/>
         </StackPanel>
-        <Button Content="Connect" Command="{Binding ConnectNowCommand}" CommandParameter="{Binding ElementName=ConnectWindow}"/>
-        <Button Content="Cancel" Command="{Binding CancelCommand}" CommandParameter="{Binding ElementName=ConnectWindow}"/>
+        <StackPanel Orientation="Horizontal">
+            <StackPanel.Resources>
+                <Style TargetType="{x:Type Button}">
+                    <Setter Property="Margin" Value="10,0,0,0"/>
+                    <Setter Property="Width" Value="100" />
+                </Style>
+            </StackPanel.Resources>
+            <Button Content="Connect" Command="{Binding ConnectNowCommand}" CommandParameter="{Binding ElementName=ConnectWindow}"/>
+            <Button Content="Cancel" Command="{Binding CancelCommand}" CommandParameter="{Binding ElementName=ConnectWindow}"/>
+        </StackPanel>
     </StackPanel>
 </Window>

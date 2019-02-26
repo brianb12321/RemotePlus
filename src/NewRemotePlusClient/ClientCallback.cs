@@ -35,7 +35,7 @@ namespace NewRemotePlusClient
 
         public void ChangePrompt(Guid serverGuid, RemotePlusLibrary.Extension.CommandSystem.PromptBuilder newPrompt)
         {
-            throw new NotImplementedException();
+            
         }
 
         public void Disconnect(Guid serverGuid, string Reason)
@@ -46,7 +46,7 @@ namespace NewRemotePlusClient
 
         public RemotePlusLibrary.Extension.CommandSystem.PromptBuilder GetCurrentPrompt()
         {
-            throw new NotImplementedException();
+            return null;
         }
 
         public Resource GetResource(string resourceIdentifier)
@@ -93,11 +93,16 @@ namespace NewRemotePlusClient
 
         public ReturnData RequestInformation(Guid serverGuid, RequestBuilder builder)
         {
-            throw new NotImplementedException();
+            ReturnData data = null;
+            Thread t = new Thread(() => data = RequestStore.Show(serverGuid, builder));
+            t.SetApartmentState(ApartmentState.STA);
+            t.Start();
+            t.Join();
+            return data;
         }
         public void DisposeCurrentRequest(Guid serverGuid)
         {
-            throw new NotImplementedException();
+            RequestStore.DisposeCurrentRequest();
         }
 
         public void RunProgram(string Program, string Argument, bool shell, bool ignore)

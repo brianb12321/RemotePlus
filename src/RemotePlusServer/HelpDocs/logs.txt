@@ -1,2 +1,0 @@
-﻿
-Returns the server logs.

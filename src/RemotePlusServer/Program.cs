@@ -40,6 +40,7 @@ namespace RemotePlusServer
 #if !SERVICE
             try
             {
+                ServerManager.ServerGuid = Guid.NewGuid();
                 var a = Assembly.GetExecutingAssembly().GetName();
                 Console.WriteLine($"Welcome to {a.Name}, version: {a.Version.ToString()}\n\n");
                 sw = new Stopwatch();
@@ -119,13 +120,42 @@ namespace RemotePlusServer
             }
             if(foundCore == false)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("FATAL ERROR: A server core is not present. Cannot start server.");
-                Console.ResetColor();
-                Environment.Exit(-1);
-                return null;
+                var embeddedCore = searchEmbeddedServerCore();
+                if(embeddedCore != null)
+                {
+                    embeddedCore.AddServices(new ServiceCollection());
+                    ServerBuilder sb = new ServerBuilder();
+                    embeddedCore.InitializeServer(sb);
+                    var serverInit = sb.Build();
+                    serverInit.RunTasks();
+                    return embeddedCore;
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("FATAL ERROR: A server core is not present. Cannot start server.");
+                    Console.ResetColor();
+                    Environment.Exit(-1);
+                    return null;
+                }
             }
             return null;
+        }
+
+        private static IServerCoreStartup searchEmbeddedServerCore()
+        {
+            try
+            {
+                Console.WriteLine("Attempting to load server core from embedded resource.");
+                return ServerCoreLoader.LoadServerCoreLibrary(new BinaryReader(Assembly.GetEntryAssembly().GetManifestResourceStream("RemotePlusServer.DefaultServerCore.dll")));
+            }
+            catch (Exception ex)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"ERROR: Unable to load resource: {ex.Message}");
+                Console.ResetColor();
+                return null;
+            }
         }
 
         static bool CheckPrerequisites()

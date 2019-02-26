@@ -25,6 +25,7 @@ namespace RemotePlusLibrary.SubSystem.Audio.OutDevices
             foreach(MMDevice dev in enumerator.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.All))
             {
                 _devs.Add(new WasapiOutDevice(name + (counter + 1), dev.DeviceFriendlyName, dev.DeviceFriendlyName, dev.ID, 2));
+                counter++;
             }
             return _devs.ToArray();
         };

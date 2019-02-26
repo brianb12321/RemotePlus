@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ServiceModel;
 using System.ServiceModel.Description;
 using System.Speech.Synthesis;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using RemotePlusLibrary;
 using RemotePlusLibrary.Configuration.ServerSettings;
@@ -265,6 +266,16 @@ namespace RemotePlusClient.CommonUI.ConnectionClients
         public bool HasKnownType(string name)
         {
             return Channel.HasKnownType(name);
+        }
+
+        public Task<CommandPipeline> ExecuteProxyCommandAsync(string command, CommandExecutionMode mode)
+        {
+            return Channel.ExecuteProxyCommandAsync(command, mode);
+        }
+
+        public Task<CommandPipeline> RunServerCommandAsync(string command, CommandExecutionMode commandMode)
+        {
+            return Channel.RunServerCommandAsync(command, commandMode);
         }
     }
 }

@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using NewRemotePlusClient.IOC;
 using RemotePlusClient.CommonUI.ConnectionClients;
+using RemotePlusLibrary.RequestSystem;
 
 namespace NewRemotePlusClient
 {

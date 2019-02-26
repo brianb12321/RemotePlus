@@ -16,6 +16,8 @@ using System.IO;
 using System.Speech.Synthesis;
 using System.Windows.Forms;
 using RemotePlusServer.Internal;
+using System.Threading.Tasks;
+using RemotePlusLibrary.Extension.ResourceSystem;
 
 namespace RemotePlusServer.Core
 {
@@ -29,6 +31,10 @@ namespace RemotePlusServer.Core
         public ServerRemoteInterface()
         {
             
+        }
+        public Guid GetSelectedServerGuid()
+        {
+            return ServerManager.ServerGuid;
         }
         public void Beep(int Hertz, int Duration)
         {
@@ -143,11 +149,29 @@ namespace RemotePlusServer.Core
                 string input = Client.ClientCallback.RequestInformation(new RemotePlusLibrary.RequestSystem.DefaultRequestBuilders.ConsoleReadLineRequestBuilder(e.Prelude.ToString()) { LineColor = ConsoleColor.Yellow }).Data.ToString();
                 e.ReceivedValue = input;
             };
-            env.SetOut(new _ClientTextWriter());
-            
+            env.SetOut(new _ClientTextWriter(Client.ClientCallback));
+            env.SetIn(new _ClientTextReader(Client.ClientCallback));
             var pipe = env.Execute(command, commandMode);
             env.Dispose();
             return pipe;
+        }
+        public Task<CommandPipeline> RunServerCommandAsync(string command, CommandExecutionMode commandMode)
+        {
+            return Task.Factory.StartNew(() =>
+            {
+                ICommandEnvironment env = IOCContainer.GetService<ICommandEnvironment>();
+                env.CommandLogged += (sender, e) => Client.ClientCallback.TellMessageToServerConsole(e.Text);
+                env.MultilineEntry += (sender, e) =>
+                {
+                    string input = Client.ClientCallback.RequestInformation(new RemotePlusLibrary.RequestSystem.DefaultRequestBuilders.ConsoleReadLineRequestBuilder(e.Prelude.ToString()) { LineColor = ConsoleColor.Yellow }).Data.ToString();
+                    e.ReceivedValue = input;
+                };
+                env.SetOut(new _ClientTextWriter(Client.ClientCallback));
+                env.SetIn(new _ClientTextReader(Client.ClientCallback));
+                var pipe = env.Execute(command, commandMode);
+                env.Dispose();
+                return pipe;
+            });
         }
     }
 }

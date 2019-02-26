@@ -22,7 +22,7 @@ namespace NewRemotePlusClient.ViewModels
     {
         public ObservableCollection<ITabPage> TabPagesLoaded { get; private set; }
         public event PropertyChangedEventHandler PropertyChanged;
-        public ILogFactory MainServerLogger { get; private set; }
+        public ILogFactory MainServerLogger => IOCContainer.GetService<ILogFactory>();
         private ApplicationStatus _status = ApplicationStatus.Ready;
         private CommunicationState _connectionState = CommunicationState.Created;
         public ApplicationStatus Status
@@ -48,7 +48,6 @@ namespace NewRemotePlusClient.ViewModels
         }
         public MainWindowViewModel()
         {
-            MainServerLogger = new BaseLogFactory();
             MainServerLogger.AddLogger(new TextBoxLogger());
             TabPagesLoaded = new ObservableCollection<ITabPage>();
             TabPagesLoaded.CollectionChanged += TabPagesLoaded_CollectionChanged;
@@ -132,6 +131,7 @@ namespace NewRemotePlusClient.ViewModels
                 {
                     IOCHelper.UI.ShowMessageBox($"An error occurred when establishing a connection to the server: {ex.Message}", "Failed to connect to server.", MessageButtons.OK, MessageType.Error);
                     Status = ApplicationStatus.Ready;
+                    ConnectionState = CommunicationState.Created;
                 }
                 finally
                 {

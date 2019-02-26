@@ -21,6 +21,10 @@ namespace RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing
                 {
                     case ' ':
                         break;
+                    case '&':
+                        tokens.Add(new CommandToken("&", TokenType.Async));
+                        i++;
+                        break;
                     case '>':
                         bool appendMode = false;
                         bool resourceRedirection = false;
@@ -34,41 +38,66 @@ namespace RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing
                         {
                             resourceRedirection = true;
                         }
-                        for (int j = (appendMode) ? i + 3 : i + 2; j <= command.Length; j++)
+                        for (int j = (appendMode) ? i + 3 : i + 2; j < command.Length; j++)
                         {
-                            if(command.Length == j)
-                            {
-                                if(resourceRedirection)
-                                {
-                                    if(appendMode)
-                                    {
-                                        tokens.Add(new CommandToken(outputRouteStringBuilder.ToString(), TokenType.AppendResourceRedirect));
-                                    }
-                                    else
-                                    {
-                                        tokens.Add(new CommandToken(outputRouteStringBuilder.ToString(), TokenType.ResourceRedirect));
-                                    }
-                                    i++;
-                                    break;
-                                }
-                                else if (appendMode == true)
-                                {
-                                    tokens.Add(new CommandToken(outputRouteStringBuilder.ToString(), TokenType.AppendFileRedirect));
-                                    i++;
-                                    break;
-                                }
-                                else
-                                {
-                                    tokens.Add(new CommandToken(outputRouteStringBuilder.ToString(), TokenType.FileRedirect));
-                                    i++;
-                                    break;
-                                }
-                            }
-                            else
+                            if(command[j] != ' ')
                             {
                                 outputRouteStringBuilder.Append(command[j]);
                                 i++;
                             }
+                            else
+                            {
+                                break;
+                            }
+                        }
+                        if (resourceRedirection)
+                        {
+                            if (appendMode)
+                            {
+                                tokens.Add(new CommandToken(outputRouteStringBuilder.ToString(), TokenType.AppendResourceRedirect));
+                            }
+                            else
+                            {
+                                tokens.Add(new CommandToken(outputRouteStringBuilder.ToString(), TokenType.ResourceRedirect));
+                            }
+                            break;
+                        }
+                        else if (appendMode == true)
+                        {
+                            tokens.Add(new CommandToken(outputRouteStringBuilder.ToString(), TokenType.AppendFileRedirect));
+                        }
+                        else
+                        {
+                            tokens.Add(new CommandToken(outputRouteStringBuilder.ToString(), TokenType.FileRedirect));
+                        }
+                        break;
+                    case '<':
+                        bool inputResourceRedirection = false;
+                        StringBuilder inputRouteStringBuilder = new StringBuilder();
+                        //Check if resource redirection is enabled.
+                        if (command[i + 2] == '$')
+                        {
+                            inputResourceRedirection = true;
+                        }
+                        for (int j = inputResourceRedirection ? i + 3 : i + 2; j < command.Length; j++)
+                        {
+                            if (command[j] != ' ')
+                            {
+                                inputRouteStringBuilder.Append(command[j]);
+                                i++;
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+                        if (inputResourceRedirection)
+                        {
+                            tokens.Add(new CommandToken(inputRouteStringBuilder.ToString(), TokenType.InResourceRedirect));
+                        }
+                        else
+                        {
+                            tokens.Add(new CommandToken(inputRouteStringBuilder.ToString(), TokenType.InRedirect));
                         }
                         break;
                     case '|':

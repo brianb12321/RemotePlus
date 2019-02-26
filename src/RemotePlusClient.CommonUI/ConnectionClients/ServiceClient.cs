@@ -13,6 +13,8 @@ using RemotePlusLibrary.Configuration.ServerSettings;
 using RemotePlusLibrary.FileTransfer.BrowserClasses;
 using RemotePlusLibrary.Extension.ResourceSystem;
 using TinyMessenger;
+using System;
+using System.Threading.Tasks;
 
 namespace RemotePlusClient.CommonUI.ConnectionClients
 {
@@ -226,6 +228,16 @@ namespace RemotePlusClient.CommonUI.ConnectionClients
         public bool HasKnownType(string name)
         {
             return Channel.HasKnownType(name);
+        }
+
+        public Guid GetSelectedServerGuid()
+        {
+            return Channel.GetSelectedServerGuid();
+        }
+
+        public Task<CommandPipeline> RunServerCommandAsync(string command, CommandExecutionMode commandMode)
+        {
+            return Channel.RunServerCommandAsync(command, commandMode);
         }
     }
 }

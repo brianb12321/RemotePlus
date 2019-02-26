@@ -1,5 +1,6 @@
 ﻿using Microsoft.Scripting.Hosting;
 using System.Collections.Generic;
+using System.IO;
 
 namespace RemotePlusLibrary.Scripting
 {
@@ -16,6 +17,8 @@ namespace RemotePlusLibrary.Scripting
         List<ScriptGlobal> GetGlobals();
         void InitializeEngine();
         object ExecuteString(string script);
+        void SetOut(TextWriter tw);
+        void SetIn(TextReader tr);
         void ClearStaticScope();
     }
 }

@@ -17,5 +17,9 @@ namespace RemotePlusClient.CommonUI.Connection
         public int Port { get; set; }
         [IgnoreDataMember]
         public IRemote RemoteConnection { get; set; }
+        [DataMember]
+        public bool ConnectAsProxy { get; set; }
+        [DataMember]
+        public string WholeAddress { get; set; }
     }
 }

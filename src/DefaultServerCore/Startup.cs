@@ -94,6 +94,7 @@ namespace DefaultServerCore
                 .LoadGlobalResources()
                 .AddAudioDevices()
                 .InitializeVariables()
+                .ResolveLib()
                 .LoadExtensionLibraries();
         }
         public void PostInitializeServer(IServerBuilder builder)

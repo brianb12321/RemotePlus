@@ -137,5 +137,15 @@ namespace RemotePlusLibrary.Scripting
         {
             staticScope = _templateScope;
         }
+
+        public void SetOut(TextWriter tw)
+        {
+            ScriptingEngine.Runtime.IO.SetOutput(new MemoryStream(), tw);
+        }
+
+        public void SetIn(TextReader tr)
+        {
+            ScriptingEngine.Runtime.IO.SetInput(new MemoryStream(), tr, Encoding.Default);
+        }
     }
 }

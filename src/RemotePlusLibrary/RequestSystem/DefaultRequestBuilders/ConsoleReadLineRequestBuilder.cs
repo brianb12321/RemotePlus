@@ -11,7 +11,7 @@ namespace RemotePlusLibrary.RequestSystem.DefaultRequestBuilders
     public class ConsoleReadLineRequestBuilder : BaseBuilders.PromptRequestBuilder
     {
         [DataMember]
-        public ConsoleColor LineColor { get; set; }
+        public ConsoleColor LineColor { get; set; } = ConsoleColor.Yellow;
         public ConsoleReadLineRequestBuilder(string message) : base("rcmd_readLine")
         {
             Message = message;

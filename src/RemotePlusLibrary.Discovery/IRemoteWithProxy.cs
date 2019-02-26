@@ -11,6 +11,7 @@ using RemotePlusLibrary.Security.AccountSystem;
 using System;
 using System.Collections.Generic;
 using System.ServiceModel;
+using System.Threading.Tasks;
 
 namespace RemotePlusLibrary.Discovery
 {
@@ -26,6 +27,8 @@ namespace RemotePlusLibrary.Discovery
         [OperationContract]
         [FaultContract(typeof(ServerFault))]
         CommandPipeline RunServerCommand(string Command, CommandExecutionMode commandMode);
+        [OperationContract(Name = "RunServerCommandAsync")]
+        Task<CommandPipeline> RunServerCommandAsync(string command, CommandExecutionMode commandMode);
         [OperationContract()]
         [FaultContract(typeof(ServerFault))]
         void UpdateServerSettings(ServerSettings Settings);

@@ -4,16 +4,14 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{D6122622-7067-4FBA-A617-365FA3FCF809}</ProjectGuid>
+    <ProjectGuid>{2CD6E69F-D473-48BA-94BB-621239957BBB}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>RemotePlusClient</RootNamespace>
     <AssemblyName>RemotePlusClient</AssemblyName>
     <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <TargetFrameworkProfile />
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
+    <Deterministic>true</Deterministic>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -27,225 +25,146 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>none</DebugType>
+    <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AutocompleteMenu">
-      <HintPath>..\..\Libs\AutocompleteMenu.dll</HintPath>
-    </Reference>
-    <Reference Include="BetterLogger">
+    <Reference Include="BetterLogger, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Libs\BetterLogger.dll</HintPath>
-    </Reference>
-    <Reference Include="FastColoredTextBox, Version=2.16.21.0, Culture=neutral, PublicKeyToken=fb8aa12b994ef61b, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\FCTB.2.16.21.0\lib\FastColoredTextBox.dll</HintPath>
     </Reference>
     <Reference Include="Ninject, Version=3.3.4.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Ninject.3.3.4\lib\net45\Ninject.dll</HintPath>
     </Reference>
-    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Design" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
-    <Reference Include="System.ServiceModel.Discovery" />
     <Reference Include="System.Speech" />
-    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Net.Http" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ClientApp.cs" />
+    <Compile Include="BaseViewModel.cs" />
     <Compile Include="ClientCallback.cs" />
-    <Compile Include="Settings\ConsoleSettings.cs" />
-    <Compile Include="UIForms\Scripting\ScriptIcons.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ScriptIcons.resx</DependentUpon>
-    </Compile>
-    <Compile Include="UIForms\SettingDialogs\ConsoleSettingsDialogBox.cs">
+    <Compile Include="Commands\ConnectCommand.cs" />
+    <Compile Include="Commands\ExitCommand.cs" />
+    <Compile Include="Commands\OpenConsoleCommand.cs" />
+    <Compile Include="DefaultConnectionManager.cs" />
+    <Compile Include="DefaultCommandManager.cs" />
+    <Compile Include="DefaultDialogManager.cs" />
+    <Compile Include="DefaultWindowManager.cs" />
+    <Compile Include="Dialogs\AuthenticationDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UIForms\SettingDialogs\ConsoleSettingsDialogBox.Designer.cs">
-      <DependentUpon>ConsoleSettingsDialogBox.cs</DependentUpon>
+    <Compile Include="Dialogs\AuthenticationDialog.Designer.cs">
+      <DependentUpon>AuthenticationDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="ExtensionSystem\ClientInitEnvironment..cs" />
-    <Compile Include="ExtensionSystem\ClientLibraryCollection.cs" />
-    <Compile Include="Settings\ClientSettings.cs" />
-    <Compile Include="UIForms\CommandSystem\CommandBrowserDialog.cs">
+    <Compile Include="Dialogs\ConnectDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UIForms\CommandSystem\CommandBrowserDialog.Designer.cs">
-      <DependentUpon>CommandBrowserDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UIForms\CommandSystem\CommandPipelineViewer.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UIForms\CommandSystem\CommandPipelineViewer.Designer.cs">
-      <DependentUpon>CommandPipelineViewer.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UIForms\Connection\ConnectAdvancedDialogBox.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UIForms\Connection\ConnectAdvancedDialogBox.Designer.cs">
-      <DependentUpon>ConnectAdvancedDialogBox.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UIForms\Connection\ConnectDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UIForms\Connection\ConnectDialog.Designer.cs">
+    <Compile Include="Dialogs\ConnectDialog.Designer.cs">
       <DependentUpon>ConnectDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="UIForms\Connection\ConnectionBuilderDialogBox.cs">
+    <Compile Include="DialogViewModels\ConnectViewModel.cs" />
+    <Compile Include="Events\ClientConnectedEvent.cs" />
+    <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UIForms\Connection\ConnectionBuilderDialogBox.Designer.cs">
-      <DependentUpon>ConnectionBuilderDialogBox.cs</DependentUpon>
+    <Compile Include="Form1.Designer.cs">
+      <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <Compile Include="UIForms\Console\ConsoleDialog.cs">
-      <SubType>Form</SubType>
+    <Compile Include="Forms\ConsoleForm.cs">
+      <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="UIForms\Console\ConsoleDialog.Designer.cs">
-      <DependentUpon>ConsoleDialog.cs</DependentUpon>
+    <Compile Include="Forms\ConsoleForm.Designer.cs">
+      <DependentUpon>ConsoleForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="ExtensionSystem\ClientExtensionLibrary.cs" />
-    <Compile Include="ExtensionSystem\FormPosition.cs" />
-    <Compile Include="ExtensionSystem\IClientExtension.cs" />
-    <Compile Include="UIForms\ExtensionView.cs">
-      <SubType>Form</SubType>
+    <Compile Include="Forms\LogForm.cs">
+      <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="UIForms\ExtensionView.Designer.cs">
-      <DependentUpon>ExtensionView.cs</DependentUpon>
+    <Compile Include="Forms\LogForm.Designer.cs">
+      <DependentUpon>LogForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="MainF.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="MainF.Designer.cs">
-      <DependentUpon>MainF.cs</DependentUpon>
-    </Compile>
+    <Compile Include="IBetterCommand.cs" />
+    <Compile Include="ICommandManager.cs" />
+    <Compile Include="IDialogForm.cs" />
+    <Compile Include="IDialogManager.cs" />
+    <Compile Include="IForm.cs" />
+    <Compile Include="ITabbedForm.cs" />
+    <Compile Include="IWindowManager.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UIForms\RemoteFileBrowser.cs">
-      <SubType>Form</SubType>
+    <Compile Include="Requests\ProgressRequest.cs" />
+    <Compile Include="Utils\Bootstrapper.cs" />
+    <Compile Include="Utils\RichTextBoxExtensions.cs" />
+    <Compile Include="Utils\WinFormExtension.cs" />
+    <Compile Include="Utils\WinFormLogger.cs" />
+    <Compile Include="ViewModels\AuthenticationViewModel.cs" />
+    <Compile Include="ViewModels\ConsoleViewModel.cs" />
+    <Compile Include="ViewModels\LogViewModel.cs" />
+    <EmbeddedResource Include="Dialogs\AuthenticationDialog.resx">
+      <DependentUpon>AuthenticationDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\ConnectDialog.resx">
+      <DependentUpon>ConnectDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Form1.resx">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ConsoleForm.resx">
+      <DependentUpon>ConsoleForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\LogForm.resx">
+      <DependentUpon>LogForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="UIForms\RemoteFileBrowser.Designer.cs">
-      <DependentUpon>RemoteFileBrowser.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UIForms\Scripting\ScriptAutoCompleteItem.cs" />
-    <Compile Include="UIForms\Scripting\ScriptingEditor.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UIForms\Scripting\ScriptingEditor.Designer.cs">
-      <DependentUpon>ScriptingEditor.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UIForms\Scripting\ScriptObjectViewer.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UIForms\Scripting\ScriptObjectViewer.Designer.cs">
-      <DependentUpon>ScriptObjectViewer.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UIForms\Console\ServerConsole.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UIForms\Console\ServerConsole.Designer.cs">
-      <DependentUpon>ServerConsole.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UIForms\ServerExplorer.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UIForms\ServerExplorer.Designer.cs">
-      <DependentUpon>ServerExplorer.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UIForms\SettingDialogs\ServerSettingsDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UIForms\SettingDialogs\ServerSettingsDialog.Designer.cs">
-      <DependentUpon>ServerSettingsDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UIForms\TextBoxLogger.cs" />
-    <Compile Include="UINodeType.cs" />
-    <Compile Include="UIForms\ViewRequestDialogBox.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UIForms\ViewRequestDialogBox.Designer.cs">
-      <DependentUpon>ViewRequestDialogBox.cs</DependentUpon>
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="UIForms\CommandSystem\CommandBrowserDialog.resx">
-      <DependentUpon>CommandBrowserDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UIForms\CommandSystem\CommandPipelineViewer.resx">
-      <DependentUpon>CommandPipelineViewer.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UIForms\Connection\ConnectAdvancedDialogBox.resx">
-      <DependentUpon>ConnectAdvancedDialogBox.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UIForms\Connection\ConnectDialog.resx">
-      <DependentUpon>ConnectDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UIForms\Connection\ConnectionBuilderDialogBox.resx">
-      <DependentUpon>ConnectionBuilderDialogBox.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UIForms\Console\ConsoleDialog.resx">
-      <DependentUpon>ConsoleDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UIForms\SettingDialogs\ConsoleSettingsDialogBox.resx">
-      <DependentUpon>ConsoleSettingsDialogBox.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UIForms\extensionView.resx">
-      <DependentUpon>ExtensionView.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MainF.resx">
-      <DependentUpon>MainF.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UIForms\RemoteFileBrowser.resx">
-      <DependentUpon>RemoteFileBrowser.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UIForms\Scripting\ScriptIcons.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <SubType>Designer</SubType>
-      <LastGenOutput>ScriptIcons.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UIForms\Scripting\ScriptingEditor.resx">
-      <DependentUpon>ScriptingEditor.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UIForms\Scripting\ScriptObjectViewer.resx">
-      <DependentUpon>ScriptObjectViewer.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UIForms\Console\ServerConsole.resx">
-      <DependentUpon>ServerConsole.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UIForms\ServerExplorer.resx">
-      <DependentUpon>ServerExplorer.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UIForms\SettingDialogs\ServerSettingsDialog.resx">
-      <DependentUpon>ServerSettingsDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UIForms\ViewRequestDialogBox.resx">
-      <DependentUpon>ViewRequestDialogBox.cs</DependentUpon>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
+    <ProjectReference Include="..\RemotePlus.SubSystem.Audio\RemotePlusLibrary.SubSystem.Audio.csproj">
+      <Project>{59d8c4d8-1ef6-4f48-8b8a-a4ef29170dd0}</Project>
+      <Name>RemotePlusLibrary.SubSystem.Audio</Name>
+    </ProjectReference>
     <ProjectReference Include="..\RemotePlusClient.CommonUI\RemotePlusClient.CommonUI.csproj">
       <Project>{9ef00d4b-27f4-4c2a-bda7-fc47246b2064}</Project>
       <Name>RemotePlusClient.CommonUI</Name>
     </ProjectReference>
     <ProjectReference Include="..\RemotePlusLibrary.Configuration\RemotePlusLibrary.Configuration.csproj">
-      <Project>{8A8A5888-1CE7-46ED-B8DE-1AC7671F3426}</Project>
+      <Project>{8a8a5888-1ce7-46ed-b8de-1ac7671f3426}</Project>
       <Name>RemotePlusLibrary.Configuration</Name>
     </ProjectReference>
     <ProjectReference Include="..\RemotePlusLibrary.Core\RemotePlusLibrary.Core.csproj">
@@ -253,11 +172,11 @@
       <Name>RemotePlusLibrary.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\RemotePlusLibrary.Discovery\RemotePlusLibrary.Discovery.csproj">
-      <Project>{FC3EB84C-D1B0-4B5C-9406-DFFA9BC5A5FC}</Project>
+      <Project>{fc3eb84c-d1b0-4b5c-9406-dffa9bc5a5fc}</Project>
       <Name>RemotePlusLibrary.Discovery</Name>
     </ProjectReference>
     <ProjectReference Include="..\RemotePlusLibrary.Extension\RemotePlusLibrary.Extension.csproj">
-      <Project>{2AA5E768-7E0A-4B0C-A0D1-F79153902DF9}</Project>
+      <Project>{2aa5e768-7e0a-4b0c-a0d1-f79153902df9}</Project>
       <Name>RemotePlusLibrary.Extension</Name>
     </ProjectReference>
     <ProjectReference Include="..\RemotePlusLibrary.Scripting\RemotePlusLibrary.Scripting.csproj">
@@ -265,7 +184,7 @@
       <Name>RemotePlusLibrary.Scripting</Name>
     </ProjectReference>
     <ProjectReference Include="..\RemotePlusLibrary.Security\RemotePlusLibrary.Security.csproj">
-      <Project>{E4E0BB7E-B995-4EBE-8EFB-3C09BF64A3A2}</Project>
+      <Project>{e4e0bb7e-b995-4ebe-8efb-3c09bf64a3a2}</Project>
       <Name>RemotePlusLibrary.Security</Name>
     </ProjectReference>
     <ProjectReference Include="..\RemotePlusLibrary\RemotePlusLibrary.csproj">
@@ -273,30 +192,6 @@
       <Name>RemotePlusLibrary</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-    <None Include="UIForms\Scripting\Resources\function_kCl_icon.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="UIForms\Scripting\Resources\table_JoW_icon.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="UIForms\Scripting\Resources\runScript.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadata Include="Connected Services\" />
-  </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
-  </PropertyGroup>
-  <Import Project="..\..\packages\Fody.3.3.3\build\Fody.targets" Condition="Exists('..\..\packages\Fody.3.3.3\build\Fody.targets')" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\..\packages\Fody.3.3.3\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Fody.3.3.3\build\Fody.targets'))" />
-  </Target>
 </Project>

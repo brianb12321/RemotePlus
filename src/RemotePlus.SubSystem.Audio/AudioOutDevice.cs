@@ -73,8 +73,12 @@ namespace RemotePlusLibrary.SubSystem.Audio
                 if (!float.TryParse(value.ToString(), out float result)) return false;
                 else
                 {
-                    PlayerDevice.Volume = result;
-                    return true;
+                    if (result <= 1)
+                    {
+                        PlayerDevice.Volume = result;
+                        return true;
+                    }
+                    else return false;
                 }
             };
             return true;

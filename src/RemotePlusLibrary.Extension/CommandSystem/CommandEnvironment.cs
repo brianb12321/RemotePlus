@@ -2,15 +2,11 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using BetterLogger;
 using RemotePlusLibrary.Core;
-using RemotePlusLibrary.Extension.CommandSystem;
+using RemotePlusLibrary.Core.IOC;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
 using RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing;
-using RemotePlusLibrary.Extension.ResourceSystem.ResourceTypes;
 using RemotePlusLibrary.Scripting;
 
 namespace RemotePlusLibrary.Extension.CommandSystem
@@ -84,7 +80,9 @@ namespace RemotePlusLibrary.Extension.CommandSystem
                 RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing.ICommandExecutor executor = Executor;
                 //processor.ConfigureProcessor(ServerManager.ServerRemoteService.Variables, executor);
                 var tokens = lexer.Lex(command);
-                var elements = parser.Parse(tokens, this);
+                var (options, elements) = parser.Parse(tokens, this);
+                IOCContainer.GetService<IScriptingEngine>().SetOut(Out);
+                IOCContainer.GetService<IScriptingEngine>().SetIn(In);
                 //var newTokens = processor.RunSubRoutines(lexer, pipe, pos);
                 //Run the commands
                 if (elements.Count <= 1)
@@ -155,6 +153,10 @@ namespace RemotePlusLibrary.Extension.CommandSystem
         {
             SwitchForgroundColor?.Invoke(this, new ConsoleColorEventArgs(text.TextColor));
             Out?.Write(text);
+        }
+        public string ReadLine()
+        {
+            return In.ReadLine();
         }
 
         public void SetOut(TextWriter writer)

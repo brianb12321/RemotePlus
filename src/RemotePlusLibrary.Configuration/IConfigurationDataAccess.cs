@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 
 namespace RemotePlusLibrary.Configuration
 {
@@ -6,5 +7,6 @@ namespace RemotePlusLibrary.Configuration
     {
         void SaveConfig<TConfigModel>(TConfigModel configType, string file);
         TConfigModel LoadConfig<TConfigModel>(string file);
+        TConfigModel LoadConfig<TConfigModel>(Stream configStream);
     }
 }

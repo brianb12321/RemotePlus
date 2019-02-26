@@ -8,7 +8,7 @@ namespace RemotePlusLibrary.Security.AccountSystem
     public interface IAccountManager
     {
         UserAccount GetLoggedInUser();
-        UserAccount CreateAccount(UserCredentials cred);
+        UserAccount CreateAccount(UserCredentials cred, bool save = true);
         /// <summary>
         /// Gets an account object associated with the account's AID.
         /// </summary>

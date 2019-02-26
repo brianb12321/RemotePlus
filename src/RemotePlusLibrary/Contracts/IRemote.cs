@@ -8,6 +8,8 @@ using RemotePlusLibrary.Security.AccountSystem;
 using RemotePlusLibrary.Core.Faults;
 using RemotePlusLibrary.Configuration.ServerSettings;
 using RemotePlusLibrary.FileTransfer.BrowserClasses;
+using System;
+using System.Threading.Tasks;
 
 namespace RemotePlusLibrary.Contracts
 {
@@ -19,6 +21,10 @@ namespace RemotePlusLibrary.Contracts
     [ServiceKnownType("GetKnownTypes", typeof(DefaultKnownTypeManager))]
     public interface IRemote : IBidirectionalContract
     {
+        [OperationContract]
+        [FaultContract(typeof(ServerFault))]
+        [FaultContract(typeof(ProxyFault))]
+        Guid GetSelectedServerGuid();
         [OperationContract()]
         [FaultContract(typeof(ServerFault))]
         [FaultContract(typeof(ProxyFault))]
@@ -27,6 +33,8 @@ namespace RemotePlusLibrary.Contracts
         [FaultContract(typeof(ServerFault))]
         [FaultContract(typeof(ProxyFault))]
         CommandPipeline RunServerCommand(string Command, CommandExecutionMode commandMode);
+        [OperationContract(Name = "RunServerCommandAsync")]
+        Task<CommandPipeline> RunServerCommandAsync(string command, CommandExecutionMode commandMode);
         [OperationContract()]
         [FaultContract(typeof(ServerFault))]
         [FaultContract(typeof(ProxyFault))]

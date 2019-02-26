@@ -22,11 +22,12 @@ namespace RemotePlusLibrary.Security.AccountSystem
         /// </summary>
         /// <param name="cred">The username and password for the account.</param>
         /// <param name="role">The string to a role that is loaded on the server.</param>
-        public UserAccount CreateAccount(UserCredentials cred)
+        /// <param name="save">Determines whether to save after the user account has been created.</param>
+        public UserAccount CreateAccount(UserCredentials cred, bool save = true)
         {
             UserAccount account = new UserAccount(cred);
             _accounts.Add(account.AID, account);
-            _loader.SaveConfig(account, $"Users\\{account.AID}.uao");
+            if(save) _loader.SaveConfig(account, $"Users\\{account.AID}.uao");
             return account;
         }
         /// <summary>

@@ -26,6 +26,7 @@ using RemotePlusLibrary.Core.IOC;
 using RemotePlusLibrary.Extension.ResourceSystem;
 using RemotePlusLibrary.Extension.ResourceSystem.ResourceTypes;
 using TinyMessenger;
+using System.Threading.Tasks;
 
 namespace RemotePlusServer
 {
@@ -139,12 +140,14 @@ namespace RemotePlusServer
         {
             if (ServerManager.DefaultSettings.DiscoverySettings.DiscoveryBehavior == ProxyConnectionMode.Connect)
             {
-                _interface.Client = Client<RemoteClient>.Build(ServerStartup.proxyChannel.RegisterClient(), new RemoteClient(null, true, ServerStartup.proxyChannel, ServerManager.ServerGuid));
+                _interface.Client = Client<RemoteClient>.Build(ServerStartup.proxyChannel.RegisterClient(),
+                    new RemoteClient(null, true, ServerStartup.proxyChannel, ServerManager.ServerGuid),
+                    OperationContext.Current.Channel);
             }
             else
             {
                 var callback = OperationContext.Current.GetCallbackChannel<IRemoteClient>();
-                _interface.Client = Client<RemoteClient>.Build(callback.RegisterClient(), new RemoteClient(callback, false, null, Guid.NewGuid()));
+                _interface.Client = Client<RemoteClient>.Build(callback.RegisterClient(), new RemoteClient(callback, false, null, ServerManager.ServerGuid), OperationContext.Current.Channel);
             }
         }
 
@@ -166,7 +169,7 @@ namespace RemotePlusServer
             if (account == null)
             {
                 GlobalServices.Logger.Log($"Client {_interface.Client.FriendlyName} [{_interface.Client.UniqueID.ToString()}] disconnected. Failed to register to the server. Authentication failed.", LogLevel.Info);
-                throw new FaultException(REG_FAILED + $" Provded username: {regObject.Credentials.Username}");
+                _interface.Client.ClientCallback.Disconnect(REG_FAILED + $" Provded username: {regObject.Credentials.Username}");
             }
             else
             {
@@ -480,6 +483,16 @@ namespace RemotePlusServer
         public bool HasKnownType(string name)
         {
             return DefaultKnownTypeManager.HasName(name);
+        }
+
+        public Guid GetSelectedServerGuid()
+        {
+            return _interface.GetSelectedServerGuid();
+        }
+
+        public Task<CommandPipeline> RunServerCommandAsync(string command, CommandExecutionMode commandMode)
+        {
+            return _interface.RunServerCommandAsync(command, commandMode);
         }
     }
 }

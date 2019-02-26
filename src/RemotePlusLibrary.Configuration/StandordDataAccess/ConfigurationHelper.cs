@@ -31,8 +31,13 @@ namespace RemotePlusLibrary.Configuration.StandordDataAccess
         }
         public TConfigModel LoadConfig<TConfigModel>(string file)
         {
+            return LoadConfig<TConfigModel>(new FileStream(file, FileMode.Open, FileAccess.Read));
+        }
+
+        public TConfigModel LoadConfig<TConfigModel>(Stream configStream)
+        {
             DataContractSerializer ser = new DataContractSerializer(typeof(TConfigModel), DefaultKnownTypeManager.GetKnownTypes(null));
-            XmlReader reader = XmlReader.Create(file);
+            XmlReader reader = XmlReader.Create(configStream);
             var ss = (TConfigModel)ser.ReadObject(reader);
             reader.Close();
             return ss;

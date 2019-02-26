@@ -20,12 +20,18 @@ namespace RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing
         [EnumMember]
         Pipe,
         [EnumMember]
+        Async,
+        [EnumMember]
         FileRedirect,
         [EnumMember]
         AppendFileRedirect,
         [EnumMember]
         ResourceRedirect,
         [EnumMember]
-        AppendResourceRedirect
+        AppendResourceRedirect,
+        [EnumMember]
+        InRedirect,
+        [EnumMember]
+        InResourceRedirect
     }
 }

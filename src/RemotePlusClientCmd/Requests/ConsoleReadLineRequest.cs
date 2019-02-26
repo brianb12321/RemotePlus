@@ -19,7 +19,10 @@ namespace RemotePlusClientCmd.Requests
 
         public override RawDataResponse RequestData(ConsoleReadLineRequestBuilder builder, NetworkSide executingSide)
         {
-            Console.Write(builder.Message);
+            if(!string.IsNullOrWhiteSpace(builder.Message))
+            {
+                Console.Write(builder.Message);
+            }
             Console.ForegroundColor = builder.LineColor;
             RawDataResponse response = RawDataResponse.Success(ConsoleHelper.LongReadLine());
             Console.ResetColor();

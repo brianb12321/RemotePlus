@@ -46,7 +46,7 @@ namespace RemotePlusLibrary.Client
         /// <param name="builder">The settings used to build the client.</param>
         /// <param name="callback">The callback for the client.</param>
         /// <returns></returns>
-        public static Client<C> Build(ClientBuilder builder, C callback)
+        public static Client<C> Build(ClientBuilder builder, C callback, IContextChannel channel)
         {
             Client<C> c = new Client<C>(builder.ClientType)
             {
@@ -54,6 +54,7 @@ namespace RemotePlusLibrary.Client
                 ClientCallback = callback,
                 ExtraData = builder.ExtraData
             };
+            c.Channel = channel;
             return c;
         }
     }

@@ -24,6 +24,7 @@ using RemotePlusLibrary.Extension.ResourceSystem;
 using RemotePlusLibrary.Extension.ResourceSystem.ResourceTypes;
 using RemotePlusLibrary.RequestSystem.DefaultUpdateRequestBuilders;
 using System.Threading;
+using NDesk.Options;
 using RemotePlusLibrary.Extension.ResourceSystem.ResourceTypes.Devices;
 
 namespace RemotePlusServer.Core
@@ -41,6 +42,35 @@ namespace RemotePlusServer.Core
         }
 
         #region Commands
+        [CommandBehavior(IndexCommandInHelp = false)]
+        public CommandResponse progTest(CommandRequest args, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
+        {
+            _service.RemoteInterface.Client.ClientCallback.RequestInformation(new ProgressRequestBuilder()
+            {
+                Maximum = 100,
+                Message = "This is just a test. The server is performing a very long operation."
+            });
+            Thread.Sleep(1000);
+            for(int i = 0; i < 100; i++)
+            {
+                _service.RemoteInterface.Client.ClientCallback.UpdateRequest(new ProgressUpdateBuilder(i)
+                {
+                    Text = $"{i} / 100 Ticks"
+                });
+
+                Thread.Sleep(250);
+            }
+            _service.RemoteInterface.Client.ClientCallback.DisposeCurrentRequest();
+            return new CommandResponse((int)CommandStatus.Success);
+        }
+        [CommandBehavior(IndexCommandInHelp = false)]
+        public CommandResponse readLineTest(CommandRequest args, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
+        {
+            currentEnvironment.Write("Enter something to say: ");
+            string result = currentEnvironment.ReadLine();
+            currentEnvironment.WriteLine($"You said \"{result}\"");
+            return new CommandResponse((int)CommandStatus.Success);
+        }
         [CommandHelp("Displays a list of commands.")]
         public CommandResponse Help(CommandRequest args, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
         {
@@ -76,18 +106,33 @@ namespace RemotePlusServer.Core
         [HelpPage("vars.txt", Source = HelpSourceType.File)]
         public CommandResponse resex(CommandRequest args, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
         {
+            string mode = string.Empty;
+            string name = string.Empty;
+            string creationType = string.Empty;
+            string value = string.Empty;
+            OptionSet set = new OptionSet()
+                .Add("new", "Creates a new resource in the system.", v => mode = "new")
+                .Add("view", "View all the resources.", v => mode = "view")
+                .Add("save", "Saves all resources to the global resource file.", v => mode = "save")
+                .Add("modify", "Modifies a resource's properties.", v => mode = "modify")
+                .Add("delete", "Deletes a resource from the system.", v => mode = "delete")
+                .Add("resourceName|n=", "The resource name.", v => name = v)
+                .Add("resourceType|t=", "The resource type to create when creating a resource.", v => creationType = v)
+                .Add("value|v=", "The value of the resource to edit or create.", v => value = v)
+                .Add("help|?", "Shows the help screen", v => mode = "help");
+            set.Parse(args.Arguments.Select(e => e.ToString()));
             if (args.Arguments.Count >= 2)
             {
-                switch(args.Arguments[1].ToString())
+                switch(mode)
                 {
                     case "new":
-                        if (args.Arguments.Count >= 3)
+                        if (!string.IsNullOrEmpty(creationType))
                         {
-                            switch (args.Arguments[2].ToString())
+                            switch (creationType)
                             {
                                 case "string":
-                                    _resourceManager.AddResource("/custom", new StringResource(args.Arguments[3].ToString(), args.Arguments[4].ToString()));
-                                    currentEnvironment.WriteLine($"Variable {args.Arguments[3]} added.");
+                                    _resourceManager.AddResource("/custom", new StringResource(name, value));
+                                    currentEnvironment.WriteLine($"Variable {name} added.");
                                     return new CommandResponse((int)CommandStatus.Success);
                                 case "fileByte":
                                     ReturnData result = _service.RemoteInterface.Client.ClientCallback.RequestInformation(new FileDialogRequestBuilder()
@@ -96,7 +141,7 @@ namespace RemotePlusServer.Core
                                     });
                                     if(result.AcquisitionState == RequestState.OK)
                                     {
-                                        _service.RemoteInterface.Client.ClientCallback.RequestInformation(new SendLocalFileByteStreamRequestBuilder(args.Arguments[3].ToString(), result.Data.ToString()) { PathToSave = "/custom"});
+                                        _service.RemoteInterface.Client.ClientCallback.RequestInformation(new SendLocalFileByteStreamRequestBuilder(name, result.Data.ToString()) { PathToSave = "/custom"});
                                         currentEnvironment.WriteLine("Resource created.");
                                         return new CommandResponse((int)CommandStatus.Success);
                                     }
@@ -109,7 +154,7 @@ namespace RemotePlusServer.Core
                                     ReturnData result2 = _service.RemoteInterface.Client.ClientCallback.RequestInformation(new SelectFileRequestBuilder());
                                     if (result2.AcquisitionState == RequestState.OK)
                                     {
-                                        _resourceManager.AddResource<FilePointerResource>("/custom", new FilePointerResource(result2.Data.ToString(), args.Arguments[3].ToString()));
+                                        _resourceManager.AddResource<FilePointerResource>("/custom", new FilePointerResource(result2.Data.ToString(), name));
                                         currentEnvironment.WriteLine("Resource created.");
                                         return new CommandResponse((int)CommandStatus.Success);
                                     }
@@ -125,7 +170,7 @@ namespace RemotePlusServer.Core
                         }
                         else
                         {
-                            currentEnvironment.WriteLine(new ConsoleText("You must provide a reosurce name") { TextColor = Color.Red });
+                            currentEnvironment.WriteLine(new ConsoleText("You must provide a reosurce creation type.") { TextColor = Color.Red });
                             return new CommandResponse((int)CommandStatus.Fail);
                         }
                     case "view":
@@ -161,7 +206,7 @@ namespace RemotePlusServer.Core
                             switch (args.Arguments[2].ToString())
                             {
                                 case "name":
-                                    if(args.Arguments[3].IsOfType<ResourceQuery>())
+                                    if (args.Arguments[3].IsOfType<ResourceQuery>())
                                     {
                                         var resource = _resourceManager.GetResource<Resource>((ResourceQuery)args.Arguments[3]);
                                         resource.ResourceIdentifier = args.Arguments[4].ToString();
@@ -183,8 +228,10 @@ namespace RemotePlusServer.Core
                             currentEnvironment.WriteLine(new ConsoleText("You must provide the value to edit.") { TextColor = Color.Red });
                             return new CommandResponse((int)CommandStatus.Fail);
                         }
+                    case "help":
                     default:
-                        currentEnvironment.WriteLine(new ConsoleText("Invalid action.") { TextColor = Color.Red });
+                        set.WriteOptionDescriptions(currentEnvironment.Out);
+                        currentEnvironment.WriteLine();
                         return new CommandResponse((int)CommandStatus.Fail);
                 }
             }
@@ -319,50 +366,48 @@ namespace RemotePlusServer.Core
         [CommandHelp("Manages and displays all devices in RemotePlus")]
         public CommandResponse devCtl(CommandRequest args, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
         {
+            string mode = string.Empty;
+            string deviceString = string.Empty;
+            string propString = string.Empty;
+            string value = string.Empty;
+            OptionSet set = new OptionSet()
+                .Add("view", "View the properties of a device.", v => mode = "view")
+                .Add("edit", "Edit a property of a device.", v => mode = "edit")
+                .Add("device|d=", "The path to a device.", v => deviceString = v)
+                .Add("property|p=", "The property to edit.", v => propString = v)
+                .Add("value|v=", "The new value of a property.", v => value = v)
+                .Add("help|?", "Shows the help screen.", v => mode = "help");
+            set.Parse(args.Arguments.Select(e => e.ToString()));
             if(args.Arguments.Count >= 2)
             {
-                switch(args.Arguments[1].ToString())
+                switch(mode)
                 {
-                    case "/view":
-                        if (args.Arguments.Count >= 3)
+                    case "view":
+                        if (!string.IsNullOrEmpty(deviceString))
                         {
-                            if(args.Arguments[args.Arguments.Count - 1].IsOfType<ResourceQuery>())
+                            IODevice device = _resourceManager.GetResource<IODevice>(new ResourceQuery(deviceString, Guid.Empty));
+                            var padWidth = device.DeviceProperties.Select(r => r.Value.Name).Max(c => c.Length) + 5;
+                            currentEnvironment.WriteLine($"{device.ToString()}");
+                            currentEnvironment.WriteLine(new string('=', device.ToString().Length));
+                            foreach (DeviceProperty prop in device.DeviceProperties.Values)
                             {
-                                IODevice device = _resourceManager.GetResource<IODevice>((ResourceQuery)args.Arguments[2].Value);
-                                var padWidth = device.DeviceProperties.Select(r => r.Value.Name).Max(c => c.Length) + 5;
-                                currentEnvironment.WriteLine($"{device.ToString()}");
-                                currentEnvironment.WriteLine(new string('=', device.ToString().Length));
-                                foreach(DeviceProperty prop in device.DeviceProperties.Values)
-                                {
-                                    currentEnvironment.WriteLine($"{prop.Name.PadRight(padWidth)}: {prop.Value}");
-                                }
-                                currentEnvironment.WriteLine();
+                                currentEnvironment.WriteLine($"{prop.Name.PadRight(padWidth)}: {prop.Value}");
                             }
-                            else
-                            {
-                                currentEnvironment.WriteLine(new ConsoleText("You must specify device using resource query.") { TextColor = Color.Red });
-                            }
+                            currentEnvironment.WriteLine();
                         }
                         else
                         {
                             currentEnvironment.WriteLine(new ConsoleText("No device has been specified.") { TextColor = Color.Red });
                         }
                         break;
-                    case "/edit":
-                        if(args.Arguments.Count >= 3)
+                    case "edit":
+                        if(!string.IsNullOrEmpty(propString))
                         {
-                            if(args.Arguments.Count >= 4)
+                            if(!string.IsNullOrEmpty(value))
                             {
-                                if(args.Arguments[args.Arguments.Count - 1].IsOfType<ResourceQuery>())
-                                {
-                                    IODevice device = _resourceManager.GetResource<IODevice>((ResourceQuery)args.Arguments[args.Arguments.Count - 1].Value);
-                                    bool success = device.DeviceProperties[args.Arguments[2].ToString()].SetValue(args.Arguments[3].ToString());
-                                    if (!success) currentEnvironment.WriteLine(new ConsoleText("Property failed to change.") { TextColor = Color.Red });
-                                }
-                                else
-                                {
-                                    currentEnvironment.WriteLine(new ConsoleText("You must specify device using resource query.") { TextColor = Color.Red });
-                                }
+                                IODevice device = _resourceManager.GetResource<IODevice>(new ResourceQuery(deviceString, Guid.Empty));
+                                bool success = device.DeviceProperties[propString].SetValue(value);
+                                if (!success) currentEnvironment.WriteLine(new ConsoleText("Property failed to change.") { TextColor = Color.Red });
                             }
                             else
                             {
@@ -373,6 +418,10 @@ namespace RemotePlusServer.Core
                         {
                             currentEnvironment.WriteLine(new ConsoleText("You must specify property to change.") { TextColor = Color.Red });
                         }
+                        break;
+                    case "help":
+                        set.WriteOptionDescriptions(currentEnvironment.Out);
+                        currentEnvironment.WriteLine();
                         break;
                 }
             }
@@ -702,6 +751,8 @@ namespace RemotePlusServer.Core
 
         public override void AddCommands()
         {
+            Commands.Add("progTest", progTest);
+            Commands.Add("readLineTest", readLineTest);
             Commands.Add("help", Help);
             Commands.Add("logs", Logs);
             Commands.Add("resex", resex);

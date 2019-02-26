@@ -17,6 +17,7 @@ using RemotePlusLibrary.Extension.ResourceSystem;
 using RemotePlusLibrary.Extension.ResourceSystem.ResourceTypes;
 using RemotePlusLibrary.Extension.ResourceSystem.ResourceTypes.Devices;
 using System.Linq;
+using System.Reflection;
 
 namespace RemotePlusServer.Core.ServerCore
 {
@@ -40,6 +41,28 @@ namespace RemotePlusServer.Core.ServerCore
                 ServerManager.DefaultSettings = s;
             });
         }
+        public static IServerBuilder ResolveLib(this IServerBuilder builder)
+        {
+            return builder.AddTask(() =>
+            {
+                AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
+            });
+        }
+
+        private static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs e)
+        {
+            string name = e.RequestingAssembly.GetName().Name;
+            if (Directory.Exists("Libs") && Directory.Exists($"Libs\\{name}"))
+            {
+                var assembly = Assembly.LoadFrom($"Libs\\{name}\\{e.Name}");
+                return assembly;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
         /// <summary>
         /// Sets the path to load the server settings.
         /// </summary>
@@ -118,8 +141,6 @@ namespace RemotePlusServer.Core.ServerCore
                 GlobalServices.Logger.Log("Starting scripting engine.", LogLevel.Info);
                 ServerManager.ScriptBuilder.InitializeEngine();
                 GlobalServices.Logger.Log($"Engine started. IronPython version {ServerManager.ScriptBuilder.ScriptingEngine.LanguageVersion.ToString()}", LogLevel.Info, "Scripting Engine");
-                GlobalServices.Logger.Log("Redirecting STDOUT to duplex channel.", LogLevel.Debug, "Scripting Engine");
-                ServerManager.ScriptBuilder.ScriptingEngine.Runtime.IO.SetOutput(new MemoryStream(), new Internal._ClientTextWriter());
                 //ServerManager.ScriptBuilder.ScriptingEngine.Runtime.IO.SetInput(new MemoryStream(), new Internal._ClientTextReader(), Encoding.ASCII);
                 GlobalServices.Logger.Log("Setting sys.path.", LogLevel.Debug, "Scripting Engine");
                 ICollection<string> paths = ServerManager.ScriptBuilder.ScriptingEngine.GetSearchPaths();
@@ -155,21 +176,20 @@ namespace RemotePlusServer.Core.ServerCore
         {
             return builder.AddTask(() =>
             {
-                if (!Directory.Exists("Users"))
-                {
-                    GlobalServices.Logger.Log("The Users folder does not exist. Creating folder.", LogLevel.Warning);
-                    Directory.CreateDirectory("Users");
-                    ServerManager.AccountManager.CreateAccount(new UserCredentials("admin", "password"));
-                }
-                else
-                {
-                    ServerManager.AccountManager.RefreshAccountList();
-                }
                 ServerManager.DefaultSettings = new ServerSettings();
                 if (!File.Exists("Configurations\\Server\\GlobalServerSettings.config"))
                 {
-                    GlobalServices.Logger.Log("The server settings file does not exist. Creating server settings file.", LogLevel.Warning);
-                    ServerManager.DataAccess.SaveConfig(ServerManager.DefaultSettings, ServerSettings.SERVER_SETTINGS_FILE_PATH);
+                    ServerSettings internalSettings = loadConfigFromAssembly();
+                    if(internalSettings != null)
+                    {
+                        GlobalServices.Logger.Log("Server settings loaded from assembly.", LogLevel.Info);
+                        ServerManager.DefaultSettings = internalSettings;
+                    }
+                    else
+                    {
+                        GlobalServices.Logger.Log("The server settings file does not exist. Creating server settings file.", LogLevel.Warning);
+                        ServerManager.DataAccess.SaveConfig(ServerManager.DefaultSettings, ServerSettings.SERVER_SETTINGS_FILE_PATH);
+                    }
                 }
                 else
                 {
@@ -187,8 +207,45 @@ namespace RemotePlusServer.Core.ServerCore
 #endif
                     }
                 }
+                if (!Directory.Exists("Users"))
+                {
+                    const string DEFAULT_USERNAME = "admin";
+                    const string DEFAULT_PASSWORD = "password";
+                    if(ServerManager.DefaultSettings.UseDefaultUserIfNoneExists)
+                    {
+                        GlobalServices.Logger.Log("The user folder does not exist. Using default user.", LogLevel.Info);
+                        ServerManager.AccountManager.CreateAccount(new UserCredentials(DEFAULT_USERNAME, DEFAULT_PASSWORD), false);
+                    }
+                    else
+                    {
+                        GlobalServices.Logger.Log("The Users folder does not exist. Creating folder.", LogLevel.Warning);
+                        Directory.CreateDirectory("Users");
+                        ServerManager.AccountManager.CreateAccount(new UserCredentials(DEFAULT_USERNAME, DEFAULT_PASSWORD));
+                    }
+                }
+                else
+                {
+                    ServerManager.AccountManager.RefreshAccountList();
+                }
             });
         }
+
+        private static ServerSettings loadConfigFromAssembly()
+        {
+            try
+            {
+                Assembly loadedAssembly = Assembly.GetEntryAssembly();
+                GlobalServices.Logger.Log($"Scanning for embedded config file in assembly: {loadedAssembly.GetName()}", LogLevel.Debug);
+                var stream = loadedAssembly.GetManifestResourceStream("RemotePlusServer.InternalConfig.config");
+                return ServerManager.DataAccess.LoadConfig<ServerSettings>(stream);
+            }
+            catch (Exception ex)
+            {
+                GlobalServices.Logger.Log($"Unable to open internal config file: {ex.Message}", LogLevel.Debug);
+                return null;
+            }
+        }
+
         public static IServerBuilder OpenMexForRemotePlus(this IServerBuilder builder)
         {
             return builder.AddTask(() =>
