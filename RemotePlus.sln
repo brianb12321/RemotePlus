@@ -57,6 +57,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemotePlusLibrary.SubSystem
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemotePlusClient", "src\RemotePlusClient\RemotePlusClient.csproj", "{2CD6E69F-D473-48BA-94BB-621239957BBB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemotePlusLibrary.VFS", "RemotePlusLibrary.VFS\RemotePlusLibrary.VFS.csproj", "{EB30C58D-E465-435B-A676-6DF7C0CD7E9C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -355,6 +357,18 @@ Global
 		{2CD6E69F-D473-48BA-94BB-621239957BBB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2CD6E69F-D473-48BA-94BB-621239957BBB}.Release|x86.ActiveCfg = Release|Any CPU
 		{2CD6E69F-D473-48BA-94BB-621239957BBB}.Release|x86.Build.0 = Release|Any CPU
+		{EB30C58D-E465-435B-A676-6DF7C0CD7E9C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB30C58D-E465-435B-A676-6DF7C0CD7E9C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB30C58D-E465-435B-A676-6DF7C0CD7E9C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{EB30C58D-E465-435B-A676-6DF7C0CD7E9C}.Debug|x86.Build.0 = Debug|Any CPU
+		{EB30C58D-E465-435B-A676-6DF7C0CD7E9C}.DebugLocal|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB30C58D-E465-435B-A676-6DF7C0CD7E9C}.DebugLocal|Any CPU.Build.0 = Debug|Any CPU
+		{EB30C58D-E465-435B-A676-6DF7C0CD7E9C}.DebugLocal|x86.ActiveCfg = Debug|Any CPU
+		{EB30C58D-E465-435B-A676-6DF7C0CD7E9C}.DebugLocal|x86.Build.0 = Debug|Any CPU
+		{EB30C58D-E465-435B-A676-6DF7C0CD7E9C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EB30C58D-E465-435B-A676-6DF7C0CD7E9C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EB30C58D-E465-435B-A676-6DF7C0CD7E9C}.Release|x86.ActiveCfg = Release|Any CPU
+		{EB30C58D-E465-435B-A676-6DF7C0CD7E9C}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
