@@ -9,9 +9,11 @@ namespace RemotePlusLibrary.Scripting
 {
     public static class ScriptingServiceCollectionExtensions
     {
-        public static IServiceCollection UseScriptingEngine<TImpl>(this IServiceCollection services) where TImpl : IScriptingEngine
+        public static IServiceCollection UseScriptingEngine<TImpl>(this IServiceCollection services)
+            where TImpl : IScriptingEngine
         {
-            return services.AddSingleton<IScriptingEngine, TImpl>();
+            services.AddSingleton<IScriptingEngine, TImpl>();
+            return services;
         }
     }
 }

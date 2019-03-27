@@ -1,0 +1,113 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{C5145229-F6C8-432B-BF35-C8A2EBC2295F}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>RemotePlusLibrary.SubSystem.Command</RootNamespace>
+    <AssemblyName>RemotePlusLibrary.SubSystem.Command</AssemblyName>
+    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="BetterLogger">
+      <HintPath>..\..\Libs\BetterLogger.dll</HintPath>
+    </Reference>
+    <Reference Include="Ninject">
+      <HintPath>..\RemotePlusLibrary.Extension\bin\Debug\Ninject.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="CommandBehaviorAttribute.cs" />
+    <Compile Include="CommandClasses\CommandParser.cs" />
+    <Compile Include="CommandClasses\CommandPipeline.cs" />
+    <Compile Include="CommandClasses\CommandRequest.cs" />
+    <Compile Include="CommandClasses\CommandResponse.cs" />
+    <Compile Include="CommandClasses\CommandRoutine.cs" />
+    <Compile Include="CommandClasses\Parsing\AggregateCommandToken.cs" />
+    <Compile Include="CommandClasses\Parsing\CommandElements\ExecutionResourceQueryCommandElement.cs" />
+    <Compile Include="CommandClasses\Parsing\CommandElements\PipelineCommandElement.cs" />
+    <Compile Include="CommandClasses\Parsing\CommandElements\ResourceQueryCommandElement.cs" />
+    <Compile Include="CommandClasses\Parsing\CommandElements\ScriptCommandElement.cs" />
+    <Compile Include="CommandClasses\Parsing\CommandElements\StringCommandElement.cs" />
+    <Compile Include="CommandClasses\Parsing\CommandEnvironmentOptions.cs" />
+    <Compile Include="CommandClasses\Parsing\CommandLexer.cs" />
+    <Compile Include="CommandClasses\Parsing\CommandToken.cs" />
+    <Compile Include="CommandClasses\Parsing\ElementValueType.cs" />
+    <Compile Include="CommandClasses\Parsing\ICommandElement.cs" />
+    <Compile Include="CommandClasses\Parsing\ICommandExecutor.cs" />
+    <Compile Include="CommandClasses\Parsing\ILexer.cs" />
+    <Compile Include="CommandClasses\Parsing\IParser.cs" />
+    <Compile Include="CommandClasses\Parsing\ParserException.cs" />
+    <Compile Include="CommandClasses\Parsing\TokenSet.cs" />
+    <Compile Include="CommandClasses\Parsing\TokenType.cs" />
+    <Compile Include="CommandDescription.cs" />
+    <Compile Include="CommandEnvironment.cs" />
+    <Compile Include="CommandEventArgs.cs" />
+    <Compile Include="CommandExecutionMode.cs" />
+    <Compile Include="CommandHelpAttribute.cs" />
+    <Compile Include="CommandlineBuilder.cs" />
+    <Compile Include="CommandLogEventArgs.cs" />
+    <Compile Include="CommandStatus.cs" />
+    <Compile Include="CommandSubsystem.cs" />
+    <Compile Include="ConsoleColorEventArgs.cs" />
+    <Compile Include="ConsoleText.cs" />
+    <Compile Include="HelpPageAttribute.cs" />
+    <Compile Include="HelpSourceType.cs" />
+    <Compile Include="ICommandEnvironmnet.cs" />
+    <Compile Include="ICommandModule.cs" />
+    <Compile Include="ICommandSubsystem.cs" />
+    <Compile Include="MultiLineEntryEventArgs.cs" />
+    <Compile Include="PromptBuilder.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RemotePlusConsole.cs" />
+    <Compile Include="StandordCommandClass..cs" />
+    <Compile Include="StatusCodeDeliveryMethod.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\RemotePlusLibrary.Core\RemotePlusLibrary.Core.csproj">
+      <Project>{0334629b-6302-42a8-b159-f8646b4d8650}</Project>
+      <Name>RemotePlusLibrary.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RemotePlusLibrary.Extension\RemotePlusLibrary.Extension.csproj">
+      <Project>{2AA5E768-7E0A-4B0C-A0D1-F79153902DF9}</Project>
+      <Name>RemotePlusLibrary.Extension</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RemotePlusLibrary.Scripting\RemotePlusLibrary.Scripting.csproj">
+      <Project>{5C399F78-C133-4F9B-9758-C36A4B7FAE98}</Project>
+      <Name>RemotePlusLibrary.Scripting</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

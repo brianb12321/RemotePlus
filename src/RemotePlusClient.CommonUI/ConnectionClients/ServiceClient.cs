@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
 using RemotePlusLibrary;
 using System.ServiceModel;
-using RemotePlusLibrary.Extension.CommandSystem;
-using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
 using RemotePlusLibrary.Scripting;
 using System.Speech.Synthesis;
 using System.Windows.Forms;
@@ -15,6 +13,8 @@ using RemotePlusLibrary.Extension.ResourceSystem;
 using TinyMessenger;
 using System;
 using System.Threading.Tasks;
+using RemotePlusLibrary.SubSystem.Command;
+using RemotePlusLibrary.SubSystem.Command.CommandClasses;
 
 namespace RemotePlusClient.CommonUI.ConnectionClients
 {
@@ -191,11 +191,6 @@ namespace RemotePlusClient.CommonUI.ConnectionClients
             return Channel.ExecuteScript(script);
         }
 
-        public ScriptGlobalInformation[] GetScriptGlobals()
-        {
-            return Channel.GetScriptGlobals();
-        }
-
         public string ReadFileAsString(string fileName)
         {
             return Channel.ReadFileAsString(fileName);
@@ -238,6 +233,11 @@ namespace RemotePlusClient.CommonUI.ConnectionClients
         public Task<CommandPipeline> RunServerCommandAsync(string command, CommandExecutionMode commandMode)
         {
             return Channel.RunServerCommandAsync(command, commandMode);
+        }
+
+        public void CancelServerCommand()
+        {
+            Channel.CancelServerCommand();
         }
     }
 }

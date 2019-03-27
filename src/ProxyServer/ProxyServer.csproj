@@ -79,9 +79,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommandExecutor.cs" />
-    <Compile Include="ExtensionSystem\ProxyExtensionCollection.cs" />
-    <Compile Include="ExtensionSystem\ProxyExtensionLibrary.cs" />
-    <Compile Include="ExtensionSystem\ProxyInitEnvironment.cs" />
+    <Compile Include="ExtensionSystem\IProxyCommandModule.cs" />
+    <Compile Include="ExtensionSystem\ProxyCommandClass.cs" />
+    <Compile Include="ExtensionSystem\ProxyCommandSubsystem.cs" />
     <Compile Include="GlobalErrorHandler.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Internal\_ClientTextReader.cs" />
@@ -139,6 +139,10 @@
     <ProjectReference Include="..\RemotePlusLibrary.Security\RemotePlusLibrary.Security.csproj">
       <Project>{E4E0BB7E-B995-4EBE-8EFB-3C09BF64A3A2}</Project>
       <Name>RemotePlusLibrary.Security</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RemotePlusLibrary.SubSystem.Command\RemotePlusLibrary.SubSystem.Command.csproj">
+      <Project>{C5145229-F6C8-432B-BF35-C8A2EBC2295F}</Project>
+      <Name>RemotePlusLibrary.SubSystem.Command</Name>
     </ProjectReference>
     <ProjectReference Include="..\RemotePlusLibrary\RemotePlusLibrary.csproj">
       <Project>{00c22a1f-d3df-4193-aaa8-9907d08e2511}</Project>

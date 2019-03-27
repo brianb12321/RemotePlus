@@ -3,7 +3,6 @@ using ProxyServer;
 using RemotePlusLibrary;
 using RemotePlusLibrary.Core;
 using RemotePlusLibrary.Discovery;
-using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusLibrary.ServiceArchitecture;
 using System;
 using System.Collections.Generic;

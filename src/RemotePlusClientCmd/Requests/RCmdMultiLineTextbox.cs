@@ -26,7 +26,10 @@ namespace RemotePlusClientCmd.Requests
         public override RawDataResponse RequestData(RCmdMultilineRequestBuilder builder, NetworkSide executingSide)
         {
             StringBuilder sb = new StringBuilder();
-            Console.WriteLine($"{builder.Message}");
+            if(!string.IsNullOrEmpty(builder.Message))
+            {
+                Console.WriteLine($"{builder.Message}");
+            }
             while(true)
             {
                 string result = Console.ReadLine();

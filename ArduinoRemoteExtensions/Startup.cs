@@ -1,6 +1,7 @@
 ﻿using ArduinoRemoteExtensionsLib.Events;
 using RemotePlusLibrary.Core;
-using RemotePlusLibrary.Extension.ExtensionLoader.Initialization;
+using RemotePlusLibrary.Core.IOC;
+using RemotePlusLibrary.Extension;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,10 +12,9 @@ namespace ArduinoRemoteExtensions
 {
     public class Startup : ILibraryStartup
     {
-        public void Init(ILibraryBuilder builder, IInitEnvironment env)
+        public void Init(IServiceCollection services)
         {
             GlobalServices.Logger.Log("Starting up Arduino Remote Extensions", BetterLogger.LogLevel.Info);
-            builder.AddCommandClass<ArduinoRemoteCommands>();
             DefaultKnownTypeManager.AddType(typeof(ArduinoEvent));
         }
 

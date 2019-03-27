@@ -3,7 +3,6 @@ using RemotePlusLibrary;
 using System.ServiceModel;
 using RemotePlusClient.CommonUI;
 using System.Windows.Forms;
-using RemotePlusLibrary.Extension.CommandSystem;
 using System.Speech.Synthesis;
 using System.Media;
 using System.Diagnostics;
@@ -17,6 +16,7 @@ using RemotePlusLibrary.Core;
 using BetterLogger;
 using RemotePlusLibrary.Extension.ResourceSystem;
 using TinyMessenger;
+using RemotePlusLibrary.SubSystem.Command;
 
 namespace RemotePlusClientCmd
 {
@@ -31,7 +31,7 @@ namespace RemotePlusClientCmd
             Console.Beep(Hertz, Duration);
         }
 
-        public void ChangePrompt(Guid guid, RemotePlusLibrary.Extension.CommandSystem.PromptBuilder newPrompt)
+        public void ChangePrompt(Guid guid, RemotePlusLibrary.SubSystem.Command.PromptBuilder newPrompt)
         {
             ClientCmdManager.prompt = newPrompt;
         }
@@ -44,7 +44,7 @@ namespace RemotePlusClientCmd
             //ClientCmdManager.WaitFlag = false;
         }
 
-        public RemotePlusLibrary.Extension.CommandSystem.PromptBuilder GetCurrentPrompt()
+        public RemotePlusLibrary.SubSystem.Command.PromptBuilder GetCurrentPrompt()
         {
             return ClientCmdManager.prompt;
         }

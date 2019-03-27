@@ -5,8 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using RemotePlusServer.Core;
-using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusLibrary.Contracts;
+using RemotePlusLibrary.SubSystem.Command;
 
 namespace RemotePlusServer.Internal
 {

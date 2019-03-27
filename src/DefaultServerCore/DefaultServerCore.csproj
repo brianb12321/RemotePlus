@@ -56,6 +56,10 @@
       <Project>{59d8c4d8-1ef6-4f48-8b8a-a4ef29170dd0}</Project>
       <Name>RemotePlusLibrary.SubSystem.Audio</Name>
     </ProjectReference>
+    <ProjectReference Include="..\RemotePlusLibrary.SubSystem.Command\RemotePlusLibrary.SubSystem.Command.csproj">
+      <Project>{C5145229-F6C8-432B-BF35-C8A2EBC2295F}</Project>
+      <Name>RemotePlusLibrary.SubSystem.Command</Name>
+    </ProjectReference>
     <ProjectReference Include="..\RSPM\RSPM.csproj">
       <Project>{d451d8d4-dc69-42a8-baac-97363c35f478}</Project>
       <Name>RSPM</Name>

@@ -10,10 +10,10 @@ using RemotePlusLibrary.Discovery;
 using RemotePlusLibrary.Configuration.ServerSettings;
 using RemotePlusServer.Core;
 using RemotePlusLibrary.Core.IOC;
-using RemotePlusLibrary.Extension.ExtensionLoader;
 using RemotePlusLibrary.Core.EventSystem;
 using RemotePlusServer.Core.ExtensionSystem;
-using RemotePlusLibrary.Extension.CommandSystem;
+using RemotePlusLibrary.Extension;
+using System.Threading.Tasks;
 
 namespace RemotePlusServer
 {
@@ -32,10 +32,10 @@ namespace RemotePlusServer
         static void Main(string[] args)
         {
             IOCContainer.Provider.Bind<IEnvironment>().ToConstant(new ServerStartup());
-            GlobalServices.RunningEnvironment.Start(args);
+            GlobalServices.RunningEnvironment.Start(args).GetAwaiter().GetResult();
         }
 
-        public void Start(string[] args)
+        public Task Start(string[] args)
         {
 #if !SERVICE
             try
@@ -55,10 +55,9 @@ namespace RemotePlusServer
                 {
                     IOCContainer.Provider.Bind<IEventBus>().To(typeof(EventBus)).InSingletonScope();
                 }
-                IOCContainer.GetService<ICommandEnvironment>().CommandClasses.InitializeCommands();
                 RunPostServerInitialization(core);
                 GlobalServices.Logger.Log("Running post init on all extensions.", LogLevel.Info);
-                ServerManager.DefaultCollection.RunPostInit();
+                ServerManager.DefaultExtensionLibraryLoader.RunPostInit();
                 if (CheckPrerequisites())
                 {
                     Application.EnableVisualStyles();
@@ -68,6 +67,7 @@ namespace RemotePlusServer
                     State = EnvironmentState.Running;
                     Application.Run(serverControl);
                 }
+                return Task.CompletedTask;
             }
             catch (Exception ex)
             {
@@ -76,12 +76,13 @@ namespace RemotePlusServer
                     //throw;
                 }
 #if !INCOGNITO
-                GlobalServices.Logger.Log("Internal server error: " + ex.Message, LogLevel.Error);
+                GlobalServices.Logger.Log("Internal server error: " + ex, LogLevel.Error);
                 Console.Write("Press any key to exit.");
                 Console.ReadKey();
 #else
                 MessageBox.Show("Internal server error: " + ex.Message);
 #endif
+                return Task.FromException(ex);
             }
 #else
             ServerManager.IsService = true;
@@ -105,7 +106,7 @@ namespace RemotePlusServer
             {
                 if(Path.GetExtension(coreFile) == ".dll")
                 {
-                    var core = ServerCoreLoader.LoadServerCoreLibrary(coreFile);
+                    var core = ServerCoreLoader.LoadServerCore(Assembly.LoadFile(coreFile));
                     if(core != null)
                     {
                         foundCore = true;
@@ -147,7 +148,10 @@ namespace RemotePlusServer
             try
             {
                 Console.WriteLine("Attempting to load server core from embedded resource.");
-                return ServerCoreLoader.LoadServerCoreLibrary(new BinaryReader(Assembly.GetEntryAssembly().GetManifestResourceStream("RemotePlusServer.DefaultServerCore.dll")));
+                var stream = new BinaryReader(Assembly.GetEntryAssembly().GetManifestResourceStream("RemotePlusServer.DefaultServerCore.dll"));
+                byte[] buffer = new byte[stream.BaseStream.Length];
+                stream.Read(buffer, 0, buffer.Length);
+                return ServerCoreLoader.LoadServerCore(Assembly.Load(buffer));
             }
             catch (Exception ex)
             {

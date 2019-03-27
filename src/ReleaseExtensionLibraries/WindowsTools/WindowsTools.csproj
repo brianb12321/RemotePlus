@@ -80,6 +80,9 @@
       <HintPath>..\..\..\packages\NAudio.1.8.4\lib\net35\NAudio.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="NDesk.Options, Version=0.2.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\NDesk.Options.0.2.1\lib\NDesk.Options.dll</HintPath>
+    </Reference>
     <Reference Include="Ninject">
       <HintPath>..\..\RemotePlusServer\bin\Debug\Ninject.dll</HintPath>
       <Private>False</Private>
@@ -124,6 +127,10 @@
       <Project>{5c399f78-c133-4f9b-9758-c36a4b7fae98}</Project>
       <Name>RemotePlusLibrary.Scripting</Name>
       <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\..\RemotePlusLibrary.SubSystem.Command\RemotePlusLibrary.SubSystem.Command.csproj">
+      <Project>{C5145229-F6C8-432B-BF35-C8A2EBC2295F}</Project>
+      <Name>RemotePlusLibrary.SubSystem.Command</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\RemotePlusLibrary\RemotePlusLibrary.csproj">
       <Project>{00C22A1F-D3DF-4193-AAA8-9907D08E2511}</Project>

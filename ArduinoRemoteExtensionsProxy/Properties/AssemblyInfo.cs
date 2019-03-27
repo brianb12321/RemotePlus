@@ -2,7 +2,7 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using ArduinoRemoteExtensionsProxy;
-using RemotePlusLibrary.Extension.ExtensionLoader;
+using RemotePlusLibrary.Extension;
 
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
@@ -17,7 +17,7 @@ using RemotePlusLibrary.Extension.ExtensionLoader;
 [assembly: AssemblyCulture("")]
 [assembly: ExtensionLibrary(typeof(Startup), "ArduinoRemoteExtensionsProxy",
     FriendlyName = "Arduino Remote Extensions Proxy",
-    LibraryType = RemotePlusLibrary.Core.NetworkSide.Server)]
+    LibraryType = RemotePlusLibrary.Core.NetworkSide.Proxy)]
 
 // Setting ComVisible to false makes the types in this assembly not visible
 // to COM components.  If you need to access a type in this assembly from

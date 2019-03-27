@@ -87,9 +87,9 @@
     <Compile Include="ClientLogger.cs" />
     <Compile Include="CommandExecutor.cs" />
     <Compile Include="DefaultCommands.cs" />
-    <Compile Include="ExtensionSystem\ServerExtensionLibrary.cs" />
-    <Compile Include="ExtensionSystem\ServerExtensionLibraryCollection.cs" />
-    <Compile Include="ExtensionSystem\ServerInitEnvironment.cs" />
+    <Compile Include="ExtensionSystem\IServerCommandModule.cs" />
+    <Compile Include="ExtensionSystem\ServerCommandClass.cs" />
+    <Compile Include="ExtensionSystem\ServerCommandSubsystem.cs" />
     <Compile Include="FileTransferServciceInterface.cs" />
     <Compile Include="FileTransferService.cs" />
     <Compile Include="FileTransferServiceBuilder.cs" />
@@ -102,7 +102,6 @@
     <Compile Include="Proxies\StaticRemoteFunctions.cs" />
     <Compile Include="Remote.cs" />
     <Compile Include="ResourceManager.cs" />
-    <Compile Include="ScriptPackageExtensions.cs" />
     <Compile Include="ServerCore\ScriptingEngineOptions.cs" />
     <Compile Include="ServerCore\ServerBuilderExtensions.cs" />
     <Compile Include="ServerCore\ServerInitiliazationPipeline.cs" />
@@ -110,7 +109,6 @@
     <Compile Include="ServerOnlyServiceCollectionExtensions.cs" />
     <Compile Include="ServerRemoteInterface.cs" />
     <Compile Include="ServerRemotePlusService.cs" />
-    <Compile Include="ServiceCollection.cs" />
     <Compile Include="SpecialCommands.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -137,6 +135,10 @@
     <ProjectReference Include="..\RemotePlusLibrary.Security\RemotePlusLibrary.Security.csproj">
       <Project>{E4E0BB7E-B995-4EBE-8EFB-3C09BF64A3A2}</Project>
       <Name>RemotePlusLibrary.Security</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RemotePlusLibrary.SubSystem.Command\RemotePlusLibrary.SubSystem.Command.csproj">
+      <Project>{C5145229-F6C8-432B-BF35-C8A2EBC2295F}</Project>
+      <Name>RemotePlusLibrary.SubSystem.Command</Name>
     </ProjectReference>
     <ProjectReference Include="..\RemotePlusLibrary\RemotePlusLibrary.csproj">
       <Project>{00C22A1F-D3DF-4193-AAA8-9907D08E2511}</Project>

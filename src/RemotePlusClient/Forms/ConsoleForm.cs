@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using RemotePlusClient.ViewModels;
 using RemotePlusLibrary.Contracts;
 using System.Threading;
+using RemotePlusLibrary.SubSystem.Command;
 
 namespace RemotePlusClient.Forms
 {
@@ -45,7 +46,7 @@ namespace RemotePlusClient.Forms
                     e.SuppressKeyPress = true;
                     e.Handled = true;
                     tb_input.Enabled = false;
-                    await _remote.RunServerCommandAsync(tb_input.Text, RemotePlusLibrary.Extension.CommandSystem.CommandExecutionMode.Client);
+                    await _remote.RunServerCommandAsync(tb_input.Text, CommandExecutionMode.Client);
                     tb_input.Clear();
                     tb_input.Enabled = true;
                     break;

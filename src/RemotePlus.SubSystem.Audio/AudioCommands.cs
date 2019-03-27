@@ -5,33 +5,30 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AudioSwitcher.AudioApi.CoreAudio;
 using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
 using NDesk.Options;
-using RemotePlusLibrary.Extension.CommandSystem;
-using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
+using Ninject;
 using RemotePlusLibrary.Extension.ResourceSystem;
 using RemotePlusLibrary.Extension.ResourceSystem.ResourceTypes;
 using RemotePlusLibrary.RequestSystem;
 using RemotePlusLibrary.RequestSystem.DefaultRequestBuilders;
 using RemotePlusLibrary.ServiceArchitecture;
 using RemotePlusLibrary.SubSystem.Audio.OutDevices;
+using RemotePlusLibrary.SubSystem.Command;
+using RemotePlusLibrary.SubSystem.Command.CommandClasses;
 using RemotePlusServer.Core;
+using RemotePlusServer.Core.ExtensionSystem;
 
 namespace RemotePlusLibrary.SubSystem.Audio
 {
-    public class AudioCommands : StandordCommandClass
+    public class AudioCommands : ServerCommandClass
     {
         IRemotePlusService<ServerRemoteInterface> _service;
         IResourceManager _resourceManager;
 
         public object IWaveFormat { get; private set; }
-
-        public AudioCommands(IRemotePlusService<ServerRemoteInterface> service, IResourceManager resourceManager)
-        {
-            _service = service;
-            _resourceManager = resourceManager;
-        }
         [CommandHelp("Loads an audio stream as a wave provider.")]
         public CommandResponse loadAudio(CommandRequest req, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
         {
@@ -524,8 +521,34 @@ namespace RemotePlusLibrary.SubSystem.Audio
             }
             return new CommandResponse((int)CommandStatus.Success);
         }
-        public override void AddCommands()
+        [CommandHelp("Sets the server audio to a specific percentage.")]
+        public CommandResponse setGlobalVolume(CommandRequest args, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
         {
+            if (args.Arguments.Count < 2)
+            {
+                currentEnvironment.WriteLine(new ConsoleText("You must specify a percentage.") { TextColor = Color.Red });
+                return new CommandResponse((int)CommandStatus.Fail);
+            }
+            else
+            {
+                if (int.TryParse(args.Arguments[1].ToString(), out int percent))
+                {
+                    CoreAudioDevice defaultPlaybackDevice = new CoreAudioController().DefaultPlaybackDevice;
+                    defaultPlaybackDevice.Volume = percent;
+                    return new CommandResponse((int)CommandStatus.Success);
+                }
+                else
+                {
+                    currentEnvironment.WriteLine(new ConsoleText("Given ToString() is invalid.") { TextColor = Color.Red });
+                    return new CommandResponse((int)CommandStatus.Fail);
+                }
+            }
+        }
+        public override void InitializeServices(IKernel kernel)
+        {
+            _service = kernel.Get<IRemotePlusService<ServerRemoteInterface>>();
+            _resourceManager = kernel.Get<IResourceManager>();
+            Commands.Add("setGlobalVolume", setGlobalVolume);
             Commands.Add("loadAudio", loadAudio);
             Commands.Add("playAudio", playAudio);
             Commands.Add("stopAudio", stopAudio);

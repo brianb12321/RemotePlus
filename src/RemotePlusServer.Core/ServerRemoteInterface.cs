@@ -2,9 +2,6 @@
 using RemotePlusLibrary;
 using RemotePlusLibrary.Client;
 using RemotePlusLibrary.Core.IOC;
-using RemotePlusLibrary.Extension.CommandSystem;
-using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
-using RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing;
 using RemotePlusLibrary.Scripting;
 using RemotePlusLibrary.Security.AccountSystem;
 using RemotePlusLibrary.Core;
@@ -18,6 +15,10 @@ using System.Windows.Forms;
 using RemotePlusServer.Internal;
 using System.Threading.Tasks;
 using RemotePlusLibrary.Extension.ResourceSystem;
+using RemotePlusServer.Core.ExtensionSystem;
+using RemotePlusLibrary.SubSystem.Command.CommandClasses;
+using RemotePlusLibrary.SubSystem.Command;
+using System.Threading;
 
 namespace RemotePlusServer.Core
 {
@@ -142,36 +143,16 @@ namespace RemotePlusServer.Core
         }
         public CommandPipeline RunServerCommand(string command, CommandExecutionMode commandMode)
         {
-            ICommandEnvironment env = IOCContainer.GetService<ICommandEnvironment>();
-            env.CommandLogged += (sender, e) => Client.ClientCallback.TellMessageToServerConsole(e.Text);
-            env.MultilineEntry += (sender, e) =>
-            {
-                string input = Client.ClientCallback.RequestInformation(new RemotePlusLibrary.RequestSystem.DefaultRequestBuilders.ConsoleReadLineRequestBuilder(e.Prelude.ToString()) { LineColor = ConsoleColor.Yellow }).Data.ToString();
-                e.ReceivedValue = input;
-            };
-            env.SetOut(new _ClientTextWriter(Client.ClientCallback));
-            env.SetIn(new _ClientTextReader(Client.ClientCallback));
-            var pipe = env.Execute(command, commandMode);
-            env.Dispose();
-            return pipe;
+            return IOCContainer.GetService<ICommandSubsystem<IServerCommandModule>>().RunServerCommand(command, commandMode);
+
         }
         public Task<CommandPipeline> RunServerCommandAsync(string command, CommandExecutionMode commandMode)
         {
-            return Task.Factory.StartNew(() =>
-            {
-                ICommandEnvironment env = IOCContainer.GetService<ICommandEnvironment>();
-                env.CommandLogged += (sender, e) => Client.ClientCallback.TellMessageToServerConsole(e.Text);
-                env.MultilineEntry += (sender, e) =>
-                {
-                    string input = Client.ClientCallback.RequestInformation(new RemotePlusLibrary.RequestSystem.DefaultRequestBuilders.ConsoleReadLineRequestBuilder(e.Prelude.ToString()) { LineColor = ConsoleColor.Yellow }).Data.ToString();
-                    e.ReceivedValue = input;
-                };
-                env.SetOut(new _ClientTextWriter(Client.ClientCallback));
-                env.SetIn(new _ClientTextReader(Client.ClientCallback));
-                var pipe = env.Execute(command, commandMode);
-                env.Dispose();
-                return pipe;
-            });
+            return IOCContainer.GetService<ICommandSubsystem<IServerCommandModule>>().RunServerCommandAsync(command, commandMode);
+        }
+        public void CancelServerCommand()
+        {
+            IOCContainer.GetService<ICommandSubsystem<IServerCommandModule>>().Cancel();
         }
     }
 }

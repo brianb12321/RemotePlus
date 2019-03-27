@@ -8,7 +8,8 @@ namespace RemotePlusLibrary.Core
     [Flags]
     public enum NetworkSide
     {
-        Server = 2,
+        Server = 1,
+        Proxy = 2,
         Client = 4
     }
 }

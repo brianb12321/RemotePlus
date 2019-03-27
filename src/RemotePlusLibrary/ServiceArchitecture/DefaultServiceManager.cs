@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ServiceModel;
 using Ninject;
+using RemotePlusLibrary.Core;
 using RemotePlusLibrary.Core.IOC;
 
 namespace RemotePlusLibrary.ServiceArchitecture
@@ -53,6 +54,7 @@ namespace RemotePlusLibrary.ServiceArchitecture
             var b = builder?.Invoke();
             var service = b.BuildService();
             IOCContainer.Provider.Bind<IRemotePlusService<TServiceImpl>>().ToConstant(service);
+            GlobalServices.Logger.Log($"Service {typeof(TServiceImpl).Name} added to IOC.", BetterLogger.LogLevel.Info);
         }
 
         public void BuildHost<TImpl>() where TImpl : new()

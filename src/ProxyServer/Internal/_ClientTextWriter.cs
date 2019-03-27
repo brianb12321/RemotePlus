@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
-using RemotePlusLibrary.Extension.CommandSystem;
+using RemotePlusLibrary.SubSystem.Command;
 
 namespace ProxyServer.Internal
 {

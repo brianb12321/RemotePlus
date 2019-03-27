@@ -1,7 +1,5 @@
-﻿using RemotePlusLibrary.Extension.CommandSystem;
-using System;
+﻿using System;
 using System.Net;
-using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
 using RemotePlusServer.Core;
 using BetterLogger;
 using System.IO;
@@ -10,19 +8,22 @@ using System.Drawing;
 using System.Threading.Tasks;
 using RemotePlusLibrary.RequestSystem.DefaultRequestBuilders;
 using RemotePlusLibrary.RequestSystem.DefaultUpdateRequestBuilders;
+using Ninject;
+using RemotePlusServer.Core.ExtensionSystem;
+using RemotePlusLibrary.SubSystem.Command;
+using RemotePlusLibrary.SubSystem.Command.CommandClasses;
+using RemotePlusLibrary.Core;
 
 namespace CommonWebCommands
 {
-    public class DownloadCommands : StandordCommandClass
+    public class DownloadCommands : ServerCommandClass
     {
         IRemotePlusService<ServerRemoteInterface> _service;
-        public DownloadCommands(IRemotePlusService<ServerRemoteInterface> service)
-        {
-            _service = service;
-        }
 
-        public override void AddCommands()
+        public override void InitializeServices(IKernel kernel)
         {
+            GlobalServices.Logger.Log("Adding download commands.", LogLevel.Info);
+            _service = kernel.Get<IRemotePlusService<ServerRemoteInterface>>();
             Commands.Add("downloadWeb", downloadWeb);
             Commands.Add("wget", wget);
         }

@@ -1,5 +1,6 @@
 ﻿using RemotePlusLibrary.Core;
-using RemotePlusLibrary.Extension.ExtensionLoader.Initialization;
+using RemotePlusLibrary.Core.IOC;
+using RemotePlusLibrary.Extension;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +11,7 @@ namespace ArduinoRemoteExtensionsProxy
 {
     public class Startup : ILibraryStartup
     {
-        public void Init(ILibraryBuilder builder, IInitEnvironment env)
+        public void Init(IServiceCollection services)
         {
             DefaultKnownTypeManager.AddType(typeof(ArduinoRemoteExtensionsLib.Events.ArduinoEvent));
         }

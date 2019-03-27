@@ -6,8 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 using RemotePlusLibrary.Discovery;
 using RemotePlusLibrary;
-using RemotePlusLibrary.Extension.CommandSystem;
-using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
 using RemotePlusLibrary.Scripting;
 using RemotePlusLibrary.Security.AccountSystem;
 using System.Speech.Synthesis;
@@ -21,7 +19,6 @@ using RemotePlusLibrary.FileTransfer.BrowserClasses;
 using RemotePlusLibrary.Core.Faults;
 using RemotePlusLibrary.RequestSystem;
 using RemotePlusLibrary.Security.Authentication;
-using RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing;
 using BetterLogger;
 using RemotePlusLibrary.Core.IOC;
 using RemotePlusLibrary.RequestSystem.DefaultRequestBuilders;
@@ -30,6 +27,10 @@ using TinyMessenger;
 using RemotePlusLibrary.Discovery.Events;
 using System.Drawing;
 using ProxyServer.Internal;
+using RemotePlusLibrary.SubSystem.Command.CommandClasses;
+using RemotePlusLibrary.SubSystem.Command;
+using System.Threading;
+using ProxyServer.ExtensionSystem;
 
 namespace ProxyServer
 {
@@ -107,11 +108,6 @@ namespace ProxyServer
             }
         }
 
-        public ScriptGlobalInformation[] GetScriptGlobals()
-        {
-            return SelectedClient.ClientCallback.GetScriptGlobals();
-        }
-
         public Guid[] GetServers()
         {
             return ConnectedServers.Select(s => s.UniqueID).ToArray();
@@ -151,6 +147,7 @@ namespace ProxyServer
         {
             var callback = OperationContext.Current.GetCallbackChannel<IRemoteClient>();
             ProxyClient = Client<IRemoteClient>.Build(callback.RegisterClient(), callback, OperationContext.Current.Channel);
+            IOCContainer.GetService<IScriptingEngine>().AddContext(ScriptingEngineExtensions.SESSION_NAME);
             if(ProxyClient.ClientType == ClientType.CommandLine)
             {
                 StringBuilder sb = new StringBuilder();
@@ -172,7 +169,7 @@ namespace ProxyServer
                 sb.AppendLine();
                 sb.AppendLine();
                 ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyManager.ProxyGuid, sb.ToString());
-                ProxyClient.ClientCallback.ChangePrompt(ProxyManager.ProxyGuid, new RemotePlusLibrary.Extension.CommandSystem.PromptBuilder()
+                ProxyClient.ClientCallback.ChangePrompt(ProxyManager.ProxyGuid, new RemotePlusLibrary.SubSystem.Command.PromptBuilder()
                 {
                     Path = "",
                     CurrentUser = "",
@@ -259,7 +256,7 @@ namespace ProxyServer
                 if (ProxyClient.ClientType == ClientType.CommandLine)
                 {
                     ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyManager.ProxyGuid, $"Server {serverPosition} is now active.", LogLevel.Info, "Proxy Server");
-                    ProxyClient.ClientCallback.ChangePrompt(ProxyManager.ProxyGuid, new RemotePlusLibrary.Extension.CommandSystem.PromptBuilder()
+                    ProxyClient.ClientCallback.ChangePrompt(ProxyManager.ProxyGuid, new RemotePlusLibrary.SubSystem.Command.PromptBuilder()
                     {
                         AdditionalData = $"Server {serverPosition}"
                     });
@@ -284,7 +281,7 @@ namespace ProxyServer
                 {
                     SelectedClient.ClientCallback.Register(new RegisterationObject());
                     ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyManager.ProxyGuid, $"Server {guid} is now active.", LogLevel.Info, "Proxy Server");
-                    ProxyClient.ClientCallback.ChangePrompt(ProxyManager.ProxyGuid, new RemotePlusLibrary.Extension.CommandSystem.PromptBuilder()
+                    ProxyClient.ClientCallback.ChangePrompt(ProxyManager.ProxyGuid, new RemotePlusLibrary.SubSystem.Command.PromptBuilder()
                     {
                         AdditionalData = $"Server {guid}"
                     });
@@ -317,7 +314,7 @@ namespace ProxyServer
         {
             ProxyClient.ClientCallback.Disconnect(SelectedClient.UniqueID, Reason);
         }
-        public RemotePlusLibrary.Extension.CommandSystem.PromptBuilder GetCurrentPrompt()
+        public RemotePlusLibrary.SubSystem.Command.PromptBuilder GetCurrentPrompt()
         {
             return ProxyClient.ClientCallback.GetCurrentPrompt();
         }
@@ -359,7 +356,7 @@ namespace ProxyServer
             ProxyClient.ClientCallback.SendSignal(signal);
         }
 
-        public void ChangePrompt(Guid guid, RemotePlusLibrary.Extension.CommandSystem.PromptBuilder newPrompt)
+        public void ChangePrompt(Guid guid, RemotePlusLibrary.SubSystem.Command.PromptBuilder newPrompt)
         {
             ProxyClient.ClientCallback.ChangePrompt(SelectedClient.UniqueID, newPrompt);
         }
@@ -371,26 +368,7 @@ namespace ProxyServer
         #region Command Methods
         public CommandPipeline ExecuteProxyCommand(string command, CommandExecutionMode mode)
         {
-            //Sends the command directly to the selected server.
-            if(command.StartsWith("=>"))
-            {
-                return RunServerCommand(command.Remove(0, 2), mode);
-            }
-            else
-            {
-                var environment = IOCContainer.GetService<ICommandEnvironment>();
-                environment.CommandLogged += (sender, e) => ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyManager.ProxyGuid, e.Text);
-                environment.MultilineEntry += (sender, e) =>
-                {
-                    string input = ProxyClient.ClientCallback.RequestInformation(ProxyManager.ProxyGuid, new ConsoleReadLineRequestBuilder(e.Prelude.ToString()) { LineColor = ConsoleColor.Yellow }).Data.ToString();
-                    e.ReceivedValue = input;
-                };
-                environment.SetOut(new _ClientTextWriter(ProxyManager.ProxyGuid));
-                environment.SetIn(new _ClientTextReader(ProxyManager.ProxyGuid));
-                var pipe = environment.Execute(command, mode);
-                environment.Dispose();
-                return pipe;
-            }
+            return IOCContainer.GetService<ICommandSubsystem<IProxyCommandModule>>().RunServerCommand(command, mode);
         }
         #endregion
         public void Leave(Guid serverGuid)
@@ -447,7 +425,11 @@ namespace ProxyServer
 
         public object ExecuteProxyScript(string script)
         {
-            return ProxyManager.ScriptBuilder.ExecuteString(script);
+            var engine = IOCContainer.GetService<IScriptingEngine>();
+            engine.SetIn(new _ClientTextReader(ProxyManager.ProxyGuid));
+            engine.SetOut(new _ClientTextWriter(ProxyManager.ProxyGuid));
+            engine.SetError(new _ClientTextWriter(ProxyManager.ProxyGuid));
+            return engine.ExecuteString<object>(script);
         }
 
         public void UpdateRequest(Guid serverGuid, UpdateRequestBuilder message)
@@ -489,33 +471,22 @@ namespace ProxyServer
 
         public Task<CommandPipeline> ExecuteProxyCommandAsync(string command, CommandExecutionMode mode)
         {
-            return Task.Factory.StartNew(() =>
-            {
-                //Sends the command directly to the selected server.
-                if (command.StartsWith("=>"))
-                {
-                    return RunServerCommand(command.Remove(0, 2), mode);
-                }
-                else
-                {
-                    var environment = IOCContainer.GetService<ICommandEnvironment>();
-                    environment.CommandLogged += (sender, e) => ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyManager.ProxyGuid, e.Text);
-                    environment.MultilineEntry += (sender, e) =>
-                    {
-                        string input = ProxyClient.ClientCallback.RequestInformation(ProxyManager.ProxyGuid, new ConsoleReadLineRequestBuilder(e.Prelude.ToString()) { LineColor = ConsoleColor.Yellow }).Data.ToString();
-                        e.ReceivedValue = input;
-                    };
-                    environment.SetOut(new _ClientTextWriter(ProxyManager.ProxyGuid));
-                    var pipe = environment.Execute(command, mode);
-                    environment.Dispose();
-                    return pipe;
-                }
-            });
+            return IOCContainer.GetService<ICommandSubsystem<IProxyCommandModule>>().RunServerCommandAsync(command, mode);
         }
 
         public Task<CommandPipeline> RunServerCommandAsync(string command, CommandExecutionMode commandMode)
         {
             return SelectedClient.ClientCallback.RunServerCommandAsync(command, commandMode);
+        }
+
+        public void CancelProxyCommand()
+        {
+            IOCContainer.GetService<ICommandSubsystem<IProxyCommandModule>>().Cancel();
+        }
+
+        public void CancelServerCommand()
+        {
+            SelectedClient.ClientCallback.CancelServerCommand();
         }
     }
 }

@@ -54,6 +54,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ClientType.cs" />
     <Compile Include="CustomConsoleTraceListener.cs" />
     <Compile Include="DefaultKnownTypeManager.cs" />
     <Compile Include="EventSystem\EventBus.cs" />
@@ -73,6 +74,7 @@
     <Compile Include="IOC\IServerCoreStartup.cs" />
     <Compile Include="IOC\IServerInitilizer.cs" />
     <Compile Include="IOC\IServiceCollection.cs" />
+    <Compile Include="IOC\ServiceCollection.cs" />
     <Compile Include="NetworkSide.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Faults\ProxyFault.cs" />

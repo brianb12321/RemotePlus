@@ -11,14 +11,15 @@ using RemotePlusLibrary.Configuration.StandordDataAccess;
 using RemotePlusLibrary.Core.IOC;
 using RemotePlusLibrary.Security.AccountSystem;
 using RSPM;
-using RemotePlusLibrary.Extension.CommandSystem;
-using RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing;
 using RemotePlusLibrary.Core;
 using RemotePlusServer.Core.ExtensionSystem;
-using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
 using RemotePlusLibrary.Extension.ResourceSystem;
 using RemotePlusLibrary.Scripting;
 using RemotePlusLibrary.SubSystem.Audio;
+using RemotePlusLibrary.Extension;
+using RemotePlusLibrary.SubSystem.Command;
+using RemotePlusLibrary.SubSystem.Command.CommandClasses.Parsing;
+using RemotePlusLibrary.SubSystem.Command.CommandClasses;
 
 namespace DefaultServerCore
 {
@@ -39,21 +40,17 @@ namespace DefaultServerCore
             services.UseServerManager<DefaultServiceManager>()
                 .UseResourceManager<RemotePlusResourceManager, FileResourceLoader>()
                 .UseErrorHandler<GlobalErrorHandler>()
-                .UseExtensionContainer<ServerExtensionLibraryCollection, ServerExtensionLibrary>(new ServerExtensionLibraryCollection())
+                .UseExtensionSystem<DefaultExtensionLoader>()
                 .UseServerControlPage<ServerControls>()
-                .UseScriptingEngine<ScriptBuilder>()
+                .UseScriptingEngine<IronPythonScriptingEngine>()
                 .UseConfigurationDataAccess<ConfigurationHelper>()
                 .AddSingletonNamed<IConfigurationDataAccess, BinarySerializationHelper>("BinaryDataAccess")
                 .UseAuthentication<AccountManager>()
                 .UsePackageManager<DefaultPackageManager>()
-                .UseCommandline<CommandEnvironment>(builder =>
+                .UseCommandline<CommandEnvironment, ServerCommandSubsystem, IServerCommandModule>(builder =>
                     builder.UseLexer<CommandLexer>()
                            .UseParser<CommandParser>()
-                           .UseExecutor<CommandExecutor>()
-                           .AddCommandClass<DefaultCommands>()
-                           .AddCommandClass<PackageCommands>()
-                           .AddCommandClass<SpecialCommands>()
-                           .AddCommandClass<AudioCommands>());
+                           .UseExecutor<CommandExecutor>());
             //Add the services.
             IServiceManager manager = IOCContainer.GetService<IServiceManager>();
             manager.AddServiceUsingBuilder(() =>
@@ -88,19 +85,21 @@ namespace DefaultServerCore
             builder.InitializeKnownTypes()
                 .LoadServerConfig()
                 .InitializeDefaultGlobals()
-                .InitializeScriptingEngine((options) => { })
                 .OpenMexForRemotePlus()
                 .OpenMexForFileTransfer()
                 .LoadGlobalResources()
                 .AddAudioDevices()
                 .InitializeVariables()
                 .ResolveLib()
-                .LoadExtensionLibraries();
+                .LoadExtensionLibraries()
+                .LoadExtensionByType<PackageCommands>()
+                .LoadExtensionByType<AudioCommands>();
         }
         public void PostInitializeServer(IServerBuilder builder)
         {
             builder.BuildServiceHost<ServerRemoteInterface>()
-                .BuildServiceHost<FileTransferServciceInterface>();
+                .BuildServiceHost<FileTransferServciceInterface>()
+                .LoadDefaultExtensionSubsystems<ICommandSubsystem<IServerCommandModule>, IServerCommandModule>();
         }
         #region Server Events
         private void Host_UnknownMessageReceived(object sender, System.ServiceModel.UnknownMessageReceivedEventArgs e)

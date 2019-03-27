@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using RemotePlusLibrary.Extension;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -13,6 +14,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCopyright("Copyright ©  2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
+[assembly: ExtensionLibrary(null, "RSPM",
+    FriendlyName = "RemotePlus Package Manager",
+    LibraryType = RemotePlusLibrary.Core.NetworkSide.Server | RemotePlusLibrary.Core.NetworkSide.Proxy | RemotePlusLibrary.Core.NetworkSide.Client)]
 
 // Setting ComVisible to false makes the types in this assembly not visible
 // to COM components.  If you need to access a type in this assembly from

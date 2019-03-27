@@ -5,9 +5,7 @@ using RemotePlusLibrary;
 using System.Windows.Forms;
 using System.Speech.Synthesis;
 using RemotePlusLibrary.Core;
-using RemotePlusLibrary.Extension.CommandSystem;
 using System.IO;
-using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
 using System.Linq;
 using RemotePlusLibrary.Scripting;
 using RemotePlusLibrary.Security.AccountSystem;
@@ -27,6 +25,9 @@ using RemotePlusLibrary.Extension.ResourceSystem;
 using RemotePlusLibrary.Extension.ResourceSystem.ResourceTypes;
 using TinyMessenger;
 using System.Threading.Tasks;
+using RemotePlusServer.Core.ExtensionSystem;
+using RemotePlusLibrary.SubSystem.Command.CommandClasses;
+using RemotePlusLibrary.SubSystem.Command;
 
 namespace RemotePlusServer
 {
@@ -125,7 +126,7 @@ namespace RemotePlusServer
             //Setup the prompt if it is a command-line client.
             if (_interface.Client.ClientType == ClientType.CommandLine && ServerStartup.proxyChannelFactory == null)
             {
-                _interface.Client.ClientCallback.ChangePrompt(new RemotePlusLibrary.Extension.CommandSystem.PromptBuilder()
+                _interface.Client.ClientCallback.ChangePrompt(new RemotePlusLibrary.SubSystem.Command.PromptBuilder()
                 {
                     Path = _interface.CurrentPath,
                     AdditionalData = "Current Path",
@@ -180,6 +181,7 @@ namespace RemotePlusServer
 
         private void RegisterComplete()
         {
+            IOCContainer.GetService<IScriptingEngine>().ResetSessionContext();
             GlobalServices.Logger.Log($"Client \"{_interface.Client.FriendlyName}\" [{_interface.Client.UniqueID}] Type: {_interface.Client.ClientType} registired.", LogLevel.Info);
             _interface.Registered = true;
             _interface.Client.ClientCallback.TellMessage("Registration complete.",LogLevel.Info);
@@ -281,9 +283,10 @@ namespace RemotePlusServer
                 List<CommandDescription> rc = new List<CommandDescription>();
                 GlobalServices.Logger.Log("Requesting commands list.", LogLevel.Info);
                 _interface.Client.ClientCallback.TellMessage("Returning commands list.", LogLevel.Info);
-                foreach (KeyValuePair<string, CommandDelegate> currentCommand in IOCContainer.GetService<ICommandClassStore>().GetAllCommands())
+                var _commandSystem = IOCContainer.GetService<ICommandSubsystem<IServerCommandModule>>();
+                foreach (KeyValuePair<string, CommandDelegate> currentCommand in _commandSystem.AggregateAllCommandModules())
                 {
-                    rc.Add(new CommandDescription() { Help = RemotePlusConsole.GetCommandHelp(currentCommand.Value), Behavior = RemotePlusConsole.GetCommandBehavior(currentCommand.Value), HelpPage = RemotePlusConsole.GetCommandHelpPage(currentCommand.Value), CommandName = currentCommand.Key });
+                    rc.Add(new CommandDescription() { Help = _commandSystem.GetCommandHelp(currentCommand.Value), Behavior = _commandSystem.GetCommandBehavior(currentCommand.Value), HelpPage = _commandSystem.GetHelpPage(currentCommand.Value), CommandName = currentCommand.Key });
                 }
                 return rc;
             }
@@ -298,7 +301,7 @@ namespace RemotePlusServer
             if (CheckRegisteration("GetCommandsAsStrings"))
             {
                 _interface.Client.ClientCallback.SendSignal(new SignalMessage("operation_completed", ""));
-                return IOCContainer.GetService<ICommandClassStore>().GetAllCommands().Keys;
+                return IOCContainer.GetService<ICommandSubsystem<IServerCommandModule>>().AggregateAllCommandModules().Keys;
             }
             else
             {
@@ -371,13 +374,13 @@ namespace RemotePlusServer
         public string GetCommandHelpPage(string command)
         {
             // OperationContext.Current.OperationCompleted += (sender, e) => _interface.Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
-            return RemotePlusConsole.ShowHelpPage(IOCContainer.GetService<ICommandClassStore>().GetAllCommands(), command);
+            return IOCContainer.GetService<ICommandSubsystem<IServerCommandModule>>().ShowHelpPage(command);
         }
 
         public string GetCommandHelpDescription(string command)
         {
             // OperationContext.Current.OperationCompleted += (sender, e) => _interface.Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
-            return RemotePlusConsole.ShowCommandHelpDescription(IOCContainer.GetService<ICommandClassStore>().GetAllCommands(), command);
+            return IOCContainer.GetService<ICommandSubsystem<IServerCommandModule>>().ShowCommandHelpDescription(command);
         }
         public IDirectory GetRemoteFiles(string path, bool usingRequest)
         {
@@ -425,7 +428,7 @@ namespace RemotePlusServer
                 }
                 catch (UnauthorizedAccessException ex)
                 {
-                    throw new FaultException<ServerFault>(new ServerFault(ex.StackTrace, ServerManager.DefaultCollection.Libraries.Select(l => l.Value.FriendlyName).ToList()), ex.Message);
+                    throw new FaultException<ServerFault>(new ServerFault(ex.StackTrace, ServerManager.DefaultExtensionLibraryLoader.GetAllLibraries().Select(l => l.FriendlyName).ToList()), ex.Message);
                 }
             }
         }
@@ -435,19 +438,13 @@ namespace RemotePlusServer
             try
             {
                 GlobalServices.Logger.Log("Running script file.", LogLevel.Info, "Server Host");
-                return ServerManager.ScriptBuilder.ExecuteString(script);
+                return IOCContainer.GetService<IScriptingEngine>().ExecuteString<object>(script);
             }
             catch (Exception ex)
             {
-                _interface.Client.ClientCallback.TellMessageToServerConsole($"Could not execute script file: {ex.Message}", LogLevel.Error, ScriptBuilder.SCRIPT_LOG_CONSTANT);
+                _interface.Client.ClientCallback.TellMessageToServerConsole($"Could not execute script file: {ex.Message}", LogLevel.Error, "Scripting Engine");
                 return false;
             }
-        }
-
-        public ScriptGlobalInformation[] GetScriptGlobals()
-        {
-            var list = ServerManager.ScriptBuilder.GetGlobals();
-            return list.Select(l => l.Information).ToArray();
         }
 
         public string ReadFileAsString(string fileName)
@@ -493,6 +490,11 @@ namespace RemotePlusServer
         public Task<CommandPipeline> RunServerCommandAsync(string command, CommandExecutionMode commandMode)
         {
             return _interface.RunServerCommandAsync(command, commandMode);
+        }
+
+        public void CancelServerCommand()
+        {
+            _interface.CancelServerCommand();
         }
     }
 }

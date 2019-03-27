@@ -1,7 +1,4 @@
-﻿using RemotePlusLibrary.Extension.CommandSystem;
-using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
-using RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
@@ -10,7 +7,6 @@ using System.Diagnostics;
 using RemotePlusServer.Core.ExtensionSystem;
 using System.IO;
 using RemotePlusLibrary.RequestSystem;
-using RemotePlusLibrary.Scripting.ScriptPackageEngine;
 using System.Drawing;
 using BetterLogger;
 using RemotePlusLibrary.Core;
@@ -26,22 +22,101 @@ using RemotePlusLibrary.RequestSystem.DefaultUpdateRequestBuilders;
 using System.Threading;
 using NDesk.Options;
 using RemotePlusLibrary.Extension.ResourceSystem.ResourceTypes.Devices;
+using System.Reflection;
+using RemotePlusLibrary.Extension;
+using RemotePlusLibrary.Scripting;
+using RemotePlusLibrary.SubSystem.Command;
+using RemotePlusLibrary.SubSystem.Command.CommandClasses;
 
 namespace RemotePlusServer.Core
 {
-    public class DefaultCommands : StandordCommandClass
+    public class DefaultCommands : ServerCommandClass
     {
         IRemotePlusService<ServerRemoteInterface> _service;
-        ICommandClassStore _store;
+        ICommandSubsystem<IServerCommandModule> _commandSubsystem;
         IResourceManager _resourceManager;
-        public DefaultCommands(IResourceManager resourceManager, IRemotePlusService<ServerRemoteInterface> service, ICommandClassStore store)
-        {
-            _service = service;
-            _store = store;
-            _resourceManager = resourceManager;
-        }
-
+        IScriptingEngine _scriptingEngine;
         #region Commands
+        [CommandHelp("Starts a process on the server.")]
+        public CommandResponse ps(CommandRequest args, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
+        {
+            bool waitForExit = false;
+            bool showHelp = false;
+            bool enterDebug = false;
+            bool exitDebug = false;
+            Process p = new Process();
+            OptionSet set = new OptionSet()
+                .Add("program|p=", "The process name to start. If shell execution has been disabled, you must specify a full path.", v => p.StartInfo.FileName = v)
+                .Add("arguments|a=", "Arguments to pass into the process.", v => p.StartInfo.Arguments = v)
+                .Add("DisableShellExecute|s", "Disables the OS to execute the program directly.", v => p.StartInfo.UseShellExecute = false)
+                .Add("redirectStdOut|o", "Redirects StdOut to RemotePlus StdOut. NOTE: Shell execution will be disabled.", v =>
+                 {
+                     p.StartInfo.UseShellExecute = false;
+                     p.StartInfo.RedirectStandardOutput = true;
+                     p.OutputDataReceived += (sender, e) =>
+                     {
+                         currentEnvironment.WriteLine(e.Data);
+                     };
+                 })
+                .Add("redirectStdError|r", "Redirects StdError to RemotePlus StdError. NOTE: Shell execution will be disabled.", v =>
+                 {
+                     p.StartInfo.UseShellExecute = false;
+                     p.StartInfo.RedirectStandardError = true;
+                     p.ErrorDataReceived += (sender, e) =>
+                     {
+                         currentEnvironment.WriteLineError(e.Data);
+                     };
+                 })
+                .Add("admin|m", "Starts the process as an administrator.", v => p.StartInfo.Verb = "runas")
+                .Add("redirectStdIn|i", "Redirects StdIn to RemotePlus StdIn. NOTE: Shell execution will be disabled.", v =>
+                 {
+                     p.StartInfo.UseShellExecute = false;
+                     p.StartInfo.RedirectStandardInput = true;
+                 })
+                .Add("disableWindow|w", "Disables a window from appearing.", v => p.StartInfo.CreateNoWindow = true)
+                .Add("waitForExit|e", "Waits for the process to exit before returning control back to the client.", v => waitForExit = true)
+                .Add("enterDebug", "Puts the server process into debug mode. NOTE: Must have appropriate privilleges.", v => enterDebug = true)
+                .Add("exitDebug", "Puts the server process out of debug mode.", v => exitDebug = true)
+                .Add("help|?", "Shows the help screen.", v => showHelp = true);
+            set.Parse(args.Arguments.Select(a => a.ToString()));
+            if (showHelp)
+            {
+                set.WriteOptionDescriptions(currentEnvironment.Out);
+                return new CommandResponse((int)CommandStatus.Success);
+            }
+            if (enterDebug)
+            {
+                Process.EnterDebugMode();
+                return new CommandResponse((int)CommandStatus.Success);
+            }
+            if(exitDebug)
+            {
+                Process.LeaveDebugMode();
+                return new CommandResponse((int)CommandStatus.Success);
+            }
+            p.Start();
+            if(p.StartInfo.RedirectStandardInput) p.StandardInput.Write(currentEnvironment.ReadToEnd());
+            if (p.StartInfo.RedirectStandardOutput) p.BeginOutputReadLine();
+            if (p.StartInfo.RedirectStandardError) p.BeginErrorReadLine();
+            if (waitForExit)
+            {
+                var reg = args.CancellationToken.Register(() =>
+                {
+                    try
+                    {
+                        p.Kill();
+                    }
+                    catch (InvalidOperationException) { }
+                });
+                p.WaitForExit();
+                reg.Dispose();
+                return new CommandResponse(p.ExitCode);
+            }
+            else
+            {
+                return new CommandResponse((int)CommandStatus.Success);
+            }
+        }
         [CommandBehavior(IndexCommandInHelp = false)]
         public CommandResponse progTest(CommandRequest args, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
         {
@@ -53,6 +128,11 @@ namespace RemotePlusServer.Core
             Thread.Sleep(1000);
             for(int i = 0; i < 100; i++)
             {
+                if(args.CancellationToken.IsCancellationRequested)
+                {
+                    _service.RemoteInterface.Client.ClientCallback.DisposeCurrentRequest();
+                    throw new OperationCanceledException();
+                }
                 _service.RemoteInterface.Client.ClientCallback.UpdateRequest(new ProgressUpdateBuilder(i)
                 {
                     Text = $"{i} / 100 Ticks"
@@ -77,11 +157,11 @@ namespace RemotePlusServer.Core
             string helpString = string.Empty;
             if(args.Arguments.Count == 2)
             {
-                helpString = RemotePlusConsole.ShowHelpPage(_store.GetAllCommands(), args.Arguments[1].ToString());
+                helpString = _commandSubsystem.ShowHelpPage(args.Arguments[1].ToString());
             }
             else
             {
-                helpString = RemotePlusConsole.ShowHelp(_store.GetAllCommands());
+                helpString = _commandSubsystem.ShowHelpScreen();
             }
             currentEnvironment.WriteLine(helpString);
             var response = new CommandResponse((int)CommandStatus.Success);
@@ -534,7 +614,7 @@ namespace RemotePlusServer.Core
             else
             {
                 Environment.CurrentDirectory = args.Arguments[1].ToString();
-                _service.RemoteInterface.Client.ClientCallback.ChangePrompt(new RemotePlusLibrary.Extension.CommandSystem.PromptBuilder()
+                _service.RemoteInterface.Client.ClientCallback.ChangePrompt(new RemotePlusLibrary.SubSystem.Command.PromptBuilder()
                 {
                     Path = _service.RemoteInterface.CurrentPath,
                     AdditionalData = "Current Path"
@@ -577,7 +657,7 @@ namespace RemotePlusServer.Core
                     path = Path.Combine(_service.RemoteInterface.CurrentPath, args.Arguments[1].ToString());
                 }
                 GlobalServices.Logger.AddLogger(clientLogger);
-                ServerManager.DefaultCollection.LoadExtension(path, new ServerInitEnvironment(false));
+                ServerManager.DefaultExtensionLibraryLoader.LoadFromAssembly(Assembly.LoadFrom(path));
                 GlobalServices.Logger.RemoveLogger(clientLogger);
                 return new CommandResponse((int)CommandStatus.Success);
             }
@@ -605,7 +685,7 @@ namespace RemotePlusServer.Core
                     var extensionData = client.DownloadData(args.Arguments[1].ToString());
                     var clientLogger = new ClientLogger(_service.RemoteInterface.Client);
                     GlobalServices.Logger.AddLogger(clientLogger);
-                    ServerManager.DefaultCollection.LoadExtension(extensionData, new ServerInitEnvironment(false));
+                    ServerManager.DefaultExtensionLibraryLoader.LoadFromAssembly(Assembly.Load(extensionData));
                     GlobalServices.Logger.RemoveLogger(clientLogger);
                     client.Dispose();
                     return new CommandResponse((int)CommandStatus.Success);
@@ -713,44 +793,22 @@ namespace RemotePlusServer.Core
             }
             return new CommandResponse((int)CommandStatus.Success);
         }
-        [CommandHelp("Generates a sample package manifest file")]
-        public CommandResponse genMan(CommandRequest args, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
-        {
-            ScriptPackageManifest m = new ScriptPackageManifest();
-            m.PackageName = "TestPackage";
-            m.ScriptEntryPoint = "main.py";
-            m.GenerateManifestToFile(args.Arguments[1].ToString());
-            return new CommandResponse((int)CommandStatus.Success);
-        }
-        [CommandHelp("Opens a script package and executes the entry-point script.")]
-        public CommandResponse scp(CommandRequest args, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
-        {
-            ScriptPackage package = ScriptPackage.Open(args.Arguments[1].ToString());
-            try
-            {
-                package.ExecuteScript();
-                package.PackageContents.Dispose();
-                package = null;
-                return new CommandResponse((int)CommandStatus.Success);
-            }
-            catch (Exception ex)
-            {
-                currentEnvironment.WriteLine(new ConsoleText($"Unable to execute script package: {ex.Message}") { TextColor = Color.Red });
-                package = null;
-                return new CommandResponse((int)CommandStatus.Fail);
-            }
-        }
         [CommandHelp("Clears all variables and functions from the interactive scripts.")]
         public CommandResponse resetStaticScript(CommandRequest reqest, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
         {
-            ServerManager.ScriptBuilder.ClearStaticScope();
+            _scriptingEngine.ResetSessionContext();
             return new CommandResponse((int)CommandStatus.Success);
         }
-        
-#endregion Commands
 
-        public override void AddCommands()
+        #endregion Commands
+
+        public override void InitializeServices(IKernel kernel)
         {
+            _service = kernel.Get<IRemotePlusService<ServerRemoteInterface>>();
+            _commandSubsystem = kernel.Get<ICommandSubsystem<IServerCommandModule>>();
+            _resourceManager = kernel.Get<IResourceManager>();
+            _scriptingEngine = kernel.Get<IScriptingEngine>();
+            Commands.Add("ps", ps);
             Commands.Add("progTest", progTest);
             Commands.Add("readLineTest", readLineTest);
             Commands.Add("help", Help);
@@ -773,8 +831,6 @@ namespace RemotePlusServer.Core
             Commands.Add("deleteFile", deleteFile);
             Commands.Add("echoFile", echoFile);
             Commands.Add("ls", ls);
-            Commands.Add("genMan", genMan);
-            Commands.Add("scp", scp);
             Commands.Add("resetStaticScript", resetStaticScript);
             Commands.Add("load-extensionLibrary-remote", loadExtensionLibraryRemote);
             Commands.Add("pg", pg);

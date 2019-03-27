@@ -1,7 +1,7 @@
 ﻿using RemotePlusLibrary.Contracts;
 using RemotePlusLibrary.Core;
-using RemotePlusLibrary.Extension.CommandSystem;
-using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
+using RemotePlusLibrary.SubSystem.Command;
+using RemotePlusLibrary.SubSystem.Command.CommandClasses;
 using System;
 using System.ServiceModel;
 using System.Threading.Tasks;
@@ -29,5 +29,7 @@ namespace RemotePlusLibrary.Discovery
         CommandPipeline ExecuteProxyCommand(string command, CommandExecutionMode mode);
         [OperationContract(Name = "ExecuteProxyCommandAsync")]
         Task<CommandPipeline> ExecuteProxyCommandAsync(string command, CommandExecutionMode mode);
+        [OperationContract]
+        void CancelProxyCommand();
     }
 }

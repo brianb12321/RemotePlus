@@ -235,6 +235,10 @@
       <Project>{e4e0bb7e-b995-4ebe-8efb-3c09bf64a3a2}</Project>
       <Name>RemotePlusLibrary.Security</Name>
     </ProjectReference>
+    <ProjectReference Include="..\RemotePlusLibrary.SubSystem.Command\RemotePlusLibrary.SubSystem.Command.csproj">
+      <Project>{c5145229-f6c8-432b-bf35-c8a2ebc2295f}</Project>
+      <Name>RemotePlusLibrary.SubSystem.Command</Name>
+    </ProjectReference>
     <ProjectReference Include="..\RemotePlusLibrary\RemotePlusLibrary.csproj">
       <Project>{00c22a1f-d3df-4193-aaa8-9907d08e2511}</Project>
       <Name>RemotePlusLibrary</Name>

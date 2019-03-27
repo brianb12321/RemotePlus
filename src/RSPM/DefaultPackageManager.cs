@@ -1,7 +1,7 @@
 ﻿using RemotePlusLibrary.Core;
-using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusLibrary.RequestSystem;
 using RemotePlusLibrary.RequestSystem.DefaultRequestBuilders;
+using RemotePlusLibrary.SubSystem.Command;
 using RemotePlusServer.Core;
 using System;
 using System.Collections.Generic;
@@ -43,7 +43,7 @@ namespace RSPM
                             try
                             {
                                 GlobalServices.Logger.AddLogger(clientLogger);
-                                package.LoadPackageExtensions("extensions", DefaultCollection);
+                                package.LoadPackageExtensions("extensions", DefaultExtensionLibraryLoader);
                                 GlobalServices.Logger.RemoveLogger(clientLogger);
                             }
                             catch
@@ -71,7 +71,7 @@ namespace RSPM
 
         private bool confirmInstallation(PackageDescription description)
         {
-            if(ServerRemoteService.RemoteInterface.Client.ClientType == RemotePlusLibrary.Client.ClientType.CommandLine)
+            if(ServerRemoteService.RemoteInterface.Client.ClientType == ClientType.CommandLine)
             {
                 StringBuilder sb = new StringBuilder();
                 sb.AppendLine($"Package {description.Name} is ready for installation.");

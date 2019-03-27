@@ -1,9 +1,11 @@
 ﻿using BetterLogger;
 using Ionic.Zip;
 using RemotePlusLibrary.Core;
+using RemotePlusLibrary.Extension;
 using RemotePlusServer.Core.ExtensionSystem;
 using System;
 using System.IO;
+using System.Reflection;
 
 namespace RSPM
 {
@@ -24,14 +26,13 @@ namespace RSPM
             Zip.ExtractAll(location);
             File.Delete($"{location}\\package.manifest");
         }
-        public void LoadPackageExtensions(string location, RemotePlusLibrary.Extension.ExtensionLoader.ExtensionLibraryCollectionBase<ServerExtensionLibrary> collection)
+        public void LoadPackageExtensions(string location, IExtensionLibraryLoader loader)
         {
-            var env = new RemotePlusServer.Core.ExtensionSystem.ServerInitEnvironment(false);
             foreach (string extensions in Description.Extensions)
             {
                 try
                 {
-                    collection.LoadExtension($"{location}\\{extensions}", env);
+                    loader.LoadFromAssembly(Assembly.LoadFrom($"{location}\\{extensions}"));
                 }
                 catch (Exception ex)
                 {

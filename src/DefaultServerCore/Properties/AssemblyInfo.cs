@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 using DefaultServerCore;
 using RemotePlusLibrary.Core;
-using RemotePlusLibrary.Extension.ExtensionLoader;
+using RemotePlusLibrary.Extension;
 
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
@@ -15,7 +15,7 @@ using RemotePlusLibrary.Extension.ExtensionLoader;
 [assembly: AssemblyCopyright("Copyright ©  2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
-[assembly: ServerCoreLibrary(typeof(Startup), "DefaultCore",
+[assembly: ServerCoreExtensionLibrary(typeof(Startup), "DefaultCore",
     FriendlyName = "Default Core",
     LibraryType = NetworkSide.Server)]
 

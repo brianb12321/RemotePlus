@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using System.Runtime.InteropServices;
 using RemotePlusLibrary.Core;
-using RemotePlusLibrary.Extension.ExtensionLoader;
+using RemotePlusLibrary.Extension;
 
 // RemotePlus server extension attributes.
 [assembly: ExtensionLibrary(typeof(ReleaseExtensions.Startup), "ReleaseExtensions",

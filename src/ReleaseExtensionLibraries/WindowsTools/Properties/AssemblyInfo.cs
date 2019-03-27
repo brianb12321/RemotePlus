@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using System.Runtime.InteropServices;
 using RemotePlusLibrary.Core;
-using RemotePlusLibrary.Extension.ExtensionLoader;
+using RemotePlusLibrary.Extension;
 using WindowsTools;
 
 [assembly: ExtensionLibrary(typeof(Startup), "WindowsTools",

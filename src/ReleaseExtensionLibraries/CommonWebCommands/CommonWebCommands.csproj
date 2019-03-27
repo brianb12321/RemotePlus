@@ -16,8 +16,8 @@
     </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>false</DebugSymbols>
-    <DebugType>none</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>pdbonly</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\..\RemotePlusServer\bin\Debug\extensions\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
@@ -41,6 +41,9 @@
       <HintPath>..\..\..\Libs\BetterLogger.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Ninject">
+      <HintPath>..\..\RemotePlusLibrary.Extension\bin\Debug\Ninject.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -59,19 +62,37 @@
     <Compile Include="WebCommands.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\RemotePlusLibrary.Configuration\RemotePlusLibrary.Configuration.csproj">
-      <Project>{8a8a5888-1ce7-46ed-b8de-1ac7671f3426}</Project>
-      <Name>RemotePlusLibrary.Configuration</Name>
-      <Private>False</Private>
-    </ProjectReference>
+    <None Include="app.config" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\..\RemotePlusLibrary.Core\RemotePlusLibrary.Core.csproj">
       <Project>{0334629b-6302-42a8-b159-f8646b4d8650}</Project>
       <Name>RemotePlusLibrary.Core</Name>
       <Private>False</Private>
     </ProjectReference>
+    <ProjectReference Include="..\..\RemotePlusLibrary.Discovery\RemotePlusLibrary.Discovery.csproj">
+      <Project>{fc3eb84c-d1b0-4b5c-9406-dffa9bc5a5fc}</Project>
+      <Name>RemotePlusLibrary.Discovery</Name>
+      <Private>False</Private>
+    </ProjectReference>
     <ProjectReference Include="..\..\RemotePlusLibrary.Extension\RemotePlusLibrary.Extension.csproj">
       <Project>{2aa5e768-7e0a-4b0c-a0d1-f79153902df9}</Project>
       <Name>RemotePlusLibrary.Extension</Name>
+      <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\..\RemotePlusLibrary.Scripting\RemotePlusLibrary.Scripting.csproj">
+      <Project>{5c399f78-c133-4f9b-9758-c36a4b7fae98}</Project>
+      <Name>RemotePlusLibrary.Scripting</Name>
+      <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\..\RemotePlusLibrary.Security\RemotePlusLibrary.Security.csproj">
+      <Project>{e4e0bb7e-b995-4ebe-8efb-3c09bf64a3a2}</Project>
+      <Name>RemotePlusLibrary.Security</Name>
+      <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\..\RemotePlusLibrary.SubSystem.Command\RemotePlusLibrary.SubSystem.Command.csproj">
+      <Project>{c5145229-f6c8-432b-bf35-c8a2ebc2295f}</Project>
+      <Name>RemotePlusLibrary.SubSystem.Command</Name>
       <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\RemotePlusLibrary\RemotePlusLibrary.csproj">
@@ -80,13 +101,10 @@
       <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\RemotePlusServer.Core\RemotePlusServer.Core.csproj">
-      <Project>{5669A80C-19D9-4DBE-BF5A-BBFCBF947634}</Project>
+      <Project>{5669a80c-19d9-4dbe-bf5a-bbfcbf947634}</Project>
       <Name>RemotePlusServer.Core</Name>
       <Private>False</Private>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

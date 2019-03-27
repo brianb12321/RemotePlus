@@ -3,11 +3,11 @@ using RemotePlusLibrary;
 using RemotePlusLibrary.Client;
 using RemotePlusLibrary.Contracts;
 using RemotePlusLibrary.Discovery;
-using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusLibrary.Extension.ResourceSystem;
 using RemotePlusLibrary.RequestSystem;
 using RemotePlusLibrary.Security.AccountSystem;
 using RemotePlusLibrary.Security.Authentication;
+using RemotePlusLibrary.SubSystem.Command;
 using System;
 using System.Speech.Synthesis;
 using System.Windows.Forms;
@@ -40,7 +40,7 @@ namespace RemotePlusServer
             }
         }
 
-        public void ChangePrompt(RemotePlusLibrary.Extension.CommandSystem.PromptBuilder newPrompt)
+        public void ChangePrompt(RemotePlusLibrary.SubSystem.Command.PromptBuilder newPrompt)
         {
             if (useProxy)
             {
@@ -64,7 +64,7 @@ namespace RemotePlusServer
             }
         }
 
-        public RemotePlusLibrary.Extension.CommandSystem.PromptBuilder GetCurrentPrompt()
+        public RemotePlusLibrary.SubSystem.Command.PromptBuilder GetCurrentPrompt()
         {
             if (useProxy)
             {

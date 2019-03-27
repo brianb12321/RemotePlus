@@ -1,8 +1,12 @@
 ﻿using BetterLogger;
+using Ninject;
+using ProxyServer.ExtensionSystem;
 using RemotePlusLibrary;
-using RemotePlusLibrary.Extension.CommandSystem;
-using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
+using RemotePlusLibrary.Extension;
+using RemotePlusLibrary.Scripting;
 using RemotePlusLibrary.ServiceArchitecture;
+using RemotePlusLibrary.SubSystem.Command;
+using RemotePlusLibrary.SubSystem.Command.CommandClasses;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,18 +15,12 @@ using System.Threading.Tasks;
 
 namespace ProxyServer
 {
-    public class ProxyCommands : ICommandClass
+    public class ProxyCommands : ProxyCommandClass
     {
-        public Dictionary<string, CommandDelegate> Commands { get; } = new Dictionary<string, CommandDelegate>();
         ILogFactory _logger;
         IRemotePlusService<ProxyServerRemoteImpl> _service;
-        ICommandClassStore _store;
-        public ProxyCommands(ILogFactory logger, IRemotePlusService<ProxyServerRemoteImpl> service, ICommandClassStore store)
-        {
-            _logger = logger;
-            _service = service;
-            _store = store;
-        }
+        ICommandSubsystem<IProxyCommandModule> _commandSubsystem;
+        IScriptingEngine _scriptEngine;
 
         [CommandHelp("Switches the specified server into the active server.")]
         public CommandResponse switchServer(CommandRequest req, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
@@ -55,11 +53,11 @@ namespace ProxyServer
             string helpString = string.Empty;
             if (req.Arguments.Count == 2)
             {
-                helpString = RemotePlusConsole.ShowHelpPage(_store.GetAllCommands(), req.Arguments[1].Value.ToString());
+                helpString = _commandSubsystem.ShowHelpPage(req.Arguments[1].Value.ToString());
             }
             else
             {
-                helpString = RemotePlusConsole.ShowHelp(_store.GetAllCommands());
+                helpString = _commandSubsystem.ShowHelpScreen();
             }
             _service.RemoteInterface.ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyManager.ProxyGuid, helpString);
             var response = new CommandResponse((int)CommandStatus.Success);
@@ -75,34 +73,20 @@ namespace ProxyServer
         [CommandHelp("Clears all variables and functions from the interactive scripts.")]
         public CommandResponse resetStaticScript(CommandRequest reqest, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
         {
-            ProxyManager.ScriptBuilder.ClearStaticScope();
+            _scriptEngine.ResetSessionContext();
             return new CommandResponse((int)CommandStatus.Success);
         }
-
-        public void AddCommands()
+        public override void InitializeServices(IKernel kernel)
         {
+            _logger = kernel.Get<ILogFactory>();
+            _service = kernel.Get<IRemotePlusService<ProxyServerRemoteImpl>>();
+            _commandSubsystem = kernel.Get<ICommandSubsystem<IProxyCommandModule>>();
+            _scriptEngine = kernel.Get<IScriptingEngine>();
             Commands.Add("proxySwitchServer", switchServer);
             Commands.Add("proxyHelp", help);
             Commands.Add("proxyViewServers", viewServers);
             Commands.Add("proxyRegister", register);
             Commands.Add("proxyResetStaticScript", resetStaticScript);
-        }
-
-        public CommandDelegate Lookup(string commandName)
-        {
-            if (Commands.TryGetValue(commandName, out CommandDelegate command))
-            {
-                return command;
-            }
-            else
-            {
-                return null;
-            }
-        }
-
-        public bool HasCommand(string commandName)
-        {
-            return Commands.ContainsKey(commandName);
         }
     }
 }

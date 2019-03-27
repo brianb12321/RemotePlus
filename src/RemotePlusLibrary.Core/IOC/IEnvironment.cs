@@ -10,7 +10,7 @@ namespace RemotePlusLibrary.Core.IOC
     {
         NetworkSide ExecutingSide { get; }
         EnvironmentState State { get; }
-        void Start(string[] args);
+        Task Start(string[] args);
         void Close();
     }
 }

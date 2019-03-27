@@ -98,7 +98,6 @@
     <Compile Include="RequestSystem\AcquisitionMode.cs" />
     <Compile Include="Client\Client.cs" />
     <Compile Include="Client\ClientBuilder.cs" />
-    <Compile Include="Client\ClientType.cs" />
     <Compile Include="FileTransfer\Service\DownloadRequest.cs" />
     <Compile Include="FileTransfer\BrowserClasses\IDirectory.cs" />
     <Compile Include="FileTransfer\BrowserClasses\RemoteDirectory.cs" />
@@ -148,6 +147,10 @@
     <ProjectReference Include="..\RemotePlusLibrary.Security\RemotePlusLibrary.Security.csproj">
       <Project>{E4E0BB7E-B995-4EBE-8EFB-3C09BF64A3A2}</Project>
       <Name>RemotePlusLibrary.Security</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RemotePlusLibrary.SubSystem.Command\RemotePlusLibrary.SubSystem.Command.csproj">
+      <Project>{c5145229-f6c8-432b-bf35-c8a2ebc2295f}</Project>
+      <Name>RemotePlusLibrary.SubSystem.Command</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -2,13 +2,13 @@
 using BetterLogger;
 using System.Windows.Forms;
 using RemotePlusLibrary.Core.IOC;
-using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusLibrary.Core.EventSystem;
 using RemotePlusLibrary.ServiceArchitecture;
-using RemotePlusLibrary.Extension.ExtensionLoader;
 using System.Collections.Generic;
 using System.ServiceModel.Dispatcher;
 using RemotePlusLibrary.Extension.ResourceSystem;
+using RemotePlusLibrary.Extension;
+using RemotePlusLibrary.SubSystem.Command;
 
 namespace RemotePlusLibrary
 {
@@ -47,22 +47,24 @@ namespace RemotePlusLibrary
         {
             return services.AddSingletonNamed<Configuration.IConfigurationDataAccess, TDataAccessImpl>("DefaultConfigDataAccess");
         }
-        public static IServiceCollection UseCommandline<TCommandEnvironmentImpl>(this IServiceCollection services, Action<CommandlineBuilder> builder) where TCommandEnvironmentImpl : ICommandEnvironment
+        public static IServiceCollection UseCommandline<TCommandEnvironmentImpl, TCommandSubsystemImpl, TModule>(this IServiceCollection services, Action<CommandlineBuilder> builder)
+            where TCommandEnvironmentImpl : ICommandEnvironment
+            where TCommandSubsystemImpl : ICommandSubsystem<TModule>
+            where TModule : ICommandModule
         {
             var b = new CommandlineBuilder(services);
             builder?.Invoke(b);
-            services.AddSingleton<ICommandClassStore, DefaultCommandStore>();
+            services.AddSingleton<ICommandSubsystem<TModule>, TCommandSubsystemImpl>();
             return services.AddTransient<ICommandEnvironment, TCommandEnvironmentImpl>();       
         }
         public static IServiceCollection UseServerManager<TServerManager>(this IServiceCollection services) where TServerManager : IServiceManager
         {
             return services.AddSingleton<IServiceManager, TServerManager>();
         }
-        public static IServiceCollection UseExtensionContainer<TContainerImpl, TLibrary>(this IServiceCollection services, ExtensionLibraryCollectionBase<TLibrary> container)
-            where TContainerImpl : ExtensionLibraryCollectionBase<TLibrary>
-            where TLibrary : ExtensionLibraryBase
+        public static IServiceCollection UseExtensionSystem<TLoader>(this IServiceCollection services)
+            where TLoader : IExtensionLibraryLoader
         {
-            return services.AddSingleton(container);
+            return services.AddSingleton<IExtensionLibraryLoader, TLoader>();
         }
         public static IServiceCollection UseErrorHandler<TErrorHandler>(this IServiceCollection services) where TErrorHandler : IErrorHandler
         {

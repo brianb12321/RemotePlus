@@ -5,13 +5,10 @@ using System.ServiceModel;
 using RemotePlusLibrary.Core;
 using System.Windows.Forms;
 using System.Drawing;
-using RemotePlusLibrary.Extension.CommandSystem;
-using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
 using System.Text.RegularExpressions;
 using RemotePlusLibrary.Security.AccountSystem;
 using RemotePlusClient.CommonUI.ConnectionClients;
 using RemotePlusLibrary.Core.Faults;
-using RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing;
 using BetterLogger;
 using BetterLogger.Loggers;
 using System.IO;
@@ -24,13 +21,21 @@ using RemotePlusClient.CommonUI.Requests;
 using RemotePlusLibrary.Discovery.Events;
 using System.Text;
 using System.Linq;
+using RemotePlusLibrary.Extension;
+using System.Reflection;
+using RemotePlusLibrary.SubSystem.Command;
+using RemotePlusLibrary.SubSystem.Command.CommandClasses.Parsing;
+using RemotePlusLibrary.SubSystem.Command.CommandClasses;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace RemotePlusClientCmd
 {
     public partial class ClientCmdManager : IEnvironment
     {
         public Dictionary<string, CommandDelegate> LocalCommands = new Dictionary<string, CommandDelegate>();
-        public static ClientExtensionLibraryCollection ExtensionLibraries { get; set; } = new ClientExtensionLibraryCollection();
+        public static IExtensionLibraryLoader ExtensionLoader { get; set; }
+        public static ICommandSubsystem<IClientCmdModule> _commandSubsystem;
         public static ServiceClient Remote = null;
         public static PromptBuilder prompt = new PromptBuilder();
         public static ProxyClient Proxy = null;
@@ -50,7 +55,7 @@ namespace RemotePlusClientCmd
             IOCContainer.Provider.Bind<IEnvironment>().ToConstant(new ClientCmdManager());
             GlobalServices.RunningEnvironment.Start(args);
         }
-        public void Start(string[] args)
+        public Task Start(string[] args)
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
@@ -58,6 +63,10 @@ namespace RemotePlusClientCmd
             var blf = new BaseLogFactory();
             blf.AddLogger(new ConsoleLogger());
             IOCContainer.Provider.Bind<ILogFactory>().ToConstant(blf);
+            ExtensionLoader = new DefaultExtensionLoader(blf);
+            _commandSubsystem = new ClientCmdExtensionSubsystem(ExtensionLoader);
+            IOCContainer.Provider.Bind<IExtensionLibraryLoader>().ToConstant(ExtensionLoader);
+            IOCContainer.Provider.Bind<ICommandSubsystem<IClientCmdModule>>().ToConstant(_commandSubsystem);
             applicationIcon = new NotifyIcon();
             applicationIcon.Icon = SystemIcons.Application;
             applicationIcon.Visible = true;
@@ -85,8 +94,9 @@ namespace RemotePlusClientCmd
             };
             Application.ApplicationExit += (sender, e) => applicationIcon.Dispose();
             ShowBanner();
-            LoadExtensions();
-            InitCommands();
+            ExtensionLoader.LoadFromAssembly(Assembly.GetAssembly(typeof(ClientCmdCommands)));
+            ExtensionLoader.LoadFromFolder("extensions");
+            _commandSubsystem.Init();
             RequestStore.Add(new RequestStringRequest());
             RequestStore.Add(new ColorRequest());
             RequestStore.Add(new MessageBoxRequest());
@@ -102,7 +112,7 @@ namespace RemotePlusClientCmd
             RequestStore.Add(new Requests.ConsoleReadLineRequest());
             InitializeDefaultKnownTypes();
             GlobalServices.Logger.Log("Running post init on all extensions.", LogLevel.Info);
-            ExtensionLibraries.RunPostInit();
+            ExtensionLoader.RunPostInit();
             State = EnvironmentState.Running;
             if (args.Length == 0)
             {
@@ -130,47 +140,7 @@ namespace RemotePlusClientCmd
                     AcceptInput(options.UseProxy);
                 }
             }
-        }
-        private void LoadExtensions()
-        {
-            List<string> excludedFiles = new List<string>();
-            GlobalServices.Logger.Log("Loading extensions...", LogLevel.Info);
-            if (Directory.Exists("extensions"))
-            {
-                if (File.Exists("extensions\\excludes.txt"))
-                {
-                    GlobalServices.Logger.Log("Found an excludes.txt file. Reading file...", LogLevel.Info);
-                    foreach (string excludedFile in File.ReadLines("extensions\\excludes.txt"))
-                    {
-                        GlobalServices.Logger.Log($"{excludedFile} is excluded from the extension search.", LogLevel.Info);
-                        excludedFiles.Add("extensions\\" + excludedFile);
-                    }
-                    GlobalServices.Logger.Log("Finished reading extension exclusion file.", LogLevel.Info);
-                }
-                ClientInitEnvironment env = new ClientInitEnvironment(false);
-                foreach (string files in Directory.GetFiles("extensions"))
-                {
-                    if (Path.GetExtension(files) == ".dll" && !excludedFiles.Contains(files))
-                    {
-                        try
-                        {
-                            GlobalServices.Logger.Log($"Found extension file ({Path.GetFileName(files)})", LogLevel.Info);
-                            env.PreviousError = GlobalServices.Logger.ErrorCount > 0 ? true : false;
-                            ExtensionLibraries.LoadExtension(files, env);
-                        }
-                        catch (Exception ex)
-                        {
-                            GlobalServices.Logger.Log($"Could not load \"{files}\" because of a load error or initialization error. Error: {ex.Message}", LogLevel.Warning);
-                        }
-                        env.InitPosition++;
-                    }
-                }
-                GlobalServices.Logger.Log($"{ExtensionLibraries.Libraries.Count} extension libraries loaded.", LogLevel.Info);
-            }
-            else
-            {
-                GlobalServices.Logger.Log("The extensions folder does not exist.", LogLevel.Info);
-            }
+            return Task.CompletedTask;
         }
 
         void CatchException(Exception ex)
@@ -231,7 +201,17 @@ namespace RemotePlusClientCmd
                 Remote.Register(ro);
                 CurrentConnectionData.RemoteConnection = Remote;
             }
+            //Console.TreatControlCAsInput = true;
+            Console.CancelKeyPress += Console_CancelKeyPress;
         }
+
+        private void Console_CancelKeyPress(object sender, ConsoleCancelEventArgs e)
+        {
+            if (Proxy != null) Proxy.CancelProxyCommand();
+            else Remote.CancelServerCommand();
+            e.Cancel = true;
+        }
+
         void AcceptInput(bool useProxy)
         {
             Console.WriteLine("Enter a command to the server. Type {help} for a list of commands.");
@@ -274,7 +254,7 @@ namespace RemotePlusClientCmd
                         //Run the commands
                         if(elements.Count <= 1)
                         {
-                            var request = new CommandRequest(elements[0].ToArray());
+                            var request = new CommandRequest(elements[0].ToArray(), CancellationToken.None);
                             var routine = new CommandRoutine(request, RunLocalCommand(request, CommandExecutionMode.Client, pipe));
                             pipe.Add(routine);
                         }
@@ -285,14 +265,14 @@ namespace RemotePlusClientCmd
                             {
                                 if (elements.IndexOf(currentCommand) == 0)
                                 {
-                                    CommandRequest firstRequest = new CommandRequest(currentCommand.ToArray());
+                                    CommandRequest firstRequest = new CommandRequest(currentCommand.ToArray(), CancellationToken.None);
                                     var firstRoutine = new CommandRoutine(firstRequest, RunLocalCommand(firstRequest, CommandExecutionMode.Client, pipe));
                                     result = firstRoutine.Output;
                                     pipe.Add(firstRoutine);
                                 }
                                 else
                                 {
-                                    CommandRequest request = new CommandRequest(currentCommand.ToArray());
+                                    CommandRequest request = new CommandRequest(currentCommand.ToArray(), CancellationToken.None);
                                     request.LastCommand = result;
                                     var routine = new CommandRoutine(request, RunLocalCommand(request, CommandExecutionMode.Client, pipe));
                                     result = routine.Output;
@@ -301,15 +281,26 @@ namespace RemotePlusClientCmd
                             }
                         }
                     }
+                    else if(c.ToCharArray()[0] == '&')
+                    {
+                        if (useProxy)
+                        {
+                            Proxy.ExecuteProxyCommandAsync(c.Substring(1), CommandExecutionMode.Client);
+                        }
+                        else
+                        {
+                            Remote.RunServerCommandAsync(c.Substring(1), CommandExecutionMode.Client);
+                        }
+                    }
                     else
                     {
                         if (useProxy)
                         {
-                            Proxy.ExecuteProxyCommand(c, CommandExecutionMode.Client);
+                            Proxy.ExecuteProxyCommandAsync(c, CommandExecutionMode.Client).Wait();
                         }
                         else
                         {
-                            Remote.RunServerCommand(c, CommandExecutionMode.Client);
+                            Remote.RunServerCommandAsync(c, CommandExecutionMode.Client);
                         }
                     }
                 }
@@ -394,16 +385,6 @@ namespace RemotePlusClientCmd
         {
             return Remote.RunServerCommand(i, CommandExecutionMode.Client);
         }
-        private void InitCommands()
-        {
-            LocalCommands.Add("#banner", banner);
-            LocalCommands.Add("#help", Help);
-            LocalCommands.Add("#clear", clearScreen);
-            LocalCommands.Add("#close", close);
-            LocalCommands.Add("#title", title);
-            LocalCommands.Add("#load-commandFile", load_CommandFile);
-            LocalCommands.Add("#execute-script", loadScriptFIle);
-        }
 
         CommandResponse RunLocalCommand(CommandRequest request, CommandExecutionMode commandMode, CommandPipeline pipe)
         {
@@ -411,52 +392,44 @@ namespace RemotePlusClientCmd
             StatusCodeDeliveryMethod scdm = StatusCodeDeliveryMethod.DoNotDeliver;
             try
             {
-                bool FoundCommand = false;
-                foreach (KeyValuePair<string, CommandDelegate> k in LocalCommands)
-                {
-                    if (request.Arguments[0].Value.ToString() == k.Key)
-                    {
-                        var ba = RemotePlusConsole.GetCommandBehavior(k.Value);
-                        if (ba != null)
-                        {
-                            if (ba.TopChainCommand && pipe.Count > 0)
-                            {
-                                GlobalServices.Logger.Log($"This is a top-level command.", LogLevel.Error);
-                                return new CommandResponse((int)CommandStatus.AccessDenied);
-                            }
-                            if (commandMode != ba.ExecutionType)
-                            {
-                                GlobalServices.Logger.Log($"The command requires you to be in {ba.ExecutionType} mode.", LogLevel.Error);
-                                return new CommandResponse((int)CommandStatus.AccessDenied);
-                            }
-                            if (ba.DoNotCatchExceptions)
-                            {
-                                throwFlag = true;
-                            }
-                            if (ba.StatusCodeDeliveryMethod != StatusCodeDeliveryMethod.DoNotDeliver)
-                            {
-                                scdm = StatusCodeDeliveryMethod.TellMessageToServerConsole;
-                            }
-                        }
-                        FoundCommand = true;
-                        var sc = k.Value(request, pipe, null);
-                        if (scdm == StatusCodeDeliveryMethod.TellMessage)
-                        {
-                            GlobalServices.Logger.Log($"Command {k.Key} finished with status code {sc.ToString()}", LogLevel.Info);
-                        }
-                        else if (scdm == StatusCodeDeliveryMethod.TellMessageToServerConsole)
-                        {
-                            GlobalServices.Logger.Log($"Command {k.Key} finished with status code {sc.ToString()}", LogLevel.Info);
-                        }
-                        return sc;
-                    }
-                }
-                if (!FoundCommand)
+                if(!_commandSubsystem.HasCommand(request.Arguments[0].ToString()))
                 {
                     GlobalServices.Logger.Log("Unknown local command. Please type {#help} for a list of commands.", LogLevel.Error);
                     return new CommandResponse((int)CommandStatus.Fail);
                 }
-                return new CommandResponse(-2);
+                var command = _commandSubsystem.GetCommand(request.Arguments[0].ToString());
+                var ba = _commandSubsystem.GetCommandBehavior(command);
+                if (ba != null)
+                {
+                    if (ba.TopChainCommand && pipe.Count > 0)
+                    {
+                        GlobalServices.Logger.Log($"This is a top-level command.", LogLevel.Error);
+                        return new CommandResponse((int)CommandStatus.AccessDenied);
+                    }
+                    if (commandMode != ba.ExecutionType)
+                    {
+                        GlobalServices.Logger.Log($"The command requires you to be in {ba.ExecutionType} mode.", LogLevel.Error);
+                        return new CommandResponse((int)CommandStatus.AccessDenied);
+                    }
+                    if (ba.DoNotCatchExceptions)
+                    {
+                        throwFlag = true;
+                    }
+                    if (ba.StatusCodeDeliveryMethod != StatusCodeDeliveryMethod.DoNotDeliver)
+                    {
+                        scdm = StatusCodeDeliveryMethod.TellMessageToServerConsole;
+                    }
+                }
+                var sc = command(request, pipe, null);
+                if (scdm == StatusCodeDeliveryMethod.TellMessage)
+                {
+                    GlobalServices.Logger.Log($"Command {request.Arguments[0]} finished with status code {sc.ToString()}", LogLevel.Info);
+                }
+                else if (scdm == StatusCodeDeliveryMethod.TellMessageToServerConsole)
+                {
+                    GlobalServices.Logger.Log($"Command {request.Arguments[0]} finished with status code {sc.ToString()}", LogLevel.Info);
+                }
+                return sc;
             }
             catch (Exception ex)
             {

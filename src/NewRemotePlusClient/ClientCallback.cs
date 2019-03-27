@@ -8,7 +8,6 @@ using System.Windows.Forms;
 using BetterLogger;
 using RemotePlusLibrary;
 using RemotePlusLibrary.Client;
-using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusLibrary.RequestSystem;
 using RemotePlusLibrary.Security.AccountSystem;
 using RemotePlusLibrary.Security.Authentication;
@@ -20,6 +19,7 @@ using NewRemotePlusClient.Models;
 using RemotePlusLibrary.Extension.ResourceSystem;
 using TinyMessenger;
 using RemotePlusLibrary.Core;
+using RemotePlusLibrary.SubSystem.Command;
 
 namespace NewRemotePlusClient
 {
@@ -33,7 +33,7 @@ namespace NewRemotePlusClient
             Console.Beep(Hertz, Duration);
         }
 
-        public void ChangePrompt(Guid serverGuid, RemotePlusLibrary.Extension.CommandSystem.PromptBuilder newPrompt)
+        public void ChangePrompt(Guid serverGuid, RemotePlusLibrary.SubSystem.Command.PromptBuilder newPrompt)
         {
             
         }
@@ -44,7 +44,7 @@ namespace NewRemotePlusClient
             IOCHelper.Client.Close();
         }
 
-        public RemotePlusLibrary.Extension.CommandSystem.PromptBuilder GetCurrentPrompt()
+        public RemotePlusLibrary.SubSystem.Command.PromptBuilder GetCurrentPrompt()
         {
             return null;
         }

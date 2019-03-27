@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace RemotePlusLibrary.Extension
 {
+    [Flags]
     public enum ClientSupportedTypes
     {
-        CommandLine,
-        GUI,
-        Both
+        CommandLine = 1,
+        GUI = 2
     }
 }

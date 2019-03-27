@@ -2,24 +2,26 @@
 using RemotePlusLibrary;
 using RemotePlusLibrary.Client;
 using RemotePlusLibrary.Extension;
-using RemotePlusLibrary.Extension.CommandSystem;
-using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
-using RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing;
 using RemotePlusLibrary.Core;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing.CommandElements;
+using RemotePlusServer.Core.ExtensionSystem;
+using RemotePlusLibrary.Scripting;
+using RemotePlusLibrary.SubSystem.Command;
+using RemotePlusLibrary.SubSystem.Command.CommandClasses.Parsing;
+using RemotePlusLibrary.SubSystem.Command.CommandClasses;
+using RemotePlusLibrary.SubSystem.Command.CommandClasses.Parsing.CommandElements;
 
 namespace RemotePlusServer.Core
 {
     public class CommandExecutor : ICommandExecutor
     {
-        private ICommandClassStore _store;
+        private ICommandSubsystem<IServerCommandModule> _commandSubsystem;
         private ILogFactory _logger;
-        public CommandExecutor(ICommandClassStore store, ILogFactory logger)
+        public CommandExecutor(ICommandSubsystem<IServerCommandModule> system, ILogFactory logger)
         {
-            _store = store;
+            _commandSubsystem = system;
             _logger = logger;
         }
 
@@ -39,83 +41,108 @@ namespace RemotePlusServer.Core
                     ReturnData = arguments.Arguments[0].Value
                 };
             }
-            bool throwFlag = false;
-            StatusCodeDeliveryMethod scdm = StatusCodeDeliveryMethod.DoNotDeliver;
-            try
+            else if(arguments.Arguments[0].ValueType == ElementValueType.ScriptFile)
             {
-                _logger.Log($"Executing server command {arguments.Arguments[0]}", LogLevel.Info);
-                if (!_store.HasCommand(arguments.Arguments[0].Value.ToString()))
+                try
                 {
-                    _logger.Log("Failed to find the command.", LogLevel.Debug);
-                    currentEnvironment.WriteLine(new ConsoleText("Unknown command. Please type {help} for a list of commands") { TextColor = Color.Red });
-                    CommandNotFound?.Invoke(this, new CommandEventArgs(arguments));
+                    object data = null;
+                    var context = currentEnvironment.ExecuteScriptFile(arguments);
+                    if (context.ContainsVariable("ReturnData"))
+                    {
+                        data = context.GetVariable<object>("ReturnData");
+                    }
+                    else data = context;
+                    return new CommandResponse((int)CommandStatus.Success)
+                    {
+                        ReturnData = data
+                    };
+                }
+                catch (Exception ex)
+                {
+                    currentEnvironment.WriteLineError($"Error executing script file: {ex.Message}", Color.Red);
                     return new CommandResponse((int)CommandStatus.Fail);
                 }
-                var command = _store.GetCommand(arguments.Arguments[0].Value.ToString());
-                var ba = RemotePlusConsole.GetCommandBehavior(command);
-                if (ba != null)
-                {
-                    if (ba.TopChainCommand && pipe.Count > 0)
-                    {
-                        _logger.Log($"This is a top-level command.", LogLevel.Error);
-                        ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessage($"This is a top-level command.", LogLevel.Error);
-                        return new CommandResponse((int)CommandStatus.AccessDenied);
-                    }
-                    if (commandMode != ba.ExecutionType)
-                    {
-                        _logger.Log($"The command requires you to be in {ba.ExecutionType} mode.", LogLevel.Error);
-                        ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessage($"The command requires you to be in {ba.ExecutionType} mode.", LogLevel.Error);
-                        return new CommandResponse((int)CommandStatus.AccessDenied);
-                    }
-                    if (ba.SupportClients != ClientSupportedTypes.Both && ((ServerManager.ServerRemoteService.RemoteInterface.Client.ClientType == ClientType.GUI && ba.SupportClients != ClientSupportedTypes.GUI) || (ServerManager.ServerRemoteService.RemoteInterface.Client.ClientType == ClientType.CommandLine && ba.SupportClients != ClientSupportedTypes.CommandLine)))
-                    {
-                        if (string.IsNullOrEmpty(ba.ClientRejectionMessage))
-                        {
-                            _logger.Log($"Your client must be a {ba.SupportClients.ToString()} client.", LogLevel.Error);
-                            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessage($"Your client must be a {ba.SupportClients.ToString()} client.", LogLevel.Error);
-                            return new CommandResponse((int)CommandStatus.UnsupportedClient);
-                        }
-                        else
-                        {
-                            _logger.Log(ba.ClientRejectionMessage, LogLevel.Error);
-                            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessage(ba.ClientRejectionMessage, LogLevel.Error);
-                            return new CommandResponse((int)CommandStatus.UnsupportedClient);
-                        }
-                    }
-                    if (ba.DoNotCatchExceptions)
-                    {
-                        throwFlag = true;
-                    }
-                    if (ba.StatusCodeDeliveryMethod != StatusCodeDeliveryMethod.DoNotDeliver)
-                    {
-                        scdm = ba.StatusCodeDeliveryMethod;
-                    }
-                }
-                _logger.Log("Found command, and executing.", LogLevel.Debug);
-                var sc = command(arguments, pipe, currentEnvironment);
-                if (scdm == StatusCodeDeliveryMethod.TellMessage)
-                {
-                    ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessage($"Command {arguments.Arguments[0]} finished with status code {sc.ToString()}", LogLevel.Info);
-                }
-                else if (scdm == StatusCodeDeliveryMethod.TellMessageToServerConsole)
-                {
-                    ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole($"Command {arguments.Arguments[0]} finished with status code {sc.ToString()}", LogLevel.Info);
-                }
-                return sc;
             }
-            catch (Exception ex)
+            else
             {
-                if (throwFlag)
+                bool throwFlag = false;
+                StatusCodeDeliveryMethod scdm = StatusCodeDeliveryMethod.DoNotDeliver;
+                try
                 {
-                    throw;
+                    _logger.Log($"Executing server command {arguments.Arguments[0]}", LogLevel.Info);
+                    if (!_commandSubsystem.HasCommand(arguments.Arguments[0].ToString()))
+                    {
+                        _logger.Log("Failed to find the command.", LogLevel.Debug);
+                        currentEnvironment.WriteLine(new ConsoleText("Unknown command. Please type {help} for a list of commands") { TextColor = Color.Red });
+                        CommandNotFound?.Invoke(this, new CommandEventArgs(arguments));
+                        return new CommandResponse((int)CommandStatus.Fail);
+                    }
+                    var command = _commandSubsystem.GetCommand(arguments.Arguments[0].ToString());
+                    var ba = _commandSubsystem.GetCommandBehavior(command);
+                    if (ba != null)
+                    {
+                        if (ba.TopChainCommand && pipe.Count > 0)
+                        {
+                            _logger.Log($"This is a top-level command.", LogLevel.Error);
+                            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessage($"This is a top-level command.", LogLevel.Error);
+                            return new CommandResponse((int)CommandStatus.AccessDenied);
+                        }
+                        if (commandMode != ba.ExecutionType)
+                        {
+                            _logger.Log($"The command requires you to be in {ba.ExecutionType} mode.", LogLevel.Error);
+                            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessage($"The command requires you to be in {ba.ExecutionType} mode.", LogLevel.Error);
+                            return new CommandResponse((int)CommandStatus.AccessDenied);
+                        }
+                        if (!ba.SupportClients.HasFlag(ServerManager.ServerRemoteService.RemoteInterface.Client.ClientType))
+                        {
+                            if (string.IsNullOrEmpty(ba.ClientRejectionMessage))
+                            {
+                                _logger.Log($"Your client must be a {ba.SupportClients.ToString()} client.", LogLevel.Error);
+                                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessage($"Your client must be a {ba.SupportClients.ToString()} client.", LogLevel.Error);
+                                return new CommandResponse((int)CommandStatus.UnsupportedClient);
+                            }
+                            else
+                            {
+                                _logger.Log(ba.ClientRejectionMessage, LogLevel.Error);
+                                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessage(ba.ClientRejectionMessage, LogLevel.Error);
+                                return new CommandResponse((int)CommandStatus.UnsupportedClient);
+                            }
+                        }
+                        if (ba.DoNotCatchExceptions)
+                        {
+                            throwFlag = true;
+                        }
+                        if (ba.StatusCodeDeliveryMethod != StatusCodeDeliveryMethod.DoNotDeliver)
+                        {
+                            scdm = ba.StatusCodeDeliveryMethod;
+                        }
+                    }
+                    _logger.Log("Found command, and executing.", LogLevel.Debug);
+                    var sc = command(arguments, pipe, currentEnvironment);
+                    if (scdm == StatusCodeDeliveryMethod.TellMessage)
+                    {
+                        ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessage($"Command {arguments.Arguments[0]} finished with status code {sc.ToString()}", LogLevel.Info);
+                    }
+                    else if (scdm == StatusCodeDeliveryMethod.TellMessageToServerConsole)
+                    {
+                        ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole($"Command {arguments.Arguments[0]} finished with status code {sc.ToString()}", LogLevel.Info);
+                    }
+                    return sc;
                 }
-                else
+                catch (Exception ex)
                 {
-                    //Dispose any requests
-                    ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.DisposeCurrentRequest();
-                    _logger.Log("command failed: " + ex.Message, LogLevel.Info);
-                    currentEnvironment.WriteLine(new ConsoleText("Error while executing command: " + ex.Message) { TextColor = Color.Red });
-                    return new CommandResponse((int)CommandStatus.Fail);
+                    if (throwFlag)
+                    {
+                        throw;
+                    }
+                    else
+                    {
+                        //Dispose any requests
+                        ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.DisposeCurrentRequest();
+                        _logger.Log("command failed: " + ex.Message, LogLevel.Info);
+                        currentEnvironment.WriteLine(new ConsoleText("Error while executing command: " + ex.Message) { TextColor = Color.Red });
+                        return new CommandResponse((int)CommandStatus.Fail);
+                    }
                 }
             }
         }

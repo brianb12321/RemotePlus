@@ -1,6 +1,6 @@
 ﻿using System;
 using System.ServiceModel;
-using RemotePlusLibrary.Extension.CommandSystem;
+using RemotePlusLibrary.SubSystem.Command;
 using RemotePlusLibrary.Security.AccountSystem;
 using RemotePlusLibrary.Client;
 using RemotePlusLibrary.RequestSystem;

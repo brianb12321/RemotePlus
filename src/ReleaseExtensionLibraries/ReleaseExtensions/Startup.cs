@@ -1,27 +1,25 @@
 ﻿using System;
-using RemotePlusLibrary.Extension.CommandSystem;
-using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
 using System.Windows.Forms;
-using RemotePlusLibrary.Extension.ExtensionLoader.Initialization;
 using RemotePlusServer.Core;
 using BetterLogger;
 using RemotePlusLibrary.Core;
 using RemotePlusLibrary.RequestSystem;
 using RemotePlusLibrary.RequestSystem.DefaultRequestBuilders;
 using RemotePlusLibrary.Core.IOC;
+using RemotePlusLibrary.Extension;
+using RemotePlusLibrary.Scripting;
+using RemotePlusLibrary.SubSystem.Command.CommandClasses;
+using RemotePlusLibrary.SubSystem.Command;
 
 namespace ReleaseExtensions
 {
     public sealed class Startup : ILibraryStartup
     {
-        void ILibraryStartup.Init(ILibraryBuilder builder, IInitEnvironment env)
+        void ILibraryStartup.Init(IServiceCollection services)
         {
-            GlobalServices.Logger.Log($"Init position {env.InitPosition}", LogLevel.Debug, "ReleaseExtensions");
             GlobalServices.Logger.Log("Welcome to \"ReleaseExtension.\" This library contains some useful tools that demonstrates the powers of \"RemotePlus\"", LogLevel.Info, "ReleaseExtensions");
-            builder.AddCommandClass(new SingleCommand("releaseExtensionAbout", releaseExtensionAbout));
-            ServerManager.ScriptBuilder.AddScriptObject("showMessageBox", new Func<string, string, MessageBoxButtons, MessageBoxIcon, DialogResult>(showMessageBoxScriptMethod), "Displays a message box on the client's screen.", RemotePlusLibrary.Scripting.ScriptGlobalType.Function);
+            IOCContainer.GetService<IScriptingEngine>().GetDefaultModule().AddVariable("showMessageBox", new Func<string, string, MessageBoxButtons, MessageBoxIcon, DialogResult>(showMessageBoxScriptMethod));
         }
-        [RemotePlusLibrary.Scripting.IndexScriptObject]
         DialogResult showMessageBoxScriptMethod(string message, string caption, MessageBoxButtons buttons, MessageBoxIcon icon)
         {
             var rb = new MessageBoxRequestBuilder()

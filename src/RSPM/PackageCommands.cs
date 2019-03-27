@@ -1,6 +1,4 @@
 ﻿using RemotePlusLibrary.Core.IOC;
-using RemotePlusLibrary.Extension.CommandSystem;
-using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
 using Ninject;
 using System.Runtime.Serialization;
 using System.Xml;
@@ -10,17 +8,16 @@ using RemotePlusServer.Core;
 using System.Drawing;
 using System.Collections.Generic;
 using RemotePlusLibrary.ServiceArchitecture;
+using RemotePlusLibrary.Extension;
+using RemotePlusServer.Core.ExtensionSystem;
+using RemotePlusLibrary.SubSystem.Command;
+using RemotePlusLibrary.SubSystem.Command.CommandClasses;
 
 namespace RSPM
 {
-    public class PackageCommands : ICommandClass
+    public class PackageCommands : ServerCommandClass
     {
         IRemotePlusService<ServerRemoteInterface> _service;
-        public PackageCommands(IRemotePlusService<ServerRemoteInterface> service)
-        {
-            _service = service;
-        }
-        public Dictionary<string, CommandDelegate> Commands { get; } = new Dictionary<string, CommandDelegate>();
 
         [CommandHelp("Installs a package from the internet.")]
         public CommandResponse InstallPackage(CommandRequest req, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
@@ -60,27 +57,11 @@ namespace RSPM
             return new CommandResponse((int)CommandStatus.Success);
         }
 
-        public void AddCommands()
+        public override void InitializeServices(IKernel kernel)
         {
+            _service = kernel.Get<IRemotePlusService<ServerRemoteInterface>>();
             Commands.Add("Install-Package", InstallPackage);
             Commands.Add("Generate-Package-Manifest", GeneratePackageManifest);
-        }
-
-        public CommandDelegate Lookup(string commandName)
-        {
-            if(Commands.TryGetValue(commandName, out CommandDelegate command))
-            {
-                return command;
-            }
-            else
-            {
-                return null;
-            }
-        }
-
-        public bool HasCommand(string commandName)
-        {
-            return Commands.ContainsKey(commandName);
         }
     }
 }

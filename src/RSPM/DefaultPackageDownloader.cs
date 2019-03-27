@@ -1,5 +1,5 @@
-﻿using RemotePlusLibrary.Extension.CommandSystem;
-using RemotePlusLibrary.ServiceArchitecture;
+﻿using RemotePlusLibrary.ServiceArchitecture;
+using RemotePlusLibrary.SubSystem.Command;
 using RemotePlusServer.Core;
 using System;
 using System.Drawing;

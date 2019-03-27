@@ -3,11 +3,11 @@ using RemotePlusLibrary.Configuration.ServerSettings;
 using RemotePlusLibrary.Contracts;
 using RemotePlusLibrary.Core;
 using RemotePlusLibrary.Core.Faults;
-using RemotePlusLibrary.Extension.CommandSystem;
-using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
 using RemotePlusLibrary.FileTransfer.BrowserClasses;
 using RemotePlusLibrary.Scripting;
 using RemotePlusLibrary.Security.AccountSystem;
+using RemotePlusLibrary.SubSystem.Command;
+using RemotePlusLibrary.SubSystem.Command.CommandClasses;
 using System;
 using System.Collections.Generic;
 using System.ServiceModel;
@@ -29,6 +29,8 @@ namespace RemotePlusLibrary.Discovery
         CommandPipeline RunServerCommand(string Command, CommandExecutionMode commandMode);
         [OperationContract(Name = "RunServerCommandAsync")]
         Task<CommandPipeline> RunServerCommandAsync(string command, CommandExecutionMode commandMode);
+        [OperationContract]
+        void CancelServerCommand();
         [OperationContract()]
         [FaultContract(typeof(ServerFault))]
         void UpdateServerSettings(ServerSettings Settings);
@@ -76,9 +78,6 @@ namespace RemotePlusLibrary.Discovery
         [OperationContract]
         [FaultContract(typeof(ServerFault))]
         string ReadFileAsString(string fileName);
-        [OperationContract]
-        [FaultContract(typeof(ServerFault))]
-        ScriptGlobalInformation[] GetScriptGlobals();
         [OperationContract]
         [FaultContract(typeof(ServerFault))]
         object ExecuteScript(string script);

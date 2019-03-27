@@ -4,27 +4,25 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
-using RemotePlusLibrary.Extension.CommandSystem;
-using RemotePlusServer;
-using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
 using RemotePlusServer.Core;
 using System.IO;
 using BetterLogger;
 using RemotePlusLibrary.ServiceArchitecture;
+using Ninject;
+using RemotePlusServer.Core.ExtensionSystem;
+using RemotePlusLibrary.SubSystem.Command.CommandClasses;
+using RemotePlusLibrary.SubSystem.Command;
 
 namespace CommonWebCommands
 {
-    public class WebCommands : StandordCommandClass
+    public class WebCommands : ServerCommandClass
     {
         private ILogFactory _logger;
         private IRemotePlusService<ServerRemoteInterface> _service;
-        public WebCommands(ILogFactory logger, IRemotePlusService<ServerRemoteInterface> service)
+        public override void InitializeServices(IKernel kernel)
         {
-            _logger = logger;
-            _service = service;
-        }
-        public override void AddCommands()
-        {
+            _logger = kernel.Get<ILogFactory>();
+            _service = kernel.Get<IRemotePlusService<ServerRemoteInterface>>();
             _logger.Log("Adding Chrome", LogLevel.Info, "WebCommands");
             CheckChrome();
             Commands.Add("chrome", chrome);

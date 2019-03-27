@@ -16,7 +16,7 @@ using BetterLogger;
 using GalaSoft.MvvmLight.Messaging;
 using NewRemotePlusClient;
 using NewRemotePlusClient.Models;
-using RemotePlusLibrary.Extension.CommandSystem;
+using RemotePlusLibrary.SubSystem.Command;
 
 namespace NewRemotePlusClient.Views.Pages
 {

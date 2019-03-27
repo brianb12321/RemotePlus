@@ -90,9 +90,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClientCallback.cs" />
-    <Compile Include="ClientExtensionSystem\ClientExtensionLibrary.cs" />
-    <Compile Include="ClientExtensionSystem\ClientExtensionLibraryCollection.cs" />
-    <Compile Include="ClientExtensionSystem\ClientInitEnvironment.cs" />
+    <Compile Include="ClientExtensionSystem\ClientCmdCommands.cs" />
+    <Compile Include="ClientExtensionSystem\ClientCmdExtensionSubsystem.cs" />
+    <Compile Include="ClientExtensionSystem\IClientCmdModule.cs" />
+    <Compile Include="ClientExtensionSystem\StandordClientCommandClass.cs" />
     <Compile Include="CommandLineOptions.cs" />
     <Compile Include="ConsoleHelper.cs" />
     <Compile Include="ErrorDialog.cs">
@@ -101,7 +102,6 @@
     <Compile Include="ErrorDialog.Designer.cs">
       <DependentUpon>ErrorDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="LocalCommands.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -149,6 +149,10 @@
     <ProjectReference Include="..\RemotePlusLibrary.Security\RemotePlusLibrary.Security.csproj">
       <Project>{E4E0BB7E-B995-4EBE-8EFB-3C09BF64A3A2}</Project>
       <Name>RemotePlusLibrary.Security</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RemotePlusLibrary.SubSystem.Command\RemotePlusLibrary.SubSystem.Command.csproj">
+      <Project>{C5145229-F6C8-432B-BF35-C8A2EBC2295F}</Project>
+      <Name>RemotePlusLibrary.SubSystem.Command</Name>
     </ProjectReference>
     <ProjectReference Include="..\RemotePlusLibrary\RemotePlusLibrary.csproj">
       <Project>{00c22a1f-d3df-4193-aaa8-9907d08e2511}</Project>

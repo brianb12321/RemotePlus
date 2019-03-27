@@ -1,7 +1,6 @@
 ﻿using BetterLogger;
 using RemotePlusLibrary.Core;
 using RemotePlusLibrary.Core.IOC;
-using RemotePlusLibrary.Extension.CommandSystem;
 using RemotePlusLibrary.Extension.ResourceSystem;
 using RemotePlusLibrary.RequestSystem.DefaultRequestBuilders;
 using RemotePlusLibrary.RequestSystem.DefaultRequestBuilders.BaseBuilders;
@@ -38,7 +37,7 @@ namespace RemotePlusLibrary
             DefaultKnownTypeManager.AddType(typeof(ResourceQuery));
             InitializeKnownTypesByNamespace("RemotePlusLibrary.RequestSystem.DefaultRequestBuilders");
             InitializeKnownTypesByNamespace("RemotePlusLibrary.RequestSystem.DefaultRequestBuilders.BaseBuilders");
-            InitializeKnownTypesByNamespace("RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing.CommandElements");
+            InitializeKnownTypesByNamespace("RemotePlusLibrary.SubSystem.Command.CommandClasses.Parsing.CommandElements");
             InitializeKnownTypesByNamespace("RemotePlusLibrary.Extension.ResourceSystem.ResourceTypes");
             InitializeKnownTypesByNamespace("RemotePlusLibrary.RequestSystem.DefaultUpdateRequestBuilders");
             InitializeKnownTypesByNamespace("RemotePlusLibrary.Core.EventSystem.Events");

@@ -3,17 +3,19 @@ using System.Text;
 using RemotePlusLibrary;
 using System.Reflection;
 using System.Windows.Forms;
-using RemotePlusLibrary.Extension.CommandSystem;
-using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
 using BetterLogger;
 using System.IO;
 using RemotePlusLibrary.Core.IOC;
 using RemotePlusLibrary.Scripting;
-using RemotePlusLibrary.Extension.ExtensionLoader;
 using RemotePlusLibrary.ServiceArchitecture;
 using RemotePlusLibrary.Core;
 using RemotePlusLibrary.Extension.ResourceSystem;
 using ProxyServer.ExtensionSystem;
+using RemotePlusLibrary.Extension;
+using Ninject;
+using System.Linq;
+using RemotePlusLibrary.SubSystem.Command;
+using System.Threading.Tasks;
 
 namespace ProxyServer
 {
@@ -23,10 +25,9 @@ namespace ProxyServer
         public static Guid ProxyGuid { get; } = Guid.NewGuid();
         public static IServiceManager DefaultServiceManager => IOCContainer.GetService<IServiceManager>();
         public static IRemotePlusService<ProxyServerRemoteImpl> ProxyService => DefaultServiceManager.GetService<ProxyServerRemoteImpl>();
-        public static IScriptingEngine ScriptBuilder => IOCContainer.GetService<IScriptingEngine>();
-        public static ExtensionLibraryCollectionBase<ProxyServer.ExtensionSystem.ProxyExtensionLibrary> DefaultCollection => IOCContainer.GetService<ExtensionLibraryCollectionBase<ExtensionSystem.ProxyExtensionLibrary>>();
+        public static IExtensionLibraryLoader DefaultExtensionLoader => IOCContainer.GetService<IExtensionLibraryLoader>();
 
-        public NetworkSide ExecutingSide => NetworkSide.Server;
+        public NetworkSide ExecutingSide => NetworkSide.Proxy;
 
         public EnvironmentState State { get; private set; } = EnvironmentState.Created;
 
@@ -35,25 +36,27 @@ namespace ProxyServer
         {
             IOCContainer.Provider.Bind<IEnvironment>().ToConstant(new ProxyManager());
             ResourceStore = ResourceStore.New();
-            GlobalServices.RunningEnvironment.Start(args);
+            GlobalServices.RunningEnvironment.Start(args).GetAwaiter().GetResult();
         }
 
-        public void Start(string[] args)
+        public Task Start(string[] args)
         {
             var a = Assembly.GetExecutingAssembly().GetName();
             Console.WriteLine($"Welcome to {a.Name}, version: {a.Version.ToString()}\n\n");
             var core = InitializeServerCore();
-            ProxyExtensionCollection.LoadExtensionsInFolder();
-            IOCContainer.GetService<ICommandEnvironment>().CommandClasses.InitializeCommands();
+            DefaultExtensionLoader.LoadFromFolder("extensions");
+            DefaultExtensionLoader.LoadFromAssembly(Assembly.GetAssembly(typeof(ProxyCommands)));
             RunPostServerCoreInitialization(core);
             GlobalServices.Logger.Log("Running post init on all extensions.", LogLevel.Info);
-            DefaultCollection.RunPostInit();
+            DefaultExtensionLoader.RunPostInit();
+            IOCContainer.Provider.Get<ICommandSubsystem<IProxyCommandModule>>().Init();
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             //BUG: if no form is injected, it will display a blank screen to the user.
             Form f = IOCContainer.GetService<Form>();
             State = EnvironmentState.Running;
             Application.Run(f);
+            return Task.CompletedTask;
         }
 
         private void RunPostServerCoreInitialization(IServerCoreStartup core)
@@ -71,7 +74,7 @@ namespace ProxyServer
             {
                 if (Path.GetExtension(coreFile) == ".dll")
                 {
-                    var core = ServerCoreLoader.LoadServerCoreLibrary(coreFile);
+                    var core = ServerCoreLoader.LoadServerCore(Assembly.LoadFile(coreFile));
                     if (core != null)
                     {
                         foundCore = true;

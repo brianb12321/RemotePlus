@@ -59,6 +59,7 @@
     <ProjectReference Include="..\..\RemotePlusLibrary.Scripting\RemotePlusLibrary.Scripting.csproj">
       <Project>{5C399F78-C133-4F9B-9758-C36A4B7FAE98}</Project>
       <Name>RemotePlusLibrary.Scripting</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\RemotePlusLibrary.Core\RemotePlusLibrary.Core.csproj">
       <Project>{0334629b-6302-42a8-b159-f8646b4d8650}</Project>
@@ -69,6 +70,10 @@
       <Project>{2aa5e768-7e0a-4b0c-a0d1-f79153902df9}</Project>
       <Name>RemotePlusLibrary.Extension</Name>
       <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\..\RemotePlusLibrary.SubSystem.Command\RemotePlusLibrary.SubSystem.Command.csproj">
+      <Project>{C5145229-F6C8-432B-BF35-C8A2EBC2295F}</Project>
+      <Name>RemotePlusLibrary.SubSystem.Command</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\RemotePlusLibrary\RemotePlusLibrary.csproj">
       <Project>{00c22a1f-d3df-4193-aaa8-9907d08e2511}</Project>

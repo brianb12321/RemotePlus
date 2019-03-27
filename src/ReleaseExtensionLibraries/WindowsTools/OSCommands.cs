@@ -4,9 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using RemotePlusServer;
-using RemotePlusLibrary.Extension.CommandSystem;
+using Microsoft.Win32;
 using System.Windows.Forms;
-using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
 using System.IO;
 using RemotePlusServer.Core;
 using AudioSwitcher.AudioApi.CoreAudio;
@@ -16,17 +15,110 @@ using BetterLogger;
 using RemotePlusLibrary.ServiceArchitecture;
 using RemotePlusLibrary.RequestSystem.DefaultRequestBuilders;
 using RemotePlusLibrary.RequestSystem.DefaultUpdateRequestBuilders;
+using NDesk.Options;
+using Ninject;
+using RemotePlusServer.Core.ExtensionSystem;
+using RemotePlusLibrary.SubSystem.Command;
+using RemotePlusLibrary.SubSystem.Command.CommandClasses;
 
 namespace WindowsTools
 {
-    public class OSCommands : StandordCommandClass
+    public class OSCommands : ServerCommandClass
     {
         ILogFactory _logger;
         IRemotePlusService<ServerRemoteInterface> _service;
-        public OSCommands(ILogFactory logger, IRemotePlusService<ServerRemoteInterface> service)
+        [CommandHelp("Manages the registry on the system.")]
+        public CommandResponse regEdit(CommandRequest args, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
         {
-            _service = service;
-            _logger = logger;
+            string mode = string.Empty;
+            string key = string.Empty;
+            string value = string.Empty;
+            string valueName = string.Empty;
+            string valueType = "string";
+            string hive = string.Empty;
+            OptionSet set = new OptionSet()
+                .Add("set", "Sets a value in the Registry", v => mode = "set")
+                .Add("createKey", "Creates a key at a specified path.", v => mode = "createKey")
+                .Add("deleteValue", "Deletes a value from a key.", v => mode = "delete")
+                .Add("deleteKey", "Deletes a key from the Registry.", v => mode = "deleteKey")
+                .Add("view", "View all values in a key.", v => mode = "view")
+                .Add("key|k=", "The path to a key.", v => key = v)
+                .Add("hive|h=", "The hive to open.", v => hive = v)
+                .Add("value|v=", "The value of the value.", v => value = v)
+                .Add("valueType|t=", "The type of value to add.", v => valueType = v)
+                .Add("valueName|n=", "The name of the value.", v => valueName = v)
+                .Add("help|?", "Shows the help screen.", v => mode = "help");
+            set.Parse(args.Arguments.Select(a => a.ToString()));
+            switch(mode)
+            {
+                case "help":
+                    set.WriteOptionDescriptions(currentEnvironment.Out);
+                    break;
+                case "set":
+                    RegistryKey regKey = openHive(hive).OpenSubKey(key, true);
+                    RegistryValueKind kind = getKind(valueType);
+                    regKey.SetValue(value, value, kind);
+                    regKey.Dispose();
+                    break;
+                case "createKey":
+                    openHive(hive).CreateSubKey(key).Dispose();
+                    break;
+                case "deleteValue":
+                    openHive(hive).OpenSubKey(key, true).DeleteValue(valueName, true);
+                    break;
+                case "view":
+                    RegistryKey openRegKey = openHive(hive).OpenSubKey(key, false);
+                    string heading = $"Values for {key}";
+                    currentEnvironment.WriteLine(heading);
+                    currentEnvironment.WriteLine(new string('=', heading.Length));
+                    foreach(var allValues in openRegKey.GetValueNames())
+                    {
+                        currentEnvironment.Write(allValues + ": ");
+                        currentEnvironment.Write(openRegKey.GetValue(allValues).ToString());
+                    }
+                    break;
+            }
+            return new CommandResponse((int)CommandStatus.Success);
+        }
+        private RegistryKey openHive(string hive)
+        {
+            switch(hive.ToUpper())
+            {
+                case "LOCALMACHINE":
+                    return Registry.LocalMachine;
+                case "CURRENTUSER":
+                    return Registry.CurrentUser;
+                case "CURRENTCONFIG":
+                    return Registry.CurrentConfig;
+                case "CLASSESROOT":
+                    return Registry.ClassesRoot;
+                case "USERS":
+                    return Registry.Users;
+                case "PERFORMANCEDATA":
+                    return Registry.PerformanceData;
+                default:
+                    throw new Exception("Hive does not exist.");
+            }
+        }
+        private RegistryValueKind getKind(string valueType)
+        {
+            switch(valueType.ToUpper())
+            {
+                case "STRING":
+                    return RegistryValueKind.String;
+                case "MULTISTRING":
+                    return RegistryValueKind.MultiString;
+                case "EXPANDSTRING":
+                    return RegistryValueKind.ExpandString;
+                case "DWORD":
+                    return RegistryValueKind.DWord;
+                case "QWORD":
+                    return RegistryValueKind.QWord;
+                case "BINARY":
+                    return RegistryValueKind.Binary;
+                default:
+                    throw new Exception("Kind not found.");
+            }
         }
         [CommandHelp("Sends a key to the remote server.")]
         public CommandResponse sendKey(CommandRequest args, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
@@ -73,29 +165,7 @@ namespace WindowsTools
             Win32Wrapper.BlockInputForInterval(int.Parse(args.Arguments[1].ToString()));
             return new CommandResponse((int)CommandStatus.Success);
         }
-        [CommandHelp("Sets the server audio to a specific percentage.")]
-        public CommandResponse setVolume(CommandRequest args, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
-        {
-            if (args.Arguments.Count < 2)
-            {
-                currentEnvironment.WriteLine(new ConsoleText("You must specify a percentage.") { TextColor = Color.Red });
-                return new CommandResponse((int)CommandStatus.Fail);
-            }
-            else
-            {
-                if(int.TryParse(args.Arguments[1].ToString(), out int percent))
-                {
-                    CoreAudioDevice defaultPlaybackDevice = new CoreAudioController().DefaultPlaybackDevice;
-                    defaultPlaybackDevice.Volume = percent;
-                    return new CommandResponse((int)CommandStatus.Success);
-                }
-                else
-                {
-                    currentEnvironment.WriteLine(new ConsoleText("Given ToString() is invalid.") { TextColor = Color.Red });
-                    return new CommandResponse((int)CommandStatus.Fail);
-                }
-            }
-        }
+        
         [CommandHelp("Toggles the mute on the server.")]
         public CommandResponse toggleMute(CommandRequest args, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
         {
@@ -144,15 +214,17 @@ namespace WindowsTools
                 if(sw != null) sw.Dispose();
             }
         }
-        public override void AddCommands()
+        public override void InitializeServices(IKernel kernel)
         {
+            _service = kernel.Get<IRemotePlusService<ServerRemoteInterface>>();
+            _logger = kernel.Get<ILogFactory>();
             _logger.Log("Adding OS commands", LogLevel.Info, "WindowsTools");
+            Commands.Add("regEdit", regEdit);
             Commands.Add("fileM", Filem.filem_command);
             Commands.Add("openDiskDrive", openDiskDrive);
             Commands.Add("drives", drives);
             Commands.Add("setMousePos", setMousePos);
             Commands.Add("blockInputI", blockInputI);
-            Commands.Add("setVolume", setVolume);
             Commands.Add("toggleMute", toggleMute);
             Commands.Add("sendKey", sendKey);
             Commands.Add("hugeFile", hugeFile);

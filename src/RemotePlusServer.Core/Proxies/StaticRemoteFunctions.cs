@@ -11,12 +11,10 @@ namespace RemotePlusServer.Core.Proxies
 {
     public class StaticRemoteFunctions
     {
-        [IndexScriptObject]
         public static void speak(string message, VoiceGender voiceGender, VoiceAge voiceAge)
         {
             ServerManager.ServerRemoteService.RemoteInterface.Speak(message, voiceGender, voiceAge);
         }
-        [IndexScriptObject]
         public static void beep(int freq, int duration)
         {
             ServerManager.ServerRemoteService.RemoteInterface.Beep(freq, duration);

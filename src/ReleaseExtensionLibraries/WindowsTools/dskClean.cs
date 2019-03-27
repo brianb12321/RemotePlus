@@ -1,6 +1,4 @@
 ﻿using RemotePlusLibrary;
-using RemotePlusLibrary.Extension.CommandSystem;
-using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
 using RemotePlusServer;
 using System;
 using System.Collections.Generic;
@@ -17,6 +15,9 @@ using RemotePlusServer.Core;
 using BetterLogger;
 using RemotePlusLibrary.RequestSystem.DefaultRequestBuilders;
 using System.Drawing;
+using RemotePlusLibrary.SubSystem.Command;
+using RemotePlusLibrary.SubSystem.Command.CommandClasses;
+using RemotePlusLibrary.Core;
 
 namespace WindowsTools
 {
@@ -27,7 +28,7 @@ namespace WindowsTools
         public static CommandResponse dskCleanCommand(CommandRequest args, CommandPipeline pipe, ICommandEnvironment _currentEnvironment)
         {
             currentEnvironment = _currentEnvironment;
-            if (ServerManager.ServerRemoteService.RemoteInterface.Client.ClientType != RemotePlusLibrary.Client.ClientType.CommandLine)
+            if (ServerManager.ServerRemoteService.RemoteInterface.Client.ClientType != ClientType.CommandLine)
             {
                 currentEnvironment.WriteLine("dskClean does not work on a GUI yet.");
                 return new CommandResponse(-3);
@@ -298,7 +299,6 @@ namespace WindowsTools
         /// <summary>
         /// Removes files from the Windows temp Folder.
         /// </summary>
-        [IndexScriptObject]
         public void cleanWindowsTempFolder()
         {
             dskClean.cleanWindowsTempFolder();
@@ -306,7 +306,6 @@ namespace WindowsTools
         /// <summary>
         /// Removes files from the AppData temp folder.
         /// </summary>
-        [IndexScriptObject]
         public void cleanAppDataTempFolder()
         {
             dskClean.cleanAppDataTempFolder();
@@ -314,7 +313,6 @@ namespace WindowsTools
         /// <summary>
         /// Removes files from the IE cache folder.
         /// </summary>
-        [IndexScriptObject]
         public void cleanIECache()
         {
             dskClean.cleanInternetExplorerCache();
@@ -322,7 +320,6 @@ namespace WindowsTools
         /// <summary>
         /// Takes ownership of all the files from the Windows temp folder to the current user.
         /// </summary>
-        [IndexScriptObject]
         public void ownWindowsTempFolder()
         {
             dskClean.ownWindowsTempFolder();
@@ -330,7 +327,6 @@ namespace WindowsTools
         /// <summary>
         /// Takes ownership of all the files from the AppData temp folder to the current user.
         /// </summary>
-        [IndexScriptObject]
         public void ownAppDataTempFolder()
         {
             dskClean.ownAppDataTempFolder();
@@ -338,7 +334,6 @@ namespace WindowsTools
         /// <summary>
         /// Takes ownership of all the files from the IE cache folder to the current user.
         /// </summary>
-        [IndexScriptObject]
         public void ownIECache()
         {
             dskClean.ownIECacheFolder();

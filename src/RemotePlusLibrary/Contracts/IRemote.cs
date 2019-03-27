@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ServiceModel;
 using RemotePlusLibrary.Core;
-using RemotePlusLibrary.Extension.CommandSystem;
-using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
 using RemotePlusLibrary.Scripting;
 using RemotePlusLibrary.Security.AccountSystem;
 using RemotePlusLibrary.Core.Faults;
@@ -10,6 +8,8 @@ using RemotePlusLibrary.Configuration.ServerSettings;
 using RemotePlusLibrary.FileTransfer.BrowserClasses;
 using System;
 using System.Threading.Tasks;
+using RemotePlusLibrary.SubSystem.Command.CommandClasses;
+using RemotePlusLibrary.SubSystem.Command;
 
 namespace RemotePlusLibrary.Contracts
 {
@@ -35,6 +35,8 @@ namespace RemotePlusLibrary.Contracts
         CommandPipeline RunServerCommand(string Command, CommandExecutionMode commandMode);
         [OperationContract(Name = "RunServerCommandAsync")]
         Task<CommandPipeline> RunServerCommandAsync(string command, CommandExecutionMode commandMode);
+        [OperationContract]
+        void CancelServerCommand();
         [OperationContract()]
         [FaultContract(typeof(ServerFault))]
         [FaultContract(typeof(ProxyFault))]
@@ -96,10 +98,6 @@ namespace RemotePlusLibrary.Contracts
         [FaultContract(typeof(ServerFault))]
         [FaultContract(typeof(ProxyFault))]
         string ReadFileAsString(string fileName);
-        [OperationContract]
-        [FaultContract(typeof(ServerFault))]
-        [FaultContract(typeof(ProxyFault))]
-        ScriptGlobalInformation[] GetScriptGlobals();
         [OperationContract]
         [FaultContract(typeof(ServerFault))]
         [FaultContract(typeof(ProxyFault))]

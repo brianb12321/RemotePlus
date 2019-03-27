@@ -1,8 +1,6 @@
 ﻿using BetterLogger;
 using RemotePlusLibrary.Configuration.ServerSettings;
 using RemotePlusLibrary.Core;
-using RemotePlusLibrary.Extension.CommandSystem;
-using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
 using RemotePlusLibrary.Core.IOC;
 using RemotePlusLibrary.Scripting;
 using RemotePlusLibrary.Security.AccountSystem;
@@ -18,6 +16,10 @@ using RemotePlusLibrary.Extension.ResourceSystem.ResourceTypes;
 using RemotePlusLibrary.Extension.ResourceSystem.ResourceTypes.Devices;
 using System.Linq;
 using System.Reflection;
+using RemotePlusLibrary.Extension;
+using Ninject;
+using RemotePlusLibrary.SubSystem.Command.CommandClasses;
+using RemotePlusLibrary.SubSystem.Command;
 
 namespace RemotePlusServer.Core.ServerCore
 {
@@ -105,50 +107,34 @@ namespace RemotePlusServer.Core.ServerCore
         {
             return builder.AddTask(() =>
             {
-                ServerExtensionLibraryCollection.LoadExtensionsInFolder();
+                ServerManager.DefaultExtensionLibraryLoader.LoadFromAssembly(Assembly.GetAssembly(typeof(DefaultCommands)));
+                ServerManager.DefaultExtensionLibraryLoader.LoadFromFolder("extensions");
+            });
+        }
+        public static IServerBuilder LoadExtensionByType<TType>(this IServerBuilder builder)
+        {
+            return builder.AddTask(() =>
+            {
+                ServerManager.DefaultExtensionLibraryLoader.LoadFromAssembly(Assembly.GetAssembly(typeof(TType)));
             });
         }
         public static void InitializeGlobals()
         {
             try
             {
-                ServerManager.ScriptBuilder.AddScriptObject("serverInstance", new PythonServerInstance(), "Provides access to the global server instance.", ScriptGlobalType.Variable);
-                ServerManager.ScriptBuilder.AddScriptObject("executeServerCommand", new Func<string, CommandPipeline>((command => ServerManager.ServerRemoteService.RemoteInterface.RunServerCommand(command, CommandExecutionMode.Script))), "Executes a command to the server.", ScriptGlobalType.Function);
-                ServerManager.ScriptBuilder.AddScriptObject("speak", new Action<string, VoiceGender, VoiceAge>(StaticRemoteFunctions.speak), "Makes the server speak.", ScriptGlobalType.Function);
-                ServerManager.ScriptBuilder.AddScriptObject("beep", new Action<int, int>(StaticRemoteFunctions.beep), "Makes the server beep.", ScriptGlobalType.Function);
-                ServerManager.ScriptBuilder.AddScriptObject("functionExists", new Func<string, bool>((name) => ServerManager.ScriptBuilder.FunctionExists(name)), "Returns true if the function exists in the server.", ScriptGlobalType.Function);
-                ServerManager.ScriptBuilder.AddScriptObject("clientPrint", new Action<string>((text => ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(text))), "Prints the text to the client-console", ScriptGlobalType.Function);
-                ServerManager.ScriptBuilder.AddScriptObject("ps", new Action<string, string, bool, bool>((program, args, shell, ignore) =>
-                {
-                    ServerManager.ServerRemoteService.RemoteInterface.RunProgram(program, args, shell, ignore);
-                }), "Executes a program on the server using the RunProgram service method.", ScriptGlobalType.Function);
+                IScriptExecutionContext context = IOCContainer.GetService<IScriptingEngine>().GetDefaultModule();
+                context.AddVariable("serverInstance", new PythonServerInstance());
+                context.AddVariable("executeServerCommand", new Func<string, CommandPipeline>((command => ServerManager.ServerRemoteService.RemoteInterface.RunServerCommand(command, CommandExecutionMode.Script))));
+                context.AddVariable("speak", new Action<string, VoiceGender, VoiceAge>(StaticRemoteFunctions.speak));
+                context.AddVariable("beep", new Action<int, int>(StaticRemoteFunctions.beep));
+                context.AddVariable("variableExists", new Func<string, bool>((name) => context.ContainsVariable(name)));
             }
             catch (ArgumentException)
             {
 
             }
         }
-        /// <summary>
-        /// Initializes the scripting engine used for executing scripts.
-        /// </summary>
-        /// <param name="builder"></param>
-        /// <param name="options">Configuration options for the scripting engine.</param>
-        /// <returns></returns>
-        public static IServerBuilder InitializeScriptingEngine(this IServerBuilder builder, Action<ScriptingEngineOptions> options)
-        {
-            return builder.AddTask(() =>
-            {
-                GlobalServices.Logger.Log("Starting scripting engine.", LogLevel.Info);
-                ServerManager.ScriptBuilder.InitializeEngine();
-                GlobalServices.Logger.Log($"Engine started. IronPython version {ServerManager.ScriptBuilder.ScriptingEngine.LanguageVersion.ToString()}", LogLevel.Info, "Scripting Engine");
-                //ServerManager.ScriptBuilder.ScriptingEngine.Runtime.IO.SetInput(new MemoryStream(), new Internal._ClientTextReader(), Encoding.ASCII);
-                GlobalServices.Logger.Log("Setting sys.path.", LogLevel.Debug, "Scripting Engine");
-                ICollection<string> paths = ServerManager.ScriptBuilder.ScriptingEngine.GetSearchPaths();
-                paths.Add(AppDomain.CurrentDomain.BaseDirectory + "\\PythonStdLib");
-                ServerManager.ScriptBuilder.ScriptingEngine.SetSearchPaths(paths);
-                GlobalServices.Logger.Log("Finished starting scripting engine.", LogLevel.Info);
-            });
-        }
+
         /// <summary>
         /// Sets up the variable system for RemotePlus server.
         /// </summary>
@@ -162,9 +148,10 @@ namespace RemotePlusServer.Core.ServerCore
                 resourceManager.AddResource("/serverProperties", new StringResource("Name", "RemotePlusServer"));
                 IDeviceSearcher searcher = new DefaultDeviceSearcher();
                 resourceManager.AddResource("/dev/utils", new TTSDevice());
+                resourceManager.AddResource("/dev/utils", new NullDevice("null"));
                 searcher.Get<KeyboardDevice>("keyboard").ToList().ForEach(d => resourceManager.AddResource("/dev/io", d));
                 searcher.Get<MouseDevice>("mouse").ToList().ForEach(d => resourceManager.AddResource("/dev/io", d));
-                ServerManager.ScriptBuilder.AddScriptObject<Func<string, ResourceQuery>>("resq", (name) => new ResourceQuery(name, Guid.Empty), "Generates a new resource query.", ScriptGlobalType.Function);
+                IOCContainer.GetService<IScriptingEngine>().GetDefaultModule().AddVariable<Func<string, ResourceQuery>>("resq", (name) => new ResourceQuery(name, Guid.Empty));
             });
         }
         /// <summary>
@@ -275,6 +262,15 @@ namespace RemotePlusServer.Core.ServerCore
                     ServerManager.FileTransferService.Host.Description.Behaviors.Add(smb2);
                     ServerManager.FileTransferService.Host.AddServiceEndpoint(typeof(IMetadataExchange), mexBinding, "http://0.0.0.0:9001/Mex2");
                 }
+            });
+        }
+        public static IServerBuilder LoadDefaultExtensionSubsystems<TSubsystem, TModule>(this IServerBuilder builder)
+            where TSubsystem : IExtensionSubsystem<TModule>
+            where TModule : IExtensionModule
+        {
+            return builder.AddTask(() =>
+            {
+                IOCContainer.Provider.Get<TSubsystem>().Init();
             });
         }
     }

@@ -1,4 +1,5 @@
 ﻿using RemotePlusLibrary.Discovery;
+using RemotePlusLibrary.SubSystem.Command;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -46,7 +47,7 @@ namespace ProxyServer.Scripting.Batch
         {
             return addTask((s) =>
             {
-                s.ClientCallback.RunServerCommand(command, RemotePlusLibrary.Extension.CommandSystem.CommandExecutionMode.Script);
+                s.ClientCallback.RunServerCommand(command, CommandExecutionMode.Script);
             });
         }
         public virtual JobTask addScriptTask(string script)

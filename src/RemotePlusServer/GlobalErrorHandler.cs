@@ -37,7 +37,9 @@ namespace RemotePlusServer
 
         public void ProvideFault(Exception error, MessageVersion version, ref Message fault)
         {
-            FaultException<ServerFault> fexp = new FaultException<ServerFault>(new ServerFault(error.StackTrace, ServerManager.DefaultCollection.Libraries.Select(f => f.Value.FriendlyName).ToList()), error.Message);
+            FaultException<ServerFault> fexp = new FaultException<ServerFault>(new ServerFault(error.StackTrace, ServerManager.DefaultExtensionLibraryLoader.GetAllLibraries()
+                .Select(f => f.FriendlyName)
+                .ToList()), error.Message);
             MessageFault m = fexp.CreateMessageFault();
             fault = Message.CreateMessage(version, m, null);
         }

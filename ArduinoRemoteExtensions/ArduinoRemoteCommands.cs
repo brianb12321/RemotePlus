@@ -1,6 +1,4 @@
-﻿using RemotePlusLibrary.Extension.CommandSystem;
-using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,20 +14,17 @@ using Ninject;
 using System.Drawing;
 using RemotePlusLibrary.Discovery.Events;
 using ArduinoRemoteExtensionsLib.Events;
+using RemotePlusServer.Core.ExtensionSystem;
+using RemotePlusLibrary.SubSystem.Command.CommandClasses;
+using RemotePlusLibrary.SubSystem.Command;
 
 namespace ArduinoRemoteExtensions
 {
-    public class ArduinoRemoteCommands : StandordCommandClass
+    public class ArduinoRemoteCommands : ServerCommandClass
     {
         private IEventBus _eventBus;
         private ILogFactory _logger;
         private SerialPort _serialPort = null;
-
-        public ArduinoRemoteCommands(ILogFactory logger, IEventBus eventBus)
-        {
-            _logger = logger;
-            _eventBus = eventBus;
-        }
         [CommandHelp("Publishes any Arduino (Serial console) activity to the event bus.")]
         public CommandResponse arduinoEvent(CommandRequest args, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
         {
@@ -62,8 +57,10 @@ namespace ArduinoRemoteExtensions
             currentEnvironment.WriteLine("Arduino event registired.");
             return new CommandResponse((int)CommandStatus.Success);
         }
-        public override void AddCommands()
+        public override void InitializeServices(IKernel kernel)
         {
+            _logger = kernel.Get<ILogFactory>();
+            _eventBus = kernel.Get<IEventBus>();
             Commands.Add("arduinoEvent", arduinoEvent);
             Commands.Add("arduinoCancel", arduinoCancel);
             Commands.Add("arduinoBeep", arduinoBeep);

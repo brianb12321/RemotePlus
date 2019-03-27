@@ -1,9 +1,9 @@
 ﻿using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using RemotePlusLibrary.Extension.ExtensionLoader;
 using ProxyServerCore;
 using RemotePlusLibrary.Core;
+using RemotePlusLibrary.Extension;
 
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
@@ -16,7 +16,7 @@ using RemotePlusLibrary.Core;
 [assembly: AssemblyCopyright("Copyright ©  2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
-[assembly: ServerCoreLibrary(typeof(Startup), "ProxyServerCore",
+[assembly: ServerCoreExtensionLibrary(typeof(Startup), "ProxyServerCore",
     FriendlyName = "Proxy Server Core",
     LibraryType = NetworkSide.Server)]
 

@@ -1,5 +1,4 @@
 ﻿using RemotePlusLibrary.Core;
-using RemotePlusLibrary.Extension.ExtensionLoader;
 using RemotePlusLibrary.RequestSystem;
 using RemotePlusLibrary.RequestSystem.DefaultRequestBuilders;
 using System;

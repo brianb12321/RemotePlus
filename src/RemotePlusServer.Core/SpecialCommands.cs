@@ -1,6 +1,7 @@
-﻿using RemotePlusLibrary.Extension.CommandSystem;
-using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
+﻿using Ninject;
 using RemotePlusLibrary.ServiceArchitecture;
+using RemotePlusLibrary.SubSystem.Command;
+using RemotePlusLibrary.SubSystem.Command.CommandClasses;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -149,7 +150,7 @@ namespace RemotePlusServer.Core
                 }
             }
         }
-        public override void AddCommands()
+        public override void InitializeServices(IKernel kernel)
         {
             Commands.Add("if", _if);
         }

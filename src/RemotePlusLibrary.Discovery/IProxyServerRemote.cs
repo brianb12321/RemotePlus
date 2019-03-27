@@ -1,6 +1,6 @@
 ﻿using RemotePlusLibrary.Client;
 using RemotePlusLibrary.Contracts;
-using RemotePlusLibrary.Extension.CommandSystem;
+using RemotePlusLibrary.SubSystem.Command;
 using RemotePlusLibrary.RequestSystem;
 using RemotePlusLibrary.Security.AccountSystem;
 using RemotePlusLibrary.Security.Authentication;

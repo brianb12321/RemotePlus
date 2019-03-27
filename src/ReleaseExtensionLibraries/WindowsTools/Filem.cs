@@ -1,6 +1,4 @@
-﻿using RemotePlusLibrary.Extension.CommandSystem;
-using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
-using System;
+﻿using System;
 using System.IO;
 using System.Threading;
 using System.Security.Principal;
@@ -11,6 +9,8 @@ using RemotePlusLibrary.RequestSystem;
 using RemotePlusServer.Core;
 using BetterLogger;
 using RemotePlusLibrary.RequestSystem.DefaultRequestBuilders;
+using RemotePlusLibrary.SubSystem.Command;
+using RemotePlusLibrary.SubSystem.Command.CommandClasses;
 
 namespace WindowsTools
 {
@@ -26,7 +26,7 @@ namespace WindowsTools
             GlobalServices.Logger.Log(message, level, "FileM");
         }
         [CommandHelp("Allows you to manage files on the remote file system.")]
-        [CommandBehavior(SupportClients = RemotePlusLibrary.Extension.ClientSupportedTypes.CommandLine,
+        [CommandBehavior(SupportClients = ClientType.CommandLine,
             ClientRejectionMessage = "FileM is not supported for GUI clients yet.",
             CommandDevelepmentState = RemotePlusLibrary.Extension.ExtensionDevelopmentState.InDevelopment)]
         public static CommandResponse filem_command(CommandRequest args, CommandPipeline pipe, ICommandEnvironment currentEnvironment)

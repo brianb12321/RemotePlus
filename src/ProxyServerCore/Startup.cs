@@ -6,13 +6,14 @@ using ProxyServer.ExtensionSystem;
 using BetterLogger;
 using RemotePlusLibrary;
 using RemotePlusLibrary.ServiceArchitecture;
-using RemotePlusLibrary.Extension.CommandSystem;
-using RemotePlusLibrary.Extension.CommandSystem.CommandClasses.Parsing;
 using RemotePlusLibrary.Core.EventSystem;
 using RemotePlusLibrary.Core;
-using RemotePlusLibrary.Extension.CommandSystem.CommandClasses;
 using RemotePlusLibrary.Extension.ResourceSystem;
 using RemotePlusLibrary.Scripting;
+using RemotePlusLibrary.Extension;
+using RemotePlusLibrary.SubSystem.Command;
+using RemotePlusLibrary.SubSystem.Command.CommandClasses;
+using RemotePlusLibrary.SubSystem.Command.CommandClasses.Parsing;
 
 namespace ProxyServerCore
 {
@@ -25,15 +26,14 @@ namespace ProxyServerCore
                 .AddSingleton<IEventBus, EventBus>()
                 .UseResourceManager<ProxyResourceManager, FileResourceLoader>()
                 .UseErrorHandler<GlobalErrorHandler>()
-                .UseExtensionContainer<ProxyExtensionCollection, ProxyExtensionLibrary>(new ProxyExtensionCollection())
-                .UseScriptingEngine<ScriptBuilder>()
+                .UseExtensionSystem<DefaultExtensionLoader>()
+                .UseScriptingEngine<IronPythonScriptingEngine>()
                 .UseServerControlPage<ServerControls>()
                 .UseConfigurationDataAccess<RemotePlusLibrary.Configuration.StandordDataAccess.ConfigurationHelper>()
-                .UseCommandline<CommandEnvironment>(builder =>
+                .UseCommandline<CommandEnvironment, ProxyCommandSubsystem, IProxyCommandModule>(builder =>
                     builder.UseLexer<CommandLexer>()
                    .UseParser<CommandParser>()
-                   .UseExecutor<CommandExecutor>()
-                   .AddCommandClass<ProxyCommands>());
+                   .UseExecutor<CommandExecutor>());
 
             //Set up WCF services.
             IServiceManager manager = IOCContainer.GetService<IServiceManager>();
@@ -53,7 +53,6 @@ namespace ProxyServerCore
         public void InitializeServer(IServerBuilder builder)
         {
             builder.InitializeKnownTypes()
-                .InitializeScriptingEngine()
                 .InitializeGlobals()
                 .LoadGlobalResources();
         }

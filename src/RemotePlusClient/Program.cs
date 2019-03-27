@@ -24,7 +24,7 @@ namespace RemotePlusClient
         static void Main()
         {
             IOCContainer.Provider.Bind<IEnvironment>().ToConstant(new Program());
-            GlobalServices.RunningEnvironment.Start(new string[] { });
+            GlobalServices.RunningEnvironment.Start(new string[] { }).GetAwaiter().GetResult();
         }
 
         public void Close()
@@ -37,7 +37,7 @@ namespace RemotePlusClient
             finally { Application.Exit(); }
         }
 
-        public void Start(string[] args)
+        public Task Start(string[] args)
         {
             IKernel provider = IOCContainer.Provider;
             Application.SetUnhandledExceptionMode(UnhandledExceptionMode.Automatic);
@@ -50,6 +50,7 @@ namespace RemotePlusClient
             Application.Run(new Form1(provider.Get<IDialogManager>(),
                 provider.Get<ICommandManager<MenuItem>>(),
                 provider.Get<IConnectionManager>()));
+            return Task.CompletedTask;
         }
     }
 }
