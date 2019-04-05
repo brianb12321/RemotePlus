@@ -1,6 +1,7 @@
 ﻿using BetterLogger;
 using Ninject;
 using RemotePlusLibrary.Core;
+using RemotePlusLibrary.Extension;
 using RemotePlusLibrary.SubSystem.Command;
 using RemotePlusLibrary.SubSystem.Command.CommandClasses;
 using System;
@@ -14,6 +15,7 @@ using static RemotePlusClientCmd.ClientCmdManager;
 
 namespace RemotePlusClientCmd.ClientExtensionSystem
 {
+    [ExtensionModule]
     public class ClientCmdCommands : StandordClientCommandClass
     {
         ICommandSubsystem<IClientCmdModule> _commandSubsystem;

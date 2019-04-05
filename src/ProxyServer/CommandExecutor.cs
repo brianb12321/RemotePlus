@@ -56,7 +56,7 @@ namespace ProxyServer
                 }
                 catch (Exception ex)
                 {
-                    currentEnvironment.WriteLineError($"Error executing script file: {ex.Message}", Color.Red);
+                    currentEnvironment.WriteLineErrorWithColor($"Error executing script file: {ex.Message}", Color.Red);
                     return new CommandResponse((int)CommandStatus.Fail);
                 }
             }
@@ -122,7 +122,7 @@ namespace ProxyServer
                     }
                     else if (scdm == StatusCodeDeliveryMethod.TellMessageToServerConsole)
                     {
-                        ProxyManager.ProxyService.RemoteInterface.ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyManager.ProxyGuid, $"Command {arguments.Arguments[0]} finished with status code {sc.ToString()}", LogLevel.Info);
+                        ProxyManager.ProxyService.RemoteInterface.ProxyClient.ClientCallback.WriteToClientConsole(ProxyManager.ProxyGuid, $"Command {arguments.Arguments[0]} finished with status code {sc.ToString()}", LogLevel.Info);
                     }
                     return sc;
                 }

@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BetterLogger;
 using RemotePlusLibrary.Core;
+using System.Drawing;
 
 namespace RemotePlusLibrary.Discovery
 {
@@ -27,15 +28,23 @@ namespace RemotePlusLibrary.Discovery
         [OperationContract(IsOneWay = true)]
         void TellMessage(Guid serverGuid, string Message, LogLevel o);
         [OperationContract(Name = "TellMessageToServerConsoleUsingString")]
-        void TellMessageToServerConsole(Guid serverGuid, string Message);
+        void WriteToClientConsole(Guid serverGuid, string Message);
         [OperationContract(Name = "TellMessageToServerConsoleUsingStringNoNewLine")]
-        void TellMessageToServerConsoleNoNewLine(Guid serverGuid, string Message);
+        void WriteToClientConsoleNoNewLine(Guid serverGuid, string Message);
         [OperationContract(Name = "TellMessageToServerConsoleWithLogLevel")]
-        void TellMessageToServerConsole(Guid serverGuid, string Message, LogLevel level);
+        void WriteToClientConsole(Guid serverGuid, string Message, LogLevel level);
         [OperationContract(Name = "TellMessageToServerConsoleWithConsoleText")]
-        void TellMessageToServerConsole(Guid serverGuid, ConsoleText text);
+        void WriteToClientConsole(Guid serverGuid, ConsoleText text);
         [OperationContract(Name = "TellMessageToServerConsoleWithFrom")]
-        void TellMessageToServerConsole(Guid serverGuid, string Message, LogLevel level, string from);
+        void WriteToClientConsole(Guid serverGuid, string Message, LogLevel level, string from);
+        [OperationContract]
+        void SetClientConsoleBackgroundColor(Guid serverGuid, Color bgColor);
+        [OperationContract]
+        void SetClientConsoleForegroundColor(Guid serverGuid, Color fgColor);
+        [OperationContract]
+        void ResetClientConsoleColor(Guid serverGuid);
+        [OperationContract]
+        void ClearServerConsole(Guid serverGuid);
         [OperationContract]
         ClientBuilder RegisterClient();
         [OperationContract(IsOneWay = true)]

@@ -9,6 +9,7 @@ using RemotePlusLibrary.Security.AccountSystem;
 using RemotePlusLibrary.Security.Authentication;
 using RemotePlusLibrary.SubSystem.Command;
 using System;
+using System.Drawing;
 using System.Speech.Synthesis;
 using System.Windows.Forms;
 using TinyMessenger;
@@ -244,55 +245,99 @@ namespace RemotePlusServer
         {
             if (useProxy)
             {
-                proxyChannel.TellMessageToServerConsole(Server, Message);
+                proxyChannel.WriteToClientConsole(Server, Message);
             }
             else
             {
-                c.TellMessageToServerConsole(Server, Message);
+                c.WriteToClientConsole(Server, Message);
             }
         }
-        public void TellMessageToServerConsoleNoNewLine(string Message)
+        public void ClearServerConsole()
         {
             if (useProxy)
             {
-                proxyChannel.TellMessageToServerConsoleNoNewLine(Server, Message);
+                proxyChannel.ClearServerConsole(Server);
             }
             else
             {
-                c.TellMessageToServerConsoleNoNewLine(Server, Message);
+                c.ClearClientConsole(Server);
+            }
+        }
+        public void SetClientConsoleBackgroundColor(Color bgColor)
+        {
+            if (useProxy)
+            {
+                proxyChannel.SetClientConsoleBackgroundColor(Server, bgColor);
+            }
+            else
+            {
+                c.SetClientConsoleBackgroundColor(Server, bgColor);
+            }
+        }
+        public void SetClientConsoleForegroundColor(Color fgColor)
+        {
+            if (useProxy)
+            {
+                proxyChannel.SetClientConsoleForegroundColor(Server, fgColor);
+            }
+            else
+            {
+                c.SetClientConsoleForegroundColor(Server, fgColor);
+            }
+        }
+        public void ResetClientConsoleColor()
+        {
+            if (useProxy)
+            {
+                proxyChannel.ResetClientConsoleColor(Server);
+            }
+            else
+            {
+                c.ResetClientConsoleColor(Server);
+            }
+        }
+        public void WriteToClientConsoleNoNewLine(string Message)
+        {
+            if (useProxy)
+            {
+                proxyChannel.WriteToClientConsoleNoNewLine(Server, Message);
+            }
+            else
+            {
+                c.WriteToClientConsoleNoNewLine(Server, Message);
             }
         }
         public void TellMessageToServerConsole(string message, LogLevel level)
         {
             if (useProxy)
             {
-                proxyChannel.TellMessageToServerConsole(Server, message, level);
+                proxyChannel.WriteToClientConsole(Server, message, level);
             }
             else
             {
-                c.TellMessageToServerConsole(Server, message, level);
+                c.WriteToClientConsole(Server, message, level);
             }
         }
         public void TellMessageToServerConsole(string message, LogLevel level, string from)
         {
             if (useProxy)
             {
-                proxyChannel.TellMessageToServerConsole(Server, message, level, from);
+                proxyChannel.WriteToClientConsole(Server, message, level, from);
             }
             else
             {
-                c.TellMessageToServerConsole(Server, message, level, from);
+                c.WriteToClientConsole(Server, message, level, from);
             }
         }
         public void TellMessageToServerConsole(ConsoleText text)
         {
             if (useProxy)
             {
-                proxyChannel.TellMessageToServerConsole(Server, text);
+                proxyChannel.WriteToClientConsole(Server, text);
             }
             else
             {
-                c.TellMessageToServerConsole(Server, text);
+                c.WriteToClientConsole(Server, text);
             }
         }
 

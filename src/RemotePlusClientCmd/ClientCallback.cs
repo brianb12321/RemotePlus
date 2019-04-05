@@ -17,6 +17,7 @@ using BetterLogger;
 using RemotePlusLibrary.Extension.ResourceSystem;
 using TinyMessenger;
 using RemotePlusLibrary.SubSystem.Command;
+using System.Drawing;
 
 namespace RemotePlusClientCmd
 {
@@ -147,31 +148,32 @@ namespace RemotePlusClientCmd
             //ClientCmdManager.WaitFlag = false;
         }
 
-        public void TellMessageToServerConsole(Guid guid, string Message)
+        public void WriteToClientConsole(Guid guid, string Message)
         {
             //ClientCmdManager.WaitFlag = true;
             Console.WriteLine(Message);
             //ClientCmdManager.WaitFlag = false;
         }
 
-        public void TellMessageToServerConsole(Guid guid, ConsoleText text)
+        public void WriteToClientConsole(Guid guid, ConsoleText text)
         {
             Colorful.Console.ForegroundColor = text.TextColor;
+            Colorful.Console.BackgroundColor = text.BackColor;
             Colorful.Console.WriteLine(text.Text);
             Colorful.Console.ResetColor();
         }
 
-        public void TellMessageToServerConsole(Guid serverGuid, string Message, LogLevel level)
+        public void WriteToClientConsole(Guid serverGuid, string Message, LogLevel level)
         {
             GlobalServices.Logger.Log(Message, level, "Server Console", serverGuid.ToString());
         }
 
-        public void TellMessageToServerConsole(Guid serverGuid, string Message, LogLevel level, string from)
+        public void WriteToClientConsole(Guid serverGuid, string Message, LogLevel level, string from)
         {
             GlobalServices.Logger.Log(Message, level, $"Server Console {from}", serverGuid.ToString());
         }
 
-        public void TellMessageToServerConsoleNoNewLine(Guid serverGuid, string Message)
+        public void WriteToClientConsoleNoNewLine(Guid serverGuid, string Message)
         {
             Console.Write(Message);
         }
@@ -184,6 +186,26 @@ namespace RemotePlusClientCmd
         public bool HasKnownType(string name)
         {
             return DefaultKnownTypeManager.HasName(name);
+        }
+
+        public void ClearClientConsole(Guid guid)
+        {
+            Console.Clear();
+        }
+
+        public void SetClientConsoleBackgroundColor(Guid guid, Color bgColor)
+        {
+            Colorful.Console.BackgroundColor = bgColor;
+        }
+
+        public void SetClientConsoleForegroundColor(Guid guid, Color fgColor)
+        {
+            Colorful.Console.ForegroundColor = fgColor;
+        }
+
+        public void ResetClientConsoleColor(Guid guid)
+        {
+            Colorful.Console.ResetColor();
         }
     }
 }

@@ -19,7 +19,7 @@ namespace RemotePlusServer.Internal
         }
         public override void Write(char value)
         {
-            _client.TellMessageToServerConsoleNoNewLine(value.ToString());
+            _client.WriteToClientConsoleNoNewLine(value.ToString());
         }
         public override void WriteLine(char value)
         {
@@ -28,7 +28,7 @@ namespace RemotePlusServer.Internal
 
         public override void Write(string value)
         {
-            _client.TellMessageToServerConsoleNoNewLine(value);
+            _client.WriteToClientConsoleNoNewLine(value);
         }
         public override void WriteLine(string value)
         {
@@ -36,7 +36,7 @@ namespace RemotePlusServer.Internal
         }
         public override void Write(object value)
         {
-            _client.TellMessageToServerConsoleNoNewLine(value.ToString());
+            _client.WriteToClientConsoleNoNewLine(value.ToString());
         }
         public override void WriteLine(object value)
         {

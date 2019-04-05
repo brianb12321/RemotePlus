@@ -15,6 +15,7 @@ using RemotePlusLibrary.SubSystem.Command.CommandClasses;
 
 namespace RSPM
 {
+    [ExtensionModule]
     public class PackageCommands : ServerCommandClass
     {
         IRemotePlusService<ServerRemoteInterface> _service;

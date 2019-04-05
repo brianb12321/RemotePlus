@@ -168,7 +168,7 @@ namespace ProxyServer
                 sb.AppendLine($"Proxy server GUID: {ProxyManager.ProxyGuid}");
                 sb.AppendLine();
                 sb.AppendLine();
-                ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyManager.ProxyGuid, sb.ToString());
+                ProxyClient.ClientCallback.WriteToClientConsole(ProxyManager.ProxyGuid, sb.ToString());
                 ProxyClient.ClientCallback.ChangePrompt(ProxyManager.ProxyGuid, new RemotePlusLibrary.SubSystem.Command.PromptBuilder()
                 {
                     Path = "",
@@ -255,7 +255,7 @@ namespace ProxyServer
                 SelectedClient = ConnectedServers[serverPosition];
                 if (ProxyClient.ClientType == ClientType.CommandLine)
                 {
-                    ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyManager.ProxyGuid, $"Server {serverPosition} is now active.", LogLevel.Info, "Proxy Server");
+                    ProxyClient.ClientCallback.WriteToClientConsole(ProxyManager.ProxyGuid, $"Server {serverPosition} is now active.", LogLevel.Info, "Proxy Server");
                     ProxyClient.ClientCallback.ChangePrompt(ProxyManager.ProxyGuid, new RemotePlusLibrary.SubSystem.Command.PromptBuilder()
                     {
                         AdditionalData = $"Server {serverPosition}"
@@ -264,7 +264,7 @@ namespace ProxyServer
             }
             catch (ArgumentOutOfRangeException)
             {
-                ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyManager.ProxyGuid, "The requested server is not connected.");
+                ProxyClient.ClientCallback.WriteToClientConsole(ProxyManager.ProxyGuid, "The requested server is not connected.");
             }
         }
 
@@ -273,14 +273,14 @@ namespace ProxyServer
             SelectedClient = ConnectedServers.First(s => s.UniqueID == guid);
             if (SelectedClient == null)
             {
-                ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyManager.ProxyGuid, "The requested server is not connected.");
+                ProxyClient.ClientCallback.WriteToClientConsole(ProxyManager.ProxyGuid, "The requested server is not connected.");
             }
             else
             {
                 if (ProxyClient.ClientType == ClientType.CommandLine)
                 {
                     SelectedClient.ClientCallback.Register(new RegisterationObject());
-                    ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyManager.ProxyGuid, $"Server {guid} is now active.", LogLevel.Info, "Proxy Server");
+                    ProxyClient.ClientCallback.WriteToClientConsole(ProxyManager.ProxyGuid, $"Server {guid} is now active.", LogLevel.Info, "Proxy Server");
                     ProxyClient.ClientCallback.ChangePrompt(ProxyManager.ProxyGuid, new RemotePlusLibrary.SubSystem.Command.PromptBuilder()
                     {
                         AdditionalData = $"Server {guid}"
@@ -341,14 +341,14 @@ namespace ProxyServer
             ProxyClient.ClientCallback.TellMessage(SelectedClient.UniqueID, Message, o);
         }
 
-        public void TellMessageToServerConsole(Guid guid, string Message)
+        public void WriteToClientConsole(Guid guid, string Message)
         {
-            ProxyClient.ClientCallback.TellMessageToServerConsole(SelectedClient.UniqueID, Message);
+            ProxyClient.ClientCallback.WriteToClientConsole(SelectedClient.UniqueID, Message);
         }
 
-        public void TellMessageToServerConsole(Guid guid, ConsoleText text)
+        public void WriteToClientConsole(Guid guid, ConsoleText text)
         {
-            ProxyClient.ClientCallback.TellMessageToServerConsole(SelectedClient.UniqueID, text);
+            ProxyClient.ClientCallback.WriteToClientConsole(SelectedClient.UniqueID, text);
         }
 
         public void SendSignal(SignalMessage signal)
@@ -398,19 +398,19 @@ namespace ProxyServer
             PublishEvent(new ServerDisconnectedEvent(foundServer.UniqueID, false, this));
         }
 
-        public void TellMessageToServerConsole(Guid serverGuid, string Message, LogLevel level)
+        public void WriteToClientConsole(Guid serverGuid, string Message, LogLevel level)
         {
-            ProxyClient.ClientCallback.TellMessageToServerConsole(serverGuid, Message, level);
+            ProxyClient.ClientCallback.WriteToClientConsole(serverGuid, Message, level);
         }
 
-        public void TellMessageToServerConsole(Guid serverGuid, string Message, LogLevel level, string from)
+        public void WriteToClientConsole(Guid serverGuid, string Message, LogLevel level, string from)
         {
-            ProxyClient.ClientCallback.TellMessageToServerConsole(serverGuid, Message, level, from);
+            ProxyClient.ClientCallback.WriteToClientConsole(serverGuid, Message, level, from);
         }
 
-        public void TellMessageToServerConsoleNoNewLine(Guid serverGuid, string Message)
+        public void WriteToClientConsoleNoNewLine(Guid serverGuid, string Message)
         {
-            ProxyClient.ClientCallback.TellMessageToServerConsoleNoNewLine(serverGuid, Message);
+            ProxyClient.ClientCallback.WriteToClientConsoleNoNewLine(serverGuid, Message);
         }
 
         public void UploadBytesToResource(byte[] data, int length, string friendlyName, string name, string path)
@@ -487,6 +487,26 @@ namespace ProxyServer
         public void CancelServerCommand()
         {
             SelectedClient.ClientCallback.CancelServerCommand();
+        }
+
+        public void SetClientConsoleBackgroundColor(Guid serverGuid, Color bgColor)
+        {
+            ProxyClient.ClientCallback.SetClientConsoleBackgroundColor(serverGuid, bgColor);
+        }
+
+        public void SetClientConsoleForegroundColor(Guid serverGuid, Color fgColor)
+        {
+            ProxyClient.ClientCallback.SetClientConsoleForegroundColor(serverGuid, fgColor);
+        }
+
+        public void ResetClientConsoleColor(Guid serverGuid)
+        {
+            ProxyClient.ClientCallback.ResetClientConsoleColor(serverGuid);
+        }
+
+        public void ClearServerConsole(Guid serverGuid)
+        {
+            ProxyClient.ClientCallback.ClearClientConsole(serverGuid);
         }
     }
 }

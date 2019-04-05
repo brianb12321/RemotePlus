@@ -57,6 +57,7 @@ namespace RemotePlusClientCmd
         }
         public Task Start(string[] args)
         {
+            Console.CursorSize = 100;
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);

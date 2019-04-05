@@ -10,6 +10,7 @@ using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
 using NDesk.Options;
 using Ninject;
+using RemotePlusLibrary.Extension;
 using RemotePlusLibrary.Extension.ResourceSystem;
 using RemotePlusLibrary.Extension.ResourceSystem.ResourceTypes;
 using RemotePlusLibrary.RequestSystem;
@@ -23,6 +24,7 @@ using RemotePlusServer.Core.ExtensionSystem;
 
 namespace RemotePlusLibrary.SubSystem.Audio
 {
+    [ExtensionModule]
     public class AudioCommands : ServerCommandClass
     {
         IRemotePlusService<ServerRemoteInterface> _service;

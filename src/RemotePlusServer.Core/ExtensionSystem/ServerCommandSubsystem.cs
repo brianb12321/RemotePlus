@@ -42,10 +42,10 @@ namespace RemotePlusServer.Core.ExtensionSystem
                 string input = _service.RemoteInterface.Client.ClientCallback.RequestInformation(new RemotePlusLibrary.RequestSystem.DefaultRequestBuilders.ConsoleReadLineRequestBuilder(e.Prelude.ToString()) { LineColor = ConsoleColor.Yellow }).Data.ToString();
                 e.ReceivedValue = input;
             };
-            //_runningEnvironment.ProcessFinished += (sender, e) =>
-            //{
-               
-            //};
+            _runningEnvironment.ClearRequested += (sender, e) => _service.RemoteInterface.Client.ClientCallback.ClearServerConsole();
+            _runningEnvironment.SwitchBackgroundColor += (sender, e) => _service.RemoteInterface.Client.ClientCallback.SetClientConsoleBackgroundColor(e.TextColor);
+            _runningEnvironment.SwitchForegroundColor += (sender, e) => _service.RemoteInterface.Client.ClientCallback.SetClientConsoleForegroundColor(e.TextColor);
+            _runningEnvironment.ResetColor += (sender, e) => _service.RemoteInterface.Client.ClientCallback.ResetClientConsoleColor();
             _runningEnvironment.SetOut(new _ClientTextWriter(_service.RemoteInterface.Client.ClientCallback));
             _runningEnvironment.SetError(new _ClientTextWriter(_service.RemoteInterface.Client.ClientCallback));
             _runningEnvironment.SetIn(new _ClientTextReader(_service.RemoteInterface.Client.ClientCallback));

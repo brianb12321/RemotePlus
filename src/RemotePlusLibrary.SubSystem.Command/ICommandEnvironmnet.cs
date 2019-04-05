@@ -17,9 +17,11 @@ namespace RemotePlusLibrary.SubSystem.Command
     public interface ICommandEnvironment : IDisposable
     {
         event EventHandler<CommandLogEventArgs> CommandLogged;
+        event EventHandler ClearRequested;
         event EventHandler<MultiLineEntryEventArgs> MultilineEntry;
-        event EventHandler<ConsoleColorEventArgs> SwitchForgroundColor;
+        event EventHandler<ConsoleColorEventArgs> SwitchForegroundColor;
         event EventHandler<ConsoleColorEventArgs> SwitchBackgroundColor;
+        event EventHandler ResetColor;
         //event EventHandler ProcessFinished;
         IScriptingEngine EnvironmentEngine { get; }
         TextWriter Out { get; }
@@ -34,17 +36,19 @@ namespace RemotePlusLibrary.SubSystem.Command
         object ExecuteScript(string content);
         IScriptExecutionContext ExecuteScriptFile(CommandRequest args);
         void WriteLine(string text);
-        void WriteLine(string text, Color color);
         void WriteLine(ConsoleText text);
         void WriteLine();
         void Write(string text);
         void Write(ConsoleText text);
         void WriteLineError(string text);
-        void WriteLineError(string text, Color color);
         void WriteLineError(ConsoleText text);
         void WriteLineError();
         void WriteError(string text);
         void WriteError(ConsoleText text);
+        void Clear();
+        void SetBackgroundColor(Color bgColor);
+        void SetForegroundColor(Color fgColor);
+        void ResetAllColors();
         string ReadLine();
         string ReadToEnd();
         void SetOut(TextWriter writer);

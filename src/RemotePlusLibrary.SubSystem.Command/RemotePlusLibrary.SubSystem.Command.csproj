@@ -74,6 +74,7 @@
     <Compile Include="CommandClasses\Parsing\TokenType.cs" />
     <Compile Include="CommandDescription.cs" />
     <Compile Include="CommandEnvironment.cs" />
+    <Compile Include="CommandEnvironmentExtensions.cs" />
     <Compile Include="CommandEventArgs.cs" />
     <Compile Include="CommandExecutionMode.cs" />
     <Compile Include="CommandHelpAttribute.cs" />
@@ -109,5 +110,6 @@
       <Name>RemotePlusLibrary.Scripting</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

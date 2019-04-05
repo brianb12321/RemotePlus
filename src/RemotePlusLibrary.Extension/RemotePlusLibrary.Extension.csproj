@@ -61,6 +61,7 @@
     <Compile Include="ClientSupportedTypes.cs" />
     <Compile Include="DefaultExtensionLoader.cs" />
     <Compile Include="ExtensionLibrary.cs" />
+    <Compile Include="ExtensionModuleAttribute.cs" />
     <Compile Include="IExtensionSubsystem.cs" />
     <Compile Include="IExtensionLibraryLoader.cs" />
     <Compile Include="IExtensionModule.cs" />

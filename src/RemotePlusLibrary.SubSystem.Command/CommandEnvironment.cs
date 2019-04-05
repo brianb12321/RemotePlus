@@ -16,9 +16,11 @@ namespace RemotePlusLibrary.SubSystem.Command
     public class CommandEnvironment : ICommandEnvironment
     {
         public event EventHandler<CommandLogEventArgs> CommandLogged;
+        public event EventHandler ClearRequested;
         public event EventHandler<MultiLineEntryEventArgs> MultilineEntry;
-        public event EventHandler<ConsoleColorEventArgs> SwitchForgroundColor;
+        public event EventHandler<ConsoleColorEventArgs> SwitchForegroundColor;
         public event EventHandler<ConsoleColorEventArgs> SwitchBackgroundColor;
+        public event EventHandler ResetColor;
         //public event EventHandler ProcessFinished;
 
         private CancellationTokenSource cts;
@@ -185,14 +187,10 @@ namespace RemotePlusLibrary.SubSystem.Command
 
         public void WriteLine(ConsoleText text)
         {
-            SwitchForgroundColor?.Invoke(this, new ConsoleColorEventArgs(text.TextColor));
+            SwitchForegroundColor?.Invoke(this, new ConsoleColorEventArgs(text.TextColor));
             Out?.WriteLine(text);
         }
 
-        public void WriteLine(string text, Color color)
-        {
-            WriteLine(new ConsoleText(text) { TextColor = color });
-        }
         public void WriteLine()
         {
             Out?.WriteLine();
@@ -204,7 +202,7 @@ namespace RemotePlusLibrary.SubSystem.Command
 
         public void Write(ConsoleText text)
         {
-            SwitchForgroundColor?.Invoke(this, new ConsoleColorEventArgs(text.TextColor));
+            SwitchForegroundColor?.Invoke(this, new ConsoleColorEventArgs(text.TextColor));
             Out?.Write(text);
         }
         public string ReadLine()
@@ -233,14 +231,9 @@ namespace RemotePlusLibrary.SubSystem.Command
             Error?.WriteLine(text);
         }
 
-        public void WriteLineError(string text, Color color)
-        {
-            WriteLineError(new ConsoleText(text) { TextColor = color });
-        }
-
         public void WriteLineError(ConsoleText text)
         {
-            SwitchForgroundColor?.Invoke(this, new ConsoleColorEventArgs(text.TextColor));
+            SwitchForegroundColor?.Invoke(this, new ConsoleColorEventArgs(text.TextColor));
             Error?.WriteLine(text);
         }
 
@@ -256,9 +249,28 @@ namespace RemotePlusLibrary.SubSystem.Command
 
         public void WriteError(ConsoleText text)
         {
-            SwitchForgroundColor?.Invoke(this, new ConsoleColorEventArgs(text.TextColor));
+            SwitchForegroundColor?.Invoke(this, new ConsoleColorEventArgs(text.TextColor));
             Error?.Write(text);
         }
+
+        public void Clear()
+        {
+            ClearRequested?.Invoke(this, EventArgs.Empty);
+        }
+        public void SetBackgroundColor(Color bgColor)
+        {
+            SwitchBackgroundColor?.Invoke(this, new ConsoleColorEventArgs(bgColor));
+        }
+
+        public void SetForegroundColor(Color fgColor)
+        {
+            SwitchForegroundColor?.Invoke(this, new ConsoleColorEventArgs(fgColor));
+        }
+        public void ResetAllColors()
+        {
+            ResetColor?.Invoke(this, EventArgs.Empty);
+        }
+
         public object ExecuteScript(string content)
         {
             var executingContext = EnvironmentEngine.GetSessionContext();

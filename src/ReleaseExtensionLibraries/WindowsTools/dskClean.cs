@@ -106,7 +106,7 @@ namespace WindowsTools
                 }
                 catch (Exception ex)
                 {
-                    currentEnvironment.WriteLine($"Could not delete file {Path.GetFileName(file)}: {ex.Message}", Color.Yellow);
+                    currentEnvironment.WriteLineWithColor($"Could not delete file {Path.GetFileName(file)}: {ex.Message}", Color.Yellow);
                 }
             }
         }
@@ -126,13 +126,13 @@ namespace WindowsTools
                         }
                         catch (Exception ex)
                         {
-                            currentEnvironment.WriteLine($"Could not delete file {Path.GetFileName(file)}: {ex.Message}", Color.Yellow);
+                            currentEnvironment.WriteLineWithColor($"Could not delete file {Path.GetFileName(file)}: {ex.Message}", Color.Yellow);
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    currentEnvironment.WriteLine($"Could access directory {Path.GetFileName(profile)}: {ex.Message}", Color.Yellow);
+                    currentEnvironment.WriteLineWithColor($"Could access directory {Path.GetFileName(profile)}: {ex.Message}", Color.Yellow);
                 }
             }
         }
@@ -152,13 +152,13 @@ namespace WindowsTools
                         }
                         catch (Exception ex)
                         {
-                            currentEnvironment.WriteLine($"Could not delete file {Path.GetFileName(file)}: {ex.Message}", Color.Yellow);
+                            currentEnvironment.WriteLineWithColor($"Could not delete file {Path.GetFileName(file)}: {ex.Message}", Color.Yellow);
                         }
                     }
                 }
                 catch(Exception ex)
                 {
-                    currentEnvironment.WriteLine($"Could not access directory {Path.GetFileName(profile)}: {ex.Message}", Color.Yellow);
+                    currentEnvironment.WriteLineWithColor($"Could not access directory {Path.GetFileName(profile)}: {ex.Message}", Color.Yellow);
                 }
             }
         }
@@ -177,7 +177,7 @@ namespace WindowsTools
                     }
                     catch (Exception ex)
                     {
-                        currentEnvironment.WriteLine($"Could not delete file {Path.GetFileName(file)}: {ex.Message}", Color.Yellow);
+                        currentEnvironment.WriteLineWithColor($"Could not delete file {Path.GetFileName(file)}: {ex.Message}", Color.Yellow);
                     }
                 }
             }
@@ -218,13 +218,13 @@ namespace WindowsTools
                         }
                         catch (Exception ex)
                         {
-                            currentEnvironment.WriteLine($"Could not own file {Path.GetFileName(file)}: {ex.Message}", Color.Yellow);
+                            currentEnvironment.WriteLineWithColor($"Could not own file {Path.GetFileName(file)}: {ex.Message}", Color.Yellow);
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    currentEnvironment.WriteLine($"Could not access directory {Path.GetFileName(profile)}: {ex.Message}", Color.Yellow);
+                    currentEnvironment.WriteLineWithColor($"Could not access directory {Path.GetFileName(profile)}: {ex.Message}", Color.Yellow);
                 }
             }
         }
@@ -260,13 +260,13 @@ namespace WindowsTools
                         }
                         catch (Exception ex)
                         {
-                            currentEnvironment.WriteLine($"Could not own file {Path.GetFileName(file)}: {ex.Message}", Color.Yellow);
+                            currentEnvironment.WriteLineWithColor($"Could not own file {Path.GetFileName(file)}: {ex.Message}", Color.Yellow);
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    currentEnvironment.WriteLine($"Could not access directory {Path.GetFileName(profile)}: {ex.Message}", Color.Yellow);
+                    currentEnvironment.WriteLineWithColor($"Could not access directory {Path.GetFileName(profile)}: {ex.Message}", Color.Yellow);
                 }
             }
         }
@@ -285,7 +285,7 @@ namespace WindowsTools
                 }
                 catch (Exception ex)
                 {
-                    currentEnvironment.WriteLine($"Could not own file {Path.GetFileName(file)}: {ex.Message}", Color.Yellow);
+                    currentEnvironment.WriteLineWithColor($"Could not own file {Path.GetFileName(file)}: {ex.Message}", Color.Yellow);
                 }
             }
         }

@@ -47,7 +47,9 @@ namespace RemotePlusLibrary.Extension
                     startup.Init(new ServiceCollection());
                 }
                 List<IExtensionModule> _modules = new List<IExtensionModule>();
-                foreach(IExtensionModule module in a.GetTypes().Where(t => t.IsClass && !t.IsAbstract && typeof(IExtensionModule).IsAssignableFrom(t)).Select(t => (IExtensionModule)Activator.CreateInstance(t)))
+                foreach(IExtensionModule module in a.GetTypes().Where(
+                    t => t.IsClass && !t.IsAbstract && typeof(IExtensionModule).IsAssignableFrom(t) && t.GetCustomAttribute<ExtensionModuleAttribute>() != null)
+                    .Select(t => (IExtensionModule)Activator.CreateInstance(t)))
                 {
                     _modules.Add(module);
                 }

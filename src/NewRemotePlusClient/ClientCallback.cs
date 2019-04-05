@@ -132,12 +132,12 @@ namespace NewRemotePlusClient
             await System.Windows.Application.Current.Dispatcher.InvokeAsync(() => IOCHelper.MainWindow.MainServerLogger.Log(Message, o, "Server Host", $"{serverGuid}"));
         }
 
-        public void TellMessageToServerConsole(Guid serverGuid, string Message)
+        public void WriteToClientConsole(Guid serverGuid, string Message)
         {
             Messenger.Default.Send(new ConsoleText(Message));
         }
 
-        public void TellMessageToServerConsole(Guid serverGuid, string Message, LogLevel level)
+        public void WriteToClientConsole(Guid serverGuid, string Message, LogLevel level)
         {
             Messenger.Default.Send(new ConsoleLogMessage()
             {
@@ -148,12 +148,12 @@ namespace NewRemotePlusClient
             });
         }
 
-        public void TellMessageToServerConsole(Guid serverGuid, ConsoleText text)
+        public void WriteToClientConsole(Guid serverGuid, ConsoleText text)
         {
             Messenger.Default.Send(text);
         }
 
-        public void TellMessageToServerConsole(Guid serverGuid, string Message, LogLevel level, string from)
+        public void WriteToClientConsole(Guid serverGuid, string Message, LogLevel level, string from)
         {
             Messenger.Default.Send(new ConsoleLogMessage()
             {

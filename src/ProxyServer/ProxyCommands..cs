@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 
 namespace ProxyServer
 {
+    [ExtensionModule]
     public class ProxyCommands : ProxyCommandClass
     {
         ILogFactory _logger;
@@ -32,7 +33,7 @@ namespace ProxyServer
             }
             else
             {
-                _service.RemoteInterface.ProxyClient.ClientCallback.TellMessageToServerConsole(_service.RemoteInterface.GetSelectedServerGuid(), "The specifed server index does not exist.", LogLevel.Error);
+                _service.RemoteInterface.ProxyClient.ClientCallback.WriteToClientConsole(_service.RemoteInterface.GetSelectedServerGuid(), "The specifed server index does not exist.", LogLevel.Error);
                 return new CommandResponse((int)CommandStatus.Fail);
             }
         }
@@ -44,7 +45,7 @@ namespace ProxyServer
             {
                 sb.AppendLine($"Index: {i}, GUID: {_service.RemoteInterface.ConnectedServers[i].UniqueID}");
             }
-            _service.RemoteInterface.ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyManager.ProxyGuid, sb.ToString());
+            _service.RemoteInterface.ProxyClient.ClientCallback.WriteToClientConsole(ProxyManager.ProxyGuid, sb.ToString());
             return new CommandResponse((int)CommandStatus.Success);
         }
         [CommandHelp("Shows help screen.")]
@@ -59,7 +60,7 @@ namespace ProxyServer
             {
                 helpString = _commandSubsystem.ShowHelpScreen();
             }
-            _service.RemoteInterface.ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyManager.ProxyGuid, helpString);
+            _service.RemoteInterface.ProxyClient.ClientCallback.WriteToClientConsole(ProxyManager.ProxyGuid, helpString);
             var response = new CommandResponse((int)CommandStatus.Success);
             response.ReturnData = helpString;
             return response;

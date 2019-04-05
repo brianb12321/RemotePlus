@@ -51,17 +51,16 @@ namespace ProxyServer.ExtensionSystem
             else
             {
                 _runningEnvironment = IOCContainer.GetService<ICommandEnvironment>();
-                _runningEnvironment.CommandLogged += (sender, e) => _service.RemoteInterface.ProxyClient.ClientCallback.TellMessageToServerConsole(ProxyManager.ProxyGuid, e.Text);
+                _runningEnvironment.CommandLogged += (sender, e) => _service.RemoteInterface.ProxyClient.ClientCallback.WriteToClientConsole(ProxyManager.ProxyGuid, e.Text);
                 _runningEnvironment.MultilineEntry += (sender, e) =>
                 {
                     string input = _service.RemoteInterface.ProxyClient.ClientCallback.RequestInformation(ProxyManager.ProxyGuid, new ConsoleReadLineRequestBuilder(e.Prelude.ToString()) { LineColor = ConsoleColor.Yellow }).Data.ToString();
                     e.ReceivedValue = input;
                 };
-                //_runningEnvironment.ProcessFinished += (sender, e) =>
-                //{
-                //    _runningEnvironment.Dispose();
-                //    _runningEnvironment = null;
-                //};
+                _runningEnvironment.ClearRequested += (sender, e) => _service.RemoteInterface.ProxyClient.ClientCallback.ClearClientConsole(ProxyManager.ProxyGuid);
+                _runningEnvironment.SwitchBackgroundColor += (sender, e) => _service.RemoteInterface.ProxyClient.ClientCallback.SetClientConsoleBackgroundColor(ProxyManager.ProxyGuid, e.TextColor);
+                _runningEnvironment.SwitchForegroundColor += (sender, e) => _service.RemoteInterface.ProxyClient.ClientCallback.SetClientConsoleForegroundColor(ProxyManager.ProxyGuid, e.TextColor);
+                _runningEnvironment.ResetColor += (sender, e) => _service.RemoteInterface.ProxyClient.ClientCallback.ResetClientConsoleColor(ProxyManager.ProxyGuid);
                 _runningEnvironment.SetOut(new _ClientTextWriter(ProxyManager.ProxyGuid));
                 _runningEnvironment.SetError(new _ClientTextWriter(ProxyManager.ProxyGuid));
                 _runningEnvironment.SetIn(new _ClientTextReader(ProxyManager.ProxyGuid));

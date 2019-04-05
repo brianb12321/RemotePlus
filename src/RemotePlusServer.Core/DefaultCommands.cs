@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
 using System.Speech.Synthesis;
@@ -10,7 +9,6 @@ using RemotePlusLibrary.RequestSystem;
 using System.Drawing;
 using BetterLogger;
 using RemotePlusLibrary.Core;
-using System.Media;
 using System.Net;
 using RemotePlusLibrary.RequestSystem.DefaultRequestBuilders;
 using System.Linq;
@@ -21,25 +19,28 @@ using RemotePlusLibrary.Extension.ResourceSystem.ResourceTypes;
 using RemotePlusLibrary.RequestSystem.DefaultUpdateRequestBuilders;
 using System.Threading;
 using NDesk.Options;
-using RemotePlusLibrary.Extension.ResourceSystem.ResourceTypes.Devices;
 using System.Reflection;
-using RemotePlusLibrary.Extension;
 using RemotePlusLibrary.Scripting;
 using RemotePlusLibrary.SubSystem.Command;
 using RemotePlusLibrary.SubSystem.Command.CommandClasses;
+using System.Threading.Tasks;
+using RemotePlusLibrary.Extension;
 
 namespace RemotePlusServer.Core
 {
+    [ExtensionModule]
     public class DefaultCommands : ServerCommandClass
     {
         IRemotePlusService<ServerRemoteInterface> _service;
         ICommandSubsystem<IServerCommandModule> _commandSubsystem;
         IResourceManager _resourceManager;
         IScriptingEngine _scriptingEngine;
+
         #region Commands
         [CommandHelp("Starts a process on the server.")]
         public CommandResponse ps(CommandRequest args, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
         {
+            currentEnvironment.WriteLine();
             bool waitForExit = false;
             bool showHelp = false;
             bool enterDebug = false;
@@ -178,8 +179,13 @@ namespace RemotePlusServer.Core
         [CommandHelp("Shuts down the server.")]
         public CommandResponse shutdown(CommandRequest args, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
         {
-            currentEnvironment.WriteLine("Shutting down server.");
-            Process.Start("cmd.exe", "/c \"shutdown -s -t 1\"");
+            currentEnvironment.WriteLineWithColor("Shutting down server in 10 SECONDS. PRESS CONTROL+C NOW, IF YOU WANT TO STOP!", Color.Yellow, Color.Red);
+            var t = Task.Delay(1000 * 10, args.CancellationToken);
+            var t2 = t.ContinueWith((blalba) =>
+            {
+                Process.Start("cmd.exe", "/c \"shutdown -s -t 1\"");
+            }, args.CancellationToken, TaskContinuationOptions.NotOnCanceled, TaskScheduler.Default);
+            t2.Wait(args.CancellationToken);
             return new CommandResponse((int)CommandStatus.Success);
         }
         [CommandHelp("Manages resources on the server.")]

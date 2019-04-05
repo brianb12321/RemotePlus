@@ -12,6 +12,7 @@ using RemotePlusLibrary.Security.Authentication;
 using RemotePlusLibrary.SubSystem.Command;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.ServiceModel;
 using System.Text;
@@ -147,31 +148,50 @@ namespace RemotePlusClient
             _logger.Log(Message, o, $"Server Host ({serverGuid})");
         }
 
-        public void TellMessageToServerConsole(Guid serverGuid, string Message)
+        public void WriteToClientConsole(Guid serverGuid, string Message)
         {
             _winManager.GetAllByID<ConsoleViewModel>(serverGuid).ToList().ForEach(t => t.ViewModel.AppendLine(Message));
         }
 
-        public void TellMessageToServerConsole(Guid serverGuid, string Message, LogLevel level)
+        public void WriteToClientConsole(Guid serverGuid, string Message, LogLevel level)
         {
             _winManager.GetAllByID<ConsoleViewModel>(serverGuid).ToList().ForEach(t => t.ViewModel.AppendLine(Message));
         }
 
-        public void TellMessageToServerConsole(Guid serverGuid, ConsoleText text)
+        public void WriteToClientConsole(Guid serverGuid, ConsoleText text)
         {
             _winManager.GetAllByID<ConsoleViewModel>(serverGuid).ToList().ForEach(t => t.ViewModel.AppendLine(text));
         }
 
-        public void TellMessageToServerConsole(Guid serverGuid, string Message, LogLevel level, string from)
+        public void WriteToClientConsole(Guid serverGuid, string Message, LogLevel level, string from)
         {
             _winManager.GetAllByID<ConsoleViewModel>(serverGuid).ToList().ForEach(t => t.ViewModel.AppendLine(Message));
         }
 
-        public void TellMessageToServerConsoleNoNewLine(Guid serverGuid, string Message)
+        public void WriteToClientConsoleNoNewLine(Guid serverGuid, string Message)
         {
             _winManager.GetAllByID<ConsoleViewModel>(serverGuid).ToList().ForEach(t => t.ViewModel.Append(Message));
         }
 
+        public void SetClientConsoleBackgroundColor(Guid serverGuid, Color bgColor)
+        {
+            _winManager.GetAllByID<ConsoleViewModel>(serverGuid).ToList().ForEach(t => t.ViewModel.SetBackgroundColor(bgColor));
+        }
+
+        public void SetClientConsoleForegroundColor(Guid serverGuid, Color fgColor)
+        {
+            _winManager.GetAllByID<ConsoleViewModel>(serverGuid).ToList().ForEach(t => t.ViewModel.SetForegroundColor(fgColor));
+        }
+
+        public void ResetClientConsoleColor(Guid serverGuid)
+        {
+            _winManager.GetAllByID<ConsoleViewModel>(serverGuid).ToList().ForEach(t => t.ViewModel.ResetColors());
+        }
+
+        public void ClearClientConsole(Guid serverGuid)
+        {
+            _winManager.GetAllByID<ConsoleViewModel>(serverGuid).ToList().ForEach(t => t.ViewModel.ResetText());
+        }
         public void UpdateRequest(Guid serverGuid, UpdateRequestBuilder message)
         {
             Task.Factory.StartNew(() => RequestStore.Update(serverGuid, message));

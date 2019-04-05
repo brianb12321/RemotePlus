@@ -17,7 +17,7 @@ namespace RemotePlusLibrary.SubSystem.Command
         [DataMember]
         public string Text { get; set; }
         [DataMember]
-        public Color TextColor { get; set; }
+        public Color TextColor { get; set; } = Color.Empty;
         [DataMember]
         public Color BackColor { get; set; } = Color.Empty;
         public ConsoleText(string text)

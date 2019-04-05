@@ -59,7 +59,7 @@ namespace RemotePlusServer.Core
                 }
                 catch (Exception ex)
                 {
-                    currentEnvironment.WriteLineError($"Error executing script file: {ex.Message}", Color.Red);
+                    currentEnvironment.WriteLineErrorWithColor($"Error executing script file: {ex.Message}", Color.Red);
                     return new CommandResponse((int)CommandStatus.Fail);
                 }
             }
