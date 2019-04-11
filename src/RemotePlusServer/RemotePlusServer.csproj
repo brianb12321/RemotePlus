@@ -191,9 +191,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="..\DefaultServerCore\bin\Debug\DefaultServerCore.dll">
-      <Link>DefaultServerCore.dll</Link>
-    </EmbeddedResource>
     <Content Include="FodyWeavers.xml" />
     <Content Include="Lib\abc.py" />
     <Content Include="Lib\aifc.py" />

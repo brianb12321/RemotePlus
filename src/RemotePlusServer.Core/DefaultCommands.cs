@@ -632,16 +632,26 @@ namespace RemotePlusServer.Core
         public CommandResponse echo(CommandRequest args, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
         {
             string stringToPrint = string.Empty;
-            if (args.Arguments.Count == 1 && args.HasLastCommand)
+            string tBgColor = string.Empty;
+            string tFgColor = string.Empty;
+            bool help = false;
+            OptionSet options = new OptionSet()
+                .Add("backgroundColor|bc=", "The backgorund color to send to the client.", v => bgColor = v)
+                .Add("foregroundColor|fc=", "The foreground color to send to the client.", v => fgColor = v)
+                .Add("help|?", "Displays the help screen.", v => help = true);
+            string[] text = options.Parse(args.Arguments.Select(a => a.ToString())).ToArray();
+            if (args.HasLastCommand)
             {
                 stringToPrint = args.LastCommand.ToString() + Environment.NewLine;
-                currentEnvironment.WriteLine(stringToPrint);
             }
             else
             {
-                stringToPrint = args.Arguments[1].ToString() + Environment.NewLine;
-                currentEnvironment.WriteLine(stringToPrint);
+                text.ToList().ForEach(t => stringToPrint += t + Environment.NewLine);
             }
+            Color bgColor;
+            Color fgColor;
+            if (!string.IsNullOrWhiteSpace(tBgColor)) bgColor = ColorHelper.FromRGBArray(tBgColor.Split(','));
+            if (!string.IsNullOrWhiteSpace(tFgColor)) fgColor = ColorHelper.FromRGBArray(tFgColor.Split(','));
             return new CommandResponse((int)CommandStatus.Success)
             {
                 ReturnData = stringToPrint

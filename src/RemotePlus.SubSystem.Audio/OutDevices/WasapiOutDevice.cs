@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using NAudio.CoreAudioApi;
 using NAudio.Wave;
+using RemotePlusLibrary.Core;
 
 namespace RemotePlusLibrary.SubSystem.Audio.OutDevices
 {
@@ -14,18 +16,25 @@ namespace RemotePlusLibrary.SubSystem.Audio.OutDevices
         public static Func<string, WasapiOutDevice[]> Searcher = (name) =>
         {
             List<WasapiOutDevice> _devs = new List<WasapiOutDevice>();
-            MMDeviceEnumerator enumerator = new MMDeviceEnumerator();
-            var defaultMM = enumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
-            var defaultConsole = enumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Console);
-            var defaultComm = enumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Communications);
-            _devs.Add(new WasapiOutDevice(name + "DefaultMM", defaultMM.DeviceFriendlyName, defaultMM.DeviceFriendlyName, defaultMM.ID, 2));
-            _devs.Add(new WasapiOutDevice(name + "DefaultConsole", defaultConsole.DeviceFriendlyName, defaultConsole.DeviceFriendlyName, defaultConsole.ID, 2));
-            _devs.Add(new WasapiOutDevice(name + "DefaultComm", defaultComm.DeviceFriendlyName, defaultComm.DeviceFriendlyName, defaultComm.ID, 2));
-            int counter = 0;
-            foreach(MMDevice dev in enumerator.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.All))
+            try
             {
-                _devs.Add(new WasapiOutDevice(name + (counter + 1), dev.DeviceFriendlyName, dev.DeviceFriendlyName, dev.ID, 2));
-                counter++;
+                MMDeviceEnumerator enumerator = new MMDeviceEnumerator();
+                var defaultMM = enumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
+                var defaultConsole = enumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Console);
+                var defaultComm = enumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Communications);
+                _devs.Add(new WasapiOutDevice(name + "DefaultMM", defaultMM.DeviceFriendlyName, defaultMM.DeviceFriendlyName, defaultMM.ID, 2));
+                _devs.Add(new WasapiOutDevice(name + "DefaultConsole", defaultConsole.DeviceFriendlyName, defaultConsole.DeviceFriendlyName, defaultConsole.ID, 2));
+                _devs.Add(new WasapiOutDevice(name + "DefaultComm", defaultComm.DeviceFriendlyName, defaultComm.DeviceFriendlyName, defaultComm.ID, 2));
+                int counter = 0;
+                foreach (MMDevice dev in enumerator.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.All))
+                {
+                    _devs.Add(new WasapiOutDevice(name + (counter + 1), dev.DeviceFriendlyName, dev.DeviceFriendlyName, dev.ID, 2));
+                    counter++;
+                }
+            }
+            catch (COMException ex)
+            {
+                GlobalServices.Logger.Log("Unable to enumerate WASAPI out device.", BetterLogger.LogLevel.Warning, "WASAPI Device");
             }
             return _devs.ToArray();
         };

@@ -49,6 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ColorHelper.cs" />
     <Compile Include="CommandBehaviorAttribute.cs" />
     <Compile Include="CommandClasses\CommandParser.cs" />
     <Compile Include="CommandClasses\CommandPipeline.cs" />

@@ -11,6 +11,7 @@ namespace RemotePlusLibrary.ServiceArchitecture
 {
     public interface IRemotePlusService<TRemoteInterface> where TRemoteInterface : new()
     {
+        bool IsSingleton { get; }
         /// <summary>
         /// The host object.
         /// </summary>

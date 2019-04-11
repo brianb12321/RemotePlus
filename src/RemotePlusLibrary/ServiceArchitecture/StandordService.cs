@@ -9,6 +9,7 @@ namespace RemotePlusLibrary.ServiceArchitecture
 {
     public abstract class StandordService<TInterface> : IRemotePlusService<TInterface> where TInterface : new()
     {
+        public bool IsSingleton { get; private set; }
         public ServiceHost Host { get; protected set; }
         private Type _impl;
         private Type _contract;
@@ -56,6 +57,7 @@ namespace RemotePlusLibrary.ServiceArchitecture
         {
             Commands = new Dictionary<string, CommandDelegate>();
             _contract = contract;
+            IsSingleton = true;
             _singleTon = singleTon;
             _binding = binding;
             _address = address;

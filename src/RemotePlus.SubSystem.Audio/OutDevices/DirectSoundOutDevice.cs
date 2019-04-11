@@ -14,11 +14,18 @@ namespace RemotePlusLibrary.SubSystem.Audio.OutDevices
         public static Func<string, DirectSoundOutDevice[]> Searcher = (name) =>
         {
             List<DirectSoundOutDevice> _devs = new List<DirectSoundOutDevice>();
-            int counter = 0;
-            foreach(DirectSoundDeviceInfo info in DirectSoundOut.Devices)
+            try
             {
-                DirectSoundOutDevice dev = new DirectSoundOutDevice(name + (counter + 1), info.ModuleName, info.Description, info.Guid.ToString(), 2);
-                _devs.Add(dev);
+                int counter = 0;
+                foreach (DirectSoundDeviceInfo info in DirectSoundOut.Devices)
+                {
+                    DirectSoundOutDevice dev = new DirectSoundOutDevice(name + (counter + 1), info.ModuleName, info.Description, info.Guid.ToString(), 2);
+                    _devs.Add(dev);
+                }
+            }
+            catch (System.Runtime.InteropServices.COMException)
+            {
+
             }
             return _devs.ToArray();
         };

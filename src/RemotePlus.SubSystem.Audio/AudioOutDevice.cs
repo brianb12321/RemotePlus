@@ -1,4 +1,5 @@
 ﻿using NAudio.Wave;
+using RemotePlusLibrary.Core;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -64,24 +65,32 @@ namespace RemotePlusLibrary.SubSystem.Audio
         public override bool Init()
         {
             base.Init();
-            DeviceProperties.Add("PlaybackState", new RemotePlusLibrary.Extension.ResourceSystem.ResourceTypes.DeviceProperty(false, false, "PlaybackState"));
-            DeviceProperties.Add("WavePlayerVolume", new Extension.ResourceSystem.ResourceTypes.DeviceProperty(false, true, "WavePlayerVolume"));
-            DeviceProperties["PlaybackState"].PropertyRead += () => PlayerDevice?.PlaybackState ?? PlaybackState.Stopped;
-            DeviceProperties["WavePlayerVolume"].PropertyRead += () => PlayerDevice?.Volume;
-            DeviceProperties["WavePlayerVolume"].PropertyChanged += (sender, value) =>
+            try
             {
-                if (!float.TryParse(value.ToString(), out float result)) return false;
-                else
+                DeviceProperties.Add("PlaybackState", new RemotePlusLibrary.Extension.ResourceSystem.ResourceTypes.DeviceProperty(false, false, "PlaybackState"));
+                DeviceProperties.Add("WavePlayerVolume", new Extension.ResourceSystem.ResourceTypes.DeviceProperty(false, true, "WavePlayerVolume"));
+                DeviceProperties["PlaybackState"].PropertyRead += () => PlayerDevice?.PlaybackState ?? PlaybackState.Stopped;
+                DeviceProperties["WavePlayerVolume"].PropertyRead += () => PlayerDevice?.Volume;
+                DeviceProperties["WavePlayerVolume"].PropertyChanged += (sender, value) =>
                 {
-                    if (result <= 1)
+                    if (!float.TryParse(value.ToString(), out float result)) return false;
+                    else
                     {
-                        PlayerDevice.Volume = result;
-                        return true;
+                        if (result <= 1)
+                        {
+                            PlayerDevice.Volume = result;
+                            return true;
+                        }
+                        else return false;
                     }
-                    else return false;
-                }
-            };
-            return true;
+                };
+                return true;
+            }
+            catch (Exception ex)
+            {
+                GlobalServices.Logger.Log($"Error while initializing audio device: {ex.Message}", BetterLogger.LogLevel.Warning, "Audio Device");
+                return false;
+            }
         }
     }
 }
