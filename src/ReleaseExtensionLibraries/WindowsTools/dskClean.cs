@@ -15,13 +15,17 @@ using RemotePlusServer.Core;
 using BetterLogger;
 using RemotePlusLibrary.RequestSystem.DefaultRequestBuilders;
 using System.Drawing;
+using Ninject;
 using RemotePlusLibrary.SubSystem.Command;
 using RemotePlusLibrary.SubSystem.Command.CommandClasses;
 using RemotePlusLibrary.Core;
+using RemotePlusLibrary.Core.IOC;
+using RemotePlusLibrary.Extension;
 
 namespace WindowsTools
 {
-    internal static class dskClean
+    [ExtensionModule]
+    public class dskClean : StandordCommandClass
     {
         private static ICommandEnvironment currentEnvironment;
         [CommandHelp("Cleans your disk of temperary files.")]
@@ -288,6 +292,11 @@ namespace WindowsTools
                     currentEnvironment.WriteLineWithColor($"Could not own file {Path.GetFileName(file)}: {ex.Message}", Color.Yellow);
                 }
             }
+        }
+
+        public override void InitializeServices(IServiceCollection services)
+        {
+            Commands.Add("dskClean", dskCleanCommand);
         }
     }
     //Provides functions for the dskClean command

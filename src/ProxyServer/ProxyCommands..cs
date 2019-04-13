@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using RemotePlusLibrary.Core.IOC;
 
 namespace ProxyServer
 {
@@ -77,12 +78,12 @@ namespace ProxyServer
             _scriptEngine.ResetSessionContext();
             return new CommandResponse((int)CommandStatus.Success);
         }
-        public override void InitializeServices(IKernel kernel)
+        public override void InitializeServices(IServiceCollection services)
         {
-            _logger = kernel.Get<ILogFactory>();
-            _service = kernel.Get<IRemotePlusService<ProxyServerRemoteImpl>>();
-            _commandSubsystem = kernel.Get<ICommandSubsystem<IProxyCommandModule>>();
-            _scriptEngine = kernel.Get<IScriptingEngine>();
+            _logger = services.GetService<ILogFactory>();
+            _service = services.GetService<IRemotePlusService<ProxyServerRemoteImpl>>();
+            _commandSubsystem = services.GetService<ICommandSubsystem<IProxyCommandModule>>();
+            _scriptEngine = services.GetService<IScriptingEngine>();
             Commands.Add("proxySwitchServer", switchServer);
             Commands.Add("proxyHelp", help);
             Commands.Add("proxyViewServers", viewServers);

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Ninject;
+using RemotePlusLibrary.Core.IOC;
 using RemotePlusLibrary.Extension;
 
 namespace RemotePlusLibrary.SubSystem.Command
@@ -18,7 +19,7 @@ namespace RemotePlusLibrary.SubSystem.Command
             return Commands.ContainsKey(commandName);
         }
 
-        public abstract void InitializeServices(IKernel kernel);
+        public abstract void InitializeServices(IServiceCollection services);
 
         public CommandDelegate Lookup(string commandName)
         {

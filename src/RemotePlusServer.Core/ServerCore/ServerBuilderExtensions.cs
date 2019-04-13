@@ -20,6 +20,7 @@ using RemotePlusLibrary.Extension;
 using Ninject;
 using RemotePlusLibrary.SubSystem.Command.CommandClasses;
 using RemotePlusLibrary.SubSystem.Command;
+using RemotePlusServer.Core.Commands;
 
 namespace RemotePlusServer.Core.ServerCore
 {
@@ -270,7 +271,7 @@ namespace RemotePlusServer.Core.ServerCore
         {
             return builder.AddTask(() =>
             {
-                IOCContainer.Provider.Get<TSubsystem>().Init();
+                IOCContainer.Provider.GetService<TSubsystem>().Init();
             });
         }
     }

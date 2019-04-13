@@ -722,6 +722,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="HelpDocs\" />
+    <Folder Include="Resources\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

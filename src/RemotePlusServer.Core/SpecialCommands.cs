@@ -8,6 +8,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using RemotePlusLibrary.Core.IOC;
 
 namespace RemotePlusServer.Core
 {
@@ -150,7 +151,7 @@ namespace RemotePlusServer.Core
                 }
             }
         }
-        public override void InitializeServices(IKernel kernel)
+        public override void InitializeServices(IServiceCollection services)
         {
             Commands.Add("if", _if);
         }

@@ -73,7 +73,7 @@ namespace RemotePlusServer.Core
                             Client.ClientCallback.TellMessageToServerConsole($"Extra data for appendText is invalid. Value: {val}", BetterLogger.LogLevel.Error, "Server Host");
                         }
                     }
-                    else if (val != "true" && val != "false")
+                    else
                     {
                         Client.ClientCallback.TellMessageToServerConsole(e.Data + "\n");
                     }
@@ -121,16 +121,16 @@ namespace RemotePlusServer.Core
             GlobalServices.Logger.Log("File encrypted.", LogLevel.Info);
             Client.ClientCallback.TellMessage($"File encrypted. File: {fileName}", LogLevel.Info);
         }
-        public void Speak(string Message, VoiceGender Gender, VoiceAge Age)
+        public void Speak(string message, VoiceGender gender, VoiceAge age)
         {
             SpeechSynthesizer ss = new System.Speech.Synthesis.SpeechSynthesizer();
-            ss.SelectVoiceByHints(Gender, Age);
-            ss.Speak(Message);
-            Client.ClientCallback.TellMessage($"Server spoke. Message: {Message}, gender: {Gender.ToString()}, age: {Age.ToString()}", LogLevel.Info);
+            ss.SelectVoiceByHints(gender, age);
+            ss.Speak(message);
+            Client.ClientCallback.TellMessage($"Server spoke. Message: {message}, gender: {gender.ToString()}, age: {age.ToString()}", LogLevel.Info);
         }
-        public DialogResult ShowMessageBox(string Message, string Caption, System.Windows.Forms.MessageBoxIcon Icon, System.Windows.Forms.MessageBoxButtons Buttons)
+        public DialogResult ShowMessageBox(string message, string caption, System.Windows.Forms.MessageBoxIcon Icon, System.Windows.Forms.MessageBoxButtons Buttons)
         {
-            var dr = MessageBox.Show(Message, Caption, Buttons, Icon);
+            var dr = MessageBox.Show(message, caption, Buttons, Icon);
             Client.ClientCallback.TellMessage($"The user responded to the message box. Response: {dr.ToString()}", LogLevel.Info);
             return dr;
         }
@@ -144,7 +144,6 @@ namespace RemotePlusServer.Core
         public CommandPipeline RunServerCommand(string command, CommandExecutionMode commandMode)
         {
             return IOCContainer.GetService<ICommandSubsystem<IServerCommandModule>>().RunServerCommand(command, commandMode);
-
         }
         public Task<CommandPipeline> RunServerCommandAsync(string command, CommandExecutionMode commandMode)
         {

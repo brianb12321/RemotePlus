@@ -15,28 +15,28 @@ namespace RemotePlusLibrary.SubSystem.Audio.OutDevices
     {
         public static Func<string, WasapiOutDevice[]> Searcher = (name) =>
         {
-            List<WasapiOutDevice> _devs = new List<WasapiOutDevice>();
+            List<WasapiOutDevice> devs = new List<WasapiOutDevice>();
             try
             {
                 MMDeviceEnumerator enumerator = new MMDeviceEnumerator();
                 var defaultMM = enumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
                 var defaultConsole = enumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Console);
                 var defaultComm = enumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Communications);
-                _devs.Add(new WasapiOutDevice(name + "DefaultMM", defaultMM.DeviceFriendlyName, defaultMM.DeviceFriendlyName, defaultMM.ID, 2));
-                _devs.Add(new WasapiOutDevice(name + "DefaultConsole", defaultConsole.DeviceFriendlyName, defaultConsole.DeviceFriendlyName, defaultConsole.ID, 2));
-                _devs.Add(new WasapiOutDevice(name + "DefaultComm", defaultComm.DeviceFriendlyName, defaultComm.DeviceFriendlyName, defaultComm.ID, 2));
+                devs.Add(new WasapiOutDevice(name + "DefaultMM", defaultMM.DeviceFriendlyName, defaultMM.DeviceFriendlyName, defaultMM.ID, 2));
+                devs.Add(new WasapiOutDevice(name + "DefaultConsole", defaultConsole.DeviceFriendlyName, defaultConsole.DeviceFriendlyName, defaultConsole.ID, 2));
+                devs.Add(new WasapiOutDevice(name + "DefaultComm", defaultComm.DeviceFriendlyName, defaultComm.DeviceFriendlyName, defaultComm.ID, 2));
                 int counter = 0;
                 foreach (MMDevice dev in enumerator.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.All))
                 {
-                    _devs.Add(new WasapiOutDevice(name + (counter + 1), dev.DeviceFriendlyName, dev.DeviceFriendlyName, dev.ID, 2));
+                    devs.Add(new WasapiOutDevice(name + (counter + 1), dev.DeviceFriendlyName, dev.DeviceFriendlyName, dev.ID, 2));
                     counter++;
                 }
             }
-            catch (COMException ex)
+            catch (COMException)
             {
                 GlobalServices.Logger.Log("Unable to enumerate WASAPI out device.", BetterLogger.LogLevel.Warning, "WASAPI Device");
             }
-            return _devs.ToArray();
+            return devs.ToArray();
         };
         public override string ResourceType => "WASAPIRender";
         public AudioClientShareMode ShareMode => (AudioClientShareMode)DeviceProperties["ShareMode"].Value;

@@ -1,28 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Diagnostics;
-using RemotePlusServer.Core;
+﻿using RemotePlusServer.Core;
 using System.IO;
 using BetterLogger;
 using RemotePlusLibrary.ServiceArchitecture;
-using Ninject;
+using RemotePlusLibrary.Core.IOC;
+using RemotePlusLibrary.Extension;
 using RemotePlusServer.Core.ExtensionSystem;
 using RemotePlusLibrary.SubSystem.Command.CommandClasses;
 using RemotePlusLibrary.SubSystem.Command;
 
 namespace CommonWebCommands
 {
+    [ExtensionModule]
     public class WebCommands : ServerCommandClass
     {
         private ILogFactory _logger;
         private IRemotePlusService<ServerRemoteInterface> _service;
-        public override void InitializeServices(IKernel kernel)
+        public override void InitializeServices(IServiceCollection services)
         {
-            _logger = kernel.Get<ILogFactory>();
-            _service = kernel.Get<IRemotePlusService<ServerRemoteInterface>>();
+            _logger = services.GetService<ILogFactory>();
+            _service = services.GetService<IRemotePlusService<ServerRemoteInterface>>();
             _logger.Log("Adding Chrome", LogLevel.Info, "WebCommands");
             CheckChrome();
             Commands.Add("chrome", chrome);
@@ -65,7 +61,7 @@ namespace CommonWebCommands
             }
         }
 
-        [CommandHelp("Starts a new chrome seassion.")]
+        [CommandHelp("Starts a new chrome session.")]
         public CommandResponse chrome(CommandRequest args, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
         {
             try
@@ -80,7 +76,7 @@ namespace CommonWebCommands
                 throw;
             }
         }
-        [CommandHelp("Starts a new internet explorer seassion.")]
+        [CommandHelp("Starts a new internet explorer session.")]
         public CommandResponse ie(CommandRequest args, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
         {
             try
@@ -95,7 +91,7 @@ namespace CommonWebCommands
                 throw;
             }
         }
-        [CommandHelp("Starts a new Opera seassion")]
+        [CommandHelp("Starts a new Opera session")]
         public CommandResponse opera(CommandRequest args, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
         {
             try
@@ -110,7 +106,7 @@ namespace CommonWebCommands
                 throw;
             }
         }
-        [CommandHelp("Starts a new Firefox seassion")]
+        [CommandHelp("Starts a new Firefox session")]
         public CommandResponse firefox(CommandRequest args, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
         {
             try

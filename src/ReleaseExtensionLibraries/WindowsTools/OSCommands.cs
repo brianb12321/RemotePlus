@@ -17,12 +17,15 @@ using RemotePlusLibrary.RequestSystem.DefaultRequestBuilders;
 using RemotePlusLibrary.RequestSystem.DefaultUpdateRequestBuilders;
 using NDesk.Options;
 using Ninject;
+using RemotePlusLibrary.Core.IOC;
+using RemotePlusLibrary.Extension;
 using RemotePlusServer.Core.ExtensionSystem;
 using RemotePlusLibrary.SubSystem.Command;
 using RemotePlusLibrary.SubSystem.Command.CommandClasses;
 
 namespace WindowsTools
 {
+    [ExtensionModule]
     public class OSCommands : ServerCommandClass
     {
         ILogFactory _logger;
@@ -214,10 +217,10 @@ namespace WindowsTools
                 if(sw != null) sw.Dispose();
             }
         }
-        public override void InitializeServices(IKernel kernel)
+        public override void InitializeServices(IServiceCollection services)
         {
-            _service = kernel.Get<IRemotePlusService<ServerRemoteInterface>>();
-            _logger = kernel.Get<ILogFactory>();
+            _service = services.GetService<IRemotePlusService<ServerRemoteInterface>>();
+            _logger = services.GetService<ILogFactory>();
             _logger.Log("Adding OS commands", LogLevel.Info, "WindowsTools");
             Commands.Add("regEdit", regEdit);
             Commands.Add("fileM", Filem.filem_command);

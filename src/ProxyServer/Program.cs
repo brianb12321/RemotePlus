@@ -34,7 +34,7 @@ namespace ProxyServer
         [STAThread]
         static void Main(string[] args)
         {
-            IOCContainer.Provider.Bind<IEnvironment>().ToConstant(new ProxyManager());
+            IOCContainer.Provider.AddSingleton<IEnvironment>(new ProxyManager());
             ResourceStore = ResourceStore.New();
             GlobalServices.RunningEnvironment.Start(args).GetAwaiter().GetResult();
         }
@@ -49,7 +49,7 @@ namespace ProxyServer
             RunPostServerCoreInitialization(core);
             GlobalServices.Logger.Log("Running post init on all extensions.", LogLevel.Info);
             DefaultExtensionLoader.RunPostInit();
-            IOCContainer.Provider.Get<ICommandSubsystem<IProxyCommandModule>>().Init();
+            IOCContainer.Provider.GetService<ICommandSubsystem<IProxyCommandModule>>().Init();
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             //BUG: if no form is injected, it will display a blank screen to the user.
@@ -78,7 +78,7 @@ namespace ProxyServer
                     if (core != null)
                     {
                         foundCore = true;
-                        core.AddServices(new ServiceCollection());
+                        core.AddServices(IOCContainer.Provider);
                         ServerBuilder sb = new ServerBuilder();
                         core.InitializeServer(sb);
                         var serverInit = sb.Build();

@@ -11,12 +11,12 @@ namespace RSPM
     {
         public PackageManagerBuilder SetPackageDownloader<TPackageDownloader>() where TPackageDownloader : IPackageDownloader
         {
-            IOCContainer.Provider.Bind<IPackageDownloader>().To(typeof(TPackageDownloader)).InTransientScope();
+            IOCContainer.Provider.AddTransient<IPackageDownloader, TPackageDownloader>();
             return this;
         }
         public PackageManagerBuilder SetPackageSourceReader<TPackageSourceReaderImpl>() where TPackageSourceReaderImpl : ISourceReader
         {
-            IOCContainer.Provider.Bind<IPackageDownloader>().To(typeof(TPackageSourceReaderImpl)).InTransientScope();
+            IOCContainer.Provider.AddTransient<IPackageDownloader, TPackageSourceReaderImpl>();
             return this;
         }
     }

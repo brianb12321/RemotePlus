@@ -30,7 +30,7 @@ namespace RemotePlusClient
         {
             CheckForIllegalCrossThreadCalls = false;
             _winManager = new DefaultWindowManager(tc_top, tc_bottum, tc_left, null);
-            IOCContainer.Provider.Bind<IWindowManager>().ToConstant(_winManager);
+            IOCContainer.Provider.AddSingleton(_winManager);
             GlobalServices.Logger.AddLogger(new WinFormLogger(_winManager));
             Bootstrapper.InitCommands(IOCContainer.Provider);
             Bootstrapper.InitRequests(_connectManager);

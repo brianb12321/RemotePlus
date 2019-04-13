@@ -58,9 +58,9 @@ namespace RSPM
             return new CommandResponse((int)CommandStatus.Success);
         }
 
-        public override void InitializeServices(IKernel kernel)
+        public override void InitializeServices(IServiceCollection services)
         {
-            _service = kernel.Get<IRemotePlusService<ServerRemoteInterface>>();
+            _service = services.GetService<IRemotePlusService<ServerRemoteInterface>>();
             Commands.Add("Install-Package", InstallPackage);
             Commands.Add("Generate-Package-Manifest", GeneratePackageManifest);
         }

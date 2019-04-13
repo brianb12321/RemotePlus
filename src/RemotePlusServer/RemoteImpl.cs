@@ -50,12 +50,12 @@ namespace RemotePlusServer
             _interface = new ServerRemoteInterface();
             i.RemoteInterface = _interface;
         }
-        bool CheckRegisteration(string Action)
+        bool CheckRegistration(string action)
         {
-            GlobalServices.Logger.Log($"Checking registiration for action {Action}.", LogLevel.Info);
+            GlobalServices.Logger.Log($"Checking registration for action {action}.", LogLevel.Info);
             if (_interface.Registered != true)
             {
-                GlobalServices.Logger.Log("The client is not registired to the server.", LogLevel.Error);
+                GlobalServices.Logger.Log("The client is not registered to the server.", LogLevel.Error);
                 if (ServerStartup.proxyChannelFactory.State == CommunicationState.Opened)
                 {
                     ServerStartup.proxyChannel.TellMessage(Guid.NewGuid(), "You must be registered.", LogLevel.Error);
@@ -74,7 +74,7 @@ namespace RemotePlusServer
         }
         public void Beep(int Hertz, int Duration)
         {
-            if (CheckRegisteration("beep"))
+            if (CheckRegistration("beep"))
             {
                 _interface.Beep(Hertz, Duration);
                 _interface.Client.ClientCallback.TellMessage($"Console beeped. Hertz: {Hertz}, Duration: {Duration}", LogLevel.Info);
@@ -84,7 +84,7 @@ namespace RemotePlusServer
 
         public void PlaySound(string FileName)
         {
-            if(CheckRegisteration("PlaySound"))
+            if(CheckRegistration("PlaySound"))
             {
                 System.Media.SoundPlayer sp = new System.Media.SoundPlayer(FileName);
                 sp.Play();
@@ -93,7 +93,7 @@ namespace RemotePlusServer
 
         public void PlaySoundLoop(string FileName)
         {
-            if (CheckRegisteration("PlaySoundLoop"))
+            if (CheckRegistration("PlaySoundLoop"))
             {
                 System.Media.SoundPlayer sp = new System.Media.SoundPlayer(FileName);
                 sp.PlayLooping();
@@ -103,7 +103,7 @@ namespace RemotePlusServer
 
         public void PlaySoundSync(string FileName)
         {
-            if (CheckRegisteration("PlaySoundSync"))
+            if (CheckRegistration("PlaySoundSync"))
             {
                 System.Media.SoundPlayer sp = new System.Media.SoundPlayer(FileName);
                 sp.PlaySync();
@@ -111,7 +111,7 @@ namespace RemotePlusServer
             // OperationContext.Current.OperationCompleted += (sender, e) => _interface.Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
         }
 
-        public void Register(RegisterationObject Settings)
+        public void Register(RegisterationObject settings)
         {
             GlobalServices.Logger.Log("A new client is awaiting registration.", LogLevel.Info);
             GlobalServices.Logger.Log("Instantiating callback object.", LogLevel.Debug);
@@ -119,10 +119,10 @@ namespace RemotePlusServer
             //Setup the client callback.
             BuildClient();
             GlobalServices.Logger.Log("Received registration object from client.", LogLevel.Info);
-            this._interface.Settings = Settings;
+            this._interface.Settings = settings;
             GlobalServices.Logger.Log("Processing registration object.", LogLevel.Debug);
             _interface.Client.ClientCallback.TellMessage("Processing registration object.", LogLevel.Debug);
-            PerformAuthentication(Settings);
+            PerformAuthentication(settings);
             //Setup the prompt if it is a command-line client.
             if (_interface.Client.ClientType == ClientType.CommandLine && ServerStartup.proxyChannelFactory == null)
             {
@@ -170,7 +170,14 @@ namespace RemotePlusServer
             if (account == null)
             {
                 GlobalServices.Logger.Log($"Client {_interface.Client.FriendlyName} [{_interface.Client.UniqueID.ToString()}] disconnected. Failed to register to the server. Authentication failed.", LogLevel.Info);
-                _interface.Client.ClientCallback.Disconnect(REG_FAILED + $" Provded username: {regObject.Credentials.Username}");
+                if (ServerManager.DefaultSettings.DiscoverySettings.DiscoveryBehavior == ProxyConnectionMode.Connect)
+                {
+                    _interface.Client.ClientCallback.TellMessage(REG_FAILED + $" Provided username: {regObject.Credentials.Username}", LogLevel.Error);
+                }
+                else
+                {
+                    _interface.Client.ClientCallback.Disconnect(REG_FAILED + $" Provided username: {regObject.Credentials.Username}");
+                }
             }
             else
             {
@@ -190,7 +197,7 @@ namespace RemotePlusServer
 
         public void RunProgram(string Program, string Argument, bool shell, bool ignore)
         {
-            if (CheckRegisteration("RunProgram"))
+            if (CheckRegistration("RunProgram"))
             {
                 _interface.RunProgram(Program, Argument, shell, ignore);
             }
@@ -199,7 +206,7 @@ namespace RemotePlusServer
 
         public DialogResult ShowMessageBox(string Message, string Caption, System.Windows.Forms.MessageBoxIcon Icon, System.Windows.Forms.MessageBoxButtons Buttons)
         {
-            if (CheckRegisteration("ShowMessageBox"))
+            if (CheckRegistration("ShowMessageBox"))
             {
                 return _interface.ShowMessageBox(Message, Caption, Icon, Buttons);
             }
@@ -212,7 +219,7 @@ namespace RemotePlusServer
 
         public void Speak(string Message, VoiceGender Gender, VoiceAge Age)
         {
-            if (CheckRegisteration("Speak"))
+            if (CheckRegistration("Speak"))
             {
                 _interface.Speak(Message, Gender, Age);
             }
@@ -220,7 +227,7 @@ namespace RemotePlusServer
 
         public CommandPipeline RunServerCommand(string Command, CommandExecutionMode commandMode)
         {
-            if (CheckRegisteration("RunServerCommand"))
+            if (CheckRegistration("RunServerCommand"))
             {
                 return _interface.RunServerCommand(Command, commandMode);
             }
@@ -232,7 +239,7 @@ namespace RemotePlusServer
 
         public void UpdateServerSettings(ServerSettings Settings)
         {
-            if (CheckRegisteration("UpdateServerSettings"))
+            if (CheckRegistration("UpdateServerSettings"))
             {
                 GlobalServices.Logger.Log("Updating server settings.", LogLevel.Info);
                 ServerManager.DefaultSettings = Settings;
@@ -247,7 +254,7 @@ namespace RemotePlusServer
         public ServerSettings GetServerSettings()
         {
             // OperationContext.Current.OperationCompleted += (sender, e) => _interface.Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
-            if (CheckRegisteration("GetServerSettings"))
+            if (CheckRegistration("GetServerSettings"))
             {
                 GlobalServices.Logger.Log("Retrieving server settings.", LogLevel.Info);
                 return ServerManager.DefaultSettings;
@@ -265,7 +272,7 @@ namespace RemotePlusServer
         public UserAccount GetLoggedInUser()
         {
             // OperationContext.Current.OperationCompleted += (sender, e) => _interface.Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
-            if (CheckRegisteration("GetLoggedInUser"))
+            if (CheckRegistration("GetLoggedInUser"))
             {
                 return _interface.LoggedInUser;
             }
@@ -277,7 +284,7 @@ namespace RemotePlusServer
 
         public IEnumerable<CommandDescription> GetCommands()
         {
-            if (CheckRegisteration("GetCommands"))
+            if (CheckRegistration("GetCommands"))
             {
                 // OperationContext.Current.OperationCompleted += (sender, e) => _interface.Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
                 List<CommandDescription> rc = new List<CommandDescription>();
@@ -298,7 +305,7 @@ namespace RemotePlusServer
         public IEnumerable<string> GetCommandsAsStrings()
         {
             // OperationContext.Current.OperationCompleted += (sender, e) => _interface.Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
-            if (CheckRegisteration("GetCommandsAsStrings"))
+            if (CheckRegistration("GetCommandsAsStrings"))
             {
                 _interface.Client.ClientCallback.SendSignal(new SignalMessage("operation_completed", ""));
                 return IOCContainer.GetService<ICommandSubsystem<IServerCommandModule>>().AggregateAllCommandModules().Keys;
@@ -489,7 +496,7 @@ namespace RemotePlusServer
 
         public Task<CommandPipeline> RunServerCommandAsync(string command, CommandExecutionMode commandMode)
         {
-            return _interface.RunServerCommandAsync(command, commandMode);
+            return CheckRegistration("RunServerCommand") ? _interface.RunServerCommandAsync(command, commandMode) : Task.FromResult<CommandPipeline>(null);
         }
 
         public void CancelServerCommand()

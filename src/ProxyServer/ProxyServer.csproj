@@ -106,7 +106,6 @@
     <Compile Include="ServerControls.Designer.cs">
       <DependentUpon>ServerControls.cs</DependentUpon>
     </Compile>
-    <Compile Include="ServiceCollection.cs" />
     <Compile Include="SessionClient.cs" />
   </ItemGroup>
   <ItemGroup>

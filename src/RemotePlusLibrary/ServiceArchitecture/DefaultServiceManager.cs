@@ -22,8 +22,8 @@ namespace RemotePlusLibrary.ServiceArchitecture
             where TService : IRemotePlusService<TImpl>
             where TImpl : new()
         {
-            IOCContainer.Provider.Bind<IRemotePlusService<TImpl>>().To(typeof(TService)).InSingletonScope();
-            ICommunicationObject communObject = IOCContainer.Provider.Get<IRemotePlusService<TImpl>>().Host;
+            IOCContainer.Provider.AddSingleton<IRemotePlusService<TImpl>, TService>();
+            ICommunicationObject communObject = IOCContainer.Provider.GetService<IRemotePlusService<TImpl>>().Host;
             communicationObjects.Add(communObject);
         }
 
@@ -37,12 +37,12 @@ namespace RemotePlusLibrary.ServiceArchitecture
 
         public IRemotePlusService<TImpl> GetService<TImpl>() where TImpl : new()
         {
-            return IOCContainer.Provider.Get<IRemotePlusService<TImpl>>();
+            return IOCContainer.Provider.GetService<IRemotePlusService<TImpl>>();
         }
 
         public CommunicationState GetState<TInterface>() where TInterface : new()
         {
-            return IOCContainer.Provider.Get<IRemotePlusService<TInterface>>().Host.State;
+            return IOCContainer.Provider.GetService<IRemotePlusService<TInterface>>().Host.State;
         }
         
         void ConstructServices()
@@ -53,13 +53,13 @@ namespace RemotePlusLibrary.ServiceArchitecture
         {
             var b = builder?.Invoke();
             var service = b.BuildService();
-            IOCContainer.Provider.Bind<IRemotePlusService<TServiceImpl>>().ToConstant(service);
+            IOCContainer.Provider.AddSingleton(service);
             GlobalServices.Logger.Log($"Service {typeof(TServiceImpl).Name} added to IOC.", BetterLogger.LogLevel.Info);
         }
 
         public void BuildHost<TImpl>() where TImpl : new()
         {
-            var service = IOCContainer.Provider.Get<IRemotePlusService<TImpl>>();
+            var service = IOCContainer.Provider.GetService<IRemotePlusService<TImpl>>();
             service.BuildHost();
             communicationObjects.Add(service.Host);
         }

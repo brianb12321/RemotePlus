@@ -1,33 +1,22 @@
 ﻿using System;
-using System.Net;
-using RemotePlusServer.Core;
-using BetterLogger;
-using System.IO;
-using RemotePlusLibrary.ServiceArchitecture;
 using System.Drawing;
+using System.Net;
 using System.Threading.Tasks;
+using RemotePlusLibrary.Core.IOC;
+using RemotePlusLibrary.Extension;
 using RemotePlusLibrary.RequestSystem.DefaultRequestBuilders;
 using RemotePlusLibrary.RequestSystem.DefaultUpdateRequestBuilders;
-using Ninject;
-using RemotePlusServer.Core.ExtensionSystem;
+using RemotePlusLibrary.ServiceArchitecture;
 using RemotePlusLibrary.SubSystem.Command;
 using RemotePlusLibrary.SubSystem.Command.CommandClasses;
-using RemotePlusLibrary.Core;
+using RemotePlusServer.Core.ExtensionSystem;
 
-namespace CommonWebCommands
+namespace RemotePlusServer.Core.Commands
 {
-    public class DownloadCommands : ServerCommandClass
+    [ExtensionModule]
+    public class ShippedWebCommands : ServerCommandClass
     {
-        IRemotePlusService<ServerRemoteInterface> _service;
-
-        public override void InitializeServices(IKernel kernel)
-        {
-            GlobalServices.Logger.Log("Adding download commands.", LogLevel.Info);
-            _service = kernel.Get<IRemotePlusService<ServerRemoteInterface>>();
-            Commands.Add("downloadWeb", downloadWeb);
-            Commands.Add("wget", wget);
-        }
-
+        private IRemotePlusService<ServerRemoteInterface> _service;
         [CommandHelp("Downloads a file from the internet and displays it in the console.")]
         public CommandResponse downloadWeb(CommandRequest args, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
         {
@@ -46,9 +35,9 @@ namespace CommonWebCommands
         [CommandHelp("Downloads a file from the internet.")]
         public CommandResponse wget(CommandRequest args, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
         {
-            if(args.Arguments.Count < 2)
+            if (args.Arguments.Count < 2)
             {
-                currentEnvironment.WriteLine(new ConsoleText("You must specify a destination location.") { TextColor = Color.Red });
+                currentEnvironment.WriteLineErrorWithColor("You must specify a destination location.", Color.Red);
                 return new CommandResponse((int)CommandStatus.Fail);
             }
             else
@@ -57,7 +46,7 @@ namespace CommonWebCommands
                 {
                     if (!Uri.IsWellFormedUriString(args.Arguments[1].ToString(), UriKind.Absolute))
                     {
-                        currentEnvironment.WriteLine(new ConsoleText("Web address is invalid.") { TextColor = Color.Red });
+                        currentEnvironment.WriteLineErrorWithColor("Web address is invalid.", Color.Red);
                         return new CommandResponse((int)CommandStatus.Fail);
                     }
                     currentEnvironment.WriteLine($"Starting download for {args.Arguments[1].ToString()}");
@@ -74,19 +63,30 @@ namespace CommonWebCommands
                     {
                         Message = "Downloading file."
                     });
+                    var sub = args.CancellationToken.Register(() =>
+                    {
+                        client.CancelAsync();
+                    });
                     Task t = client.DownloadFileTaskAsync(args.Arguments[1].ToString(), args.Arguments[2].ToString());
-                    t.Wait();
+                    t.Wait(args.CancellationToken);
                     _service.RemoteInterface.Client.ClientCallback.DisposeCurrentRequest();
-                    currentEnvironment.WriteLine("File downloaded succesfully.");
+                    currentEnvironment.WriteLine("File downloaded successfully.");
+                    sub.Dispose();
                     return new CommandResponse((int)CommandStatus.Success);
                 }
                 catch (AggregateException ex)
                 {
                     _service.RemoteInterface.Client.ClientCallback.DisposeCurrentRequest();
-                    currentEnvironment.WriteLine(new ConsoleText($"Unable to download web resource. Message: {ex.GetBaseException().Message}") { TextColor = Color.Red });
+                    currentEnvironment.WriteLineErrorWithColor($"Unable to download web resource. Message: {ex.GetBaseException().Message}", Color.Red);
                     return new CommandResponse((int)CommandStatus.Fail);
                 }
             }
+        }
+        public override void InitializeServices(IServiceCollection services)
+        {
+            _service = services.GetService<IRemotePlusService<ServerRemoteInterface>>();
+            Commands.Add("downloadWeb", downloadWeb);
+            Commands.Add("wget", wget);
         }
     }
 }

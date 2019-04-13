@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using RemotePlusLibrary.Core.IOC;
-using Ninject;
 using RemotePlusClient.Utils;
 using BetterLogger;
 using RemotePlusClient.CommonUI.Connection;
@@ -23,7 +20,7 @@ namespace RemotePlusClient
         [STAThread]
         static void Main()
         {
-            IOCContainer.Provider.Bind<IEnvironment>().ToConstant(new Program());
+            IOCContainer.Provider.AddSingleton<IEnvironment>(new Program());
             GlobalServices.RunningEnvironment.Start(new string[] { }).GetAwaiter().GetResult();
         }
 
@@ -39,17 +36,17 @@ namespace RemotePlusClient
 
         public Task Start(string[] args)
         {
-            IKernel provider = IOCContainer.Provider;
+            IServiceCollection provider = IOCContainer.Provider;
             Application.SetUnhandledExceptionMode(UnhandledExceptionMode.Automatic);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Bootstrapper.InitServices(provider);
             Bootstrapper.InitKnownTypes();
             Bootstrapper.SetupErrorHandlers(IOCContainer.GetService<ILogFactory>());
-            Bootstrapper.InitDialogs(provider.Get<IDialogManager>());
-            Application.Run(new Form1(provider.Get<IDialogManager>(),
-                provider.Get<ICommandManager<MenuItem>>(),
-                provider.Get<IConnectionManager>()));
+            Bootstrapper.InitDialogs(provider.GetService<IDialogManager>());
+            Application.Run(new Form1(provider.GetService<IDialogManager>(),
+                provider.GetService<ICommandManager<MenuItem>>(),
+                provider.GetService<IConnectionManager>()));
             return Task.CompletedTask;
         }
     }

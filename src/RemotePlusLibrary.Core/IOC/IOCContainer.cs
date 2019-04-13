@@ -4,14 +4,14 @@ namespace RemotePlusLibrary.Core.IOC
 {
     public static class IOCContainer
     {
-        public static IKernel Provider { get; set; } = new StandardKernel();
+        public static IServiceCollection Provider { get; set; } = new ServiceCollection();
         public static TService GetService<TService>()
         {
-            return Provider.Get<TService>();
+            return Provider.GetService<TService>();
         }
         public static TService GetService<TService>(string name)
         {
-            return Provider.Get<TService>(name);
+            return Provider.GetService<TService>(name);
         }
     }
 }

@@ -10,6 +10,7 @@ using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
 using NDesk.Options;
 using Ninject;
+using RemotePlusLibrary.Core.IOC;
 using RemotePlusLibrary.Extension;
 using RemotePlusLibrary.Extension.ResourceSystem;
 using RemotePlusLibrary.Extension.ResourceSystem.ResourceTypes;
@@ -546,10 +547,10 @@ namespace RemotePlusLibrary.SubSystem.Audio
                 }
             }
         }
-        public override void InitializeServices(IKernel kernel)
+        public override void InitializeServices(IServiceCollection services)
         {
-            _service = kernel.Get<IRemotePlusService<ServerRemoteInterface>>();
-            _resourceManager = kernel.Get<IResourceManager>();
+            _service = services.GetService<IRemotePlusService<ServerRemoteInterface>>();
+            _resourceManager = services.GetService<IResourceManager>();
             Commands.Add("setGlobalVolume", setGlobalVolume);
             Commands.Add("loadAudio", loadAudio);
             Commands.Add("playAudio", playAudio);

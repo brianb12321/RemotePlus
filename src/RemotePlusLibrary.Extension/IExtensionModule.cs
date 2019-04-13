@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using RemotePlusLibrary.Core.IOC;
 
 namespace RemotePlusLibrary.Extension
 {
@@ -12,6 +13,6 @@ namespace RemotePlusLibrary.Extension
     /// </summary>
     public interface IExtensionModule
     {
-        void InitializeServices(IKernel kernel);
+        void InitializeServices(IServiceCollection kernel);
     }
 }

@@ -14,12 +14,15 @@ using Ninject;
 using System.Drawing;
 using RemotePlusLibrary.Discovery.Events;
 using ArduinoRemoteExtensionsLib.Events;
+using RemotePlusLibrary.Core.IOC;
+using RemotePlusLibrary.Extension;
 using RemotePlusServer.Core.ExtensionSystem;
 using RemotePlusLibrary.SubSystem.Command.CommandClasses;
 using RemotePlusLibrary.SubSystem.Command;
 
 namespace ArduinoRemoteExtensions
 {
+    [ExtensionModule]
     public class ArduinoRemoteCommands : ServerCommandClass
     {
         private IEventBus _eventBus;
@@ -57,10 +60,10 @@ namespace ArduinoRemoteExtensions
             currentEnvironment.WriteLine("Arduino event registired.");
             return new CommandResponse((int)CommandStatus.Success);
         }
-        public override void InitializeServices(IKernel kernel)
+        public override void InitializeServices(IServiceCollection services)
         {
-            _logger = kernel.Get<ILogFactory>();
-            _eventBus = kernel.Get<IEventBus>();
+            _logger = services.GetService<ILogFactory>();
+            _eventBus = services.GetService<IEventBus>();
             Commands.Add("arduinoEvent", arduinoEvent);
             Commands.Add("arduinoCancel", arduinoCancel);
             Commands.Add("arduinoBeep", arduinoBeep);

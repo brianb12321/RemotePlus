@@ -1,32 +1,32 @@
 ﻿using System;
-using System.Text;
-using System.Windows.Forms;
-using System.Speech.Synthesis;
 using System.Diagnostics;
-using RemotePlusServer.Core.ExtensionSystem;
-using System.IO;
-using RemotePlusLibrary.RequestSystem;
 using System.Drawing;
-using BetterLogger;
-using RemotePlusLibrary.Core;
-using System.Net;
-using RemotePlusLibrary.RequestSystem.DefaultRequestBuilders;
+using System.IO;
 using System.Linq;
-using Ninject;
-using RemotePlusLibrary.ServiceArchitecture;
+using System.Net;
+using System.Reflection;
+using System.Speech.Synthesis;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using BetterLogger;
+using NDesk.Options;
+using RemotePlusLibrary.Core;
+using RemotePlusLibrary.Core.IOC;
+using RemotePlusLibrary.Extension;
 using RemotePlusLibrary.Extension.ResourceSystem;
 using RemotePlusLibrary.Extension.ResourceSystem.ResourceTypes;
+using RemotePlusLibrary.RequestSystem;
+using RemotePlusLibrary.RequestSystem.DefaultRequestBuilders;
 using RemotePlusLibrary.RequestSystem.DefaultUpdateRequestBuilders;
-using System.Threading;
-using NDesk.Options;
-using System.Reflection;
 using RemotePlusLibrary.Scripting;
+using RemotePlusLibrary.ServiceArchitecture;
 using RemotePlusLibrary.SubSystem.Command;
 using RemotePlusLibrary.SubSystem.Command.CommandClasses;
-using System.Threading.Tasks;
-using RemotePlusLibrary.Extension;
+using RemotePlusServer.Core.ExtensionSystem;
 
-namespace RemotePlusServer.Core
+namespace RemotePlusServer.Core.Commands
 {
     [ExtensionModule]
     public class DefaultCommands : ServerCommandClass
@@ -76,7 +76,7 @@ namespace RemotePlusServer.Core
                  })
                 .Add("disableWindow|w", "Disables a window from appearing.", v => p.StartInfo.CreateNoWindow = true)
                 .Add("waitForExit|e", "Waits for the process to exit before returning control back to the client.", v => waitForExit = true)
-                .Add("enterDebug", "Puts the server process into debug mode. NOTE: Must have appropriate privilleges.", v => enterDebug = true)
+                .Add("enterDebug", "Puts the server process into debug mode. NOTE: Must have appropriate privileges.", v => enterDebug = true)
                 .Add("exitDebug", "Puts the server process out of debug mode.", v => exitDebug = true)
                 .Add("help|?", "Shows the help screen.", v => showHelp = true);
             set.Parse(args.Arguments.Select(a => a.ToString()));
@@ -628,35 +628,7 @@ namespace RemotePlusServer.Core
                 return new CommandResponse((int)CommandStatus.Success);
             }
         }
-        [CommandHelp("Prints the message to the screen.")]
-        public CommandResponse echo(CommandRequest args, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
-        {
-            string stringToPrint = string.Empty;
-            string tBgColor = string.Empty;
-            string tFgColor = string.Empty;
-            bool help = false;
-            OptionSet options = new OptionSet()
-                .Add("backgroundColor|bc=", "The backgorund color to send to the client.", v => bgColor = v)
-                .Add("foregroundColor|fc=", "The foreground color to send to the client.", v => fgColor = v)
-                .Add("help|?", "Displays the help screen.", v => help = true);
-            string[] text = options.Parse(args.Arguments.Select(a => a.ToString())).ToArray();
-            if (args.HasLastCommand)
-            {
-                stringToPrint = args.LastCommand.ToString() + Environment.NewLine;
-            }
-            else
-            {
-                text.ToList().ForEach(t => stringToPrint += t + Environment.NewLine);
-            }
-            Color bgColor;
-            Color fgColor;
-            if (!string.IsNullOrWhiteSpace(tBgColor)) bgColor = ColorHelper.FromRGBArray(tBgColor.Split(','));
-            if (!string.IsNullOrWhiteSpace(tFgColor)) fgColor = ColorHelper.FromRGBArray(tFgColor.Split(','));
-            return new CommandResponse((int)CommandStatus.Success)
-            {
-                ReturnData = stringToPrint
-            };
-        }
+        
         [CommandHelp("Loads an extension library dll into the system.")]
         public CommandResponse loadExtensionLibrary(CommandRequest args, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
         {
@@ -818,12 +790,12 @@ namespace RemotePlusServer.Core
 
         #endregion Commands
 
-        public override void InitializeServices(IKernel kernel)
+        public override void InitializeServices(IServiceCollection services)
         {
-            _service = kernel.Get<IRemotePlusService<ServerRemoteInterface>>();
-            _commandSubsystem = kernel.Get<ICommandSubsystem<IServerCommandModule>>();
-            _resourceManager = kernel.Get<IResourceManager>();
-            _scriptingEngine = kernel.Get<IScriptingEngine>();
+            _service = services.GetService<IRemotePlusService<ServerRemoteInterface>>();
+            _commandSubsystem = services.GetService<ICommandSubsystem<IServerCommandModule>>();
+            _resourceManager = services.GetService<IResourceManager>();
+            _scriptingEngine = services.GetService<IScriptingEngine>();
             Commands.Add("ps", ps);
             Commands.Add("progTest", progTest);
             Commands.Add("readLineTest", readLineTest);
@@ -841,7 +813,6 @@ namespace RemotePlusServer.Core
             Commands.Add("showMessageBox", svm_showMessageBox);
             Commands.Add("path", path);
             Commands.Add("cd", cd);
-            Commands.Add("echo", echo);
             Commands.Add("load-extensionLibrary", loadExtensionLibrary);
             Commands.Add("cp", cp);
             Commands.Add("deleteFile", deleteFile);

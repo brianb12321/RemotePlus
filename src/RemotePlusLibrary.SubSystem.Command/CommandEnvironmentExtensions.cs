@@ -15,7 +15,11 @@ namespace RemotePlusLibrary.SubSystem.Command
         }
         public static void WriteLineWithColor(this ICommandEnvironment env, string message, Color foregroundColor, Color backgroundColor)
         {
-            env.WriteLine(new ConsoleText(message) { TextColor = foregroundColor, BackColor = backgroundColor });
+            if (foregroundColor == Color.Empty)
+            {
+                env.WriteLine(new ConsoleText(message) {BackColor = backgroundColor });
+            }
+            else env.WriteLine(new ConsoleText(message) { TextColor = foregroundColor, BackColor = backgroundColor });
         }
         public static void WriteLineErrorWithColor(this ICommandEnvironment env, string message, Color foregroundColor)
         {

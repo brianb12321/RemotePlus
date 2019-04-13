@@ -86,7 +86,9 @@
   <ItemGroup>
     <Compile Include="ClientLogger.cs" />
     <Compile Include="CommandExecutor.cs" />
-    <Compile Include="DefaultCommands.cs" />
+    <Compile Include="Commands\EchoCommands.cs" />
+    <Compile Include="Commands\DefaultCommands.cs" />
+    <Compile Include="Commands\ShippedWebCommands.cs" />
     <Compile Include="ExtensionSystem\IServerCommandModule.cs" />
     <Compile Include="ExtensionSystem\ServerCommandClass.cs" />
     <Compile Include="ExtensionSystem\ServerCommandSubsystem.cs" />

@@ -52,7 +52,7 @@ namespace RemotePlusClientCmd
         [STAThread]
         static void Main(string[] args)
         {
-            IOCContainer.Provider.Bind<IEnvironment>().ToConstant(new ClientCmdManager());
+            IOCContainer.Provider.AddSingleton<IEnvironment>(new ClientCmdManager());
             GlobalServices.RunningEnvironment.Start(args);
         }
         public Task Start(string[] args)
@@ -63,17 +63,18 @@ namespace RemotePlusClientCmd
             Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
             var blf = new BaseLogFactory();
             blf.AddLogger(new ConsoleLogger());
-            IOCContainer.Provider.Bind<ILogFactory>().ToConstant(blf);
+            IOCContainer.Provider.AddSingleton<ILogFactory>(blf);
             ExtensionLoader = new DefaultExtensionLoader(blf);
             _commandSubsystem = new ClientCmdExtensionSubsystem(ExtensionLoader);
-            IOCContainer.Provider.Bind<IExtensionLibraryLoader>().ToConstant(ExtensionLoader);
-            IOCContainer.Provider.Bind<ICommandSubsystem<IClientCmdModule>>().ToConstant(_commandSubsystem);
+            IOCContainer.Provider.AddSingleton(ExtensionLoader);
+            IOCContainer.Provider.AddSingleton<ICommandSubsystem<IClientCmdModule>>(_commandSubsystem);
             applicationIcon = new NotifyIcon();
             applicationIcon.Icon = SystemIcons.Application;
             applicationIcon.Visible = true;
-            IOCContainer.Provider.Bind<Connection>().ToSelf().InSingletonScope();
-            IOCContainer.Provider.Bind<RemotePlusLibrary.Configuration.IConfigurationDataAccess>().To(typeof(RemotePlusLibrary.Configuration.StandordDataAccess.ConfigurationHelper)).InSingletonScope().Named("DefaultConfigDataAccess");
-            IOCContainer.Provider.Bind<IEventBus>().To(typeof(EventBus)).InSingletonScope();
+            IOCContainer.Provider.AddSingleton<Connection>();
+            IOCContainer.Provider.AddSingletonNamed<RemotePlusLibrary.Configuration.IConfigurationDataAccess,
+                    RemotePlusLibrary.Configuration.StandordDataAccess.ConfigurationHelper>("DefaultConfigDataAccess");
+            IOCContainer.Provider.AddSingleton<IEventBus, EventBus>();
             EventBus.RemoveEventProxy();
             Console.ResetColor();
             //Application.ThreadException += (Sender, e) => CatchException(e.Exception);

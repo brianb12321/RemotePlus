@@ -157,8 +157,8 @@ namespace RemotePlusClientCmd
 
         public void WriteToClientConsole(Guid guid, ConsoleText text)
         {
-            Colorful.Console.ForegroundColor = text.TextColor;
-            Colorful.Console.BackgroundColor = text.BackColor;
+            if(text.TextColor != Color.Empty) Colorful.Console.ForegroundColor = text.TextColor;
+            if(text.BackColor != Color.Empty) Colorful.Console.BackgroundColor = text.BackColor;
             Colorful.Console.WriteLine(text.Text);
             Colorful.Console.ResetColor();
         }

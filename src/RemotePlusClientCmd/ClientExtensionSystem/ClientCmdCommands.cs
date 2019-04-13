@@ -1,16 +1,13 @@
 ﻿using BetterLogger;
-using Ninject;
 using RemotePlusLibrary.Core;
 using RemotePlusLibrary.Extension;
 using RemotePlusLibrary.SubSystem.Command;
 using RemotePlusLibrary.SubSystem.Command.CommandClasses;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
+using RemotePlusLibrary.Core.IOC;
 using static RemotePlusClientCmd.ClientCmdManager;
 
 namespace RemotePlusClientCmd.ClientExtensionSystem
@@ -88,9 +85,17 @@ namespace RemotePlusClientCmd.ClientExtensionSystem
             else ClientCmdManager.Remote.ExecuteScript(File.ReadAllText(args.Arguments[1].ToString()));
             return new CommandResponse((int)CommandStatus.Success);
         }
-        public override void InitializeServices(IKernel kernel)
+
+        [CommandHelp("Reset the console colors.")]
+        public CommandResponse resetConsoleColors(CommandRequest args, CommandPipeline pipe,
+            ICommandEnvironment currentEnvironment)
         {
-            _commandSubsystem = kernel.Get<ICommandSubsystem<IClientCmdModule>>();
+            Console.ResetColor();
+            return new CommandResponse((int)CommandStatus.Success);
+        }
+        public override void InitializeServices(IServiceCollection services)
+        {
+            _commandSubsystem = services.GetService<ICommandSubsystem<IClientCmdModule>>();
             Commands.Add("#banner", banner);
             Commands.Add("#help", Help);
             Commands.Add("#clear", clearScreen);
@@ -98,6 +103,7 @@ namespace RemotePlusClientCmd.ClientExtensionSystem
             Commands.Add("#title", title);
             Commands.Add("#load-commandFile", load_CommandFile);
             Commands.Add("#execute-script", loadScriptFIle);
+            Commands.Add("#resetConsoleColors", resetConsoleColors);
         }
     }
 }

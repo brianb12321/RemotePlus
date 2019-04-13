@@ -31,7 +31,7 @@ namespace RemotePlusServer
         [STAThread]
         static void Main(string[] args)
         {
-            IOCContainer.Provider.Bind<IEnvironment>().ToConstant(new ServerStartup());
+            IOCContainer.Provider.AddSingleton<IEnvironment>(new ServerStartup());
             GlobalServices.RunningEnvironment.Start(args).GetAwaiter().GetResult();
         }
 
@@ -53,7 +53,7 @@ namespace RemotePlusServer
                 }
                 else
                 {
-                    IOCContainer.Provider.Bind<IEventBus>().To(typeof(EventBus)).InSingletonScope();
+                    IOCContainer.Provider.AddSingleton<IEventBus, EventBus>();
                 }
                 RunPostServerInitialization(core);
                 GlobalServices.Logger.Log("Running post init on all extensions.", LogLevel.Info);
@@ -110,7 +110,7 @@ namespace RemotePlusServer
                     if(core != null)
                     {
                         foundCore = true;
-                        core.AddServices(new ServiceCollection());
+                        core.AddServices(IOCContainer.Provider);
                         ServerBuilder sb = new ServerBuilder();
                         core.InitializeServer(sb);
                         var serverInit = sb.Build();
@@ -204,8 +204,8 @@ namespace RemotePlusServer
             _remote.SetRemoteInterface(ServerManager.ServerRemoteService);
             proxyChannelFactory = new DuplexChannelFactory<IProxyServerRemote>(_remote, _ConnectionFactory.BuildBinding(), new EndpointAddress(ServerManager.DefaultSettings.DiscoverySettings.Connection.ProxyServerURL));
             proxyChannel = proxyChannelFactory.CreateChannel();
-            IOCContainer.Provider.Bind<IProxyServerRemote>().ToConstant(proxyChannel);
-            IOCContainer.Provider.Bind<IEventBus>().To(typeof(ProxyEventBus)).InSingletonScope();
+            IOCContainer.Provider.AddSingleton(proxyChannel);
+            IOCContainer.Provider.AddSingleton<IEventBus, ProxyEventBus>();
         }
         public static void RunInServerMode()
         {
