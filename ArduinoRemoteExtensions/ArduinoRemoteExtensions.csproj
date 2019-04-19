@@ -95,6 +95,7 @@
     <ProjectReference Include="..\src\RemotePlusLibrary.SubSystem.Command\RemotePlusLibrary.SubSystem.Command.csproj">
       <Project>{C5145229-F6C8-432B-BF35-C8A2EBC2295F}</Project>
       <Name>RemotePlusLibrary.SubSystem.Command</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\src\RemotePlusLibrary\RemotePlusLibrary.csproj">
       <Project>{00c22a1f-d3df-4193-aaa8-9907d08e2511}</Project>

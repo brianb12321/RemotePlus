@@ -1,0 +1,89 @@
+﻿<Activity mc:Ignorable="sap sap2010 sads" x:Class="TestWorkflowExtensionLibrary.Workflows.HelloWorldWorkflow"
+ xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities"
+ xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+ xmlns:mca="clr-namespace:Microsoft.CSharp.Activities;assembly=System.Activities"
+ xmlns:rswa="clr-namespace:RemotePlusLibrary.SubSystem.Workflow.Activities;assembly=RemotePlusLibrary.SubSystem.Workflow"
+ xmlns:sads="http://schemas.microsoft.com/netfx/2010/xaml/activities/debugger"
+ xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation"
+ xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation"
+ xmlns:scg="clr-namespace:System.Collections.Generic;assembly=mscorlib"
+ xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=mscorlib"
+ xmlns:sd="clr-namespace:System.Drawing;assembly=System.Drawing"
+ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:Members>
+    <x:Property Name="argument2" Type="InArgument(x:String)" />
+  </x:Members>
+  <sap2010:ExpressionActivityEditor.ExpressionActivityEditor>C#</sap2010:ExpressionActivityEditor.ExpressionActivityEditor>
+  <sap2010:WorkflowViewState.IdRef>TestWorkflowExtensionLibrary.Workflows.HelloWorldWorkflow_1</sap2010:WorkflowViewState.IdRef>
+  <TextExpression.NamespacesForImplementation>
+    <sco:Collection x:TypeArguments="x:String">
+      <x:String>System</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Data</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>System.Text</x:String>
+      <x:String>System.Drawing</x:String>
+    </sco:Collection>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <sco:Collection x:TypeArguments="AssemblyReference">
+      <AssemblyReference>PresentationFramework</AssemblyReference>
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>System.Activities</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.Drawing</AssemblyReference>
+      <AssemblyReference>System.ServiceModel</AssemblyReference>
+      <AssemblyReference>System.ServiceModel.Activities</AssemblyReference>
+      <AssemblyReference>System.Xaml</AssemblyReference>
+      <AssemblyReference>System.Xml.Linq</AssemblyReference>
+      <AssemblyReference>System.Data.DataSetExtensions</AssemblyReference>
+      <AssemblyReference>Microsoft.CSharp</AssemblyReference>
+      <AssemblyReference>System.Data</AssemblyReference>
+      <AssemblyReference>System.Net.Http</AssemblyReference>
+      <AssemblyReference>System.Xml</AssemblyReference>
+      <AssemblyReference>RemotePlusLibrary.Core</AssemblyReference>
+      <AssemblyReference>RemotePlusLibrary.Extension</AssemblyReference>
+      <AssemblyReference>RemotePlusLibrary.SubSystem.Command</AssemblyReference>
+      <AssemblyReference>RemotePlusLibrary.SubSystem.Workflow</AssemblyReference>
+      <AssemblyReference>RemotePlusServer.Core</AssemblyReference>
+      <AssemblyReference>BetterLogger</AssemblyReference>
+      <AssemblyReference>mscorlib</AssemblyReference>
+      <AssemblyReference>TestWorkflowExtensionLibrary</AssemblyReference>
+    </sco:Collection>
+  </TextExpression.ReferencesForImplementation>
+  <Sequence sap2010:WorkflowViewState.IdRef="Sequence_1">
+    <rswa:ClientWriteLineActivity DisplayName="Write to client" sap2010:WorkflowViewState.IdRef="ClientWriteLineActivity_1" Text="Hello World">
+      <rswa:ClientWriteLineActivity.BackgroundColor>
+        <InArgument x:TypeArguments="sd:Color">
+          <mca:CSharpValue x:TypeArguments="sd:Color">Color.FromArgb(133, 133, 133)</mca:CSharpValue>
+        </InArgument>
+      </rswa:ClientWriteLineActivity.BackgroundColor>
+      <rswa:ClientWriteLineActivity.ForegroundColor>
+        <InArgument x:TypeArguments="sd:Color">
+          <mca:CSharpValue x:TypeArguments="sd:Color">System.Drawing.Color.White</mca:CSharpValue>
+        </InArgument>
+      </rswa:ClientWriteLineActivity.ForegroundColor>
+    </rswa:ClientWriteLineActivity>
+    <sads:DebugSymbol.Symbol>d25EOlxTb3VyY2VcUmVwb3NcUmVtb3RlUGx1c1xzcmNcUmVsZWFzZUV4dGVuc2lvbkxpYnJhcmllc1xUZXN0V29ya2Zsb3dMaWJyYXJ5XFdvcmtmbG93c1xIZWxsb1dvcmxkV29ya2Zsb3cueGFtbAU2A0QOAgEBNwVCJAIBAj8LP2MCAQY6CzpmAgEEN4IBN48BAgED</sads:DebugSymbol.Symbol>
+  </Sequence>
+  <sap2010:WorkflowViewState.ViewStateManager>
+    <sap2010:ViewStateManager>
+      <sap2010:ViewStateData Id="ClientWriteLineActivity_1" sap:VirtualizedContainerService.HintSize="280,126">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="Sequence_1" sap:VirtualizedContainerService.HintSize="302,250">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="TestWorkflowExtensionLibrary.Workflows.HelloWorldWorkflow_1" sap:VirtualizedContainerService.HintSize="342,330" />
+    </sap2010:ViewStateManager>
+  </sap2010:WorkflowViewState.ViewStateManager>
+</Activity>

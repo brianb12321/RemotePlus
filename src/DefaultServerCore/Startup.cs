@@ -20,6 +20,9 @@ using RemotePlusLibrary.Extension;
 using RemotePlusLibrary.SubSystem.Command;
 using RemotePlusLibrary.SubSystem.Command.CommandClasses.Parsing;
 using RemotePlusLibrary.SubSystem.Command.CommandClasses;
+using RemotePlusLibrary.SubSystem.Workflow;
+using RemotePlusLibrary.SubSystem.Workflow.ExtensionSystem;
+using RemotePlusLibrary.SubSystem.Workflow.Server;
 
 namespace DefaultServerCore
 {
@@ -50,7 +53,8 @@ namespace DefaultServerCore
                 .UseCommandline<CommandEnvironment, ServerCommandSubsystem, IServerCommandModule>(builder =>
                     builder.UseLexer<CommandLexer>()
                            .UseParser<CommandParser>()
-                           .UseExecutor<CommandExecutor>());
+                           .UseExecutor<CommandExecutor>())
+                .AddWorkflowFeature();
             //Add the services.
             IServiceManager manager = IOCContainer.GetService<IServiceManager>();
             manager.AddServiceUsingBuilder(() =>
@@ -93,13 +97,16 @@ namespace DefaultServerCore
                 .ResolveLib()
                 .LoadExtensionLibraries()
                 .LoadExtensionByType<PackageCommands>()
-                .LoadExtensionByType<AudioCommands>();
+                .LoadExtensionByType<AudioCommands>()
+                .LoadExtensionByType<RemotePlusActivityContext>()
+                .LoadExtensionByType<WorkflowCommands>();
         }
         public void PostInitializeServer(IServerBuilder builder)
         {
             builder.BuildServiceHost<ServerRemoteInterface>()
                 .BuildServiceHost<FileTransferServciceInterface>()
-                .LoadDefaultExtensionSubsystems<ICommandSubsystem<IServerCommandModule>, IServerCommandModule>();
+                .LoadDefaultExtensionSubsystems<ICommandSubsystem<IServerCommandModule>, IServerCommandModule>()
+                .LoadDefaultExtensionSubsystems<IWorkflowSubsystem, IRemotePlusWorkflowModule>();
         }
         #region Server Events
         private void Host_UnknownMessageReceived(object sender, System.ServiceModel.UnknownMessageReceivedEventArgs e)

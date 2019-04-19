@@ -44,7 +44,7 @@ namespace RemotePlusLibrary.Extension
                 if (attrib.Startup != null)
                 {
                     startup = (ILibraryStartup)Activator.CreateInstance(attrib.Startup);
-                    startup.Init(new ServiceCollection());
+                    startup.Init(IOCContainer.Provider);
                 }
                 List<IExtensionModule> _modules = new List<IExtensionModule>();
                 foreach(IExtensionModule module in a.GetTypes().Where(

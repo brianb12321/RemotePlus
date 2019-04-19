@@ -1,0 +1,418 @@
+﻿<Activity mc:Ignorable="sap sap2010 sads" x:Class="TestWorkflowExtensionLibrary.Workflows.CustomShellActivity"
+ xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities"
+ xmlns:av="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+ xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+ xmlns:mca="clr-namespace:Microsoft.CSharp.Activities;assembly=System.Activities"
+ xmlns:rswa="clr-namespace:RemotePlusLibrary.SubSystem.Workflow.Activities;assembly=RemotePlusLibrary.SubSystem.Workflow"
+ xmlns:rswsar="clr-namespace:RemotePlusLibrary.SubSystem.Workflow.Server.Activities.Requests;assembly=RemotePlusLibrary.SubSystem.Workflow.Server"
+ xmlns:sads="http://schemas.microsoft.com/netfx/2010/xaml/activities/debugger"
+ xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation"
+ xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation"
+ xmlns:scg="clr-namespace:System.Collections.Generic;assembly=mscorlib"
+ xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=mscorlib"
+ xmlns:sd="clr-namespace:System.Drawing;assembly=System.Drawing"
+ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:Members>
+    <x:Property Name="result" Type="OutArgument(x:String)" />
+  </x:Members>
+  <sap2010:ExpressionActivityEditor.ExpressionActivityEditor>C#</sap2010:ExpressionActivityEditor.ExpressionActivityEditor>
+  <sap2010:WorkflowViewState.IdRef>TestWorkflowExtensionLibrary.Workflows.CustomShellActivity_1</sap2010:WorkflowViewState.IdRef>
+  <TextExpression.NamespacesForImplementation>
+    <sco:Collection x:TypeArguments="x:String">
+      <x:String>System</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Data</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>System.Text</x:String>
+      <x:String>System.Drawing</x:String>
+      <x:String>RemotePlusLibrary.Core.EventSystem.Events</x:String>
+      <x:String>RemotePlusLibrary.Discovery.Events</x:String>
+    </sco:Collection>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <sco:Collection x:TypeArguments="AssemblyReference">
+      <AssemblyReference>PresentationFramework</AssemblyReference>
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>System.Activities</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.Drawing</AssemblyReference>
+      <AssemblyReference>System.ServiceModel</AssemblyReference>
+      <AssemblyReference>System.ServiceModel.Activities</AssemblyReference>
+      <AssemblyReference>System.Xaml</AssemblyReference>
+      <AssemblyReference>System.Xml.Linq</AssemblyReference>
+      <AssemblyReference>System.Data.DataSetExtensions</AssemblyReference>
+      <AssemblyReference>Microsoft.CSharp</AssemblyReference>
+      <AssemblyReference>System.Data</AssemblyReference>
+      <AssemblyReference>System.Net.Http</AssemblyReference>
+      <AssemblyReference>System.Xml</AssemblyReference>
+      <AssemblyReference>RemotePlusLibrary.Core</AssemblyReference>
+      <AssemblyReference>RemotePlusLibrary.Extension</AssemblyReference>
+      <AssemblyReference>RemotePlusLibrary.SubSystem.Command</AssemblyReference>
+      <AssemblyReference>RemotePlusLibrary.SubSystem.Workflow</AssemblyReference>
+      <AssemblyReference>RemotePlusServer.Core</AssemblyReference>
+      <AssemblyReference>BetterLogger</AssemblyReference>
+      <AssemblyReference>RemotePlusLibrary.SubSystem.Workflow.Server</AssemblyReference>
+      <AssemblyReference>mscorlib</AssemblyReference>
+      <AssemblyReference>TestWorkflowExtensionLibrary</AssemblyReference>
+      <AssemblyReference>RemotePlusLibrary.Discovery</AssemblyReference>
+    </sco:Collection>
+  </TextExpression.ReferencesForImplementation>
+  <Sequence sap2010:WorkflowViewState.IdRef="Sequence_1">
+    <rswa:ClientWriteLineActivity BackgroundColor="" DisplayName="Client WriteLine" sap2010:WorkflowViewState.IdRef="ClientWriteLineActivity_1" Text="Enter command.">
+      <rswa:ClientWriteLineActivity.ForegroundColor>
+        <InArgument x:TypeArguments="sd:Color">
+          <mca:CSharpValue x:TypeArguments="sd:Color">Color.Green</mca:CSharpValue>
+        </InArgument>
+      </rswa:ClientWriteLineActivity.ForegroundColor>
+    </rswa:ClientWriteLineActivity>
+    <While sap2010:WorkflowViewState.IdRef="While_1" Condition="True">
+      <Flowchart DisplayName="Command-line" sap2010:WorkflowViewState.IdRef="Flowchart_1">
+        <Flowchart.StartNode>
+          <FlowStep x:Name="__ReferenceID6" sap2010:WorkflowViewState.IdRef="FlowStep_3">
+            <rswsar:PromptRequestActivity DisplayName="Prompt Request" sap2010:WorkflowViewState.IdRef="PromptRequestActivity_1" Prompt="&gt;">
+              <rswsar:PromptRequestActivity.Result>
+                <OutArgument x:TypeArguments="x:String">
+                  <mca:CSharpReference x:TypeArguments="x:String">result</mca:CSharpReference>
+                </OutArgument>
+              </rswsar:PromptRequestActivity.Result>
+            </rswsar:PromptRequestActivity>
+            <FlowStep.Next>
+              <FlowSwitch x:TypeArguments="x:String" x:Name="__ReferenceID7" DisplayName="Decide command" sap2010:WorkflowViewState.IdRef="FlowSwitch`1_1">
+                <FlowSwitch.Default>
+                  <FlowStep x:Name="__ReferenceID8" sap2010:WorkflowViewState.IdRef="FlowStep_1">
+                    <rswa:ClientWriteLineActivity BackgroundColor="" DisplayName="Client WriteLine" sap2010:WorkflowViewState.IdRef="ClientWriteLineActivity_2" Text="Invalid command.">
+                      <rswa:ClientWriteLineActivity.ForegroundColor>
+                        <InArgument x:TypeArguments="sd:Color">
+                          <mca:CSharpValue x:TypeArguments="sd:Color">Color.Red</mca:CSharpValue>
+                        </InArgument>
+                      </rswa:ClientWriteLineActivity.ForegroundColor>
+                    </rswa:ClientWriteLineActivity>
+                  </FlowStep>
+                </FlowSwitch.Default>
+                <FlowSwitch.Expression>
+                  <mca:CSharpValue x:TypeArguments="x:String">result</mca:CSharpValue>
+                </FlowSwitch.Expression>
+                <FlowStep x:Key="hello" x:Name="__ReferenceID9" sap2010:WorkflowViewState.IdRef="FlowStep_2">
+                  <rswa:ClientWriteLineActivity BackgroundColor="" DisplayName="Client WriteLine" sap2010:WorkflowViewState.IdRef="ClientWriteLineActivity_3" Text="Hi!!!">
+                    <rswa:ClientWriteLineActivity.ForegroundColor>
+                      <InArgument x:TypeArguments="sd:Color">
+                        <mca:CSharpValue x:TypeArguments="sd:Color">Color.Green</mca:CSharpValue>
+                      </InArgument>
+                    </rswa:ClientWriteLineActivity.ForegroundColor>
+                  </rswa:ClientWriteLineActivity>
+                </FlowStep>
+                <FlowStep x:Key="showHelp" x:Name="__ReferenceID10" sap2010:WorkflowViewState.IdRef="FlowStep_4">
+                  <rswa:ExecuteCommandActivity Command="help" DisplayName="Execute Command" sap2010:WorkflowViewState.IdRef="ExecuteCommandActivity_1" Mode="Script" UseCurrentEnvironment="True" />
+                </FlowStep>
+                <FlowStep x:Key="exit" x:Name="__ReferenceID11" sap2010:WorkflowViewState.IdRef="FlowStep_5">
+                  <TerminateWorkflow sap2010:WorkflowViewState.IdRef="TerminateWorkflow_1" Reason="Workflow terminated by the user." />
+                </FlowStep>
+                <FlowStep x:Key="downloadSong" x:Name="__ReferenceID12" sap2010:WorkflowViewState.IdRef="FlowStep_7">
+                  <Flowchart sap2010:WorkflowViewState.IdRef="Flowchart_2">
+                    <Flowchart.Variables>
+                      <Variable x:TypeArguments="x:String" Name="fileName" />
+                      <Variable x:TypeArguments="x:String" Name="playFile" />
+                    </Flowchart.Variables>
+                    <Flowchart.StartNode>
+                      <FlowStep x:Name="__ReferenceID5" sap2010:WorkflowViewState.IdRef="FlowStep_11">
+                        <rswa:ClientConsoleClearActivity DisplayName="Client Console Clear" sap2010:WorkflowViewState.IdRef="ClientConsoleClearActivity_1" />
+                        <FlowStep.Next>
+                          <FlowStep x:Name="__ReferenceID1" sap2010:WorkflowViewState.IdRef="FlowStep_6">
+                            <rswsar:PromptRequestActivity DisplayName="Prompt Request" sap2010:WorkflowViewState.IdRef="PromptRequestActivity_2" Prompt="Enter url of music file.">
+                              <rswsar:PromptRequestActivity.Result>
+                                <OutArgument x:TypeArguments="x:String">
+                                  <mca:CSharpReference x:TypeArguments="x:String">fileName</mca:CSharpReference>
+                                </OutArgument>
+                              </rswsar:PromptRequestActivity.Result>
+                            </rswsar:PromptRequestActivity>
+                            <FlowStep.Next>
+                              <FlowStep x:Name="__ReferenceID2" sap2010:WorkflowViewState.IdRef="FlowStep_10">
+                                <rswa:ExecuteCommandActivity DisplayName="Execute Command" sap2010:WorkflowViewState.IdRef="ExecuteCommandActivity_2" Mode="Script" UseCurrentEnvironment="True">
+                                  <rswa:ExecuteCommandActivity.Command>
+                                    <InArgument x:TypeArguments="x:String">
+                                      <mca:CSharpValue x:TypeArguments="x:String">$"wget {fileName} \"Musicfile.wav\""</mca:CSharpValue>
+                                    </InArgument>
+                                  </rswa:ExecuteCommandActivity.Command>
+                                </rswa:ExecuteCommandActivity>
+                                <FlowStep.Next>
+                                  <FlowStep x:Name="__ReferenceID3" sap2010:WorkflowViewState.IdRef="FlowStep_9">
+                                    <rswsar:PromptRequestActivity DisplayName="Prompt Request" sap2010:WorkflowViewState.IdRef="PromptRequestActivity_3" Prompt="Play File?">
+                                      <rswsar:PromptRequestActivity.Result>
+                                        <OutArgument x:TypeArguments="x:String">
+                                          <mca:CSharpReference x:TypeArguments="x:String">playFile</mca:CSharpReference>
+                                        </OutArgument>
+                                      </rswsar:PromptRequestActivity.Result>
+                                    </rswsar:PromptRequestActivity>
+                                    <FlowStep.Next>
+                                      <FlowSwitch x:TypeArguments="x:String" x:Name="__ReferenceID4" sap2010:WorkflowViewState.IdRef="FlowSwitch`1_2">
+                                        <FlowSwitch.Default>
+                                          <FlowStep x:Name="__ReferenceID0" sap2010:WorkflowViewState.IdRef="FlowStep_8">
+                                            <rswa:ClientWriteLineActivity BackgroundColor="" DisplayName="Client WriteLine" ForegroundColor="" sap2010:WorkflowViewState.IdRef="ClientWriteLineActivity_4" Text="Played file." />
+                                          </FlowStep>
+                                        </FlowSwitch.Default>
+                                        <FlowSwitch.Expression>
+                                          <mca:CSharpValue x:TypeArguments="x:String">playFile</mca:CSharpValue>
+                                        </FlowSwitch.Expression>
+                                        <x:Reference>__ReferenceID0<x:Key>Yes</x:Key></x:Reference>
+                                      </FlowSwitch>
+                                    </FlowStep.Next>
+                                  </FlowStep>
+                                </FlowStep.Next>
+                              </FlowStep>
+                            </FlowStep.Next>
+                          </FlowStep>
+                        </FlowStep.Next>
+                      </FlowStep>
+                    </Flowchart.StartNode>
+                    <x:Reference>__ReferenceID1</x:Reference>
+                    <x:Reference>__ReferenceID2</x:Reference>
+                    <x:Reference>__ReferenceID3</x:Reference>
+                    <x:Reference>__ReferenceID4</x:Reference>
+                    <x:Reference>__ReferenceID0</x:Reference>
+                    <x:Reference>__ReferenceID5</x:Reference>
+                  </Flowchart>
+                </FlowStep>
+              </FlowSwitch>
+            </FlowStep.Next>
+          </FlowStep>
+        </Flowchart.StartNode>
+        <x:Reference>__ReferenceID6</x:Reference>
+        <x:Reference>__ReferenceID7</x:Reference>
+        <x:Reference>__ReferenceID8</x:Reference>
+        <x:Reference>__ReferenceID9</x:Reference>
+        <x:Reference>__ReferenceID10</x:Reference>
+        <x:Reference>__ReferenceID11</x:Reference>
+        <x:Reference>__ReferenceID12</x:Reference>
+      </Flowchart>
+    </While>
+    <sads:DebugSymbol.Symbol>d29EOlxTb3VyY2VcUmVwb3NcUmVtb3RlUGx1c1xzcmNcUmVsZWFzZUV4dGVuc2lvbkxpYnJhcmllc1xUZXN0V29ya2Zsb3dMaWJyYXJ5XFdvcmtmbG93c1xDdXN0b21TaGVsbEFjdGl2aXR5LnhhbWwrPAO9AQ4CAQE9BUMkAgE4RAW7AQ0CAQJAC0BUAgE7PTM9NQIBOj2WAT2mAQIBOUUHugETAgEEREBERgIBA0gNTiwCATRdE11XAgEyUxVZNAIBLW8TrQEfAgEQbBNsiAECAQ5pE2nFAQIBCmATZjICAQVIiQFIjwECATdLE0tfAgE1VhtWYgIBMFNDU0UCAS9TpgFTuAECAS52GXaeAQIBLHkdfzwCASaCASGIAT8CAR+LASWRAUQCARmaASuaAXECARWWAS2WAeIBAgERbGNshQECAQ9pnQFppQECAQ1pvAFpwgECAQxpOGk+AgELYxljYgIBCGBBYEMCAQdgpAFgqwECAQZ5mQF5swECASt8I3xxAgEnggGcAYIBpAECASWCAbsBggHBAQIBJIUBJ4UBiQECASCLAaEBiwGtAQIBHo4BK44BeQIBGpYBjQGWAY8BAgEUlgFblgFdAgETlgHRAZYB3wECARI=</sads:DebugSymbol.Symbol>
+  </Sequence>
+  <sap2010:WorkflowViewState.ViewStateManager>
+    <sap2010:ViewStateManager>
+      <sap2010:ViewStateData Id="ClientWriteLineActivity_1" sap:VirtualizedContainerService.HintSize="464,126" />
+      <sap2010:ViewStateData Id="PromptRequestActivity_1" sap:VirtualizedContainerService.HintSize="200,62">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="ClientWriteLineActivity_2" sap:VirtualizedContainerService.HintSize="378,126">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="FlowStep_1">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <av:Point x:Key="ShapeLocation">331,597</av:Point>
+            <av:Size x:Key="ShapeSize">378,126</av:Size>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="ClientWriteLineActivity_3" sap:VirtualizedContainerService.HintSize="378,126">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="FlowStep_2">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <av:Point x:Key="ShapeLocation">761,297</av:Point>
+            <av:Size x:Key="ShapeSize">378,126</av:Size>
+            <av:PointCollection x:Key="ConnectorLocation">730,333 730,383</av:PointCollection>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="ExecuteCommandActivity_1" sap:VirtualizedContainerService.HintSize="200,62">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="FlowStep_4">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <av:Point x:Key="ShapeLocation">770,149</av:Point>
+            <av:Size x:Key="ShapeSize">200,62</av:Size>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="TerminateWorkflow_1" sap:VirtualizedContainerService.HintSize="200,22">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="FlowStep_5">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <av:Point x:Key="ShapeLocation">220,349</av:Point>
+            <av:Size x:Key="ShapeSize">200,22</av:Size>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="ClientConsoleClearActivity_1" sap:VirtualizedContainerService.HintSize="200,22">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="PromptRequestActivity_2" sap:VirtualizedContainerService.HintSize="200,62">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="ExecuteCommandActivity_2" sap:VirtualizedContainerService.HintSize="290,62">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="PromptRequestActivity_3" sap:VirtualizedContainerService.HintSize="200,62">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="ClientWriteLineActivity_4" sap:VirtualizedContainerService.HintSize="378,126">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="FlowStep_8">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <av:Point x:Key="ShapeLocation">491,497</av:Point>
+            <av:Size x:Key="ShapeSize">378,126</av:Size>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="FlowSwitch`1_2" sap:VirtualizedContainerService.HintSize="70,87">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+            <av:Point x:Key="ShapeLocation">285,576.5</av:Point>
+            <av:Size x:Key="ShapeSize">70,87</av:Size>
+            <av:PointCollection x:Key="Default">355,598.25 385,598.25 385,560 491,560</av:PointCollection>
+            <x:String x:Key="DefaultCaseDisplayName">yes</x:String>
+            <av:PointCollection x:Key="YesConnector">355,641.75 680,641.75 680,623</av:PointCollection>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="FlowStep_9">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <av:Point x:Key="ShapeLocation">230,469</av:Point>
+            <av:Size x:Key="ShapeSize">200,62</av:Size>
+            <av:PointCollection x:Key="ConnectorLocation">330,531 330,561 320,561 320,576.5</av:PointCollection>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="FlowStep_10">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <av:Point x:Key="ShapeLocation">185,359</av:Point>
+            <av:Size x:Key="ShapeSize">290,62</av:Size>
+            <av:PointCollection x:Key="ConnectorLocation">330,421 330,469</av:PointCollection>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="FlowStep_6">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <av:Point x:Key="ShapeLocation">220,249</av:Point>
+            <av:Size x:Key="ShapeSize">200,62</av:Size>
+            <av:PointCollection x:Key="ConnectorLocation">320,311 320,341 330,341 330,359</av:PointCollection>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="FlowStep_11">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <av:Point x:Key="ShapeLocation">220,139</av:Point>
+            <av:Size x:Key="ShapeSize">200,22</av:Size>
+            <av:PointCollection x:Key="ConnectorLocation">320,161 320,249</av:PointCollection>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="Flowchart_2" sap:VirtualizedContainerService.HintSize="200,51">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+            <av:Point x:Key="ShapeLocation">270,2.5</av:Point>
+            <av:Size x:Key="ShapeSize">60,75</av:Size>
+            <x:Double x:Key="Width">880.5</x:Double>
+            <av:PointCollection x:Key="ConnectorLocation">300,77.5 300,107.5 320,107.5 320,139</av:PointCollection>
+            <x:Double x:Key="Height">673</x:Double>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="FlowStep_7">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <av:Point x:Key="ShapeLocation">860,454.5</av:Point>
+            <av:Size x:Key="ShapeSize">200,51</av:Size>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="FlowSwitch`1_1" sap:VirtualizedContainerService.HintSize="98,87">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+            <av:Point x:Key="ShapeLocation">471,326.5</av:Point>
+            <av:Size x:Key="ShapeSize">98,87</av:Size>
+            <av:PointCollection x:Key="Default">520,413.5 520,597</av:PointCollection>
+            <av:PointCollection x:Key="helloConnector">569,370 599,370 599,360 761,360</av:PointCollection>
+            <av:PointCollection x:Key="showHelpConnector">569,348.25 628,348.25 628,333 734,333 734,180 770,180</av:PointCollection>
+            <av:PointCollection x:Key="exitConnector">471,370 441,370 441,360 420,360</av:PointCollection>
+            <av:PointCollection x:Key="downloadSongConnector">544.5,413.5 544.5,535.5 960,535.5 960,505.5</av:PointCollection>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="FlowStep_3">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <av:Point x:Key="ShapeLocation">420,219</av:Point>
+            <av:Size x:Key="ShapeSize">200,62</av:Size>
+            <av:PointCollection x:Key="ConnectorLocation">520,281 520,326.5</av:PointCollection>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="Flowchart_1" sap:VirtualizedContainerService.HintSize="1491,776">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">False</x:Boolean>
+            <av:Point x:Key="ShapeLocation">490,12.5</av:Point>
+            <av:Size x:Key="ShapeSize">60,75</av:Size>
+            <x:Double x:Key="Width">1477</x:Double>
+            <x:Double x:Key="Height">740</x:Double>
+            <av:PointCollection x:Key="ConnectorLocation">520,87.5 520,219</av:PointCollection>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="While_1" sap:VirtualizedContainerService.HintSize="464,220" />
+      <sap2010:ViewStateData Id="Sequence_1" sap:VirtualizedContainerService.HintSize="486,510">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="TestWorkflowExtensionLibrary.Workflows.CustomShellActivity_1" sap:VirtualizedContainerService.HintSize="526,590" />
+    </sap2010:ViewStateManager>
+  </sap2010:WorkflowViewState.ViewStateManager>
+</Activity>

@@ -1,0 +1,114 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{BE3AD1CB-8066-444A-A8CC-6483319C35CE}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>RemotePlusLibrary.SubSystem.Workflow.Server</RootNamespace>
+    <AssemblyName>RemotePlusLibrary.SubSystem.Workflow.Server</AssemblyName>
+    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="NDesk.Options, Version=0.2.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\NDesk.Options.0.2.1\lib\NDesk.Options.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System" />
+    <Reference Include="System.Activities" />
+    <Reference Include="System.Activities.Presentation" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Activities\Requests\ProgressRequestActivity.cs" />
+    <Compile Include="Activities\Requests\PromptRequestActivity.cs" />
+    <Compile Include="Activities\Requests\DisposeRequestActivity.cs" />
+    <Compile Include="Activities\Requests\UpdateProgressRequestActivity.cs" />
+    <Compile Include="Activities\ToolboxCategories.cs" />
+    <Compile Include="ActivityDesigners\UpdateProgressActivityDesigner.xaml.cs">
+      <DependentUpon>UpdateProgressActivityDesigner.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ActivityDesigners\ProgressRequestActivityDesigner.xaml.cs">
+      <DependentUpon>ProgressRequestActivityDesigner.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ActivityDesigners\PromptRequestActivityDesigner.xaml.cs">
+      <DependentUpon>PromptRequestActivityDesigner.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WorkflowCommands.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\RemotePlusLibrary.Core\RemotePlusLibrary.Core.csproj">
+      <Project>{0334629B-6302-42A8-B159-F8646B4D8650}</Project>
+      <Name>RemotePlusLibrary.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RemotePlusLibrary.Extension\RemotePlusLibrary.Extension.csproj">
+      <Project>{2AA5E768-7E0A-4B0C-A0D1-F79153902DF9}</Project>
+      <Name>RemotePlusLibrary.Extension</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RemotePlusLibrary.SubSystem.Command\RemotePlusLibrary.SubSystem.Command.csproj">
+      <Project>{C5145229-F6C8-432B-BF35-C8A2EBC2295F}</Project>
+      <Name>RemotePlusLibrary.SubSystem.Command</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RemotePlusLibrary.SubSystem.Workflow\RemotePlusLibrary.SubSystem.Workflow.csproj">
+      <Project>{A38779D7-8A28-4F55-A803-A20F518E9339}</Project>
+      <Name>RemotePlusLibrary.SubSystem.Workflow</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RemotePlusLibrary\RemotePlusLibrary.csproj">
+      <Project>{00c22a1f-d3df-4193-aaa8-9907d08e2511}</Project>
+      <Name>RemotePlusLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RemotePlusServer.Core\RemotePlusServer.Core.csproj">
+      <Project>{5669A80C-19D9-4DBE-BF5A-BBFCBF947634}</Project>
+      <Name>RemotePlusServer.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="ActivityDesigners\UpdateProgressActivityDesigner.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ActivityDesigners\ProgressRequestActivityDesigner.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ActivityDesigners\PromptRequestActivityDesigner.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

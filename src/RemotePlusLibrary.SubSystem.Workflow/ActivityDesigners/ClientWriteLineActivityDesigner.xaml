@@ -1,0 +1,54 @@
+﻿<sap:ActivityDesigner x:Class="RemotePlusLibrary.SubSystem.Workflow.ActivityDesigners.ClientWriteLineActivityDesigner"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:sap="clr-namespace:System.Activities.Presentation;assembly=System.Activities.Presentation"
+    xmlns:sapv="clr-namespace:System.Activities.Presentation.View;assembly=System.Activities.Presentation"
+    xmlns:converters="clr-namespace:System.Activities.Presentation.Converters;assembly=System.Activities.Presentation"
+    xmlns:localConverters="clr-namespace:RemotePlusLibrary.SubSystem.Workflow.Converters"
+    xmlns:system="clr-namespace:System;assembly=mscorlib"
+    xmlns:drawing1="clr-namespace:System.Drawing;assembly=System.Drawing"
+    Collapsible="False">
+    <sap:ActivityDesigner.Resources>
+        <converters:ArgumentToExpressionConverter x:Key="ArgumentToExpressionConverter" />
+        <localConverters:ColorConverter x:Key="ColorConverter" />
+    </sap:ActivityDesigner.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0" Background="CornflowerBlue" Grid.ColumnSpan="2">
+            <TextBlock FontSize="10">The text inputted will be sent to the client</TextBlock>
+        </Grid>
+        <TextBlock VerticalAlignment="Center" Grid.Row="1" Grid.Column="0">Text to Write</TextBlock>
+        <sapv:ExpressionTextBox HintText="Text to write"
+                                Expression="{Binding Path=ModelItem.Text, Mode=TwoWay, Converter={StaticResource ArgumentToExpressionConverter}, ConverterParameter=In}"
+                                ExpressionType="{x:Type system:String}"
+                                OwnerActivity="{Binding Path=ModelItem}"
+                                Grid.Column="1"
+                                Grid.Row="1"
+                                Margin="3,0,0,0"/>
+        <TextBlock VerticalAlignment="Center" Grid.Row="2" Grid.Column="0">Background Color</TextBlock>
+        <sapv:ExpressionTextBox Grid.Row="2"
+                          Grid.Column="1"
+                          HintText="The color for the background. ie: The console text."
+                          ExpressionType="{x:Type drawing1:Color}"
+                          OwnerActivity="{Binding Path=ModelItem}"
+                          Expression="{Binding Path=ModelItem.BackgroundColor, Mode=TwoWay, Converter={StaticResource ArgumentToExpressionConverter}, ConverterParameter=In}"
+                          Margin="3,0,0,0"/>
+        <TextBlock VerticalAlignment="Center" Grid.Row="3" Grid.Column="0">Foreground Color</TextBlock>
+        <sapv:ExpressionTextBox Grid.Row="3"
+                          Grid.Column="1"
+                          HintText="The color for the background."
+                          ExpressionType="{x:Type drawing1:Color}"
+                          OwnerActivity="{Binding Path=ModelItem}"
+                          Expression="{Binding Path=ModelItem.ForegroundColor, Mode=TwoWay, Converter={StaticResource ArgumentToExpressionConverter}, ConverterParameter=In}"
+                          Margin="3,0,0,0"/>
+    </Grid>
+</sap:ActivityDesigner>

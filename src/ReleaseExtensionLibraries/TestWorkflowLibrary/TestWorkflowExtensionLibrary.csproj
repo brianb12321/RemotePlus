@@ -4,20 +4,18 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{4A312E8C-FE94-4996-B2B4-55C9854075C8}</ProjectGuid>
+    <ProjectGuid>{C1A67853-21DB-47EA-BD92-AAAF976812FB}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ReleaseExtensions</RootNamespace>
-    <AssemblyName>ReleaseExtensions</AssemblyName>
+    <RootNamespace>TestWorkflowExtensionLibrary</RootNamespace>
+    <AssemblyName>TestWorkflowExtensionLibrary</AssemblyName>
     <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
+    <Deterministic>true</Deterministic>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
-    <DebugType>pdbonly</DebugType>
+    <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\..\RemotePlusServer\bin\Debug\extensions\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
@@ -25,25 +23,26 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>none</DebugType>
+    <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\..\ServerExtensionLibraryBuild\</OutputPath>
+    <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BetterLogger, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="BetterLogger">
       <HintPath>..\..\..\Libs\BetterLogger.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
+    <Reference Include="System.Activities" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Management" />
-    <Reference Include="System.Speech" />
-    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceModel.Activities" />
+    <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -52,19 +51,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Modules\CustomShellActivityModule.cs" />
+    <Compile Include="Modules\HelloWorldActivityModule.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\RemotePlusLibrary.Scripting\RemotePlusLibrary.Scripting.csproj">
-      <Project>{5C399F78-C133-4F9B-9758-C36A4B7FAE98}</Project>
-      <Name>RemotePlusLibrary.Scripting</Name>
-      <Private>False</Private>
-    </ProjectReference>
     <ProjectReference Include="..\..\RemotePlusLibrary.Core\RemotePlusLibrary.Core.csproj">
-      <Project>{0334629b-6302-42a8-b159-f8646b4d8650}</Project>
+      <Project>{0334629B-6302-42A8-B159-F8646B4D8650}</Project>
       <Name>RemotePlusLibrary.Core</Name>
       <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\..\RemotePlusLibrary.Discovery\RemotePlusLibrary.Discovery.csproj">
+      <Project>{fc3eb84c-d1b0-4b5c-9406-dffa9bc5a5fc}</Project>
+      <Name>RemotePlusLibrary.Discovery</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\RemotePlusLibrary.Extension\RemotePlusLibrary.Extension.csproj">
       <Project>{2aa5e768-7e0a-4b0c-a0d1-f79153902df9}</Project>
@@ -72,23 +72,37 @@
       <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\RemotePlusLibrary.SubSystem.Command\RemotePlusLibrary.SubSystem.Command.csproj">
-      <Project>{C5145229-F6C8-432B-BF35-C8A2EBC2295F}</Project>
+      <Project>{c5145229-f6c8-432b-bf35-c8a2ebc2295f}</Project>
       <Name>RemotePlusLibrary.SubSystem.Command</Name>
       <Private>False</Private>
     </ProjectReference>
-    <ProjectReference Include="..\..\RemotePlusLibrary\RemotePlusLibrary.csproj">
-      <Project>{00c22a1f-d3df-4193-aaa8-9907d08e2511}</Project>
-      <Name>RemotePlusLibrary</Name>
+    <ProjectReference Include="..\..\RemotePlusLibrary.SubSystem.Workflow.Server\RemotePlusLibrary.SubSystem.Workflow.Server.csproj">
+      <Project>{BE3AD1CB-8066-444A-A8CC-6483319C35CE}</Project>
+      <Name>RemotePlusLibrary.SubSystem.Workflow.Server</Name>
+      <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\..\RemotePlusLibrary.SubSystem.Workflow\RemotePlusLibrary.SubSystem.Workflow.csproj">
+      <Project>{a38779d7-8a28-4f55-a803-a20f518e9339}</Project>
+      <Name>RemotePlusLibrary.SubSystem.Workflow</Name>
       <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\RemotePlusServer.Core\RemotePlusServer.Core.csproj">
-      <Project>{5669A80C-19D9-4DBE-BF5A-BBFCBF947634}</Project>
+      <Project>{5669a80c-19d9-4dbe-bf5a-bbfcbf947634}</Project>
       <Name>RemotePlusServer.Core</Name>
       <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
+    <XamlAppDef Include="Workflows\HelloWorldWorkflow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </XamlAppDef>
+  </ItemGroup>
+  <ItemGroup>
+    <XamlAppDef Include="Workflows\CustomShellActivity.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </XamlAppDef>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

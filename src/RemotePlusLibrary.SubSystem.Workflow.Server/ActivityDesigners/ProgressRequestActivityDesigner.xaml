@@ -1,0 +1,29 @@
+﻿<sap:ActivityDesigner x:Class="RemotePlusLibrary.SubSystem.Workflow.Server.ActivityDesigners.ProgressRequestActivityDesigner"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:sap="clr-namespace:System.Activities.Presentation;assembly=System.Activities.Presentation"
+    xmlns:sapv="clr-namespace:System.Activities.Presentation.View;assembly=System.Activities.Presentation"
+    xmlns:converters="clr-namespace:System.Activities.Presentation.Converters;assembly=System.Activities.Presentation"
+    xmlns:system1="clr-namespace:System;assembly=mscorlib"
+    Collapsible="False">
+    <sap:ActivityDesigner.Resources>
+        <converters:ArgumentToExpressionConverter x:Key="ArgConverter"/>
+    </sap:ActivityDesigner.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center">Maximum</TextBlock>
+        <sapv:ExpressionTextBox Grid.Row="0"
+                                Margin="3,0,0,0"
+                                Grid.Column="1"
+                                OwnerActivity="{Binding Path=ModelItem}"
+                                ExpressionType="{x:Type system1:Int32}"
+                                Expression="{Binding Path=ModelItem.Maximum, Mode=TwoWay, Converter={StaticResource ArgConverter}, ConverterParameter=In}"/>
+    </Grid>
+</sap:ActivityDesigner>

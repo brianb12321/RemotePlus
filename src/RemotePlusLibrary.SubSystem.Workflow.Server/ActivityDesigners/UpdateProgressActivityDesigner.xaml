@@ -1,0 +1,36 @@
+﻿<sap:ActivityDesigner x:Class="RemotePlusLibrary.SubSystem.Workflow.Server.ActivityDesigners.UpdateProgressRequestActivityDesigner"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:sap="clr-namespace:System.Activities.Presentation;assembly=System.Activities.Presentation"
+    xmlns:sapv="clr-namespace:System.Activities.Presentation.View;assembly=System.Activities.Presentation"
+    xmlns:converters="clr-namespace:System.Activities.Presentation.Converters;assembly=System.Activities.Presentation"
+    xmlns:system1="clr-namespace:System;assembly=mscorlib"
+    Collapsible="False">
+    <sap:ActivityDesigner.Resources>
+        <converters:ArgumentToExpressionConverter x:Key="ArgConverter"/>
+    </sap:ActivityDesigner.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <TextBlock VerticalAlignment="Center" Grid.Row="0" Grid.Column="0">Value</TextBlock>
+        <sapv:ExpressionTextBox Grid.Row="0"
+                                Grid.Column="1"
+                                Margin="3,0,0,0"
+                                OwnerActivity="{Binding Path=ModelItem}"
+                                ExpressionType="{x:Type system1:Int32}"
+                                Expression="{Binding Path=ModelItem.Value, Mode=TwoWay, Converter={StaticResource ArgConverter}, ConverterParameter=In}"/>
+        <TextBlock VerticalAlignment="Center" Grid.Row="1" Grid.Column="0">Text</TextBlock>
+        <sapv:ExpressionTextBox Grid.Row="1"
+                                Grid.Column="1"
+                                Margin="3,0,0,0"
+                                OwnerActivity="{Binding Path=ModelItem}"
+                                ExpressionType="{x:Type system1:String}"
+                                Expression="{Binding Path=ModelItem.Text, Mode=TwoWay, Converter={StaticResource ArgConverter}, ConverterParameter=In}"/>
+    </Grid>
+</sap:ActivityDesigner>

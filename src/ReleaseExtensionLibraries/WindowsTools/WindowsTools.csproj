@@ -82,6 +82,7 @@
     </Reference>
     <Reference Include="NDesk.Options, Version=0.2.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\NDesk.Options.0.2.1\lib\NDesk.Options.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Ninject">
       <HintPath>..\..\RemotePlusServer\bin\Debug\Ninject.dll</HintPath>
@@ -131,6 +132,7 @@
     <ProjectReference Include="..\..\RemotePlusLibrary.SubSystem.Command\RemotePlusLibrary.SubSystem.Command.csproj">
       <Project>{C5145229-F6C8-432B-BF35-C8A2EBC2295F}</Project>
       <Name>RemotePlusLibrary.SubSystem.Command</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\RemotePlusLibrary\RemotePlusLibrary.csproj">
       <Project>{00C22A1F-D3DF-4193-AAA8-9907D08E2511}</Project>
