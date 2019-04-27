@@ -1,5 +1,4 @@
-﻿using RemotePlusLibrary.Client;
-using RemotePlusLibrary.Configuration.ServerSettings;
+﻿using RemotePlusLibrary.Configuration.ServerSettings;
 using RemotePlusLibrary.Contracts;
 using RemotePlusLibrary.Core;
 using RemotePlusLibrary.Core.Faults;

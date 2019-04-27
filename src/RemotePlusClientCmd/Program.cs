@@ -298,11 +298,11 @@ namespace RemotePlusClientCmd
                     {
                         if (useProxy)
                         {
-                            Proxy.ExecuteProxyCommandAsync(c, CommandExecutionMode.Client).Wait();
+                            Proxy.ExecuteProxyCommand(c, CommandExecutionMode.Client);
                         }
                         else
                         {
-                            Remote.RunServerCommandAsync(c, CommandExecutionMode.Client);
+                            Remote.RunServerCommand(c, CommandExecutionMode.Client);
                         }
                     }
                 }

@@ -1,4 +1,5 @@
-﻿using Ninject;
+﻿using System.Linq;
+using Ninject;
 
 namespace RemotePlusLibrary.Core.IOC
 {
@@ -48,6 +49,11 @@ namespace RemotePlusLibrary.Core.IOC
         public TService GetService<TService>(string name)
         {
             return _provider.Get<TService>(name);
+        }
+
+        public TService[] GetAllServices<TService>()
+        {
+            return _provider.GetAll<TService>().ToArray();
         }
     }
 }

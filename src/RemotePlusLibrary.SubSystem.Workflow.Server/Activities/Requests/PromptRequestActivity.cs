@@ -8,6 +8,7 @@ using RemotePlusLibrary.RequestSystem.DefaultRequestBuilders;
 using RemotePlusLibrary.ServiceArchitecture;
 using RemotePlusLibrary.SubSystem.Workflow.Server.Activities;
 using RemotePlusLibrary.SubSystem.Workflow.Server.ActivityDesigners;
+using RemotePlusServer;
 using RemotePlusServer.Core;
 
 namespace RemotePlusLibrary.SubSystem.Workflow.Server.Activities.Requests
@@ -29,9 +30,8 @@ namespace RemotePlusLibrary.SubSystem.Workflow.Server.Activities.Requests
             // Obtain the runtime value of the Text input argument
             var remotePlusContext = context.GetExtension<RemotePlusActivityContext>();
             string prompt = context.GetValue(this.Prompt);
-            var _service = remotePlusContext.ServiceCollection
-                .GetService<IRemotePlusService<ServerRemoteInterface>>();
-            var result = _service.RemoteInterface.Client.ClientCallback.RequestInformation(
+            var client = remotePlusContext.CurrentCommandEnvironment.ClientContext.GetClient<RemoteClient>();
+            var result = client.ClientCallback.RequestInformation(
                 new ConsoleReadLineRequestBuilder(prompt)).Data.ToString();
             return result;
         }

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
 using IronPython;
@@ -46,6 +47,16 @@ namespace RemotePlusLibrary.Scripting
         public T GetVariable<T>(string name)
         {
             return CurrentScriptScope.GetVariable<T>(name);
+        }
+
+        void IExtension<InstanceContext>.Attach(InstanceContext owner)
+        {
+            
+        }
+
+        void IExtension<InstanceContext>.Detach(InstanceContext owner)
+        {
+            
         }
     }
 }

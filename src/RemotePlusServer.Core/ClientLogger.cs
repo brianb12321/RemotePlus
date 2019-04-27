@@ -1,5 +1,5 @@
 ﻿using BetterLogger;
-using RemotePlusLibrary.Client;
+using RemotePlusLibrary.Core;
 
 namespace RemotePlusServer.Core
 {

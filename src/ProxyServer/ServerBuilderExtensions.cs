@@ -8,6 +8,7 @@ using BetterLogger;
 using RemotePlusLibrary.Core.IOC;
 using RemotePlusLibrary.Core;
 using System.Reflection;
+using IronPython.Modules;
 using ProxyServer.Scripting;
 using ProxyServer.Scripting.Batch;
 using RemotePlusLibrary.Scripting;
@@ -44,7 +45,8 @@ namespace ProxyServer
             }));
             context.AddVariable("getServers", new Func<Guid[]>(() =>
             {
-                return ProxyManager.ProxyService.RemoteInterface.ConnectedServers.Select(s => s.UniqueID).ToArray();
+                var list = IOCContainer.GetService<IServerListManager>();
+                return list.GetAllServers();
             }));
         }
     }

@@ -23,6 +23,7 @@ namespace ProxyServer
         IRemotePlusService<ProxyServerRemoteImpl> _service;
         ICommandSubsystem<IProxyCommandModule> _commandSubsystem;
         IScriptingEngine _scriptEngine;
+        private IServerListManager _listManager;
 
         [CommandHelp("Switches the specified server into the active server.")]
         public CommandResponse switchServer(CommandRequest req, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
@@ -42,9 +43,9 @@ namespace ProxyServer
         public CommandResponse viewServers(CommandRequest req, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
         {
             StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < _service.RemoteInterface.ConnectedServers.Count; i++)
+            for (int i = 0; i < _listManager.Count; i++)
             {
-                sb.AppendLine($"Index: {i}, GUID: {_service.RemoteInterface.ConnectedServers[i].UniqueID}");
+                sb.AppendLine($"Index: {i}, GUID: {_listManager[i].UniqueID}");
             }
             _service.RemoteInterface.ProxyClient.ClientCallback.WriteToClientConsole(ProxyManager.ProxyGuid, sb.ToString());
             return new CommandResponse((int)CommandStatus.Success);
@@ -80,6 +81,7 @@ namespace ProxyServer
         }
         public override void InitializeServices(IServiceCollection services)
         {
+            _listManager = services.GetService<IServerListManager>();
             _logger = services.GetService<ILogFactory>();
             _service = services.GetService<IRemotePlusService<ProxyServerRemoteImpl>>();
             _commandSubsystem = services.GetService<ICommandSubsystem<IProxyCommandModule>>();

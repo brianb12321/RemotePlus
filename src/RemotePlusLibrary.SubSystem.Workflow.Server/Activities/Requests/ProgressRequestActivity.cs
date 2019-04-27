@@ -7,6 +7,7 @@ using System.ComponentModel;
 using RemotePlusLibrary.RequestSystem.DefaultRequestBuilders;
 using RemotePlusLibrary.ServiceArchitecture;
 using RemotePlusLibrary.SubSystem.Workflow.Server.ActivityDesigners;
+using RemotePlusServer;
 using RemotePlusServer.Core;
 
 namespace RemotePlusLibrary.SubSystem.Workflow.Server.Activities.Requests
@@ -27,8 +28,9 @@ namespace RemotePlusLibrary.SubSystem.Workflow.Server.Activities.Requests
         {
             // Obtain the runtime value of the Text input argument
             int max = context.GetValue(this.Maximum);
-            var service = context.GetExtension<RemotePlusActivityContext>().ServiceCollection.GetService<IRemotePlusService<ServerRemoteInterface>>();
-            service.RemoteInterface.Client.ClientCallback.RequestInformation(new ProgressRequestBuilder()
+            var client = context.GetExtension<RemotePlusActivityContext>().CurrentCommandEnvironment.ClientContext
+                .GetClient<RemoteClient>();
+            client.ClientCallback.RequestInformation(new ProgressRequestBuilder()
             {
                 Maximum = max
             });

@@ -12,6 +12,7 @@ using RemotePlusLibrary.Extension;
 using RemotePlusServer.Core.ExtensionSystem;
 using RemotePlusLibrary.SubSystem.Command;
 using RemotePlusLibrary.SubSystem.Command.CommandClasses;
+using RemotePlusServer;
 
 namespace RSPM
 {
@@ -23,16 +24,18 @@ namespace RSPM
         [CommandHelp("Installs a package from the internet.")]
         public CommandResponse InstallPackage(CommandRequest req, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
         {
+            var client = currentEnvironment.ClientContext.GetClient<RemoteClient>();
             try
             {
                 IPackageManager manager = IOCContainer.GetService<IPackageManager>();
+                manager.ClientContext = currentEnvironment.ClientContext;
                 manager.LoadPackageSources();
                 manager.InstallPackage(req.Arguments[1].Value.ToString());
                 return new CommandResponse((int)CommandStatus.Success);
             }
             catch (Exception ex)
             {
-                _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText($"An error occurred during installation: {ex.Message}") { TextColor = Color.Red });
+                client.ClientCallback.TellMessageToServerConsole(new ConsoleText($"An error occurred during installation: {ex.Message}") { TextColor = Color.Red });
                 return new CommandResponse((int)CommandStatus.Fail);
             }
         }

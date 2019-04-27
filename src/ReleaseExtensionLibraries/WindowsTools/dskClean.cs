@@ -28,11 +28,13 @@ namespace WindowsTools
     public class dskClean : StandordCommandClass
     {
         private static ICommandEnvironment currentEnvironment;
+        private static Client<RemoteClient> _client = null;
         [CommandHelp("Cleans your disk of temperary files.")]
         public static CommandResponse dskCleanCommand(CommandRequest args, CommandPipeline pipe, ICommandEnvironment _currentEnvironment)
         {
             currentEnvironment = _currentEnvironment;
-            if (ServerManager.ServerRemoteService.RemoteInterface.Client.ClientType != ClientType.CommandLine)
+            _client = _currentEnvironment.ClientContext.GetClient<RemoteClient>();
+            if (_client.ClientType != ClientType.CommandLine)
             {
                 currentEnvironment.WriteLine("dskClean does not work on a GUI yet.");
                 return new CommandResponse(-3);
@@ -53,7 +55,7 @@ namespace WindowsTools
                 MenuItems = cleanOptions,
                 Message = "What should dskClean clean from the server?\nNOTE: These actions will be performed on all users except for the Recycle Bin clean."
             };
-            var result = ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(rb);
+            var result = _client.ClientCallback.RequestInformation(rb);
             switch((char)result.Data)
             {
                 case '0':
@@ -200,7 +202,7 @@ namespace WindowsTools
                 Buttons = MessageBoxButtons.YesNo,
                 Icons = MessageBoxIcon.Warning
             };
-            var result = (DialogResult)Enum.Parse(typeof(DialogResult), ((string)ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(rb).Data));
+            var result = (DialogResult)Enum.Parse(typeof(DialogResult), ((string)_client.ClientCallback.RequestInformation(rb).Data));
             if(result != DialogResult.Yes)
             {
                 currentEnvironment.WriteLine("Operation aborted.");
@@ -242,7 +244,7 @@ namespace WindowsTools
                 Buttons = MessageBoxButtons.YesNo,
                 Icons = MessageBoxIcon.Warning
             };
-            var result = (DialogResult)Enum.Parse(typeof(DialogResult), ((string)ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(rb).Data));
+            var result = (DialogResult)Enum.Parse(typeof(DialogResult), ((string)_client.ClientCallback.RequestInformation(rb).Data));
             if (result != DialogResult.Yes)
             {
                 currentEnvironment.WriteLine("Operation aborted.");

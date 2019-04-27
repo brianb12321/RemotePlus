@@ -59,8 +59,7 @@ namespace DefaultServerCore
             IServiceManager manager = IOCContainer.GetService<IServiceManager>();
             manager.AddServiceUsingBuilder(() =>
             {
-                ServerStartup._remote = new RemoteImpl();
-                MainRemotePlusServiceBuilder builder = new MainRemotePlusServiceBuilder(ServerStartup._remote);
+                MainRemotePlusServiceBuilder builder = new MainRemotePlusServiceBuilder(typeof(RemoteImpl));
                 return builder.RouteHostClosedEvent(Host_Closed)
                         .RouteHostClosingEvent(Host_Closing)
                         .RouteHostFaultedEvent(Host_Faulted)
@@ -117,7 +116,6 @@ namespace DefaultServerCore
         private void Host_Opening(object sender, EventArgs e)
         {
             GlobalServices.Logger.Log("Opening server.", LogLevel.Info);
-            ServerStartup._remote.SetRemoteInterface(ServerManager.ServerRemoteService);
         }
 
         private void Host_Opened(object sender, EventArgs e)

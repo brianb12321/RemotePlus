@@ -29,7 +29,7 @@ namespace RemotePlusClientCmd.ClientExtensionSystem
             GlobalServices.Logger.Log("Starting proxy command subsystem.", BetterLogger.LogLevel.Info);
         }
 
-        public override Task<CommandPipeline> RunServerCommandAsync(string command, CommandExecutionMode commandMode)
+        public override Task<CommandPipeline> RunServerCommandAsync(string command, CommandExecutionMode commandMode, IClientContext client)
         {
             throw new NotImplementedException();
         }

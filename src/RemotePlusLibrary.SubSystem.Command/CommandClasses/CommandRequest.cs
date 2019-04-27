@@ -23,6 +23,7 @@ namespace RemotePlusLibrary.SubSystem.Command.CommandClasses
         public bool HasLastCommand { get; set; }
         [IgnoreDataMember]
         public CancellationToken CancellationToken { get; private set; }
+       
         public CommandRequest(ICommandElement[] args, CancellationToken ct)
         {
             CancellationToken = ct;

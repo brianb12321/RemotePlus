@@ -1,13 +1,7 @@
-﻿using RemotePlusLibrary.Core;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
+﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace RemotePlusLibrary.Client
+namespace RemotePlusLibrary.Core
 {
     /// <summary>
     /// Provides settings used to build the client.

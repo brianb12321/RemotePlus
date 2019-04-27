@@ -11,7 +11,6 @@ using System.Threading;
 using RemotePlusLibrary.Contracts;
 using RemotePlusLibrary.RequestSystem;
 using RemotePlusLibrary.Security.Authentication;
-using RemotePlusLibrary.Client;
 using RemotePlusLibrary.Core;
 using BetterLogger;
 using RemotePlusLibrary.Extension.ResourceSystem;

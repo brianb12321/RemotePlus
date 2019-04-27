@@ -1,6 +1,6 @@
 ﻿using System.Net;
 
-namespace RemotePlusLibrary
+namespace RemotePlusLibrary.Core
 {
     /// <summary>
     /// Represents a computer that is connected to a server.

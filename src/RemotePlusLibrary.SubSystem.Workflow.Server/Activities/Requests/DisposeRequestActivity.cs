@@ -8,6 +8,7 @@ using System.ComponentModel;
 using RemotePlusLibrary.RequestSystem.DefaultUpdateRequestBuilders;
 using RemotePlusLibrary.ServiceArchitecture;
 using RemotePlusLibrary.SubSystem.Workflow.Server.ActivityDesigners;
+using RemotePlusServer;
 using RemotePlusServer.Core;
 
 namespace RemotePlusLibrary.SubSystem.Workflow.Server.Activities.Requests
@@ -22,9 +23,8 @@ namespace RemotePlusLibrary.SubSystem.Workflow.Server.Activities.Requests
         // and return the value from the Execute method.
         protected override void Execute(CodeActivityContext context)
         {
-            var service = context.GetExtension<RemotePlusActivityContext>().ServiceCollection
-                .GetService<IRemotePlusService<ServerRemoteInterface>>();
-            service.RemoteInterface.Client.ClientCallback.DisposeCurrentRequest();
+            var env = context.GetExtension<RemotePlusActivityContext>().CurrentCommandEnvironment;
+            env.ClientContext.GetClient<RemoteClient>().ClientCallback.DisposeCurrentRequest();
         }
     }
 }

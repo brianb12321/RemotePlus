@@ -1,6 +1,5 @@
 ﻿using BetterLogger;
 using RemotePlusLibrary;
-using RemotePlusLibrary.Client;
 using RemotePlusLibrary.Core.IOC;
 using RemotePlusLibrary.Scripting;
 using RemotePlusLibrary.Security.AccountSystem;
@@ -24,11 +23,7 @@ namespace RemotePlusServer.Core
 {
     public class ServerRemoteInterface
     {
-        public RegisterationObject Settings { get; set; }
-        public Client<RemoteClient> Client { get; set; }
-        public bool Registered { get; set; }
-        public UserAccount LoggedInUser { get; set; }
-        public string CurrentPath = Environment.CurrentDirectory;
+        
         public ServerRemoteInterface()
         {
             
@@ -41,8 +36,9 @@ namespace RemotePlusServer.Core
         {
             Console.Beep(Hertz, Duration);
         }
-        public void RunProgram(string Program, string Argument, bool shellExecute, bool ignore)
+        public void RunProgram(IClientContext context, string Program, string Argument, bool shellExecute, bool ignore)
         {
+            var Client = context.GetClient<RemoteClient>();
             GlobalServices.Logger.Log("Creating process component.", LogLevel.Debug);
             Process p = new Process();
             GlobalServices.Logger.Log($"File to execute: {Program}", LogLevel.Debug);
@@ -114,40 +110,40 @@ namespace RemotePlusServer.Core
                 p.WaitForExit();
             }
         }
-        public void EncryptFile(string fileName, string password)
+        public void EncryptFile(IClientContext context, string fileName, string password)
         {
             GlobalServices.Logger.Log($"Encrypting file. file name: {fileName}", LogLevel.Info);
             GameclubCryptoServices.CryptoService.EncryptFile(password, fileName, Path.ChangeExtension(fileName, ".ec"));
             GlobalServices.Logger.Log("File encrypted.", LogLevel.Info);
-            Client.ClientCallback.TellMessage($"File encrypted. File: {fileName}", LogLevel.Info);
+            context.GetClient<RemoteClient>().ClientCallback.TellMessage($"File encrypted. File: {fileName}", LogLevel.Info);
         }
-        public void Speak(string message, VoiceGender gender, VoiceAge age)
+        public void Speak(IClientContext context, string message, VoiceGender gender, VoiceAge age)
         {
             SpeechSynthesizer ss = new System.Speech.Synthesis.SpeechSynthesizer();
             ss.SelectVoiceByHints(gender, age);
             ss.Speak(message);
-            Client.ClientCallback.TellMessage($"Server spoke. Message: {message}, gender: {gender.ToString()}, age: {age.ToString()}", LogLevel.Info);
+            context.GetClient<RemoteClient>().ClientCallback.TellMessage($"Server spoke. Message: {message}, gender: {gender.ToString()}, age: {age.ToString()}", LogLevel.Info);
         }
-        public DialogResult ShowMessageBox(string message, string caption, System.Windows.Forms.MessageBoxIcon Icon, System.Windows.Forms.MessageBoxButtons Buttons)
+        public DialogResult ShowMessageBox(IClientContext context, string message, string caption, System.Windows.Forms.MessageBoxIcon Icon, System.Windows.Forms.MessageBoxButtons Buttons)
         {
             var dr = MessageBox.Show(message, caption, Buttons, Icon);
-            Client.ClientCallback.TellMessage($"The user responded to the message box. Response: {dr.ToString()}", LogLevel.Info);
+            context.GetClient<RemoteClient>().ClientCallback.TellMessage($"The user responded to the message box. Response: {dr.ToString()}", LogLevel.Info);
             return dr;
         }
-        public void DecryptFile(string fileName, string password)
+        public void DecryptFile(IClientContext context, string fileName, string password)
         {
             GlobalServices.Logger.Log($"Decrypting file. file name: {fileName}", LogLevel.Info);
             GameclubCryptoServices.CryptoService.DecrypttFile(password, fileName, Path.ChangeExtension(fileName, ".uc"));
             GlobalServices.Logger.Log("File decrypted.", LogLevel.Info);
-            Client.ClientCallback.TellMessage($"File decrypted. File: {fileName}", LogLevel.Info);
+            context.GetClient<RemoteClient>().ClientCallback.TellMessage($"File decrypted. File: {fileName}", LogLevel.Info);
         }
-        public CommandPipeline RunServerCommand(string command, CommandExecutionMode commandMode)
+        public CommandPipeline RunServerCommand(IClientContext context, string command, CommandExecutionMode commandMode)
         {
-            return IOCContainer.GetService<ICommandSubsystem<IServerCommandModule>>().RunServerCommand(command, commandMode);
+            return IOCContainer.GetService<ICommandSubsystem<IServerCommandModule>>().RunServerCommand(command, commandMode, context);
         }
-        public Task<CommandPipeline> RunServerCommandAsync(string command, CommandExecutionMode commandMode)
+        public Task<CommandPipeline> RunServerCommandAsync(IClientContext context, string command, CommandExecutionMode commandMode)
         {
-            return IOCContainer.GetService<ICommandSubsystem<IServerCommandModule>>().RunServerCommandAsync(command, commandMode);
+            return IOCContainer.GetService<ICommandSubsystem<IServerCommandModule>>().RunServerCommandAsync(command, commandMode, context);
         }
         public void CancelServerCommand()
         {

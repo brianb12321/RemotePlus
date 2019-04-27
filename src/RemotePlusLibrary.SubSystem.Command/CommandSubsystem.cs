@@ -8,6 +8,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using RemotePlusLibrary.Core;
 
 namespace RemotePlusLibrary.SubSystem.Command
 {
@@ -16,11 +17,11 @@ namespace RemotePlusLibrary.SubSystem.Command
         protected CommandSubsystem(IExtensionLibraryLoader loader) : base(loader)
         {
         }
-        public virtual CommandPipeline RunServerCommand(string command, CommandExecutionMode commandMode)
+        public virtual CommandPipeline RunServerCommand(string command, CommandExecutionMode commandMode, IClientContext context)
         {
-            return RunServerCommandAsync(command, commandMode).Result;
+            return RunServerCommandAsync(command, commandMode, context).Result;
         }
-        public abstract Task<CommandPipeline> RunServerCommandAsync(string command, CommandExecutionMode commandMode);
+        public abstract Task<CommandPipeline> RunServerCommandAsync(string command, CommandExecutionMode commandMode, IClientContext context);
         public abstract void Cancel();
         public CommandDelegate GetCommand(string name)
         {

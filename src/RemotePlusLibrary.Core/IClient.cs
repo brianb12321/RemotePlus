@@ -1,4 +1,4 @@
-﻿namespace RemotePlusLibrary.Client
+﻿namespace RemotePlusLibrary.Core
 {
     /// <summary>
     /// Represents a client.

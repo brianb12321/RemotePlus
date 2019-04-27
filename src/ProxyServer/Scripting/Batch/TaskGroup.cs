@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using RemotePlusLibrary.Core.IOC;
 
 namespace ProxyServer.Scripting.Batch
 {
@@ -11,10 +12,11 @@ namespace ProxyServer.Scripting.Batch
     {
         public static TaskGroup withAllServers()
         {
+            var list = IOCContainer.GetService<IServerListManager>();
             var tg = new TaskGroup();
-            foreach(var server in ProxyManager.ProxyService.RemoteInterface.ConnectedServers)
+            foreach(var server in list)
             {
-                tg.addServer(ProxyManager.ProxyService.RemoteInterface.ConnectedServers.IndexOf(server));
+                tg.addServer(list.IndexOf(server));
             }
             return tg;
         }
@@ -26,7 +28,8 @@ namespace ProxyServer.Scripting.Batch
         {
             try
             {
-                servers.Add(ProxyManager.ProxyService.RemoteInterface.ConnectedServers[serverID]);
+                var list = IOCContainer.GetService<IServerListManager>();
+                servers.Add(list[serverID]);
             }
             catch (KeyNotFoundException)
             {

@@ -1,13 +1,8 @@
-﻿using RemotePlusLibrary.Core;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
 using System.ServiceModel;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace RemotePlusLibrary.Client
+namespace RemotePlusLibrary.Core
 {
     /// <summary>
     /// Represents a RemotePlusClient. A client is any application that communicates with the server.

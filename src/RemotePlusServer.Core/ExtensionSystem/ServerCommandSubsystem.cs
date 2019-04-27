@@ -33,22 +33,24 @@ namespace RemotePlusServer.Core.ExtensionSystem
             GlobalServices.Logger.Log("Starting server command subsystem.", BetterLogger.LogLevel.Info);
         }
 
-        public override Task<CommandPipeline> RunServerCommandAsync(string command, CommandExecutionMode commandMode)
+        public override Task<CommandPipeline> RunServerCommandAsync(string command, CommandExecutionMode commandMode, IClientContext context)
         {
+            var client = context.GetClient<RemoteClient>();
             _runningEnvironment = IOCContainer.GetService<ICommandEnvironment>();
-            _runningEnvironment.CommandLogged += (sender, e) => _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(e.Text);
+            _runningEnvironment.ClientContext = context;
+            _runningEnvironment.CommandLogged += (sender, e) => client.ClientCallback.TellMessageToServerConsole(e.Text);
             _runningEnvironment.MultilineEntry += (sender, e) =>
             {
-                string input = _service.RemoteInterface.Client.ClientCallback.RequestInformation(new RemotePlusLibrary.RequestSystem.DefaultRequestBuilders.ConsoleReadLineRequestBuilder(e.Prelude.ToString()) { LineColor = ConsoleColor.Yellow }).Data.ToString();
+                string input = client.ClientCallback.RequestInformation(new RemotePlusLibrary.RequestSystem.DefaultRequestBuilders.ConsoleReadLineRequestBuilder(e.Prelude.ToString()) { LineColor = ConsoleColor.Yellow }).Data.ToString();
                 e.ReceivedValue = input;
             };
-            _runningEnvironment.ClearRequested += (sender, e) => _service.RemoteInterface.Client.ClientCallback.ClearServerConsole();
-            _runningEnvironment.SwitchBackgroundColor += (sender, e) => _service.RemoteInterface.Client.ClientCallback.SetClientConsoleBackgroundColor(e.TextColor);
-            _runningEnvironment.SwitchForegroundColor += (sender, e) => _service.RemoteInterface.Client.ClientCallback.SetClientConsoleForegroundColor(e.TextColor);
-            _runningEnvironment.ResetColor += (sender, e) => _service.RemoteInterface.Client.ClientCallback.ResetClientConsoleColor();
-            _runningEnvironment.SetOut(new _ClientTextWriter(_service.RemoteInterface.Client.ClientCallback));
-            _runningEnvironment.SetError(new _ClientTextWriter(_service.RemoteInterface.Client.ClientCallback));
-            _runningEnvironment.SetIn(new _ClientTextReader(_service.RemoteInterface.Client.ClientCallback));
+            _runningEnvironment.ClearRequested += (sender, e) => client.ClientCallback.ClearServerConsole();
+            _runningEnvironment.SwitchBackgroundColor += (sender, e) => client.ClientCallback.SetClientConsoleBackgroundColor(e.TextColor);
+            _runningEnvironment.SwitchForegroundColor += (sender, e) => client.ClientCallback.SetClientConsoleForegroundColor(e.TextColor);
+            _runningEnvironment.ResetColor += (sender, e) => client.ClientCallback.ResetClientConsoleColor();
+            _runningEnvironment.SetOut(new _ClientTextWriter(client.ClientCallback));
+            _runningEnvironment.SetError(new _ClientTextWriter(client.ClientCallback));
+            _runningEnvironment.SetIn(new _ClientTextReader(client.ClientCallback));
             var t = _runningEnvironment.ExecuteAsync(command, commandMode);
             t.ContinueWith((blalbalba) =>
             {

@@ -41,7 +41,7 @@ namespace ProxyServer.ExtensionSystem
             GlobalServices.Logger.Log("Starting proxy command subsystem.", BetterLogger.LogLevel.Info);
         }
 
-        public override Task<CommandPipeline> RunServerCommandAsync(string command, CommandExecutionMode commandMode)
+        public override Task<CommandPipeline> RunServerCommandAsync(string command, CommandExecutionMode commandMode, IClientContext context)
         {
             //Sends the command directly to the selected server.
             if (command.StartsWith("=>"))
@@ -57,6 +57,7 @@ namespace ProxyServer.ExtensionSystem
                     string input = _service.RemoteInterface.ProxyClient.ClientCallback.RequestInformation(ProxyManager.ProxyGuid, new ConsoleReadLineRequestBuilder(e.Prelude.ToString()) { LineColor = ConsoleColor.Yellow }).Data.ToString();
                     e.ReceivedValue = input;
                 };
+                _runningEnvironment.ClientContext = context;
                 _runningEnvironment.ClearRequested += (sender, e) => _service.RemoteInterface.ProxyClient.ClientCallback.ClearClientConsole(ProxyManager.ProxyGuid);
                 _runningEnvironment.SwitchBackgroundColor += (sender, e) => _service.RemoteInterface.ProxyClient.ClientCallback.SetClientConsoleBackgroundColor(ProxyManager.ProxyGuid, e.TextColor);
                 _runningEnvironment.SwitchForegroundColor += (sender, e) => _service.RemoteInterface.ProxyClient.ClientCallback.SetClientConsoleForegroundColor(ProxyManager.ProxyGuid, e.TextColor);

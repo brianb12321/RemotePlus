@@ -24,6 +24,7 @@ namespace ProxyServerCore
             services.UseLogger((logFactory) => logFactory.AddLogger(new ConsoleLogger()));
             services.UseServerManager<DefaultServiceManager>()
                 .AddSingleton<IEventBus, EventBus>()
+                .AddSingleton<IServerListManager, DefaultServerListManager>()
                 .UseResourceManager<ProxyResourceManager, FileResourceLoader>()
                 .UseErrorHandler<GlobalErrorHandler>()
                 .UseExtensionSystem<DefaultExtensionLoader>()

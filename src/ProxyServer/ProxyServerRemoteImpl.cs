@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,7 +12,6 @@ using System.Windows.Forms;
 using RemotePlusLibrary.Core;
 using System.Reflection;
 using RemotePlusLibrary.Configuration.ServerSettings;
-using RemotePlusLibrary.Client;
 using RemotePlusLibrary.Contracts;
 using RemotePlusLibrary.FileTransfer.BrowserClasses;
 using RemotePlusLibrary.Core.Faults;
@@ -29,7 +27,6 @@ using System.Drawing;
 using ProxyServer.Internal;
 using RemotePlusLibrary.SubSystem.Command.CommandClasses;
 using RemotePlusLibrary.SubSystem.Command;
-using System.Threading;
 using ProxyServer.ExtensionSystem;
 
 namespace ProxyServer
@@ -39,12 +36,23 @@ namespace ProxyServer
         ConcurrencyMode = ConcurrencyMode.Multiple,
         MaxItemsInObjectGraph = int.MaxValue,
         UseSynchronizationContext = false)]
+    [CustomInstanceProviderBehavior(typeof(WcfInstanceProviderAttribute), typeof(ProxyServerRemoteImpl))]
     [GlobalExceptionIOCAttribute]
     public class ProxyServerRemoteImpl : IProxyServerRemote, IProxyRemote
     {
+        private IServerListManager _list;
         public SessionClient<IRemoteWithProxy> SelectedClient = null;
         public Client<IRemoteClient> ProxyClient = null;
-        public List<SessionClient<IRemoteWithProxy>> ConnectedServers { get; } = new List<SessionClient<IRemoteWithProxy>>();
+
+        IClientContext BuildContext()
+        {
+            return new ProxyClientContext(ProxyClient, SelectedClient, OperationContext.Current.RequestContext, OperationContext.Current.InstanceContext, string.Empty);
+        }
+        public ProxyServerRemoteImpl()
+        {
+            _list = IOCContainer.GetService<IServerListManager>();
+        }
+        
         public void Beep(int Hertz, int Duration)
         {
             SelectedClient.ClientCallback.Beep(Hertz, Duration);
@@ -58,7 +66,7 @@ namespace ProxyServer
         public void Disconnect()
         {
             SelectedClient.ClientCallback.Disconnect();
-            ConnectedServers.Remove(SelectedClient);
+            _list.RemoveServer(SelectedClient);
         }
 
         public void EncryptFile(string fileName, string password)
@@ -110,7 +118,7 @@ namespace ProxyServer
 
         public Guid[] GetServers()
         {
-            return ConnectedServers.Select(s => s.UniqueID).ToArray();
+            return _list.GetAllServers();
         }
 
         public ServerSettings GetServerSettings()
@@ -136,7 +144,7 @@ namespace ProxyServer
         public void ProxyDisconnect()
         {
             GlobalServices.Logger.Log($"Client [{ProxyClient.UniqueID}] disconnected from proxy server. Proxy server notifying connected servers that the client has disconnected.", LogLevel.Info);
-            foreach(Client<IRemoteWithProxy> client in ConnectedServers)
+            foreach(Client<IRemoteWithProxy> client in _list)
             {
                 client.ClientCallback.Disconnect();
                 GlobalServices.Logger.Log($"Server [{client.UniqueID}] notified of client disconnection.", LogLevel.Info);
@@ -162,7 +170,7 @@ namespace ProxyServer
                 sb.AppendLine("http://github.com/brianb12321/RemotePlus");
                 sb.AppendLine("=================================================================================");
                 sb.AppendLine();
-                sb.AppendLine($"There are {ConnectedServers.Count} server(s) connected to the proxy server.");
+                sb.AppendLine($"There are {_list.Count} server(s) connected to the proxy server.");
                 sb.AppendLine("To view all the servers connected, enter {proxyViewServers} into the console.");
                 sb.AppendLine("To switch the selected server, enter {proxySwitchServer} into the console.");
                 sb.AppendLine($"Proxy server GUID: {ProxyManager.ProxyGuid}");
@@ -195,7 +203,7 @@ namespace ProxyServer
             var callback = OperationContext.Current.GetCallbackChannel<IRemoteWithProxy>();
             SessionClient<IRemoteWithProxy> tempClient = SessionClient<IRemoteWithProxy>.BuildSessionClient(new ClientBuilder(ClientType.Server), callback);
             tempClient.SessionId = OperationContext.Current.Channel.SessionId;
-            ConnectedServers.Add(tempClient);
+            _list.AddServer(tempClient);
             tempClient.Channel = OperationContext.Current.Channel;
             if(SelectedClient == null)
             {
@@ -203,9 +211,9 @@ namespace ProxyServer
             }
             tempClient.Channel.Faulted += (sender, e) =>
             {
-                var closedClient = ConnectedServers.First(s => s.Channel == tempClient.Channel);
+                var closedClient = _list.GetServerByChannel(tempClient.Channel);
                 GlobalServices.Logger.Log($"Server [{closedClient.UniqueID}] closed without proper shutdown.", LogLevel.Info);
-                ConnectedServers.Remove(closedClient);
+                _list.RemoveServer(closedClient);
                 PublishEvent(new ServerDisconnectedEvent(closedClient.UniqueID, true, this));
                 if (SelectedClient == closedClient)
                 {
@@ -252,7 +260,7 @@ namespace ProxyServer
         {
             try
             {
-                SelectedClient = ConnectedServers[serverPosition];
+                SelectedClient = _list[serverPosition];
                 if (ProxyClient.ClientType == ClientType.CommandLine)
                 {
                     ProxyClient.ClientCallback.WriteToClientConsole(ProxyManager.ProxyGuid, $"Server {serverPosition} is now active.", LogLevel.Info, "Proxy Server");
@@ -270,7 +278,7 @@ namespace ProxyServer
 
         public void SelectServer(Guid guid)
         {
-            SelectedClient = ConnectedServers.First(s => s.UniqueID == guid);
+            SelectedClient = _list.GetByGuid(guid);
             if (SelectedClient == null)
             {
                 ProxyClient.ClientCallback.WriteToClientConsole(ProxyManager.ProxyGuid, "The requested server is not connected.");
@@ -368,16 +376,16 @@ namespace ProxyServer
         #region Command Methods
         public CommandPipeline ExecuteProxyCommand(string command, CommandExecutionMode mode)
         {
-            return IOCContainer.GetService<ICommandSubsystem<IProxyCommandModule>>().RunServerCommand(command, mode);
+            return IOCContainer.GetService<ICommandSubsystem<IProxyCommandModule>>().RunServerCommand(command, mode, BuildContext());
         }
         #endregion
         public void Leave(Guid serverGuid)
         {
-            var foundServer = ConnectedServers.FirstOrDefault(s => s.UniqueID == serverGuid);
+            var foundServer = _list.GetByGuid(serverGuid);
             if(foundServer != null)
             {
                 GlobalServices.Logger.Log($"Server [{foundServer.UniqueID}] disconnected gracefully.", LogLevel.Info);
-                ConnectedServers.Remove(foundServer);
+                _list.RemoveServer(foundServer);
                 //Notify client that the active server has disconnected gracefully.
                 if(SelectedClient == foundServer)
                 {
@@ -443,7 +451,7 @@ namespace ProxyServer
 
         public void PublishEvent(ITinyMessage message)
         {
-            foreach(var clients in ConnectedServers)
+            foreach(var clients in _list)
             {
                 if (clients.ClientCallback.HasKnownType(message.GetType().Name))
                 {
@@ -471,7 +479,7 @@ namespace ProxyServer
 
         public Task<CommandPipeline> ExecuteProxyCommandAsync(string command, CommandExecutionMode mode)
         {
-            return IOCContainer.GetService<ICommandSubsystem<IProxyCommandModule>>().RunServerCommandAsync(command, mode);
+            return IOCContainer.GetService<ICommandSubsystem<IProxyCommandModule>>().RunServerCommandAsync(command, mode, BuildContext());
         }
 
         public Task<CommandPipeline> RunServerCommandAsync(string command, CommandExecutionMode commandMode)

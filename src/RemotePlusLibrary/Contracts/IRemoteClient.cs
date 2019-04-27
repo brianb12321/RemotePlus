@@ -2,7 +2,6 @@
 using System.ServiceModel;
 using RemotePlusLibrary.SubSystem.Command;
 using RemotePlusLibrary.Security.AccountSystem;
-using RemotePlusLibrary.Client;
 using RemotePlusLibrary.RequestSystem;
 using RemotePlusLibrary.Security.Authentication;
 using BetterLogger;

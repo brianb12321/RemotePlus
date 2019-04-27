@@ -15,9 +15,12 @@ namespace RemotePlusLibrary.Core.EventSystem.Events
     {
         [DataMember]
         public bool LoginSuccessful { get; private set; }
-        public LoginEvent(bool loginSuccess, object sender) : base(sender)
+        [IgnoreDataMember]
+        public IClientContext ClientLoggedIn { get; private set; }
+        public LoginEvent(bool loginSuccess, object sender, IClientContext client) : base(sender)
         {
             LoginSuccessful = loginSuccess;
+            ClientLoggedIn = client;
         }
     }
 }

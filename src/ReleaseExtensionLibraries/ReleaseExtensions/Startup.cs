@@ -10,6 +10,7 @@ using RemotePlusLibrary.Extension;
 using RemotePlusLibrary.Scripting;
 using RemotePlusLibrary.SubSystem.Command.CommandClasses;
 using RemotePlusLibrary.SubSystem.Command;
+using RemotePlusServer;
 
 namespace ReleaseExtensions
 {
@@ -18,9 +19,9 @@ namespace ReleaseExtensions
         void ILibraryStartup.Init(IServiceCollection services)
         {
             GlobalServices.Logger.Log("Welcome to \"ReleaseExtension.\" This library contains some useful tools that demonstrates the powers of \"RemotePlus\"", LogLevel.Info, "ReleaseExtensions");
-            IOCContainer.GetService<IScriptingEngine>().GetDefaultModule().AddVariable("showMessageBox", new Func<string, string, MessageBoxButtons, MessageBoxIcon, DialogResult>(showMessageBoxScriptMethod));
+            IOCContainer.GetService<IScriptingEngine>().GetDefaultModule().AddVariable("showMessageBox", new Func<IClientContext, string, string, MessageBoxButtons, MessageBoxIcon, DialogResult>(showMessageBoxScriptMethod));
         }
-        DialogResult showMessageBoxScriptMethod(string message, string caption, MessageBoxButtons buttons, MessageBoxIcon icon)
+        DialogResult showMessageBoxScriptMethod(IClientContext context, string message, string caption, MessageBoxButtons buttons, MessageBoxIcon icon)
         {
             var rb = new MessageBoxRequestBuilder()
             {
@@ -29,7 +30,7 @@ namespace ReleaseExtensions
                 Buttons = buttons,
                 Icons = icon
             };
-            return (DialogResult)Enum.Parse(typeof(DialogResult), ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(rb).Data.ToString());
+            return (DialogResult)Enum.Parse(typeof(DialogResult), context.GetClient<RemoteClient>().ClientCallback.RequestInformation(rb).Data.ToString());
         }
         [CommandHelp("Describes about the ReleaseExtensionsLibrary.")]
         CommandResponse releaseExtensionAbout(CommandRequest args, CommandPipeline pipe, ICommandEnvironment currentEnvironment)

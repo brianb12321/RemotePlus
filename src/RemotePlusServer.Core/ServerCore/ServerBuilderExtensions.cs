@@ -5,7 +5,6 @@ using RemotePlusLibrary.Core.IOC;
 using RemotePlusLibrary.Scripting;
 using RemotePlusLibrary.Security.AccountSystem;
 using RemotePlusServer.Core.ExtensionSystem;
-using RemotePlusServer.Core.Proxies;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -124,10 +123,7 @@ namespace RemotePlusServer.Core.ServerCore
             try
             {
                 IScriptExecutionContext context = IOCContainer.GetService<IScriptingEngine>().GetDefaultModule();
-                context.AddVariable("serverInstance", new PythonServerInstance());
-                context.AddVariable("executeServerCommand", new Func<string, CommandPipeline>((command => ServerManager.ServerRemoteService.RemoteInterface.RunServerCommand(command, CommandExecutionMode.Script))));
-                context.AddVariable("speak", new Action<string, VoiceGender, VoiceAge>(StaticRemoteFunctions.speak));
-                context.AddVariable("beep", new Action<int, int>(StaticRemoteFunctions.beep));
+                context.AddVariable("executeServerCommand", new Func<IClientContext, string, CommandPipeline>((clientContext, command) => ServerManager.ServerRemoteService.RemoteInterface.RunServerCommand(clientContext, command, CommandExecutionMode.Script)));
                 context.AddVariable("variableExists", new Func<string, bool>((name) => context.ContainsVariable(name)));
             }
             catch (ArgumentException)

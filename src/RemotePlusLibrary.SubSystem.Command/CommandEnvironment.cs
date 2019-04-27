@@ -21,11 +21,12 @@ namespace RemotePlusLibrary.SubSystem.Command
         public event EventHandler<ConsoleColorEventArgs> SwitchForegroundColor;
         public event EventHandler<ConsoleColorEventArgs> SwitchBackgroundColor;
         public event EventHandler ResetColor;
+
+        public IClientContext ClientContext { get; set; }
         //public event EventHandler ProcessFinished;
 
         private CancellationTokenSource cts;
         public ILexer Lexer { get;private set; }
-
         public ICommandExecutor Executor { get; private set; }
         public IParser Parser { get; }
         public TextWriter Out { get; private set; }
@@ -84,7 +85,7 @@ namespace RemotePlusLibrary.SubSystem.Command
                             engine.SetOut(Out);
                             engine.SetError(Error);
                             engine.SetIn(In);
-                            var executingContext = engine.GetSessionContext();
+                            var executingContext = ClientContext.GetExtension<IScriptExecutionContext>();
                             executingContext.AddVariable("ExecutingEnvironment", this);
                             object value = engine.ExecuteString<object>(command.Substring(2), executingContext);
                             //ProcessFinished?.Invoke(this, EventArgs.Empty);
@@ -273,7 +274,7 @@ namespace RemotePlusLibrary.SubSystem.Command
 
         public object ExecuteScript(string content)
         {
-            var executingContext = EnvironmentEngine.GetSessionContext();
+            var executingContext = ClientContext.GetExtension<IScriptExecutionContext>();
             executingContext.AddVariable("ExecutingEnvironment", this);
             var valueObj = EnvironmentEngine.ExecuteString<object>(content, executingContext);
             return valueObj;
@@ -327,5 +328,6 @@ namespace RemotePlusLibrary.SubSystem.Command
         }
 
         #endregion
+
     }
 }

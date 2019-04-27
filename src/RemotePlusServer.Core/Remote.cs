@@ -1,6 +1,5 @@
 ﻿using BetterLogger;
 using RemotePlusLibrary;
-using RemotePlusLibrary.Client;
 using RemotePlusLibrary.Contracts;
 using RemotePlusLibrary.Discovery;
 using RemotePlusLibrary.Extension.ResourceSystem;
@@ -12,6 +11,7 @@ using System;
 using System.Drawing;
 using System.Speech.Synthesis;
 using System.Windows.Forms;
+using RemotePlusLibrary.Core;
 using TinyMessenger;
 
 namespace RemotePlusServer

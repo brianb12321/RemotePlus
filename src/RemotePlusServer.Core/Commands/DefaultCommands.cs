@@ -31,7 +31,7 @@ namespace RemotePlusServer.Core.Commands
     [ExtensionModule]
     public class DefaultCommands : ServerCommandClass
     {
-        IRemotePlusService<ServerRemoteInterface> _service;
+        private IRemotePlusService<ServerRemoteInterface> _service;
         ICommandSubsystem<IServerCommandModule> _commandSubsystem;
         IResourceManager _resourceManager;
         IScriptingEngine _scriptingEngine;
@@ -121,7 +121,8 @@ namespace RemotePlusServer.Core.Commands
         [CommandBehavior(IndexCommandInHelp = false)]
         public CommandResponse progTest(CommandRequest args, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
         {
-            _service.RemoteInterface.Client.ClientCallback.RequestInformation(new ProgressRequestBuilder()
+            var client = currentEnvironment.ClientContext.GetClient<RemoteClient>();
+            client.ClientCallback.RequestInformation(new ProgressRequestBuilder()
             {
                 Maximum = 100,
                 Message = "This is just a test. The server is performing a very long operation."
@@ -131,17 +132,17 @@ namespace RemotePlusServer.Core.Commands
             {
                 if(args.CancellationToken.IsCancellationRequested)
                 {
-                    _service.RemoteInterface.Client.ClientCallback.DisposeCurrentRequest();
+                    client.ClientCallback.DisposeCurrentRequest();
                     throw new OperationCanceledException();
                 }
-                _service.RemoteInterface.Client.ClientCallback.UpdateRequest(new ProgressUpdateBuilder(i)
+                client.ClientCallback.UpdateRequest(new ProgressUpdateBuilder(i)
                 {
                     Text = $"{i} / 100 Ticks"
                 });
 
                 Thread.Sleep(250);
             }
-            _service.RemoteInterface.Client.ClientCallback.DisposeCurrentRequest();
+            client.ClientCallback.DisposeCurrentRequest();
             return new CommandResponse((int)CommandStatus.Success);
         }
         [CommandBehavior(IndexCommandInHelp = false)]
@@ -192,6 +193,7 @@ namespace RemotePlusServer.Core.Commands
         [HelpPage("vars.txt", Source = HelpSourceType.File)]
         public CommandResponse resex(CommandRequest args, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
         {
+            var client = currentEnvironment.ClientContext.GetClient<RemoteClient>();
             string mode = string.Empty;
             string name = string.Empty;
             string creationType = string.Empty;
@@ -221,13 +223,13 @@ namespace RemotePlusServer.Core.Commands
                                     currentEnvironment.WriteLine($"Variable {name} added.");
                                     return new CommandResponse((int)CommandStatus.Success);
                                 case "fileByte":
-                                    ReturnData result = _service.RemoteInterface.Client.ClientCallback.RequestInformation(new FileDialogRequestBuilder()
+                                    ReturnData result = client.ClientCallback.RequestInformation(new FileDialogRequestBuilder()
                                     {
                                         Title = "Select file to upload as resource."
                                     });
                                     if(result.AcquisitionState == RequestState.OK)
                                     {
-                                        _service.RemoteInterface.Client.ClientCallback.RequestInformation(new SendLocalFileByteStreamRequestBuilder(name, result.Data.ToString()) { PathToSave = "/custom"});
+                                        client.ClientCallback.RequestInformation(new SendLocalFileByteStreamRequestBuilder(name, result.Data.ToString()) { PathToSave = "/custom"});
                                         currentEnvironment.WriteLine("Resource created.");
                                         return new CommandResponse((int)CommandStatus.Success);
                                     }
@@ -237,7 +239,7 @@ namespace RemotePlusServer.Core.Commands
                                         return new CommandResponse((int)CommandStatus.Success);
                                     }
                                 case "filePointer":
-                                    ReturnData result2 = _service.RemoteInterface.Client.ClientCallback.RequestInformation(new SelectFileRequestBuilder());
+                                    ReturnData result2 = client.ClientCallback.RequestInformation(new SelectFileRequestBuilder());
                                     if (result2.AcquisitionState == RequestState.OK)
                                     {
                                         _resourceManager.AddResource<FilePointerResource>("/custom", new FilePointerResource(result2.Data.ToString(), name));
@@ -363,7 +365,7 @@ namespace RemotePlusServer.Core.Commands
         {
             try
             {
-                _service.RemoteInterface.EncryptFile(args.Arguments[1].ToString(), args.Arguments[2].ToString());
+                _service.RemoteInterface.EncryptFile(currentEnvironment.ClientContext, args.Arguments[1].ToString(), args.Arguments[2].ToString());
                 return new CommandResponse((int)CommandStatus.Success);
             }
             catch (IndexOutOfRangeException)
@@ -377,7 +379,7 @@ namespace RemotePlusServer.Core.Commands
         {
             try
             {
-                _service.RemoteInterface.DecryptFile(args.Arguments[1].ToString(), args.Arguments[2].ToString());
+                _service.RemoteInterface.DecryptFile(currentEnvironment.ClientContext, args.Arguments[1].ToString(), args.Arguments[2].ToString());
                 return new CommandResponse((int)CommandStatus.Success);
             }
             catch (IndexOutOfRangeException)
@@ -446,7 +448,7 @@ namespace RemotePlusServer.Core.Commands
                 return new CommandResponse((int)CommandStatus.Fail);
             }
             message = args.Arguments[3].ToString();
-            _service.RemoteInterface.Speak(message, gender, age);
+            _service.RemoteInterface.Speak(currentEnvironment.ClientContext, message, gender, age);
             return new CommandResponse((int)CommandStatus.Success);
         }
         [CommandHelp("Manages and displays all devices in RemotePlus")]
@@ -593,7 +595,7 @@ namespace RemotePlusServer.Core.Commands
             }
             caption = args.Arguments[3].ToString();
             message = args.Arguments[4].ToString();
-            var dr = _service.RemoteInterface.ShowMessageBox(message, caption, icon, buttons);
+            var dr = _service.RemoteInterface.ShowMessageBox(currentEnvironment.ClientContext, message, caption, icon, buttons);
             CommandResponse response = new CommandResponse((int)CommandStatus.Success);
             response.Metadata.Add("Buttons", buttons.ToString());
             response.Metadata.Add("Icon", icon.ToString());
@@ -612,6 +614,7 @@ namespace RemotePlusServer.Core.Commands
         [CommandHelp("Changes the current working directory.")]
         public CommandResponse cd(CommandRequest args, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
         {
+            var client = currentEnvironment.ClientContext.GetClient<RemoteClient>();
             if (args.Arguments.Count < 2)
             {
                 currentEnvironment.WriteLine(new ConsoleText("You must specify a path to change to.") { TextColor = Color.Red });
@@ -620,9 +623,10 @@ namespace RemotePlusServer.Core.Commands
             else
             {
                 Environment.CurrentDirectory = args.Arguments[1].ToString();
-                _service.RemoteInterface.Client.ClientCallback.ChangePrompt(new RemotePlusLibrary.SubSystem.Command.PromptBuilder()
+                client.ClientCallback.ChangePrompt(new RemotePlusLibrary.SubSystem.Command.PromptBuilder()
                 {
-                    Path = _service.RemoteInterface.CurrentPath,
+                    CurrentUser = currentEnvironment.ClientContext.Username,
+                    Path = Environment.CurrentDirectory,
                     AdditionalData = "Current Path"
                 });
                 return new CommandResponse((int)CommandStatus.Success);
@@ -632,7 +636,8 @@ namespace RemotePlusServer.Core.Commands
         [CommandHelp("Loads an extension library dll into the system.")]
         public CommandResponse loadExtensionLibrary(CommandRequest args, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
         {
-            var clientLogger = new ClientLogger(_service.RemoteInterface.Client);
+            var client = currentEnvironment.ClientContext.GetClient<RemoteClient>();
+            var clientLogger = new ClientLogger(client);
             try
             {
                 string path = string.Empty;
@@ -642,7 +647,7 @@ namespace RemotePlusServer.Core.Commands
                 }
                 else
                 {
-                    path = Path.Combine(_service.RemoteInterface.CurrentPath, args.Arguments[1].ToString());
+                    path = Path.Combine(Environment.CurrentDirectory, args.Arguments[1].ToString());
                 }
                 GlobalServices.Logger.AddLogger(clientLogger);
                 ServerManager.DefaultExtensionLibraryLoader.LoadFromAssembly(Assembly.LoadFrom(path));
@@ -660,6 +665,7 @@ namespace RemotePlusServer.Core.Commands
         [CommandHelp("Loads an extension library from an external url.")]
         public CommandResponse loadExtensionLibraryRemote(CommandRequest args, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
         {
+            var client = currentEnvironment.ClientContext.GetClient<RemoteClient>();
             if (args.Arguments.Count < 2)
             {
                 currentEnvironment.WriteLine(new ConsoleText("You must provide a url.") { TextColor = Color.Red });
@@ -669,13 +675,13 @@ namespace RemotePlusServer.Core.Commands
             {
                 try
                 {
-                    WebClient client = new WebClient();
-                    var extensionData = client.DownloadData(args.Arguments[1].ToString());
-                    var clientLogger = new ClientLogger(_service.RemoteInterface.Client);
+                    WebClient wClient = new WebClient();
+                    var extensionData = wClient.DownloadData(args.Arguments[1].ToString());
+                    var clientLogger = new ClientLogger(client);
                     GlobalServices.Logger.AddLogger(clientLogger);
                     ServerManager.DefaultExtensionLibraryLoader.LoadFromAssembly(Assembly.Load(extensionData));
                     GlobalServices.Logger.RemoveLogger(clientLogger);
-                    client.Dispose();
+                    wClient.Dispose();
                     return new CommandResponse((int)CommandStatus.Success);
                 }
                 catch
@@ -701,6 +707,7 @@ namespace RemotePlusServer.Core.Commands
         [CommandHelp("Deletes the specified file. This cannot be reverted.")]
         public CommandResponse deleteFile(CommandRequest args, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
         {
+            var client = currentEnvironment.ClientContext.GetClient<RemoteClient>();
             bool autoAccept = args.Arguments.HasFlag("--acceptDisclamer");
             if (File.Exists(args.Arguments[1].ToString()))
             {
@@ -713,7 +720,7 @@ namespace RemotePlusServer.Core.Commands
                         Buttons = MessageBoxButtons.YesNo,
                         Icons = MessageBoxIcon.Warning
                     };
-                    DialogResult result = (DialogResult)Enum.Parse(typeof(DialogResult), (string)_service.RemoteInterface.Client.ClientCallback.RequestInformation(rb).Data);
+                    DialogResult result = (DialogResult)Enum.Parse(typeof(DialogResult), (string)client.ClientCallback.RequestInformation(rb).Data);
                     if (result == DialogResult.Yes)
                     {
                         File.Delete(args.Arguments[1].ToString());
@@ -754,28 +761,29 @@ namespace RemotePlusServer.Core.Commands
         [CommandHelp("Tests the progress bar.")]
         public CommandResponse pg(CommandRequest args, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
         {
-            _service.RemoteInterface.Client.ClientCallback.RequestInformation(new ProgressRequestBuilder()
+            var client = currentEnvironment.ClientContext.GetClient<RemoteClient>();
+            client.ClientCallback.RequestInformation(new ProgressRequestBuilder()
             {
                 Message = "Testing"
             });
             Thread.Sleep(3000);
             for(int i = 0; i <= 100; i++)
             {
-                _service.RemoteInterface.Client.ClientCallback.UpdateRequest(new ProgressUpdateBuilder(i));
+                client.ClientCallback.UpdateRequest(new ProgressUpdateBuilder(i));
                 Thread.Sleep(200);
             }
-            _service.RemoteInterface.Client.ClientCallback.DisposeCurrentRequest();
+            client.ClientCallback.DisposeCurrentRequest();
             return new CommandResponse((int)CommandStatus.Success);
         }
         [CommandHelp("Lists all the files and directories in the current directory.")]
         public CommandResponse ls(CommandRequest args, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
         {
             StringBuilder builder = new StringBuilder();
-            foreach (string file in Directory.GetFiles(_service.RemoteInterface.CurrentPath))
+            foreach (string file in Directory.GetFiles(Environment.CurrentDirectory))
             {
                 currentEnvironment.WriteLine(new ConsoleText(Path.GetFileName(file) + "\t") { TextColor = Color.LightGray });
             }
-            foreach (string directory in Directory.GetDirectories(_service.RemoteInterface.CurrentPath))
+            foreach (string directory in Directory.GetDirectories(Environment.CurrentDirectory))
             {
                 currentEnvironment.WriteLine(new ConsoleText(directory + "\t") { TextColor = Color.Purple });
             }
@@ -792,10 +800,10 @@ namespace RemotePlusServer.Core.Commands
 
         public override void InitializeServices(IServiceCollection services)
         {
-            _service = services.GetService<IRemotePlusService<ServerRemoteInterface>>();
             _commandSubsystem = services.GetService<ICommandSubsystem<IServerCommandModule>>();
             _resourceManager = services.GetService<IResourceManager>();
             _scriptingEngine = services.GetService<IScriptingEngine>();
+            _service = services.GetService<IRemotePlusService<ServerRemoteInterface>>();
             Commands.Add("ps", ps);
             Commands.Add("progTest", progTest);
             Commands.Add("readLineTest", readLineTest);

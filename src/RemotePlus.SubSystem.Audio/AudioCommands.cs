@@ -20,6 +20,7 @@ using RemotePlusLibrary.ServiceArchitecture;
 using RemotePlusLibrary.SubSystem.Audio.OutDevices;
 using RemotePlusLibrary.SubSystem.Command;
 using RemotePlusLibrary.SubSystem.Command.CommandClasses;
+using RemotePlusServer;
 using RemotePlusServer.Core;
 using RemotePlusServer.Core.ExtensionSystem;
 
@@ -153,6 +154,7 @@ namespace RemotePlusLibrary.SubSystem.Audio
         [CommandHelp("Plays an audio file (wav) sent by the client.")]
         public CommandResponse playAudio(CommandRequest req, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
         {
+            var client = currentEnvironment.ClientContext.GetClient<RemoteClient>();
             string audioDeviceString = string.Empty;
             string audioResourceString = string.Empty;
             string audioFileFormatString = "wav";
@@ -248,10 +250,10 @@ namespace RemotePlusLibrary.SubSystem.Audio
                     Title = "Select audio file.",
                     Filter = "Wav File (*.wav)|*.wav"
                 };
-                var path = _service.RemoteInterface.Client.ClientCallback.RequestInformation(requestPathBuilder);
+                var path = client.ClientCallback.RequestInformation(requestPathBuilder);
                 if (path.AcquisitionState == RequestState.OK)
                 {
-                    _service.RemoteInterface.Client.ClientCallback.RequestInformation(new SendLocalFileByteStreamRequestBuilder(Path.GetFileName(path.Data.ToString()), path.Data.ToString())
+                    client.ClientCallback.RequestInformation(new SendLocalFileByteStreamRequestBuilder(Path.GetFileName(path.Data.ToString()), path.Data.ToString())
                     {
                         PathToSave = "/temp"
                     });

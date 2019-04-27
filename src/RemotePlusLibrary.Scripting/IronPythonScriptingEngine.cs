@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
 using IronPython;
 using IronPython.Hosting;
 using Microsoft.Scripting.Hosting;
+using RemotePlusLibrary.Core;
 
 namespace RemotePlusLibrary.Scripting
 {

@@ -23,7 +23,6 @@ namespace RemotePlusServer
     public class ServerStartup : IEnvironment
     {
         static Stopwatch sw = new Stopwatch();
-        public static RemoteImpl _remote = null;
         public NetworkSide ExecutingSide => NetworkSide.Server;
 
         public EnvironmentState State { get; private set; } = EnvironmentState.Created;
@@ -47,6 +46,7 @@ namespace RemotePlusServer
                 sw.Start();
                 Console.WriteLine("Starting server core to setup and initialize services.");
                 var core = LoadServerCoreExtension();
+                ServerManager.ServerRemoteService.RemoteInterface = new ServerRemoteInterface();
                 if (ServerManager.DefaultSettings.DiscoverySettings.DiscoveryBehavior == ProxyConnectionMode.Connect)
                 {
                     SetupProxyClient();
@@ -201,8 +201,7 @@ namespace RemotePlusServer
         }
         public static void SetupProxyClient()
         {
-            _remote.SetRemoteInterface(ServerManager.ServerRemoteService);
-            proxyChannelFactory = new DuplexChannelFactory<IProxyServerRemote>(_remote, _ConnectionFactory.BuildBinding(), new EndpointAddress(ServerManager.DefaultSettings.DiscoverySettings.Connection.ProxyServerURL));
+            proxyChannelFactory = new DuplexChannelFactory<IProxyServerRemote>(new RemoteImpl(), _ConnectionFactory.BuildBinding(), new EndpointAddress(ServerManager.DefaultSettings.DiscoverySettings.Connection.ProxyServerURL));
             proxyChannel = proxyChannelFactory.CreateChannel();
             IOCContainer.Provider.AddSingleton(proxyChannel);
             IOCContainer.Provider.AddSingleton<IEventBus, ProxyEventBus>();

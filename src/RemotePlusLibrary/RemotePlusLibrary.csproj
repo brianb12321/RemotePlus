@@ -96,8 +96,6 @@
     <Compile Include="ServiceArchitecture\IRemotePlusService.cs" />
     <Compile Include="RemotePlusServiceOptions.cs" />
     <Compile Include="RequestSystem\AcquisitionMode.cs" />
-    <Compile Include="Client\Client.cs" />
-    <Compile Include="Client\ClientBuilder.cs" />
     <Compile Include="FileTransfer\Service\DownloadRequest.cs" />
     <Compile Include="FileTransfer\BrowserClasses\IDirectory.cs" />
     <Compile Include="FileTransfer\BrowserClasses\RemoteDirectory.cs" />
@@ -105,11 +103,9 @@
     <Compile Include="FileTransfer\BrowserClasses\RemoteFiles.cs" />
     <Compile Include="FileTransfer\Service\IFileTransferContract.cs" />
     <Compile Include="Contracts\IBidirectionalContract.cs" />
-    <Compile Include="Client\IClient.cs" />
     <Compile Include="RequestSystem\IDataRequest.cs" />
     <Compile Include="Contracts\IRemote.cs" />
     <Compile Include="Contracts\IRemoteClient.cs" />
-    <Compile Include="NetNode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RequestSystem\RawDataRequest.cs" />
     <Compile Include="RegistirationObject.cs" />

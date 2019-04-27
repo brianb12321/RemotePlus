@@ -189,14 +189,15 @@ namespace WindowsTools
         [CommandHelp("Writes specified amount of random data to disk.")]
         public CommandResponse hugeFile(CommandRequest args, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
         {
+            var client = currentEnvironment.ClientContext.GetClient<RemoteClient>();
             StreamWriter sw = null;
             try
             {
                 Random r = new Random();
                 sw = new StreamWriter(args.Arguments[1].ToString());
                 int max = int.Parse(args.Arguments[2].ToString());
-                _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Beginning write operation.");
-                _service.RemoteInterface.Client.ClientCallback.RequestInformation(new ProgressRequestBuilder()
+                client.ClientCallback.TellMessageToServerConsole("Beginning write operation.");
+                client.ClientCallback.RequestInformation(new ProgressRequestBuilder()
                 {
                     Message = "Writing to disk.",
                     Maximum = max
@@ -204,12 +205,12 @@ namespace WindowsTools
                 for (int i = 0; i <= max; i++)
                 {
                     sw.WriteLine(r.Next(0, int.MaxValue));
-                    _service.RemoteInterface.Client.ClientCallback.UpdateRequest(new ProgressUpdateBuilder(i)
+                    client.ClientCallback.UpdateRequest(new ProgressUpdateBuilder(i)
                     {
                         Text = $"{i} / {max} written."
                     });
                 }
-                _service.RemoteInterface.Client.ClientCallback.DisposeCurrentRequest();
+                client.ClientCallback.DisposeCurrentRequest();
                 return new CommandResponse((int)CommandStatus.Success);
             }
             finally

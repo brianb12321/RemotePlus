@@ -5,15 +5,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace ProxyServer
 {
     public class ProxyResourceManager : IResourceManager
     {
         private IResourceLoader _loader;
-        public ProxyResourceManager(IResourceLoader loader)
+        private IServerListManager _listManager;
+        public ProxyResourceManager(IResourceLoader loader, IServerListManager lm)
         {
             _loader = loader;
+            _listManager = lm;
         }
         public void AddResource<TResource>(string path, TResource resource) where TResource : Resource
         {
@@ -34,8 +37,7 @@ namespace ProxyServer
         public TResource[] GetAllResourcesByType<TResource>(string path) where TResource : Resource
         {
             return ProxyManager.ResourceStore.GetResourceDirectoryByPath(path).Resources.Values
-                .Where(r => r is TResource)
-                .Select(r => (TResource)r)
+                .OfType<TResource>()
                 .ToArray();
         }
         public void AddResourceDirectory(string path, string name)
@@ -58,9 +60,9 @@ namespace ProxyServer
             {
                 return (TResource)ProxyManager.ResourceStore[query.ResourceIdentifier];
             }
-            if(ProxyManager.ProxyService.RemoteInterface.ConnectedServers.FirstOrDefault(s => s.UniqueID == query.Node) != null)
+            if(_listManager.GetByGuid(query.Node) != null)
             {
-                return (TResource)ProxyManager.ProxyService.RemoteInterface.ConnectedServers.FirstOrDefault(s => s.UniqueID == query.Node).ClientCallback.GetResource(query.ResourceIdentifier);
+                return (TResource)_listManager.GetByGuid(query.Node).ClientCallback.GetResource(query.ResourceIdentifier);
             }
             else
             {

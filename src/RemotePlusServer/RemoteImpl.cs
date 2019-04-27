@@ -15,7 +15,6 @@ using RemotePlusLibrary.FileTransfer.BrowserClasses;
 using RemotePlusLibrary.Contracts;
 using RemotePlusLibrary.Security.Authentication;
 using RemotePlusLibrary.Configuration.ServerSettings;
-using RemotePlusLibrary.Client;
 using RemotePlusServer.Core;
 using BetterLogger;
 using RemotePlusLibrary.Core.EventSystem;
@@ -32,7 +31,7 @@ using RemotePlusLibrary.SubSystem.Command;
 namespace RemotePlusServer
 {
     [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Multiple,
-        InstanceContextMode = InstanceContextMode.Single,
+        InstanceContextMode = InstanceContextMode.PerSession,
         IncludeExceptionDetailInFaults = true,
         UseSynchronizationContext = false,
         MaxItemsInObjectGraph = int.MaxValue)]
@@ -41,19 +40,30 @@ namespace RemotePlusServer
         UseSynchronizationContext = false,
         MaxItemsInObjectGraph = int.MaxValue)]
     [GlobalExceptionIOCAttribute]
+    [CustomInstanceProviderBehavior(typeof(WcfInstanceProviderAttribute), typeof(RemoteImpl))]
     [ServiceKnownType("GetKnownTypes", typeof(DefaultKnownTypeManager))]
     public class RemoteImpl : IRemote, IRemoteWithProxy
     {
+        private IScriptExecutionContext localScriptContext = null;
+        private RegisterationObject Settings { get; set; }
+        private Client<RemoteClient> Client { get; set; }
+        private bool Registered { get; set; }
+        private UserAccount LoggedInUser { get; set; }
         private ServerRemoteInterface _interface = null;
-        public void SetRemoteInterface(RemotePlusLibrary.ServiceArchitecture.IRemotePlusService<ServerRemoteInterface> i)
+
+        public RemoteImpl()
         {
-            _interface = new ServerRemoteInterface();
-            i.RemoteInterface = _interface;
+            _interface = ServerManager.ServerRemoteService.RemoteInterface;
+        }
+
+        public IClientContext BuildContext()
+        {
+            return new ServerClientContext(Client, OperationContext.Current.RequestContext, OperationContext.Current.InstanceContext, LoggedInUser.Credentials.Username);
         }
         bool CheckRegistration(string action)
         {
             GlobalServices.Logger.Log($"Checking registration for action {action}.", LogLevel.Info);
-            if (_interface.Registered != true)
+            if (Registered != true)
             {
                 GlobalServices.Logger.Log("The client is not registered to the server.", LogLevel.Error);
                 if (ServerStartup.proxyChannelFactory.State == CommunicationState.Opened)
@@ -77,9 +87,9 @@ namespace RemotePlusServer
             if (CheckRegistration("beep"))
             {
                 _interface.Beep(Hertz, Duration);
-                _interface.Client.ClientCallback.TellMessage($"Console beeped. Hertz: {Hertz}, Duration: {Duration}", LogLevel.Info);
+                Client.ClientCallback.TellMessage($"Console beeped. Hertz: {Hertz}, Duration: {Duration}", LogLevel.Info);
             }
-            // OperationContext.Current.OperationCompleted += (sender, e) => _interface.Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
+            // OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
         }
 
         public void PlaySound(string FileName)
@@ -98,7 +108,7 @@ namespace RemotePlusServer
                 System.Media.SoundPlayer sp = new System.Media.SoundPlayer(FileName);
                 sp.PlayLooping();
             }
-            // OperationContext.Current.OperationCompleted += (sender, e) => _interface.Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
+            // OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
         }
 
         public void PlaySoundSync(string FileName)
@@ -108,7 +118,7 @@ namespace RemotePlusServer
                 System.Media.SoundPlayer sp = new System.Media.SoundPlayer(FileName);
                 sp.PlaySync();
             }
-            // OperationContext.Current.OperationCompleted += (sender, e) => _interface.Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
+            // OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
         }
 
         public void Register(RegisterationObject settings)
@@ -119,36 +129,36 @@ namespace RemotePlusServer
             //Setup the client callback.
             BuildClient();
             GlobalServices.Logger.Log("Received registration object from client.", LogLevel.Info);
-            this._interface.Settings = settings;
+            this.Settings = settings;
             GlobalServices.Logger.Log("Processing registration object.", LogLevel.Debug);
-            _interface.Client.ClientCallback.TellMessage("Processing registration object.", LogLevel.Debug);
+            Client.ClientCallback.TellMessage("Processing registration object.", LogLevel.Debug);
             PerformAuthentication(settings);
             //Setup the prompt if it is a command-line client.
-            if (_interface.Client.ClientType == ClientType.CommandLine && ServerStartup.proxyChannelFactory == null)
+            if (Client.ClientType == ClientType.CommandLine && ServerStartup.proxyChannelFactory == null)
             {
-                _interface.Client.ClientCallback.ChangePrompt(new RemotePlusLibrary.SubSystem.Command.PromptBuilder()
+                Client.ClientCallback.ChangePrompt(new RemotePlusLibrary.SubSystem.Command.PromptBuilder()
                 {
-                    Path = _interface.CurrentPath,
+                    Path = Environment.CurrentDirectory,
                     AdditionalData = "Current Path",
-                    CurrentUser = _interface.LoggedInUser.Credentials.Username
+                    CurrentUser = LoggedInUser.Credentials.Username
                 });
             }
             //Publish the LoginEvent onto the event bus, notifying listeners that the user has attempted to login.
-            ServerManager.EventBus.Publish(new LoginEvent(_interface.Registered, this));
+            ServerManager.EventBus.Publish(new LoginEvent(Registered, this, BuildContext()));
         }
 
         private void BuildClient()
         {
             if (ServerManager.DefaultSettings.DiscoverySettings.DiscoveryBehavior == ProxyConnectionMode.Connect)
             {
-                _interface.Client = Client<RemoteClient>.Build(ServerStartup.proxyChannel.RegisterClient(),
+                Client = Client<RemoteClient>.Build(ServerStartup.proxyChannel.RegisterClient(),
                     new RemoteClient(null, true, ServerStartup.proxyChannel, ServerManager.ServerGuid),
                     OperationContext.Current.Channel);
             }
             else
             {
                 var callback = OperationContext.Current.GetCallbackChannel<IRemoteClient>();
-                _interface.Client = Client<RemoteClient>.Build(callback.RegisterClient(), new RemoteClient(callback, false, null, ServerManager.ServerGuid), OperationContext.Current.Channel);
+                Client = Client<RemoteClient>.Build(callback.RegisterClient(), new RemoteClient(callback, false, null, ServerManager.ServerGuid), OperationContext.Current.Channel);
             }
         }
 
@@ -163,65 +173,64 @@ namespace RemotePlusServer
             else
             {
                 GlobalServices.Logger.Log("Awaiting credentials from the client.", LogLevel.Info);
-                _interface.Client.ClientCallback.TellMessage("Awaiting credentials from the client.", LogLevel.Info);
-                UserCredentials upp = _interface.Client.ClientCallback.RequestAuthentication(new AuthenticationRequest(AuthenticationSeverity.Normal) { Reason = "The server requires credentials to register." });
+                Client.ClientCallback.TellMessage("Awaiting credentials from the client.", LogLevel.Info);
+                UserCredentials upp = Client.ClientCallback.RequestAuthentication(new AuthenticationRequest(AuthenticationSeverity.Normal) { Reason = "The server requires credentials to register." });
                 account = LogIn(upp);
             }
             if (account == null)
             {
-                GlobalServices.Logger.Log($"Client {_interface.Client.FriendlyName} [{_interface.Client.UniqueID.ToString()}] disconnected. Failed to register to the server. Authentication failed.", LogLevel.Info);
+                GlobalServices.Logger.Log($"Client {Client.FriendlyName} [{Client.UniqueID.ToString()}] disconnected. Failed to register to the server. Authentication failed.", LogLevel.Info);
                 if (ServerManager.DefaultSettings.DiscoverySettings.DiscoveryBehavior == ProxyConnectionMode.Connect)
                 {
-                    _interface.Client.ClientCallback.TellMessage(REG_FAILED + $" Provided username: {regObject.Credentials.Username}", LogLevel.Error);
+                    Client.ClientCallback.TellMessage(REG_FAILED + $" Provided username: {regObject.Credentials.Username}", LogLevel.Error);
                 }
                 else
                 {
-                    _interface.Client.ClientCallback.Disconnect(REG_FAILED + $" Provided username: {regObject.Credentials.Username}");
+                    Client.ClientCallback.Disconnect(REG_FAILED + $" Provided username: {regObject.Credentials.Username}");
                 }
             }
             else
             {
-                _interface.LoggedInUser = account;
+                LoggedInUser = account;
                 RegisterComplete();
             }
         }
 
         private void RegisterComplete()
         {
-            IOCContainer.GetService<IScriptingEngine>().ResetSessionContext();
-            GlobalServices.Logger.Log($"Client \"{_interface.Client.FriendlyName}\" [{_interface.Client.UniqueID}] Type: {_interface.Client.ClientType} registired.", LogLevel.Info);
-            _interface.Registered = true;
-            _interface.Client.ClientCallback.TellMessage("Registration complete.",LogLevel.Info);
-            _interface.Client.ClientCallback.RegistirationComplete();
+            GlobalServices.Logger.Log($"Client \"{Client.FriendlyName}\" [{Client.UniqueID}] Type: {Client.ClientType} registired.", LogLevel.Info);
+            Registered = true;
+            Client.ClientCallback.TellMessage("Registration complete.",LogLevel.Info);
+            Client.ClientCallback.RegistirationComplete();
         }
 
         public void RunProgram(string Program, string Argument, bool shell, bool ignore)
         {
             if (CheckRegistration("RunProgram"))
             {
-                _interface.RunProgram(Program, Argument, shell, ignore);
+                _interface.RunProgram(BuildContext(), Program, Argument, shell, ignore);
             }
-            // OperationContext.Current.OperationCompleted += (sender, e) => _interface.Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
+            // OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
         }
 
         public DialogResult ShowMessageBox(string Message, string Caption, System.Windows.Forms.MessageBoxIcon Icon, System.Windows.Forms.MessageBoxButtons Buttons)
         {
             if (CheckRegistration("ShowMessageBox"))
             {
-                return _interface.ShowMessageBox(Message, Caption, Icon, Buttons);
+                return _interface.ShowMessageBox(BuildContext(), Message, Caption, Icon, Buttons);
             }
             else
             {
                 return DialogResult.Abort;
             }
-            // OperationContext.Current.OperationCompleted += (sender, e) => _interface.Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
+            // OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
         }
 
         public void Speak(string Message, VoiceGender Gender, VoiceAge Age)
         {
             if (CheckRegistration("Speak"))
             {
-                _interface.Speak(Message, Gender, Age);
+                _interface.Speak(BuildContext(), Message, Gender, Age);
             }
         }
 
@@ -229,7 +238,7 @@ namespace RemotePlusServer
         {
             if (CheckRegistration("RunServerCommand"))
             {
-                return _interface.RunServerCommand(Command, commandMode);
+                return _interface.RunServerCommand(BuildContext(), Command, commandMode);
             }
             else
             {
@@ -243,17 +252,17 @@ namespace RemotePlusServer
             {
                 GlobalServices.Logger.Log("Updating server settings.", LogLevel.Info);
                 ServerManager.DefaultSettings = Settings;
-                _interface.Client.ClientCallback.TellMessage("Saving settings.", LogLevel.Info);
+                Client.ClientCallback.TellMessage("Saving settings.", LogLevel.Info);
                 ServerManager.DataAccess.SaveConfig(ServerManager.DefaultSettings, ServerSettings.SERVER_SETTINGS_FILE_PATH);
-                _interface.Client.ClientCallback.TellMessage("Settings saved.", LogLevel.Info);
+                Client.ClientCallback.TellMessage("Settings saved.", LogLevel.Info);
                 GlobalServices.Logger.Log("Settings saved.", LogLevel.Info);
             }
-            // OperationContext.Current.OperationCompleted += (sender, e) => _interface.Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
+            // OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
         }
 
         public ServerSettings GetServerSettings()
         {
-            // OperationContext.Current.OperationCompleted += (sender, e) => _interface.Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
+            // OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
             if (CheckRegistration("GetServerSettings"))
             {
                 GlobalServices.Logger.Log("Retrieving server settings.", LogLevel.Info);
@@ -271,10 +280,10 @@ namespace RemotePlusServer
         }
         public UserAccount GetLoggedInUser()
         {
-            // OperationContext.Current.OperationCompleted += (sender, e) => _interface.Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
+            // OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
             if (CheckRegistration("GetLoggedInUser"))
             {
-                return _interface.LoggedInUser;
+                return LoggedInUser;
             }
             else
             {
@@ -286,10 +295,10 @@ namespace RemotePlusServer
         {
             if (CheckRegistration("GetCommands"))
             {
-                // OperationContext.Current.OperationCompleted += (sender, e) => _interface.Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
+                // OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
                 List<CommandDescription> rc = new List<CommandDescription>();
                 GlobalServices.Logger.Log("Requesting commands list.", LogLevel.Info);
-                _interface.Client.ClientCallback.TellMessage("Returning commands list.", LogLevel.Info);
+                Client.ClientCallback.TellMessage("Returning commands list.", LogLevel.Info);
                 var _commandSystem = IOCContainer.GetService<ICommandSubsystem<IServerCommandModule>>();
                 foreach (KeyValuePair<string, CommandDelegate> currentCommand in _commandSystem.AggregateAllCommandModules())
                 {
@@ -304,10 +313,10 @@ namespace RemotePlusServer
         }
         public IEnumerable<string> GetCommandsAsStrings()
         {
-            // OperationContext.Current.OperationCompleted += (sender, e) => _interface.Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
+            // OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
             if (CheckRegistration("GetCommandsAsStrings"))
             {
-                _interface.Client.ClientCallback.SendSignal(new SignalMessage("operation_completed", ""));
+                Client.ClientCallback.SendSignal(new SignalMessage("operation_completed", ""));
                 return IOCContainer.GetService<ICommandSubsystem<IServerCommandModule>>().AggregateAllCommandModules().Keys;
             }
             else
@@ -318,36 +327,36 @@ namespace RemotePlusServer
 
         public void SwitchUser()
         {
-            // OperationContext.Current.OperationCompleted += (sender, e) => _interface.Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
+            // OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
             LogOff();
             GlobalServices.Logger.Log("Logging in.", LogLevel.Info ,"Server Host");
-            _interface.Client.ClientCallback.TellMessage("Logging in.", LogLevel.Info);
-            var cred = _interface.Client.ClientCallback.RequestAuthentication(new AuthenticationRequest(AuthenticationSeverity.Normal) { Reason = "Please provide a username and password to switch to." });
+            Client.ClientCallback.TellMessage("Logging in.", LogLevel.Info);
+            var cred = Client.ClientCallback.RequestAuthentication(new AuthenticationRequest(AuthenticationSeverity.Normal) { Reason = "Please provide a username and password to switch to." });
             LogIn(cred);
         }
         private void LogOff()
         {
-            _interface.Registered = false;
-            string username = _interface.LoggedInUser.Credentials.Username;
-            _interface.LoggedInUser = null;
+            Registered = false;
+            string username = LoggedInUser.Credentials.Username;
+            LoggedInUser = null;
             GlobalServices.Logger.Log($"User {username} logged off.", LogLevel.Info, "Server Host");
-            _interface.Client.ClientCallback.TellMessage($"user {username} logged off.", LogLevel.Info);
+            Client.ClientCallback.TellMessage($"user {username} logged off.", LogLevel.Info);
         }
         private UserAccount LogIn(UserCredentials cred)
         {
-            // OperationContext.Current.OperationCompleted += (sender, e) => _interface.Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
+            // OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
             if (cred == null)
             {
                 GlobalServices.Logger.Log("The user did not pass in any credentials. Authentication failed.", LogLevel.Info);
-                _interface.Client.ClientCallback.TellMessage("Can't you at least provide a username and password?", LogLevel.Info);
-                _interface.Client.ClientCallback.Disconnect("Authentication failed.");
+                Client.ClientCallback.TellMessage("Can't you at least provide a username and password?", LogLevel.Info);
+                Client.ClientCallback.Disconnect("Authentication failed.");
                 return null;
             }
             else
             {
                 var l4 = "Authenticating your user credentials.";
                 GlobalServices.Logger.Log(l4, LogLevel.Info);
-                _interface.Client.ClientCallback.TellMessage(l4, LogLevel.Info);
+                Client.ClientCallback.TellMessage(l4, LogLevel.Info);
                 var tryUser = ServerManager.AccountManager.AttemptLogin(cred);
                 if (tryUser != null)
                 {
@@ -355,7 +364,7 @@ namespace RemotePlusServer
                 }
                 else
                 {
-                    _interface.Client.ClientCallback.TellMessage("Registration failed. Authentication failed.", LogLevel.Info);
+                    Client.ClientCallback.TellMessage("Registration failed. Authentication failed.", LogLevel.Info);
                     return null;
                 }
             }
@@ -363,35 +372,37 @@ namespace RemotePlusServer
 
         public void Disconnect()
         {
-            GlobalServices.Logger.Log($"Client \"{_interface.Client.FriendlyName ?? "\"\""}\" [{_interface.Client.UniqueID}] disconectted.", LogLevel.Info);
+            IOCContainer.GetService<IScriptingEngine>().RemoveContext(Client.UniqueID.ToString());
+            localScriptContext = null;
+            GlobalServices.Logger.Log($"Client \"{Client.FriendlyName ?? "\"\""}\" [{Client.UniqueID}] disconectted.", LogLevel.Info);
         }
 
         public void EncryptFile(string fileName, string password)
         {
-            // OperationContext.Current.OperationCompleted += (sender, e) => _interface.Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
-            _interface.EncryptFile(fileName, password);
+            // OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
+            _interface.EncryptFile(BuildContext(), fileName, password);
         }
 
         public void DecryptFile(string fileName, string password)
         {
-            // OperationContext.Current.OperationCompleted += (sender, e) => _interface.Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
-            _interface.DecryptFile(fileName, password);
+            // OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
+            _interface.DecryptFile(BuildContext(), fileName, password);
         }
 
         public string GetCommandHelpPage(string command)
         {
-            // OperationContext.Current.OperationCompleted += (sender, e) => _interface.Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
+            // OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
             return IOCContainer.GetService<ICommandSubsystem<IServerCommandModule>>().ShowHelpPage(command);
         }
 
         public string GetCommandHelpDescription(string command)
         {
-            // OperationContext.Current.OperationCompleted += (sender, e) => _interface.Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
+            // OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
             return IOCContainer.GetService<ICommandSubsystem<IServerCommandModule>>().ShowCommandHelpDescription(command);
         }
         public IDirectory GetRemoteFiles(string path, bool usingRequest)
         {
-            // OperationContext.Current.OperationCompleted += (sender, e) => _interface.Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
+            // OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
             DirectoryInfo subDir = new DirectoryInfo(path);
             if (subDir.Parent == null)
             {
@@ -449,7 +460,7 @@ namespace RemotePlusServer
             }
             catch (Exception ex)
             {
-                _interface.Client.ClientCallback.TellMessageToServerConsole($"Could not execute script file: {ex.Message}", LogLevel.Error, "Scripting Engine");
+                Client.ClientCallback.TellMessageToServerConsole($"Could not execute script file: {ex.Message}", LogLevel.Error, "Scripting Engine");
                 return false;
             }
         }
@@ -496,7 +507,7 @@ namespace RemotePlusServer
 
         public Task<CommandPipeline> RunServerCommandAsync(string command, CommandExecutionMode commandMode)
         {
-            return CheckRegistration("RunServerCommand") ? _interface.RunServerCommandAsync(command, commandMode) : Task.FromResult<CommandPipeline>(null);
+            return CheckRegistration("RunServerCommand") ? _interface.RunServerCommandAsync(BuildContext(), command, commandMode) : Task.FromResult<CommandPipeline>(null);
         }
 
         public void CancelServerCommand()

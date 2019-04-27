@@ -11,6 +11,7 @@ using BetterLogger;
 using RemotePlusLibrary.RequestSystem.DefaultRequestBuilders;
 using RemotePlusLibrary.SubSystem.Command;
 using RemotePlusLibrary.SubSystem.Command.CommandClasses;
+using RemotePlusServer;
 
 namespace WindowsTools
 {
@@ -19,10 +20,11 @@ namespace WindowsTools
     /// </summary>
     public static class Filem
     {
-        const int DELAY_TIMER = 3000;
+        private const int DELAY_TIMER = 3000;
+        private static Client<RemoteClient> _client;
         static void SendMessage(string message, LogLevel level)
         {
-            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(message, level, "FileM");
+            _client.ClientCallback.TellMessageToServerConsole(message, level, "FileM");
             GlobalServices.Logger.Log(message, level, "FileM");
         }
         [CommandHelp("Allows you to manage files on the remote file system.")]
@@ -31,6 +33,7 @@ namespace WindowsTools
             CommandDevelepmentState = RemotePlusLibrary.Extension.ExtensionDevelopmentState.InDevelopment)]
         public static CommandResponse filem_command(CommandRequest args, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
         {
+            _client = currentEnvironment.ClientContext.GetClient<RemoteClient>();
             //if(ServerManager.ServerRemoteService.RemoteInterface.Client.ClientType != ClientType.CommandLine)
             //{
             //    SendMessage("FileM is currently only availible to command line users.", LogLevel.Error);
@@ -46,7 +49,7 @@ namespace WindowsTools
             menu.SelectBackColor = Color.RoyalBlue.ToArgb();
             while(true)
             {
-                var choice = int.Parse(ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(menu).Data.ToString());
+                var choice = int.Parse(_client.ClientCallback.RequestInformation(menu).Data.ToString());
                 switch (choice)
                 {
                     case 0:
@@ -60,7 +63,7 @@ namespace WindowsTools
         }
         static void openFile()
         {
-            string file = (string)ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(new SelectFileRequestBuilder()).Data;
+            string file = (string)_client.ClientCallback.RequestInformation(new SelectFileRequestBuilder()).Data;
             //var filePath = new CmdTextBox("Enter file path to open").BuildAndSend();
             try
             {
@@ -93,7 +96,7 @@ namespace WindowsTools
             menu.MenuItems.Add("6", "Use Gameclub encryption");
             menu.MenuItems.Add("7", "Set owner");
             menu.MenuItems.Add("8", "Return to home emnu");
-            var choice = int.Parse(ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(menu).Data.ToString());
+            var choice = int.Parse(_client.ClientCallback.RequestInformation(menu).Data.ToString());
             switch(choice)
             {
                 case 0:
@@ -116,7 +119,7 @@ namespace WindowsTools
             {
                 Message = "Please enter text to append to the file. When finished, hit {ENTER}"
             };
-            string message = (string)ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(rb).Data;
+            string message = (string)_client.ClientCallback.RequestInformation(rb).Data;
             File.AppendAllText(fullName, message);
             SendMessage($"File {fullName} appended.", LogLevel.Info);
         }
@@ -126,7 +129,7 @@ namespace WindowsTools
             {
                 Message = "Please enter text to override. When finished, hit {ENTER}"
             };
-            string message = (string)ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(rb).Data;
+            string message = (string)_client.ClientCallback.RequestInformation(rb).Data;
             File.WriteAllText(file, message);
             SendMessage($"File {file} overwritten.", LogLevel.Info);
         }
@@ -140,7 +143,7 @@ namespace WindowsTools
                 Buttons = MessageBoxButtons.YesNo,
                 Icons = MessageBoxIcon.Warning
             };
-            var result = (DialogResult)Enum.Parse(typeof(DialogResult), (string)ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.RequestInformation(rb).Data);
+            var result = (DialogResult)Enum.Parse(typeof(DialogResult), (string)_client.ClientCallback.RequestInformation(rb).Data);
             if(result == DialogResult.Yes)
             {
                 SendMessage($"Deleting {file}.", LogLevel.Info);

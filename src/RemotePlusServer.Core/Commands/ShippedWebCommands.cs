@@ -20,21 +20,23 @@ namespace RemotePlusServer.Core.Commands
         [CommandHelp("Downloads a file from the internet and displays it in the console.")]
         public CommandResponse downloadWeb(CommandRequest args, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
         {
-            WebClient client = new WebClient();
+            var client = currentEnvironment.ClientContext.GetClient<RemoteClient>();
+            WebClient wClient = new WebClient();
             try
             {
-                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(client.DownloadString(args.Arguments[1].ToString()));
+                client.ClientCallback.TellMessageToServerConsole(wClient.DownloadString(args.Arguments[1].ToString()));
                 return new CommandResponse((int)CommandStatus.Success);
             }
             catch (Exception ex)
             {
-                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole($"Unable to download file: {ex.Message}", BetterLogger.LogLevel.Error, "WebCommands");
+                client.ClientCallback.TellMessageToServerConsole($"Unable to download file: {ex.Message}", BetterLogger.LogLevel.Error, "WebCommands");
                 return new CommandResponse((int)CommandStatus.Fail);
             }
         }
         [CommandHelp("Downloads a file from the internet.")]
         public CommandResponse wget(CommandRequest args, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
         {
+            var client = currentEnvironment.ClientContext.GetClient<RemoteClient>();
             if (args.Arguments.Count < 2)
             {
                 currentEnvironment.WriteLineErrorWithColor("You must specify a destination location.", Color.Red);
@@ -51,32 +53,32 @@ namespace RemotePlusServer.Core.Commands
                     }
                     currentEnvironment.WriteLine($"Starting download for {args.Arguments[1].ToString()}");
                     currentEnvironment.WriteLine("Opening connection...");
-                    WebClient client = new WebClient();
-                    client.DownloadProgressChanged += (sender, e) =>
+                    WebClient wClient = new WebClient();
+                    wClient.DownloadProgressChanged += (sender, e) =>
                     {
-                        _service.RemoteInterface.Client.ClientCallback.UpdateRequest(new ProgressUpdateBuilder(e.ProgressPercentage)
+                        client.ClientCallback.UpdateRequest(new ProgressUpdateBuilder(e.ProgressPercentage)
                         {
                             Text = $"{e.BytesReceived} / {e.TotalBytesToReceive} bytes received."
                         });
                     };
-                    _service.RemoteInterface.Client.ClientCallback.RequestInformation(new ProgressRequestBuilder()
+                    client.ClientCallback.RequestInformation(new ProgressRequestBuilder()
                     {
                         Message = "Downloading file."
                     });
                     var sub = args.CancellationToken.Register(() =>
                     {
-                        client.CancelAsync();
+                        wClient.CancelAsync();
                     });
-                    Task t = client.DownloadFileTaskAsync(args.Arguments[1].ToString(), args.Arguments[2].ToString());
+                    Task t = wClient.DownloadFileTaskAsync(args.Arguments[1].ToString(), args.Arguments[2].ToString());
                     t.Wait(args.CancellationToken);
-                    _service.RemoteInterface.Client.ClientCallback.DisposeCurrentRequest();
+                    client.ClientCallback.DisposeCurrentRequest();
                     currentEnvironment.WriteLine("File downloaded successfully.");
                     sub.Dispose();
                     return new CommandResponse((int)CommandStatus.Success);
                 }
                 catch (AggregateException ex)
                 {
-                    _service.RemoteInterface.Client.ClientCallback.DisposeCurrentRequest();
+                    client.ClientCallback.DisposeCurrentRequest();
                     currentEnvironment.WriteLineErrorWithColor($"Unable to download web resource. Message: {ex.GetBaseException().Message}", Color.Red);
                     return new CommandResponse((int)CommandStatus.Fail);
                 }

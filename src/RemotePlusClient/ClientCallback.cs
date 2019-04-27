@@ -2,7 +2,6 @@
 using RemotePlusClient.CommonUI.Connection;
 using RemotePlusClient.ViewModels;
 using RemotePlusLibrary;
-using RemotePlusLibrary.Client;
 using RemotePlusLibrary.Contracts;
 using RemotePlusLibrary.Core;
 using RemotePlusLibrary.Extension.ResourceSystem;

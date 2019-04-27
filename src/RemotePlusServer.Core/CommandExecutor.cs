@@ -1,6 +1,5 @@
 ﻿using BetterLogger;
 using RemotePlusLibrary;
-using RemotePlusLibrary.Client;
 using RemotePlusLibrary.Extension;
 using RemotePlusLibrary.Core;
 using System;
@@ -29,6 +28,7 @@ namespace RemotePlusServer.Core
 
         public CommandResponse Execute(CommandRequest arguments, CommandExecutionMode commandMode, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
         {
+            var client = currentEnvironment.ClientContext.GetClient<RemoteClient>();
             if(arguments.Arguments.Count == 0)
             {
                 return new CommandResponse((int)CommandStatus.Success);
@@ -84,27 +84,27 @@ namespace RemotePlusServer.Core
                         if (ba.TopChainCommand && pipe.Count > 0)
                         {
                             _logger.Log($"This is a top-level command.", LogLevel.Error);
-                            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessage($"This is a top-level command.", LogLevel.Error);
+                            client.ClientCallback.TellMessage($"This is a top-level command.", LogLevel.Error);
                             return new CommandResponse((int)CommandStatus.AccessDenied);
                         }
                         if (commandMode != ba.ExecutionType)
                         {
                             _logger.Log($"The command requires you to be in {ba.ExecutionType} mode.", LogLevel.Error);
-                            ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessage($"The command requires you to be in {ba.ExecutionType} mode.", LogLevel.Error);
+                            client.ClientCallback.TellMessage($"The command requires you to be in {ba.ExecutionType} mode.", LogLevel.Error);
                             return new CommandResponse((int)CommandStatus.AccessDenied);
                         }
-                        if (!ba.SupportClients.HasFlag(ServerManager.ServerRemoteService.RemoteInterface.Client.ClientType))
+                        if (!ba.SupportClients.HasFlag(client.ClientType))
                         {
                             if (string.IsNullOrEmpty(ba.ClientRejectionMessage))
                             {
                                 _logger.Log($"Your client must be a {ba.SupportClients.ToString()} client.", LogLevel.Error);
-                                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessage($"Your client must be a {ba.SupportClients.ToString()} client.", LogLevel.Error);
+                                client.ClientCallback.TellMessage($"Your client must be a {ba.SupportClients.ToString()} client.", LogLevel.Error);
                                 return new CommandResponse((int)CommandStatus.UnsupportedClient);
                             }
                             else
                             {
                                 _logger.Log(ba.ClientRejectionMessage, LogLevel.Error);
-                                ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessage(ba.ClientRejectionMessage, LogLevel.Error);
+                                client.ClientCallback.TellMessage(ba.ClientRejectionMessage, LogLevel.Error);
                                 return new CommandResponse((int)CommandStatus.UnsupportedClient);
                             }
                         }
@@ -121,11 +121,11 @@ namespace RemotePlusServer.Core
                     var sc = command(arguments, pipe, currentEnvironment);
                     if (scdm == StatusCodeDeliveryMethod.TellMessage)
                     {
-                        ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessage($"Command {arguments.Arguments[0]} finished with status code {sc.ToString()}", LogLevel.Info);
+                        client.ClientCallback.TellMessage($"Command {arguments.Arguments[0]} finished with status code {sc.ToString()}", LogLevel.Info);
                     }
                     else if (scdm == StatusCodeDeliveryMethod.TellMessageToServerConsole)
                     {
-                        ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole($"Command {arguments.Arguments[0]} finished with status code {sc.ToString()}", LogLevel.Info);
+                        client.ClientCallback.TellMessageToServerConsole($"Command {arguments.Arguments[0]} finished with status code {sc.ToString()}", LogLevel.Info);
                     }
                     return sc;
                 }
@@ -138,7 +138,7 @@ namespace RemotePlusServer.Core
                     else
                     {
                         //Dispose any requests
-                        ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.DisposeCurrentRequest();
+                        client.ClientCallback.DisposeCurrentRequest();
                         _logger.Log("command failed: " + ex.Message, LogLevel.Info);
                         currentEnvironment.WriteLine(new ConsoleText("Error while executing command: " + ex.Message) { TextColor = Color.Red });
                         return new CommandResponse((int)CommandStatus.Fail);

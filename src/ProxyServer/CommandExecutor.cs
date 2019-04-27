@@ -1,5 +1,4 @@
 ﻿using BetterLogger;
-using RemotePlusLibrary.Client;
 using RemotePlusLibrary.Extension;
 using RemotePlusLibrary.Core;
 using System;

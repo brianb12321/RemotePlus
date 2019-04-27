@@ -6,6 +6,7 @@ using RemotePlusLibrary.Core.IOC;
 using RemotePlusLibrary.Scripting;
 using System;
 using RemotePlusLibrary.Extension;
+using RemotePlusServer;
 
 namespace WindowsTools
 {
@@ -19,7 +20,7 @@ namespace WindowsTools
 
         public void PostInit()
         {
-            GlobalServices.EventBus.Subscribe<LoginEvent>(e => ServerManager.ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Welcome to WindowsTools!"), e => e.LoginSuccessful);
+            GlobalServices.EventBus.Subscribe<LoginEvent>(e => e.ClientLoggedIn.GetClient<RemoteClient>().ClientCallback.TellMessageToServerConsole("Welcome to WindowsTools!"), e => e.LoginSuccessful);
         }
     }
 }

@@ -8,13 +8,14 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using RemotePlusLibrary.Core;
 
 namespace RemotePlusLibrary.SubSystem.Command
 {
     /// <summary>
     /// Exposes methods and events for interacting with the command-line environment.
     /// </summary>
-    public interface ICommandEnvironment : IDisposable
+    public interface ICommandEnvironment : IDisposable, IConnectionObject
     {
         event EventHandler<CommandLogEventArgs> CommandLogged;
         event EventHandler ClearRequested;

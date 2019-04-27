@@ -66,7 +66,7 @@ namespace CommonWebCommands
         {
             try
             {
-                _service.RemoteInterface.RunProgram("cmd.exe", $"/c \"start chrome.exe {args.Arguments[1]}\"", false, false);
+                _service.RemoteInterface.RunProgram(currentEnvironment.ClientContext, "cmd.exe", $"/c \"start chrome.exe {args.Arguments[1]}\"", false, false);
                 currentEnvironment.WriteLine("Chrome started");
                 return new CommandResponse((int)CommandStatus.Success);
             }
@@ -81,7 +81,7 @@ namespace CommonWebCommands
         {
             try
             {
-                _service.RemoteInterface.RunProgram("cmd.exe", $"/c \"start iexplore.exe {args.Arguments[1]}\"", false, false);
+                _service.RemoteInterface.RunProgram(currentEnvironment.ClientContext, "cmd.exe", $"/c \"start iexplore.exe {args.Arguments[1]}\"", false, false);
                 currentEnvironment.WriteLine("Chrome started");
                 return new CommandResponse((int)CommandStatus.Success);
             }
@@ -96,7 +96,7 @@ namespace CommonWebCommands
         {
             try
             {
-                _service.RemoteInterface.RunProgram("cmd.exe", $"/c \"start opera.exe {args.Arguments[1]}\"", false, false);
+                _service.RemoteInterface.RunProgram(currentEnvironment.ClientContext, "cmd.exe", $"/c \"start opera.exe {args.Arguments[1]}\"", false, false);
                 currentEnvironment.WriteLine("Opera started");
                 return new CommandResponse((int)CommandStatus.Success);
             }
@@ -111,7 +111,7 @@ namespace CommonWebCommands
         {
             try
             {
-                _service.RemoteInterface.RunProgram("cmd.exe", $"/c \"start firefox.exe {args.Arguments[1]}\"", false, false);
+                _service.RemoteInterface.RunProgram(currentEnvironment.ClientContext, "cmd.exe", $"/c \"start firefox.exe {args.Arguments[1]}\"", false, false);
                 currentEnvironment.WriteLine("Firefox started");
                 return new CommandResponse((int)CommandStatus.Success);
             }

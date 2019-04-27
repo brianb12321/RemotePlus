@@ -5,13 +5,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using RemotePlusLibrary.Core;
 
 namespace RemotePlusLibrary.SubSystem.Command
 {
     public interface ICommandSubsystem<out TModule> : IExtensionSubsystem<TModule> where TModule : ICommandModule
     {
-        Task<CommandPipeline> RunServerCommandAsync(string command, CommandExecutionMode commandMode);
-        CommandPipeline RunServerCommand(string command, CommandExecutionMode commandMode);
+        Task<CommandPipeline> RunServerCommandAsync(string command, CommandExecutionMode commandMode, IClientContext context);
+        CommandPipeline RunServerCommand(string command, CommandExecutionMode commandMode, IClientContext context);
         void Cancel();
         CommandDelegate GetCommand(string name);
         bool HasCommand(string name);

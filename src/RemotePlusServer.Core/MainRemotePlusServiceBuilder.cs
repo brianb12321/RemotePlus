@@ -1,4 +1,5 @@
-﻿using System.ServiceModel.Description;
+﻿using System;
+using System.ServiceModel.Description;
 using RemotePlusLibrary.Contracts;
 using RemotePlusLibrary.ServiceArchitecture;
 
@@ -6,8 +7,8 @@ namespace RemotePlusServer.Core
 {
     public class MainRemotePlusServiceBuilder : DefaultServiceBuilder<ServerRemoteInterface>
     {
-        object _remote;
-        public MainRemotePlusServiceBuilder(object remote)
+        Type _remote;
+        public MainRemotePlusServiceBuilder(Type remote)
         {
             _remote = remote;
         }
@@ -29,8 +30,7 @@ namespace RemotePlusServer.Core
 
         public override IWCFServiceBuilder<ServerRemoteInterface> UseSingleton(object singleTon)
         {
-            _remote = singleTon;
-            return this;
+            throw new NotSupportedException();
         }
     }
 }

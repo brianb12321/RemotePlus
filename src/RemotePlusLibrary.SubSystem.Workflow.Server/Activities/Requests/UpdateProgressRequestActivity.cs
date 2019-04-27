@@ -7,6 +7,7 @@ using System.ComponentModel;
 using RemotePlusLibrary.RequestSystem.DefaultUpdateRequestBuilders;
 using RemotePlusLibrary.ServiceArchitecture;
 using RemotePlusLibrary.SubSystem.Workflow.Server.ActivityDesigners;
+using RemotePlusServer;
 using RemotePlusServer.Core;
 
 namespace RemotePlusLibrary.SubSystem.Workflow.Server.Activities.Requests
@@ -30,9 +31,8 @@ namespace RemotePlusLibrary.SubSystem.Workflow.Server.Activities.Requests
             // Obtain the runtime value of the Text input argument
             string text = context.GetValue(this.Text);
             int value = context.GetValue(this.Value);
-            var service = context.GetExtension<RemotePlusActivityContext>().ServiceCollection
-                .GetService<IRemotePlusService<ServerRemoteInterface>>();
-            service.RemoteInterface.Client.ClientCallback.UpdateRequest(new ProgressUpdateBuilder(value)
+            var client = context.GetExtension<RemotePlusActivityContext>().CurrentCommandEnvironment.ClientContext.GetClient<RemoteClient>();
+            client.ClientCallback.UpdateRequest(new ProgressUpdateBuilder(value)
             {
                 Text = text
             });

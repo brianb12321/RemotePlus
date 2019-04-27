@@ -1,4 +1,6 @@
-﻿namespace RemotePlusLibrary.Core.IOC
+﻿using System.Runtime.Remoting.Services;
+
+namespace RemotePlusLibrary.Core.IOC
 {
     /// <summary>
     /// Represents all the services in the DI container.
@@ -13,5 +15,6 @@
         IServiceCollection AddTransient<TService>();
         TService GetService<TService>();
         TService GetService<TService>(string name);
+        TService[] GetAllServices<TService>();
     }
 }

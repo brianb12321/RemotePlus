@@ -6,12 +6,15 @@ using System.Drawing;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using RemotePlusLibrary.Core;
+using RemotePlusServer;
 using static RemotePlusServer.Core.ServerManager;
 
 namespace RSPM
 {
     public class DefaultPackageDownloader : IPackageDownloader
     {
+        public IClientContext ClientContext { get; set; }
         IRemotePlusService<ServerRemoteInterface> _service = null;
         public DefaultPackageDownloader(IRemotePlusService<ServerRemoteInterface> service)
         {
@@ -19,15 +22,16 @@ namespace RSPM
         }
         public bool DownlaodPackage(string packageName, Uri[] sources)
         {
+            var client = ClientContext.GetClient<RemoteClient>();
             bool foundPackage = false;
             WebClient downloader = new WebClient();
             downloader.DownloadProgressChanged += Downloader_DownloadProgressChanged;
             foreach (Uri addressToCheck in sources)
             {
-                ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole($"Package Get: {addressToCheck}");
+                client.ClientCallback.TellMessageToServerConsole($"Package Get: {addressToCheck}");
                 try
                 {
-                    _service.RemoteInterface.Client.ClientCallback.RequestInformation(new RemotePlusLibrary.RequestSystem.DefaultRequestBuilders.ProgressRequestBuilder()
+                    client.ClientCallback.RequestInformation(new RemotePlusLibrary.RequestSystem.DefaultRequestBuilders.ProgressRequestBuilder()
                     {
                         Message = "Attempting to download package."
                     });
@@ -38,21 +42,22 @@ namespace RSPM
                 }
                 catch (AggregateException ex)
                 {
-                    _service.RemoteInterface.Client.ClientCallback.DisposeCurrentRequest();
-                    ServerRemoteService.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole(new ConsoleText($"Unable to download: {ex.GetBaseException().Message}") { TextColor = Color.Red });
+                    client.ClientCallback.DisposeCurrentRequest();
+                    client.ClientCallback.TellMessageToServerConsole(new ConsoleText($"Unable to download: {ex.GetBaseException().Message}") { TextColor = Color.Red });
                 }
             }
             if(foundPackage)
             {
-                _service.RemoteInterface.Client.ClientCallback.TellMessageToServerConsole("Finished downloaded package.");
+                client.ClientCallback.TellMessageToServerConsole("Finished downloaded package.");
             }
-            _service.RemoteInterface.Client.ClientCallback.DisposeCurrentRequest();
+            client.ClientCallback.DisposeCurrentRequest();
             return foundPackage;
         }
 
         private void Downloader_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
-            _service.RemoteInterface.Client.ClientCallback.UpdateRequest(new RemotePlusLibrary.RequestSystem.DefaultUpdateRequestBuilders.ProgressUpdateBuilder(e.ProgressPercentage));
+            var client = ClientContext.GetClient<RemoteClient>();
+            client.ClientCallback.UpdateRequest(new RemotePlusLibrary.RequestSystem.DefaultUpdateRequestBuilders.ProgressUpdateBuilder(e.ProgressPercentage));
         }
     }
 }
