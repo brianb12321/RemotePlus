@@ -88,6 +88,7 @@
     <Compile Include="CommandExecutor.cs" />
     <Compile Include="Commands\EchoCommands.cs" />
     <Compile Include="Commands\DefaultCommands.cs" />
+    <Compile Include="Commands\ProcessCommands.cs" />
     <Compile Include="Commands\ShippedWebCommands.cs" />
     <Compile Include="ExtensionSystem\IServerCommandModule.cs" />
     <Compile Include="ExtensionSystem\ServerCommandClass.cs" />

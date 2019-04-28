@@ -11,6 +11,7 @@ namespace RemotePlusClient
 {
     class Program : IEnvironment
     {
+        public Guid EnvironmentGuid { get; set; } = Guid.NewGuid();
         public NetworkSide ExecutingSide => NetworkSide.Client;
         public EnvironmentState State { get; private set; }
 

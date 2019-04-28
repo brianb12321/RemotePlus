@@ -8,6 +8,7 @@ using RemotePlusLibrary.Core.IOC;
 using RemotePlusLibrary.Security.AccountSystem;
 using RemotePlusLibrary.Core.EventSystem;
 using RemotePlusLibrary.Configuration;
+using RemotePlusLibrary.Core;
 using RemotePlusLibrary.ServiceArchitecture;
 using RemotePlusLibrary.Extension;
 
@@ -26,7 +27,12 @@ namespace RemotePlusServer.Core
         /// </summary>
         public static IExtensionLibraryLoader DefaultExtensionLibraryLoader => IOCContainer.GetService<IExtensionLibraryLoader>();
         public static IAccountManager AccountManager => IOCContainer.GetService<IAccountManager>();
-        public static Guid ServerGuid { get; set; }
+
+        public static Guid ServerGuid
+        {
+            get => GlobalServices.RunningEnvironment.EnvironmentGuid;
+            set => GlobalServices.RunningEnvironment.EnvironmentGuid = value;
+        }
         public static bool IsService { get; set; }
         public static IRemotePlusService<FileTransferServciceInterface> FileTransferService => DefaultServiceManager.GetService<FileTransferServciceInterface>();
         public static IEventBus EventBus => IOCContainer.GetService<IEventBus>();

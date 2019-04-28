@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using RemotePlusLibrary.Core;
 
 namespace RemotePlusLibrary.SubSystem.Audio.OutDevices
 {
@@ -18,14 +19,21 @@ namespace RemotePlusLibrary.SubSystem.Audio.OutDevices
         public static Func<string, WaveOutDevice[]> Searcher => (name) =>
         {
             List<WaveOutDevice> _devs = new List<WaveOutDevice>();
-            WaveOutCapabilities defaultCap = WaveOut.GetCapabilities(-1);
-            WaveOutDevice defaultDevice = new WaveOutDevice(name + "Default", defaultCap.ProductName, defaultCap.ProductName, "-1", defaultCap.Channels);
-            _devs.Add(defaultDevice);
-            for(int i = 0; i < WaveOut.DeviceCount; i++)
+            try
             {
-                WaveOutCapabilities cap = WaveOut.GetCapabilities(i);
-                WaveOutDevice device = new WaveOutDevice(name + (i + 1), cap.ProductName, cap.ProductName, i.ToString(), cap.Channels);
-                _devs.Add(device);
+                WaveOutCapabilities defaultCap = WaveOut.GetCapabilities(-1);
+                WaveOutDevice defaultDevice = new WaveOutDevice(name + "Default", defaultCap.ProductName, defaultCap.ProductName, "-1", defaultCap.Channels);
+                _devs.Add(defaultDevice);
+                for(int i = 0; i < WaveOut.DeviceCount; i++)
+                {
+                    WaveOutCapabilities cap = WaveOut.GetCapabilities(i);
+                    WaveOutDevice device = new WaveOutDevice(name + (i + 1), cap.ProductName, cap.ProductName, i.ToString(), cap.Channels);
+                    _devs.Add(device);
+                }
+            }
+            catch (Exception e)
+            {
+                GlobalServices.Logger.Log("Unable to enumerate WaveOut out device.", BetterLogger.LogLevel.Warning, "WaveOut Device");
             }
             return _devs.ToArray();
         };

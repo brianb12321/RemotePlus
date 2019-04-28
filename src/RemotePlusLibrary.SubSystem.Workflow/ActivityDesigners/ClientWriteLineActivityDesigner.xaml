@@ -23,7 +23,7 @@
             <RowDefinition />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <Grid Grid.Row="0" Background="CornflowerBlue" Grid.ColumnSpan="2">
+        <Grid Grid.Row="0" Background="CornflowerBlue" Grid.ColumnSpan="2" Margin="0,0,0,3">
             <TextBlock FontSize="10">The text inputted will be sent to the client</TextBlock>
         </Grid>
         <TextBlock VerticalAlignment="Center" Grid.Row="1" Grid.Column="0">Text to Write</TextBlock>

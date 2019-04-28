@@ -24,6 +24,7 @@ namespace RemotePlusServer
     {
         static Stopwatch sw = new Stopwatch();
         public NetworkSide ExecutingSide => NetworkSide.Server;
+        public Guid EnvironmentGuid { get; set; } = Guid.NewGuid();
 
         public EnvironmentState State { get; private set; } = EnvironmentState.Created;
 
@@ -39,7 +40,6 @@ namespace RemotePlusServer
 #if !SERVICE
             try
             {
-                ServerManager.ServerGuid = Guid.NewGuid();
                 var a = Assembly.GetExecutingAssembly().GetName();
                 Console.WriteLine($"Welcome to {a.Name}, version: {a.Version.ToString()}\n\n");
                 sw = new Stopwatch();

@@ -1,5 +1,7 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Ninject;
+using Ninject.Parameters;
 
 namespace RemotePlusLibrary.Core.IOC
 {
@@ -29,6 +31,12 @@ namespace RemotePlusLibrary.Core.IOC
             return this;
         }
 
+        public IServiceCollection AddSingletonNamed<TService>(string name, TService service)
+        {
+            _provider.Bind<TService>().ToConstant(service).Named(name);
+            return this;
+        }
+
         public IServiceCollection AddTransient<TService, TImplementation>()
         {
             _provider.Bind<TService>().To(typeof(TImplementation)).InTransientScope();
@@ -46,7 +54,7 @@ namespace RemotePlusLibrary.Core.IOC
             return _provider.Get<TService>();
         }
 
-        public TService GetService<TService>(string name)
+        public TService GetServiceNamed<TService>(string name)
         {
             return _provider.Get<TService>(name);
         }

@@ -37,87 +37,7 @@ namespace RemotePlusServer.Core.Commands
         IScriptingEngine _scriptingEngine;
 
         #region Commands
-        [CommandHelp("Starts a process on the server.")]
-        public CommandResponse ps(CommandRequest args, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
-        {
-            currentEnvironment.WriteLine();
-            bool waitForExit = false;
-            bool showHelp = false;
-            bool enterDebug = false;
-            bool exitDebug = false;
-            Process p = new Process();
-            OptionSet set = new OptionSet()
-                .Add("program|p=", "The process name to start. If shell execution has been disabled, you must specify a full path.", v => p.StartInfo.FileName = v)
-                .Add("arguments|a=", "Arguments to pass into the process.", v => p.StartInfo.Arguments = v)
-                .Add("DisableShellExecute|s", "Disables the OS to execute the program directly.", v => p.StartInfo.UseShellExecute = false)
-                .Add("redirectStdOut|o", "Redirects StdOut to RemotePlus StdOut. NOTE: Shell execution will be disabled.", v =>
-                 {
-                     p.StartInfo.UseShellExecute = false;
-                     p.StartInfo.RedirectStandardOutput = true;
-                     p.OutputDataReceived += (sender, e) =>
-                     {
-                         currentEnvironment.WriteLine(e.Data);
-                     };
-                 })
-                .Add("redirectStdError|r", "Redirects StdError to RemotePlus StdError. NOTE: Shell execution will be disabled.", v =>
-                 {
-                     p.StartInfo.UseShellExecute = false;
-                     p.StartInfo.RedirectStandardError = true;
-                     p.ErrorDataReceived += (sender, e) =>
-                     {
-                         currentEnvironment.WriteLineError(e.Data);
-                     };
-                 })
-                .Add("admin|m", "Starts the process as an administrator.", v => p.StartInfo.Verb = "runas")
-                .Add("redirectStdIn|i", "Redirects StdIn to RemotePlus StdIn. NOTE: Shell execution will be disabled.", v =>
-                 {
-                     p.StartInfo.UseShellExecute = false;
-                     p.StartInfo.RedirectStandardInput = true;
-                 })
-                .Add("disableWindow|w", "Disables a window from appearing.", v => p.StartInfo.CreateNoWindow = true)
-                .Add("waitForExit|e", "Waits for the process to exit before returning control back to the client.", v => waitForExit = true)
-                .Add("enterDebug", "Puts the server process into debug mode. NOTE: Must have appropriate privileges.", v => enterDebug = true)
-                .Add("exitDebug", "Puts the server process out of debug mode.", v => exitDebug = true)
-                .Add("help|?", "Shows the help screen.", v => showHelp = true);
-            set.Parse(args.Arguments.Select(a => a.ToString()));
-            if (showHelp)
-            {
-                set.WriteOptionDescriptions(currentEnvironment.Out);
-                return new CommandResponse((int)CommandStatus.Success);
-            }
-            if (enterDebug)
-            {
-                Process.EnterDebugMode();
-                return new CommandResponse((int)CommandStatus.Success);
-            }
-            if(exitDebug)
-            {
-                Process.LeaveDebugMode();
-                return new CommandResponse((int)CommandStatus.Success);
-            }
-            p.Start();
-            if(p.StartInfo.RedirectStandardInput) p.StandardInput.Write(currentEnvironment.ReadToEnd());
-            if (p.StartInfo.RedirectStandardOutput) p.BeginOutputReadLine();
-            if (p.StartInfo.RedirectStandardError) p.BeginErrorReadLine();
-            if (waitForExit)
-            {
-                var reg = args.CancellationToken.Register(() =>
-                {
-                    try
-                    {
-                        p.Kill();
-                    }
-                    catch (InvalidOperationException) { }
-                });
-                p.WaitForExit();
-                reg.Dispose();
-                return new CommandResponse(p.ExitCode);
-            }
-            else
-            {
-                return new CommandResponse((int)CommandStatus.Success);
-            }
-        }
+        
         [CommandBehavior(IndexCommandInHelp = false)]
         public CommandResponse progTest(CommandRequest args, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
         {
@@ -335,25 +255,7 @@ namespace RemotePlusServer.Core.Commands
             currentEnvironment.WriteLine(DateTime.Now.ToString());
             return new CommandResponse((int)CommandStatus.Success);
         }
-        [CommandHelp("Gets the list of processes running on the remote server.")]
-        public CommandResponse processes(CommandRequest args, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
-        {
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine();
-            foreach (var p in Process.GetProcesses())
-            {
-                try
-                {
-                    sb.AppendLine($"Name: {p.ProcessName}, ID: {p.Id}, Start Time: {p.StartTime.ToString()}");
-                }
-                catch (Exception ex)
-                {
-                    sb.AppendLine($"This process can be accessed: {ex.Message}");
-                }
-            }
-            currentEnvironment.WriteLine(sb.ToString());
-            return new CommandResponse((int)CommandStatus.Success);
-        }
+
         [CommandHelp("Returns the server version.")]
         public CommandResponse version(CommandRequest args, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
         {
@@ -678,9 +580,7 @@ namespace RemotePlusServer.Core.Commands
                     WebClient wClient = new WebClient();
                     var extensionData = wClient.DownloadData(args.Arguments[1].ToString());
                     var clientLogger = new ClientLogger(client);
-                    GlobalServices.Logger.AddLogger(clientLogger);
                     ServerManager.DefaultExtensionLibraryLoader.LoadFromAssembly(Assembly.Load(extensionData));
-                    GlobalServices.Logger.RemoveLogger(clientLogger);
                     wClient.Dispose();
                     return new CommandResponse((int)CommandStatus.Success);
                 }
@@ -804,14 +704,12 @@ namespace RemotePlusServer.Core.Commands
             _resourceManager = services.GetService<IResourceManager>();
             _scriptingEngine = services.GetService<IScriptingEngine>();
             _service = services.GetService<IRemotePlusService<ServerRemoteInterface>>();
-            Commands.Add("ps", ps);
             Commands.Add("progTest", progTest);
             Commands.Add("readLineTest", readLineTest);
             Commands.Add("help", Help);
             Commands.Add("logs", Logs);
             Commands.Add("resex", resex);
             Commands.Add("dateTime", dateTime);
-            Commands.Add("processes", processes);
             Commands.Add("version", version);
             Commands.Add("encrypt", svm_encyptFile);
             Commands.Add("decrypt", svm_decryptFile);

@@ -27,7 +27,7 @@ namespace RemotePlusLibrary.SubSystem.Workflow.Server
                 return new CommandResponse((int)CommandStatus.Success);
             }
 
-            return _subsystem.RunWorkflow(workflowToRun[0], environment);
+            return _subsystem.RunWorkflow(workflowToRun[0], environment, this);
         }
 
         [CommandHelp("Displays all available workflow activities.")]

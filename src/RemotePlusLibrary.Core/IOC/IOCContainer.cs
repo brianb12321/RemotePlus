@@ -11,7 +11,7 @@ namespace RemotePlusLibrary.Core.IOC
         }
         public static TService GetService<TService>(string name)
         {
-            return Provider.GetService<TService>(name);
+            return Provider.GetServiceNamed<TService>(name);
         }
     }
 }

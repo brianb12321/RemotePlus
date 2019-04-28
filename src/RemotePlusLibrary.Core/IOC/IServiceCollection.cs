@@ -11,10 +11,11 @@ namespace RemotePlusLibrary.Core.IOC
         IServiceCollection AddSingleton<TService>();
         IServiceCollection AddSingleton<TService, TServiceImpl>();
         IServiceCollection AddSingletonNamed<TService, TServiceImpl>(string name);
+        IServiceCollection AddSingletonNamed<TService>(string name, TService service);
         IServiceCollection AddTransient<TService, TImplementation>();
         IServiceCollection AddTransient<TService>();
         TService GetService<TService>();
-        TService GetService<TService>(string name);
+        TService GetServiceNamed<TService>(string name);
         TService[] GetAllServices<TService>();
     }
 }

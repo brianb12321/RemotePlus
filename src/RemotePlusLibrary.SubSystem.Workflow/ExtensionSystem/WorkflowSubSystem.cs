@@ -24,15 +24,18 @@ namespace RemotePlusLibrary.SubSystem.Workflow.ExtensionSystem
             GlobalServices.Logger.Log("Workflow Subsystem started.", BetterLogger.LogLevel.Info);
         }
 
-        public CommandResponse RunWorkflow(string name, ICommandEnvironment env)
+        public CommandResponse RunWorkflow(string name, ICommandEnvironment env, object sender)
         {
+            Dictionary<string, object> inputs = new Dictionary<string, object>();
+            inputs.Add("EnvGuid", GlobalServices.RunningEnvironment.EnvironmentGuid);
+            inputs.Add("Sender", sender);
             var modules = base.GetAllModules();
             var rightModule = modules.FirstOrDefault(m => m.WorkflowName == name);
             if (rightModule != null)
             {
                 WorkflowInvoker invoker = new WorkflowInvoker(rightModule.Activity);
                 invoker.Extensions.Add(new RemotePlusActivityContext(env, IOCContainer.Provider));
-                invoker.Invoke();
+                invoker.Invoke(inputs);
                 return new CommandResponse((int)CommandStatus.Success);
             }
             else

@@ -6,6 +6,6 @@ namespace RemotePlusLibrary.SubSystem.Workflow.ExtensionSystem
 {
     public interface IWorkflowSubsystem : IExtensionSubsystem<IRemotePlusWorkflowModule>
     {
-        CommandResponse RunWorkflow(string name, ICommandEnvironment env);
+        CommandResponse RunWorkflow(string name, ICommandEnvironment env, object sender);
     }
 }

@@ -8,6 +8,7 @@ namespace RemotePlusLibrary.Core.IOC
 {
     public interface IEnvironment
     {
+        Guid EnvironmentGuid { get; set; }
         NetworkSide ExecutingSide { get; }
         EnvironmentState State { get; }
         Task Start(string[] args);

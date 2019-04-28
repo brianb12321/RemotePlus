@@ -104,8 +104,7 @@ namespace DefaultServerCore
         {
             builder.BuildServiceHost<ServerRemoteInterface>()
                 .BuildServiceHost<FileTransferServciceInterface>()
-                .LoadDefaultExtensionSubsystems<ICommandSubsystem<IServerCommandModule>, IServerCommandModule>()
-                .LoadDefaultExtensionSubsystems<IWorkflowSubsystem, IRemotePlusWorkflowModule>();
+                .LoadDefaultExtensionSubsystems<ICommandSubsystem<IServerCommandModule>, IServerCommandModule>();
         }
         #region Server Events
         private void Host_UnknownMessageReceived(object sender, System.ServiceModel.UnknownMessageReceivedEventArgs e)

@@ -33,6 +33,7 @@ namespace RemotePlusClientCmd
 {
     public partial class ClientCmdManager : IEnvironment
     {
+        public Guid EnvironmentGuid { get; set; } = Guid.NewGuid();
         public Dictionary<string, CommandDelegate> LocalCommands = new Dictionary<string, CommandDelegate>();
         public static IExtensionLibraryLoader ExtensionLoader { get; set; }
         public static ICommandSubsystem<IClientCmdModule> _commandSubsystem;

@@ -21,8 +21,9 @@ namespace ProxyServer
 {
     public class ProxyManager : IEnvironment
     {
+        public Guid EnvironmentGuid { get; set; } = Guid.NewGuid();
         public static ResourceStore ResourceStore;
-        public static Guid ProxyGuid { get; } = Guid.NewGuid();
+        public static Guid ProxyGuid => GlobalServices.RunningEnvironment.EnvironmentGuid;
         public static IServiceManager DefaultServiceManager => IOCContainer.GetService<IServiceManager>();
         public static IRemotePlusService<ProxyServerRemoteImpl> ProxyService => DefaultServiceManager.GetService<ProxyServerRemoteImpl>();
         public static IExtensionLibraryLoader DefaultExtensionLoader => IOCContainer.GetService<IExtensionLibraryLoader>();
