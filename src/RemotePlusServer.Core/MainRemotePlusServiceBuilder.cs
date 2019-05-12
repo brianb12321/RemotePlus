@@ -25,6 +25,9 @@ namespace RemotePlusServer.Core
             _service.HostOpening += _hostOpening;
             _service.HostFaulted += _hostFaulted;
             _service.HostUnknownMessageReceived += _hostUnknown;
+            _service.Behaviors = _behaviors;
+            _service.EndpointBehaviors = _endpointBehaviors;
+            _service.ContractBehaviors = _contractBehaviors;
             return _service;
         }
 

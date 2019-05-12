@@ -71,7 +71,6 @@ namespace RemotePlusClient.CommonUI.ConnectionClients
         public ServiceClient(InstanceContext callbackInstance, System.ServiceModel.Channels.Binding binding, EndpointAddress remoteAddress) : base(callbackInstance, binding, remoteAddress)
         {
         }
-
         public void Beep(int Hertz, int Duration)
         {
             base.Channel.Beep(Hertz, Duration);
@@ -177,10 +176,6 @@ namespace RemotePlusClient.CommonUI.ConnectionClients
             Channel.SwitchUser();
         }
 
-        public void UpdateServerSettings(ServerSettings Settings)
-        {
-            Channel.UpdateServerSettings(Settings);
-        }
         public void Connect()
         {
             base.Open();

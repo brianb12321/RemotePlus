@@ -67,7 +67,7 @@ namespace RemotePlusLibrary.Configuration.ServerSettings
         [DataMember]
         [Browsable(false)]
         [Category(SERVER_SETTINGS_CATEGORY_SECURITY)]
-        public StringCollection BannedIPs { get; set; }
+        public SecuritySettings Security { get; set; }
         #endregion
         #region Server Info
         [TypeConverter(typeof(ExpandableObjectConverter))]
@@ -115,6 +115,7 @@ namespace RemotePlusLibrary.Configuration.ServerSettings
         {
             PortNumber = 9000;
             LoggingSettings = new LoggingSettings();
+            Security = new SecuritySettings();
         }
     }
 }

@@ -37,10 +37,6 @@ namespace RemotePlusLibrary.Contracts
         Task<CommandPipeline> RunServerCommandAsync(string command, CommandExecutionMode commandMode);
         [OperationContract]
         void CancelServerCommand();
-        [OperationContract()]
-        [FaultContract(typeof(ServerFault))]
-        [FaultContract(typeof(ProxyFault))]
-        void UpdateServerSettings(ServerSettings Settings);
         [OperationContract]
         [FaultContract(typeof(ServerFault))]
         [FaultContract(typeof(ProxyFault))]

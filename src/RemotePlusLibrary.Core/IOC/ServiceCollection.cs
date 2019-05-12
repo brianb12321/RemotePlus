@@ -8,6 +8,7 @@ namespace RemotePlusLibrary.Core.IOC
     public class ServiceCollection : IServiceCollection
     {
         private readonly IKernel _provider = new StandardKernel();
+
         public IServiceCollection AddSingleton<TService>(TService service)
         {
             _provider.Bind<TService>().ToConstant(service);

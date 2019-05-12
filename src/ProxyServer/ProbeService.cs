@@ -23,8 +23,9 @@ namespace ProxyServer
         public ServiceEndpoint ClientEndpoint { get; private set; }
         public override void BuildHost()
         {
-            base.BuildHost();
+            Host = new ServiceHost(RemoteInterface);
             ClientEndpoint = Host.AddServiceEndpoint(typeof(IProxyRemote), _clientBinding, _clientAddress);
+            base.BuildHost();
         }
         public ProbeService(ProxyServerRemoteImpl singleTon, Binding serverBinding, Binding clientBinding, string proxyAddress, string proxyClientAddress) : base(typeof(IProxyServerRemote), singleTon, serverBinding, proxyAddress)
         {

@@ -36,8 +36,6 @@ namespace ProxyServer
         ConcurrencyMode = ConcurrencyMode.Multiple,
         MaxItemsInObjectGraph = int.MaxValue,
         UseSynchronizationContext = false)]
-    [CustomInstanceProviderBehavior(typeof(WcfInstanceProviderAttribute), typeof(ProxyServerRemoteImpl))]
-    [GlobalExceptionIOCAttribute]
     public class ProxyServerRemoteImpl : IProxyServerRemote, IProxyRemote
     {
         private IServerListManager _list;
@@ -311,12 +309,6 @@ namespace ProxyServer
         {
             SelectedClient.ClientCallback.SwitchUser();
         }
-
-        public void UpdateServerSettings(ServerSettings Settings)
-        {
-            SelectedClient.ClientCallback.UpdateServerSettings(Settings);
-        }
-
 
         public void Disconnect(Guid guid, string Reason)
         {

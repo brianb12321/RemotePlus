@@ -20,6 +20,6 @@ namespace RemotePlusLibrary.Core
         /// </summary>
         public static ILogFactory Logger => IOCContainer.GetService<ILogFactory>();
         public static IEventBus EventBus => IOCContainer.GetService<IEventBus>();
-        public static IEnvironment RunningEnvironment => IOCContainer.GetService<IEnvironment>();
+        public static IApplication RunningApplication => IOCContainer.GetService<IApplication>();
     }
 }

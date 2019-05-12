@@ -54,11 +54,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Behavior\NetDataContractSerializerBehavior.cs" />
     <Compile Include="Client.cs" />
     <Compile Include="ClientBuilder.cs" />
     <Compile Include="ClientType.cs" />
     <Compile Include="CustomConsoleTraceListener.cs" />
-    <Compile Include="CustomInstanceProviderBehaviorAttribute.cs" />
+    <Compile Include="Behavior\CustomInstanceProviderBehavior.cs" />
     <Compile Include="DefaultKnownTypeManager.cs" />
     <Compile Include="EventSystem\EventBus.cs" />
     <Compile Include="EventSystem\EventDeliveryEventArgs.cs" />
@@ -68,26 +69,31 @@
     <Compile Include="EventSystem\LoggerEventProxy.cs" />
     <Compile Include="EventSystem\Events\LoginEvent.cs" />
     <Compile Include="EventSystem\TinyMessenger.cs" />
-    <Compile Include="GlobalExceptionAttribute.cs" />
+    <Compile Include="Behavior\GlobalExceptionBehavior.cs" />
     <Compile Include="GlobalServices.cs" />
     <Compile Include="IClient.cs" />
     <Compile Include="IClientContext.cs" />
     <Compile Include="IClientContextExtensionProvider.cs" />
     <Compile Include="IConnectionObject.cs" />
     <Compile Include="IOC\EnvironmentState.cs" />
-    <Compile Include="IOC\IEnvironment.cs" />
+    <Compile Include="NodeStartup\IClientBuilder.cs" />
+    <Compile Include="NodeStartup\IClientCoreStartup.cs" />
+    <Compile Include="IOC\IApplication.cs" />
+    <Compile Include="NodeStartup\INodeBuilder.cs" />
     <Compile Include="IOC\IOCContainer.cs" />
-    <Compile Include="IOC\IServerBuilder.cs" />
-    <Compile Include="IOC\IServerCoreStartup.cs" />
-    <Compile Include="IOC\IServerInitilizer.cs" />
+    <Compile Include="NodeStartup\INodeCoreStartup.cs" />
+    <Compile Include="NodeStartup\IServerTaskBuilder.cs" />
+    <Compile Include="NodeStartup\IServerCoreStartup.cs" />
+    <Compile Include="NodeStartup\INodeInitilizer.cs" />
     <Compile Include="IOC\IServiceCollection.cs" />
     <Compile Include="IOC\ServiceCollection.cs" />
+    <Compile Include="NetDataContractOperationBehavior.cs" />
     <Compile Include="NetNode.cs" />
     <Compile Include="NetworkSide.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Faults\ProxyFault.cs" />
     <Compile Include="Faults\ServerFault.cs" />
-    <Compile Include="WcfInstanceProviderAttribute.cs" />
+    <Compile Include="WcfInstanceProvider.cs" />
     <Compile Include="_ConnectionFactory.cs" />
   </ItemGroup>
   <ItemGroup>

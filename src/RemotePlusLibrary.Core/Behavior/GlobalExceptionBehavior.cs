@@ -1,18 +1,13 @@
-﻿using RemotePlusLibrary.Core.IOC;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
+﻿using System.Collections.ObjectModel;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
-using System.Text;
-using System.Threading.Tasks;
+using RemotePlusLibrary.Core.IOC;
 
-namespace RemotePlusLibrary.Core
+namespace RemotePlusLibrary.Core.Behavior
 {
-    public class GlobalExceptionIOCAttributeAttribute : Attribute, IServiceBehavior
+    public class GlobalExceptionBehavior : IServiceBehavior
     {
         public void AddBindingParameters(ServiceDescription serviceDescription, ServiceHostBase serviceHostBase, Collection<ServiceEndpoint> endpoints, BindingParameterCollection bindingParameters)
         {

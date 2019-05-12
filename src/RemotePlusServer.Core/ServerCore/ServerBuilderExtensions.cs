@@ -15,11 +15,18 @@ using RemotePlusLibrary.Extension.ResourceSystem.ResourceTypes;
 using RemotePlusLibrary.Extension.ResourceSystem.ResourceTypes.Devices;
 using System.Linq;
 using System.Reflection;
+using System.Security.Cryptography.X509Certificates;
+using System.ServiceModel;
+using System.ServiceModel.Channels;
 using RemotePlusLibrary.Extension;
 using Ninject;
+using Ninject.Planning.Bindings;
+using RemotePlusLibrary.Core.NodeStartup;
+using RemotePlusLibrary.ServiceArchitecture;
 using RemotePlusLibrary.SubSystem.Command.CommandClasses;
 using RemotePlusLibrary.SubSystem.Command;
 using RemotePlusServer.Core.Commands;
+using Binding = System.ServiceModel.Channels.Binding;
 
 namespace RemotePlusServer.Core.ServerCore
 {
@@ -28,22 +35,8 @@ namespace RemotePlusServer.Core.ServerCore
     /// </summary>
     public static class ServerBuilderExtensions
     {
-        /// <summary>
-        /// Preloads <see cref="ServerSettings"/> with the perferred settings. NOTE: not calling <see cref="SkipServerSettingsLoading(IServerBuilder)"/> will override your preferred settings.
-        /// </summary>
-        /// <param name="builder"></param>
-        /// <param name="options"></param>
-        /// <returns></returns>
-        public static IServerBuilder PreloadSettings(this IServerBuilder builder, Action<ServerSettings> options)
-        {
-            return builder.AddTask(() =>
-            {
-                ServerSettings s = new ServerSettings();
-                options?.Invoke(s);
-                ServerManager.DefaultSettings = s;
-            });
-        }
-        public static IServerBuilder ResolveLib(this IServerBuilder builder)
+
+        public static INodeBuilder<IServerTaskBuilder> ResolveLib(this INodeBuilder<IServerTaskBuilder> builder)
         {
             return builder.AddTask(() =>
             {
@@ -71,7 +64,7 @@ namespace RemotePlusServer.Core.ServerCore
         /// <param name="builder"></param>
         /// <param name="path">The path to set the search path to.</param>
         /// <returns></returns>
-        public static IServerBuilder SetupServerConfigPath(this IServerBuilder builder, string path)
+        public static INodeBuilder<IServerTaskBuilder> SetupServerConfigPath(this INodeBuilder<IServerTaskBuilder> builder, string path)
         {
             return builder.AddTask(() =>
             {
@@ -83,7 +76,7 @@ namespace RemotePlusServer.Core.ServerCore
         /// </summary>
         /// <param name="builder"></param>
         /// <returns></returns>
-        public static IServerBuilder InitializeServerSideKnownTypes(this IServerBuilder builder)
+        public static INodeBuilder<IServerTaskBuilder> InitializeServerSideKnownTypes(this INodeBuilder<IServerTaskBuilder> builder)
         {
             return builder.AddTask(() =>
             {
@@ -95,7 +88,7 @@ namespace RemotePlusServer.Core.ServerCore
         /// </summary>
         /// <param name="builder"></param>
         /// <returns></returns>
-        public static IServerBuilder InitializeDefaultGlobals(this IServerBuilder builder)
+        public static INodeBuilder<IServerTaskBuilder> InitializeDefaultGlobals(this INodeBuilder<IServerTaskBuilder> builder)
         {
             return builder.AddTask(() =>
             {
@@ -103,21 +96,7 @@ namespace RemotePlusServer.Core.ServerCore
                 InitializeGlobals();
             });
         }
-        public static IServerBuilder LoadExtensionLibraries(this IServerBuilder builder)
-        {
-            return builder.AddTask(() =>
-            {
-                ServerManager.DefaultExtensionLibraryLoader.LoadFromAssembly(Assembly.GetAssembly(typeof(DefaultCommands)));
-                ServerManager.DefaultExtensionLibraryLoader.LoadFromFolder("extensions");
-            });
-        }
-        public static IServerBuilder LoadExtensionByType<TType>(this IServerBuilder builder)
-        {
-            return builder.AddTask(() =>
-            {
-                ServerManager.DefaultExtensionLibraryLoader.LoadFromAssembly(Assembly.GetAssembly(typeof(TType)));
-            });
-        }
+        
         public static void InitializeGlobals()
         {
             try
@@ -137,7 +116,7 @@ namespace RemotePlusServer.Core.ServerCore
         /// </summary>
         /// <param name="builder"></param>
         /// <returns></returns>
-        public static IServerBuilder InitializeVariables(this IServerBuilder builder)
+        public static INodeBuilder<IServerTaskBuilder> InitializeVariables(this INodeBuilder<IServerTaskBuilder> builder)
         {
             return builder.AddTask(() =>
             {
@@ -151,93 +130,15 @@ namespace RemotePlusServer.Core.ServerCore
                 IOCContainer.GetService<IScriptingEngine>().GetDefaultModule().AddVariable<Func<string, ResourceQuery>>("resq", (name) => new ResourceQuery(name, Guid.Empty));
             });
         }
-        /// <summary>
-        /// Reads the server config file and loads the settings defined in the file.
-        /// </summary>
-        /// <param name="builder"></param>
-        /// <returns></returns>
-        public static IServerBuilder LoadServerConfig(this IServerBuilder builder)
-        {
-            return builder.AddTask(() =>
-            {
-                ServerManager.DefaultSettings = new ServerSettings();
-                if (!File.Exists("Configurations\\Server\\GlobalServerSettings.config"))
-                {
-                    ServerSettings internalSettings = loadConfigFromAssembly();
-                    if(internalSettings != null)
-                    {
-                        GlobalServices.Logger.Log("Server settings loaded from assembly.", LogLevel.Info);
-                        ServerManager.DefaultSettings = internalSettings;
-                    }
-                    else
-                    {
-                        GlobalServices.Logger.Log("The server settings file does not exist. Creating server settings file.", LogLevel.Warning);
-                        ServerManager.DataAccess.SaveConfig(ServerManager.DefaultSettings, ServerSettings.SERVER_SETTINGS_FILE_PATH);
-                    }
-                }
-                else
-                {
-                    GlobalServices.Logger.Log("Loading server settings file.", LogLevel.Info);
-                    try
-                    {
-                        ServerManager.DefaultSettings = ServerManager.DataAccess.LoadConfig<ServerSettings>(ServerSettings.SERVER_SETTINGS_FILE_PATH);
-                    }
-                    catch (Exception ex)
-                    {
-#if DEBUG
-                        GlobalServices.Logger.Log("Unable to load server settings. " + ex.ToString(), LogLevel.Error);
-#else
-                    GlobalServices.Logger.Log("Unable to load server settings. " + ex.Message, LogLevel.Error);
-#endif
-                    }
-                }
-                if (!Directory.Exists("Users"))
-                {
-                    const string DEFAULT_USERNAME = "admin";
-                    const string DEFAULT_PASSWORD = "password";
-                    if(ServerManager.DefaultSettings.UseDefaultUserIfNoneExists)
-                    {
-                        GlobalServices.Logger.Log("The user folder does not exist. Using default user.", LogLevel.Info);
-                        ServerManager.AccountManager.CreateAccount(new UserCredentials(DEFAULT_USERNAME, DEFAULT_PASSWORD), false);
-                    }
-                    else
-                    {
-                        GlobalServices.Logger.Log("The Users folder does not exist. Creating folder.", LogLevel.Warning);
-                        Directory.CreateDirectory("Users");
-                        ServerManager.AccountManager.CreateAccount(new UserCredentials(DEFAULT_USERNAME, DEFAULT_PASSWORD));
-                    }
-                }
-                else
-                {
-                    ServerManager.AccountManager.RefreshAccountList();
-                }
-            });
-        }
 
-        private static ServerSettings loadConfigFromAssembly()
-        {
-            try
-            {
-                Assembly loadedAssembly = Assembly.GetEntryAssembly();
-                GlobalServices.Logger.Log($"Scanning for embedded config file in assembly: {loadedAssembly.GetName()}", LogLevel.Debug);
-                var stream = loadedAssembly.GetManifestResourceStream("RemotePlusServer.InternalConfig.config");
-                return ServerManager.DataAccess.LoadConfig<ServerSettings>(stream);
-            }
-            catch (Exception ex)
-            {
-                GlobalServices.Logger.Log($"Unable to open internal config file: {ex.Message}", LogLevel.Debug);
-                return null;
-            }
-        }
-
-        public static IServerBuilder OpenMexForRemotePlus(this IServerBuilder builder)
+        public static INodeBuilder<IServerTaskBuilder> OpenMexForRemotePlus(this INodeBuilder<IServerTaskBuilder> builder)
         {
             return builder.AddTask(() =>
             {
                 if (ServerManager.DefaultSettings.EnableMetadataExchange)
                 {
                     GlobalServices.Logger.Log("NOTE: Metadata exchange is enabled on the server.", LogLevel.Info, "Server Host");
-                    System.ServiceModel.Channels.Binding mexBinding = MetadataExchangeBindings.CreateMexTcpBinding();
+                    Binding mexBinding = MetadataExchangeBindings.CreateMexTcpBinding();
                     ServiceMetadataBehavior smb = new ServiceMetadataBehavior();
                     smb.HttpGetEnabled = true;
                     smb.HttpGetUrl = new Uri("http://0.0.0.0:9001/Mex");
@@ -246,28 +147,19 @@ namespace RemotePlusServer.Core.ServerCore
                 }
             });
         }
-        public static IServerBuilder OpenMexForFileTransfer(this IServerBuilder builder)
+        public static INodeBuilder<IServerTaskBuilder> OpenMexForFileTransfer(this INodeBuilder<IServerTaskBuilder> builder)
         {
             return builder.AddTask(() =>
             {
                 if (ServerManager.DefaultSettings.EnableMetadataExchange)
                 {
-                    System.ServiceModel.Channels.Binding mexBinding = MetadataExchangeBindings.CreateMexTcpBinding();
+                    Binding mexBinding = MetadataExchangeBindings.CreateMexTcpBinding();
                     ServiceMetadataBehavior smb2 = new ServiceMetadataBehavior();
                     smb2.HttpGetEnabled = true;
                     smb2.HttpGetUrl = new Uri("http://0.0.0.0:9001/Mex2");
                     ServerManager.FileTransferService.Host.Description.Behaviors.Add(smb2);
                     ServerManager.FileTransferService.Host.AddServiceEndpoint(typeof(IMetadataExchange), mexBinding, "http://0.0.0.0:9001/Mex2");
                 }
-            });
-        }
-        public static IServerBuilder LoadDefaultExtensionSubsystems<TSubsystem, TModule>(this IServerBuilder builder)
-            where TSubsystem : IExtensionSubsystem<TModule>
-            where TModule : IExtensionModule
-        {
-            return builder.AddTask(() =>
-            {
-                IOCContainer.Provider.GetService<TSubsystem>().Init();
             });
         }
     }

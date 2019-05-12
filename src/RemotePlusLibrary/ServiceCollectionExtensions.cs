@@ -43,10 +43,6 @@ namespace RemotePlusLibrary
         {
             return services.AddTransient<Form, TServerControl>();
         }
-        public static IServiceCollection UseConfigurationDataAccess<TDataAccessImpl>(this IServiceCollection services)
-        {
-            return services.AddSingletonNamed<Configuration.IConfigurationDataAccess, TDataAccessImpl>("DefaultConfigDataAccess");
-        }
         public static IServiceCollection UseCommandline<TCommandEnvironmentImpl, TCommandSubsystemImpl, TModule>(this IServiceCollection services, Action<CommandlineBuilder> builder)
             where TCommandEnvironmentImpl : ICommandEnvironment
             where TCommandSubsystemImpl : ICommandSubsystem<TModule>

@@ -10,7 +10,7 @@ namespace RemotePlusLibrary.SubSystem.Command
 {
     public class CommandlineBuilder
     {
-        public IServiceCollection _services;
+        private IServiceCollection _services;
         public CommandlineBuilder(IServiceCollection services)
         {
             _services = services;
@@ -25,9 +25,9 @@ namespace RemotePlusLibrary.SubSystem.Command
             _services.AddTransient<ILexer, TLexerImpl>();
             return this;
         }
-        public CommandlineBuilder UseExecutor<TExecuotorImpl>() where TExecuotorImpl : ICommandExecutor
+        public CommandlineBuilder UseExecutor<TExecutorImpl>() where TExecutorImpl : ICommandExecutor
         {
-            _services.AddTransient<ICommandExecutor, TExecuotorImpl>();
+            _services.AddTransient<ICommandExecutor, TExecutorImpl>();
             return this;
         }
     }

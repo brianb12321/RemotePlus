@@ -10,11 +10,11 @@ using RemotePlusLibrary.Core.IOC;
 
 namespace RemotePlusLibrary.Core
 {
-    public class WcfInstanceProviderAttribute : IInstanceProvider
+    public class WcfInstanceProvider : IInstanceProvider
     {
         private Type _instance = null;
 
-        public WcfInstanceProviderAttribute(Type instance)
+        public WcfInstanceProvider(Type instance)
         {
             _instance = instance;
         }

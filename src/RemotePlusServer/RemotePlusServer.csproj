@@ -122,7 +122,7 @@
   <ItemGroup>
     <Compile Include="FileTransferServiceImpl.cs" />
     <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="ServerBuilder.cs" />
+    <Compile Include="ServerTaskBuilder.cs" />
     <Compile Include="ServerControls.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -710,7 +710,6 @@
     <Content Include="Lib\__phello__.foo.py" />
     <None Include="App.config" />
     <None Include="app.manifest" />
-    <EmbeddedResource Include="InternalConfig.config" />
     <None Include="Lib\ensurepip\_bundled\pip-8.1.1-py2.py3-none-any.whl" />
     <None Include="Lib\ensurepip\_bundled\setuptools-20.10.1-py2.py3-none-any.whl" />
     <None Include="packages.config" />

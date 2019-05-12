@@ -1,22 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace RemotePlusLibrary.Core
+namespace RemotePlusLibrary.Core.Behavior
 {
-    [AttributeUsage(AttributeTargets.Class)]
-    public class CustomInstanceProviderBehaviorAttribute : Attribute, IServiceBehavior
+    public class CustomInstanceProviderBehavior : IServiceBehavior
     {
         private Type _instanceProvider = null;
         private Type _instance = null;
-        public CustomInstanceProviderBehaviorAttribute(Type ip, Type instance)
+        public CustomInstanceProviderBehavior(Type ip, Type instance)
         {
             _instanceProvider = ip;
             _instance = instance;

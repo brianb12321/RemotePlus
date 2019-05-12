@@ -37,7 +37,7 @@ namespace RemotePlusLibrary.RequestSystem
                 if (request != null)
                 {
                     current = request;
-                    var rd = current.StartRequestData(builder, GlobalServices.RunningEnvironment.ExecutingSide);
+                    var rd = current.StartRequestData(builder, GlobalServices.RunningApplication.ExecutingSide);
                     if (rd.State == RequestState.OK)
                     {
                         return new ReturnData(rd.RawData, RequestState.OK);

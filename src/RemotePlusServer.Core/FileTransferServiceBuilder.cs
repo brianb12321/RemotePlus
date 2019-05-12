@@ -19,7 +19,6 @@ namespace RemotePlusServer.Core
         }
         public override IRemotePlusService<FileTransferServciceInterface> BuildService()
         {
-            ((NetTcpBinding)_binding).TransferMode = TransferMode.Buffered;
             string endpointAddress = "FileTransfer";
             var _service = new FileTransferService(_serviceImpl, _binding, $"net.tcp://0.0.0.0:{_portNumber}/{endpointAddress}");
             _service.HostClosed += _hostClosed;
@@ -28,6 +27,9 @@ namespace RemotePlusServer.Core
             _service.HostOpening += _hostOpening;
             _service.HostFaulted += _hostFaulted;
             _service.HostUnknownMessageReceived += _hostUnknown;
+            _service.Behaviors = _behaviors;
+            _service.EndpointBehaviors = _endpointBehaviors;
+            _service.ContractBehaviors = _contractBehaviors;
             return _service;
         }
 

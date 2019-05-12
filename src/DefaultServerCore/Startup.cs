@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Linq;
+using System.ServiceModel;
+using System.ServiceModel.Description;
 using BetterLogger;
 using RemotePlusServer.Core;
 using RemotePlusServer.Core.ServerCore;
@@ -8,10 +11,14 @@ using RemotePlusLibrary.ServiceArchitecture;
 using BetterLogger.Loggers;
 using RemotePlusLibrary.Configuration;
 using RemotePlusLibrary.Configuration.StandordDataAccess;
+using RemotePlusLibrary.Contracts;
 using RemotePlusLibrary.Core.IOC;
 using RemotePlusLibrary.Security.AccountSystem;
 using RSPM;
 using RemotePlusLibrary.Core;
+using RemotePlusLibrary.Core.Behavior;
+using RemotePlusLibrary.Core.NodeStartup;
+using RemotePlusLibrary.Discovery;
 using RemotePlusServer.Core.ExtensionSystem;
 using RemotePlusLibrary.Extension.ResourceSystem;
 using RemotePlusLibrary.Scripting;
@@ -23,14 +30,17 @@ using RemotePlusLibrary.SubSystem.Command.CommandClasses;
 using RemotePlusLibrary.SubSystem.Workflow;
 using RemotePlusLibrary.SubSystem.Workflow.ExtensionSystem;
 using RemotePlusLibrary.SubSystem.Workflow.Server;
+using RemotePlusServer.Core.Commands;
 
 namespace DefaultServerCore
 {
-    public sealed class Startup : IServerCoreStartup
+    public sealed class Startup : IServerCoreStartup, IClientCoreStartup
     {
         public void AddServices(IServiceCollection services)
         {
-            services.UseLogger(logFactory =>
+            services.UseConfigurationDataAccess<ConfigurationHelper>()
+                .AddSingletonNamed<IConfigurationDataAccess, BinarySerializationHelper>("BinaryDataAccess")
+                .UseLogger(logFactory =>
             {
                 logFactory.AddLogger(new ConsoleLogger()
                 {
@@ -40,15 +50,14 @@ namespace DefaultServerCore
                     }
                 });
             });
+            services.UseAuthentication<AccountManager>();
+            services.LoadServerSettings();
             services.UseServerManager<DefaultServiceManager>()
                 .UseResourceManager<RemotePlusResourceManager, FileResourceLoader>()
                 .UseErrorHandler<GlobalErrorHandler>()
                 .UseExtensionSystem<DefaultExtensionLoader>()
                 .UseServerControlPage<ServerControls>()
                 .UseScriptingEngine<IronPythonScriptingEngine>()
-                .UseConfigurationDataAccess<ConfigurationHelper>()
-                .AddSingletonNamed<IConfigurationDataAccess, BinarySerializationHelper>("BinaryDataAccess")
-                .UseAuthentication<AccountManager>()
                 .UsePackageManager<DefaultPackageManager>()
                 .UseCommandline<CommandEnvironment, ServerCommandSubsystem, IServerCommandModule>(builder =>
                     builder.UseLexer<CommandLexer>()
@@ -56,7 +65,7 @@ namespace DefaultServerCore
                            .UseExecutor<CommandExecutor>())
                 .AddWorkflowFeature();
             //Add the services.
-            IServiceManager manager = IOCContainer.GetService<IServiceManager>();
+            IServiceManager manager = services.GetService<IServiceManager>();
             manager.AddServiceUsingBuilder(() =>
             {
                 MainRemotePlusServiceBuilder builder = new MainRemotePlusServiceBuilder(typeof(RemoteImpl));
@@ -67,7 +76,10 @@ namespace DefaultServerCore
                         .RouteHostOpeningEvent(Host_Opening)
                         .RouteUnknownMessageReceivedEvent(Host_UnknownMessageReceived)
                         .SetBinding(_ConnectionFactory.BuildBinding())
-                        .SetPortNumber(ServerManager.DefaultSettings.PortNumber);
+                        .SetPortNumber(ServerManager.DefaultSettings.PortNumber)
+                        .AddServiceBehavior(new GlobalExceptionBehavior())
+                        .AddServiceBehavior(new CustomInstanceProviderBehavior(typeof(WcfInstanceProvider), typeof(RemoteImpl)))
+                        .AddContractBehavior<IRemote>(new NetDataContractSerializerBehavior());
             });
             manager.AddServiceUsingBuilder(() =>
             {
@@ -79,15 +91,38 @@ namespace DefaultServerCore
                         .RouteHostOpeningEvent(Host_Opening)
                         .RouteUnknownMessageReceivedEvent(Host_UnknownMessageReceived)
                         .SetBinding(_ConnectionFactory.BuildBinding())
-                        .SetPortNumber(ServerManager.DefaultSettings.PortNumber);
+                        .SetPortNumber(ServerManager.DefaultSettings.PortNumber)
+                        .AddServiceBehavior(new GlobalExceptionBehavior());
             });
         }
 
-        void IServerCoreStartup.InitializeServer(IServerBuilder builder)
+        public void InitializeClientServices(IServiceCollection services)
         {
-            builder.InitializeKnownTypes()
-                .LoadServerConfig()
-                .InitializeDefaultGlobals()
+            DuplexChannelFactory<IProxyServerRemote> channelFactory =
+                services.GetService<DuplexChannelFactory<IProxyServerRemote>>();
+            channelFactory.Endpoint.Contract.Operations.ToList().ForEach(o =>
+            {
+                DataContractSerializerOperationBehavior behavior =
+                    o.Behaviors.Find<DataContractSerializerOperationBehavior>();
+                o.Behaviors.Remove(behavior);
+                o.Behaviors.Add(new NetDataContractOperationBehavior(o));
+            });
+        }
+
+        public void InitializeNode(IClientBuilder builder)
+        {
+            
+        }
+
+        public void PostInitializeNode(IClientBuilder builder)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void InitializeNode(IServerTaskBuilder builder)
+        {
+            //builder.InitializeKnownTypes()
+            builder.InitializeDefaultGlobals()
                 .OpenMexForRemotePlus()
                 .OpenMexForFileTransfer()
                 .LoadGlobalResources()
@@ -95,21 +130,23 @@ namespace DefaultServerCore
                 .InitializeVariables()
                 .ResolveLib()
                 .LoadExtensionLibraries()
-                .LoadExtensionByType<PackageCommands>()
-                .LoadExtensionByType<AudioCommands>()
-                .LoadExtensionByType<RemotePlusActivityContext>()
-                .LoadExtensionByType<WorkflowCommands>();
+                .LoadExtensionByType(typeof(DefaultCommands))
+                .LoadExtensionByType(typeof(PackageCommands))
+                .LoadExtensionByType(typeof(AudioCommands))
+                .LoadExtensionByType(typeof(RemotePlusActivityContext))
+                .LoadExtensionByType(typeof(WorkflowCommands));
         }
-        public void PostInitializeServer(IServerBuilder builder)
+
+        public void PostInitializeNode(IServerTaskBuilder builder)
         {
-            builder.BuildServiceHost<ServerRemoteInterface>()
-                .BuildServiceHost<FileTransferServciceInterface>()
-                .LoadDefaultExtensionSubsystems<ICommandSubsystem<IServerCommandModule>, IServerCommandModule>();
+            builder.BuildServiceHost<IServerTaskBuilder, ServerRemoteInterface>()
+                .BuildServiceHost<IServerTaskBuilder, FileTransferServciceInterface>()
+                .LoadDefaultExtensionSubsystems<IServerTaskBuilder, ICommandSubsystem<IServerCommandModule>, IServerCommandModule>();
         }
         #region Server Events
-        private void Host_UnknownMessageReceived(object sender, System.ServiceModel.UnknownMessageReceivedEventArgs e)
+        private void Host_UnknownMessageReceived(object sender, UnknownMessageReceivedEventArgs e)
         {
-            GlobalServices.Logger.Log($"The server encountered an unknown message sent by the client. Message: {e.Message.ToString()}", LogLevel.Error);
+            GlobalServices.Logger.Log($"The server encountered an unknown message sent by the client. Message: {e.Message}", LogLevel.Error);
         }
 
         private void Host_Opening(object sender, EventArgs e)
@@ -121,11 +158,11 @@ namespace DefaultServerCore
         {
             if (ServerManager.DefaultSettings.DiscoverySettings.DiscoveryBehavior == RemotePlusLibrary.Configuration.ServerSettings.ProxyConnectionMode.Connect)
             {
-                GlobalServices.Logger.Log($"Host ready. Server is now part of the proxy cluster. Connect to proxy server to configure this server.", BetterLogger.LogLevel.Info);
+                GlobalServices.Logger.Log($"Host ready. Server is now part of the proxy cluster. Connect to proxy server to configure this server.", LogLevel.Info);
             }
             else
             {
-                GlobalServices.Logger.Log($"Host ready. Server is listening on port {ServerManager.DefaultSettings.PortNumber}. Connect to configure server.", BetterLogger.LogLevel.Info);
+                GlobalServices.Logger.Log($"Host ready. Server is listening on port {ServerManager.DefaultSettings.PortNumber}. Connect to configure server.", LogLevel.Info);
             }
         }
 
@@ -136,12 +173,12 @@ namespace DefaultServerCore
 
         private void Host_Closing(object sender, EventArgs e)
         {
-            GlobalServices.Logger.Log("Closing the server.", BetterLogger.LogLevel.Info);
+            GlobalServices.Logger.Log("Closing the server.", LogLevel.Info);
         }
 
         private void Host_Closed(object sender, EventArgs e)
         {
-            GlobalServices.Logger.Log("The server is now closed.", BetterLogger.LogLevel.Info);
+            GlobalServices.Logger.Log("The server is now closed.", LogLevel.Info);
         }
         #endregion
     }

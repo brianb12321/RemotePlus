@@ -18,7 +18,10 @@ namespace TestWorkflowExtensionLibrary.Modules
             
         }
 
-        public Activity Activity => new Workflows.CustomShellActivity();
+        public Activity RunActivity()
+        {
+            return new Workflows.CustomShellActivity();
+        }
         public string WorkflowName => "CustomShellActivity";
     }
 }

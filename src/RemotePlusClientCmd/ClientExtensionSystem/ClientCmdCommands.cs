@@ -48,7 +48,7 @@ namespace RemotePlusClientCmd.ClientExtensionSystem
         [CommandHelp("Closes the connection to the server.")]
         CommandResponse close(CommandRequest args, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
         {
-            GlobalServices.RunningEnvironment.Close();
+            GlobalServices.RunningApplication.Close();
             return new CommandResponse((int)CommandStatus.Success);
         }
         [CommandHelp("Changes the console title.")]
@@ -96,14 +96,14 @@ namespace RemotePlusClientCmd.ClientExtensionSystem
         public override void InitializeServices(IServiceCollection services)
         {
             _commandSubsystem = services.GetService<ICommandSubsystem<IClientCmdModule>>();
-            Commands.Add("#banner", banner);
-            Commands.Add("#help", Help);
-            Commands.Add("#clear", clearScreen);
-            Commands.Add("#close", close);
-            Commands.Add("#title", title);
-            Commands.Add("#load-commandFile", load_CommandFile);
-            Commands.Add("#execute-script", loadScriptFIle);
-            Commands.Add("#resetConsoleColors", resetConsoleColors);
+            Commands.Add("banner", banner);
+            Commands.Add("help", Help);
+            Commands.Add("clear", clearScreen);
+            Commands.Add("close", close);
+            Commands.Add("title", title);
+            Commands.Add("load-commandFile", load_CommandFile);
+            Commands.Add("execute-script", loadScriptFIle);
+            Commands.Add("resetConsoleColors", resetConsoleColors);
         }
     }
 }

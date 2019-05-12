@@ -8,7 +8,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RemotePlusServer.Core
+namespace RemotePlusLibrary.Extension.ResourceSystem
 {
     public class RemotePlusResourceManager : IResourceManager
     {

@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace RemotePlusLibrary.SubSystem.Command.CommandClasses.Parsing
 {
+    [CollectionDataContract]
     public class ElementSet : IList<ICommandElement>
     {
         List<ICommandElement> _internalList;

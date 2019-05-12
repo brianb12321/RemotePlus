@@ -12,6 +12,6 @@ namespace RemotePlusLibrary.SubSystem.Workflow.ExtensionSystem
     public interface IRemotePlusWorkflowModule : IExtensionModule
     {
         string WorkflowName { get; }
-        Activity Activity { get; }
+        Activity RunActivity();
     }
 }

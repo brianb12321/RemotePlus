@@ -67,7 +67,8 @@
   <ItemGroup>
     <Compile Include="FileTransfer\Service\FileTransfer.cs" />
     <Compile Include="FileTransfer\Service\IFile.cs" />
-    <Compile Include="GlobalServerBuilderExtensions.cs" />
+    <Compile Include="GlobalNodeBuilderExtensions.cs" />
+    <Compile Include="IRemotePlusCommunicationObject.cs" />
     <Compile Include="RequestSystem\DefaultRequestBuilders\ConsoleMenuRequestBuilder.cs" />
     <Compile Include="RequestSystem\DefaultRequestBuilders\ConsoleReadLineRequestBuilder.cs" />
     <Compile Include="RequestSystem\DefaultRequestBuilders\ProgressRequestBuilder.cs" />
@@ -93,6 +94,7 @@
     <Compile Include="RequestSystem\UpdateRequestBuilder.cs" />
     <Compile Include="ServiceArchitecture\DefaultServiceBuilder.cs" />
     <Compile Include="ServiceArchitecture\DefaultServiceManager.cs" />
+    <Compile Include="IChannelBuilder.cs" />
     <Compile Include="ServiceArchitecture\IRemotePlusService.cs" />
     <Compile Include="RemotePlusServiceOptions.cs" />
     <Compile Include="RequestSystem\AcquisitionMode.cs" />

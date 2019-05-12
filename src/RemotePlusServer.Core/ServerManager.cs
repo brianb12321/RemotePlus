@@ -18,10 +18,11 @@ namespace RemotePlusServer.Core
     {
         public static IServiceManager DefaultServiceManager => IOCContainer.GetService<IServiceManager>();
         public static IRemotePlusService<ServerRemoteInterface> ServerRemoteService => DefaultServiceManager.GetService<ServerRemoteInterface>();
+
         /// <summary>
         /// The main server configuration. Provides settings for the main server.
         /// </summary>
-        public static ServerSettings DefaultSettings { get; set; } = new ServerSettings();
+        public static ServerSettings DefaultSettings => IOCContainer.GetService<ServerSettings>();
         /// <summary>
         /// The global container that all house the libraries that are loaded into the system.
         /// </summary>
@@ -30,8 +31,8 @@ namespace RemotePlusServer.Core
 
         public static Guid ServerGuid
         {
-            get => GlobalServices.RunningEnvironment.EnvironmentGuid;
-            set => GlobalServices.RunningEnvironment.EnvironmentGuid = value;
+            get => GlobalServices.RunningApplication.EnvironmentGuid;
+            set => GlobalServices.RunningApplication.EnvironmentGuid = value;
         }
         public static bool IsService { get; set; }
         public static IRemotePlusService<FileTransferServciceInterface> FileTransferService => DefaultServiceManager.GetService<FileTransferServciceInterface>();

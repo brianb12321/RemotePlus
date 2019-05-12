@@ -100,7 +100,7 @@
     <Compile Include="Scripting\Batch\JobExecutionMode.cs" />
     <Compile Include="Scripting\Batch\JobTask.cs" />
     <Compile Include="Scripting\Batch\TaskGroup.cs" />
-    <Compile Include="ServerBuilder.cs" />
+    <Compile Include="ServerTaskBuilder.cs" />
     <Compile Include="ServerBuilderExtensions.cs" />
     <Compile Include="ServerControls.cs">
       <SubType>Form</SubType>

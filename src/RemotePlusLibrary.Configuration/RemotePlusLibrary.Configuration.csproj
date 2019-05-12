@@ -38,6 +38,10 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BetterLogger, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Libs\BetterLogger.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Serialization" />
@@ -49,6 +53,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConfigurationServiceCollectionExtensions.cs" />
+    <Compile Include="ServerSettings\SecuritySettings.cs" />
     <Compile Include="StandordDataAccess\BinarySerializationHelper.cs" />
     <Compile Include="StandordDataAccess\ConfigurationHelper.cs" />
     <Compile Include="IConfigurationDataAccess.cs" />

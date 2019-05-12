@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RemotePlusLibrary.Core.IOC
 {
-    public interface IEnvironment
+    public interface IApplication
     {
         Guid EnvironmentGuid { get; set; }
         NetworkSide ExecutingSide { get; }

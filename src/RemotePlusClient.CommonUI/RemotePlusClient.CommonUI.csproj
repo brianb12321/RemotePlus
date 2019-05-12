@@ -56,8 +56,13 @@
     <Compile Include="AuthenticationDialog.Designer.cs">
       <DependentUpon>AuthenticationDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="ClientArchitecture\IClientManager.cs" />
+    <Compile Include="ClientInitBuilder.cs" />
     <Compile Include="Connection\Connection.cs" />
     <Compile Include="Connection\IConnectionManager.cs" />
+    <Compile Include="DefaultClientManager.cs" />
+    <Compile Include="GlobalClientInitBuilderExtensions.cs" />
+    <Compile Include="GlobalClientServiceCollectionExtensions.cs" />
     <Compile Include="Requests\ColorRequest.cs" />
     <Compile Include="Connection\ConnectionConfiguration.cs" />
     <Compile Include="Connection\NewConnectionDialog.cs">

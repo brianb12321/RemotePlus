@@ -7,12 +7,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using RemotePlusLibrary.Core.NodeStartup;
 
 namespace RemotePlusLibrary.SubSystem.Audio
 {
     public static class AudioServerBuilderExtensions
     {
-        public static IServerBuilder AddAudioDevices(this IServerBuilder builder)
+        public static INodeBuilder<IServerTaskBuilder> AddAudioDevices(this INodeBuilder<IServerTaskBuilder> builder)
         {
             return builder.AddTask(() =>
             {

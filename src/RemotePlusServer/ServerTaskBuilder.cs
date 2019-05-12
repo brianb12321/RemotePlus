@@ -1,24 +1,25 @@
 ﻿using RemotePlusLibrary.Core.IOC;
 using System;
 using System.Collections.Generic;
+using RemotePlusLibrary.Core.NodeStartup;
 
 namespace RemotePlusServer
 {
-    public class ServerBuilder : IServerBuilder, IServerInitilizer
+    public class ServerTaskBuilder : IServerTaskBuilder, INodeInitilizer
     {
         List<Action> _tasks = new List<Action>();
-        public IServerBuilder AddTask(Action task)
+        public IServerTaskBuilder AddTask(Action task)
         {
             _tasks.Add(task);
             return this;
         }
 
-        public IServerInitilizer Build()
+        public INodeInitilizer Build()
         {
             return this;
         }
 
-        void IServerInitilizer.RunTasks()
+        void INodeInitilizer.RunTasks()
         {
             foreach (Action task in _tasks)
             {

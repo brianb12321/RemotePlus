@@ -68,7 +68,7 @@ namespace RemotePlusClient.Utils
 
         public static void InitKnownTypes()
         {
-            GlobalServerBuilderExtensions.InitializeKnownTypes();
+            GlobalNodeBuilderExtensions.InitializeKnownTypes();
         }
     }
 }

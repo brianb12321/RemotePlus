@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
+using System.ServiceModel.Description;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -21,6 +22,11 @@ namespace RemotePlusLibrary.ServiceArchitecture
         protected EventHandler _hostFaulted;
         protected EventHandler<UnknownMessageReceivedEventArgs> _hostUnknown;
         protected int _portNumber = 9000;
+        protected List<IServiceBehavior> _behaviors = new List<IServiceBehavior>();
+        protected Dictionary<Type, List<IEndpointBehavior>> _endpointBehaviors = new Dictionary<Type, List<IEndpointBehavior>>();
+
+        protected Dictionary<Type, List<IContractBehavior>> _contractBehaviors =
+            new Dictionary<Type, List<IContractBehavior>>();
         public abstract IRemotePlusService<TInterface> BuildService();
 
         public virtual Binding GetBinding()
@@ -67,6 +73,42 @@ namespace RemotePlusLibrary.ServiceArchitecture
         public virtual IWCFServiceBuilder<TInterface> SetBinding(Binding binding)
         {
             _binding = binding;
+            return this;
+        }
+
+        public IWCFServiceBuilder<TInterface> AddServiceBehavior(IServiceBehavior behavior)
+        {
+            _behaviors.Add(behavior);
+            return this;
+        }
+
+        public IWCFServiceBuilder<TInterface> AddEndpointBehavior<TEndpoint>(IEndpointBehavior behavior)
+        {
+            if (!_endpointBehaviors.ContainsKey(typeof(TEndpoint)))
+            {
+                _endpointBehaviors.Add(typeof(TEndpoint), new List<IEndpointBehavior>());
+                _endpointBehaviors[typeof(TEndpoint)].Add(behavior);
+            }
+            else
+            {
+                _endpointBehaviors[typeof(TEndpoint)].Add(behavior);
+            }
+
+            return this;
+        }
+
+        public IWCFServiceBuilder<TInterface> AddContractBehavior<TContract>(IContractBehavior behavior)
+        {
+            if (!_contractBehaviors.ContainsKey(typeof(TContract)))
+            {
+                _contractBehaviors.Add(typeof(TContract), new List<IContractBehavior>());
+                _contractBehaviors[typeof(TContract)].Add(behavior);
+            }
+            else
+            {
+                _contractBehaviors[typeof(TContract)].Add(behavior);
+            }
+
             return this;
         }
 

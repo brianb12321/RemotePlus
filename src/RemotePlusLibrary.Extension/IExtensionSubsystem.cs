@@ -18,7 +18,7 @@ namespace RemotePlusLibrary.Extension
         /// <summary>
         /// The current environment of the host.
         /// </summary>
-        IEnvironment Side { get; }
+        IApplication Side { get; }
         /// <summary>
         /// Gets a service from the host's IOC container.
         /// </summary>

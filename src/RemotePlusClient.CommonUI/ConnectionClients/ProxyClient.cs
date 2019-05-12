@@ -228,11 +228,6 @@ namespace RemotePlusClient.CommonUI.ConnectionClients
             return Channel.ExecuteProxyCommand(command, mode);
         }
 
-        public void UpdateServerSettings(ServerSettings Settings)
-        {
-            Channel.UpdateServerSettings(Settings);
-        }
-
         public void SendSignal(SignalMessage signal)
         {
             Channel.SendSignal(signal);

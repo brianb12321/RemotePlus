@@ -30,9 +30,6 @@ namespace RemotePlusLibrary.Discovery
         Task<CommandPipeline> RunServerCommandAsync(string command, CommandExecutionMode commandMode);
         [OperationContract]
         void CancelServerCommand();
-        [OperationContract()]
-        [FaultContract(typeof(ServerFault))]
-        void UpdateServerSettings(ServerSettings Settings);
         [OperationContract]
         [FaultContract(typeof(ServerFault))]
         ServerSettings GetServerSettings();

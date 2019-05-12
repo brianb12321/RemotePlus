@@ -16,7 +16,6 @@ namespace RemotePlusServer
 {
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerCall,
         IncludeExceptionDetailInFaults = true)]
-    [GlobalExceptionIOCAttribute]
     public class FileTransferServiceImpl : IFileTransferContract
     {
         public void DeleteFile(string remoteFile)

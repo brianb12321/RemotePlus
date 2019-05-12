@@ -20,7 +20,7 @@ namespace RemotePlusClient.Commands
 
         public void Execute(object args)
         {
-            GlobalServices.RunningEnvironment.Close();
+            GlobalServices.RunningApplication.Close();
         }
 
         public void UIAdded(MenuItem item)

@@ -34,7 +34,7 @@ namespace ProxyServer
 
         private void button2_Click(object sender, EventArgs e)
         {
-            GlobalServices.RunningEnvironment.Close();
+            GlobalServices.RunningApplication.Close();
         }
 
         private void ServerControls_Load(object sender, EventArgs e)

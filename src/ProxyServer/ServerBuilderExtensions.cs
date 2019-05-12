@@ -11,6 +11,7 @@ using System.Reflection;
 using IronPython.Modules;
 using ProxyServer.Scripting;
 using ProxyServer.Scripting.Batch;
+using RemotePlusLibrary.Core.NodeStartup;
 using RemotePlusLibrary.Scripting;
 using RemotePlusLibrary.SubSystem.Command.CommandClasses;
 using RemotePlusLibrary.SubSystem.Command;
@@ -19,7 +20,7 @@ namespace ProxyServer
 {
     public static class ServerBuilderExtensions
     {
-        public static IServerBuilder InitializeGlobals(this IServerBuilder builder)
+        public static IServerTaskBuilder InitializeGlobals(this IServerTaskBuilder builder)
         {
             return builder.AddTask(() =>
             {

@@ -101,7 +101,6 @@
     <Compile Include="MainRemotePlusServiceBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Remote.cs" />
-    <Compile Include="ResourceManager.cs" />
     <Compile Include="ServerClientContext.cs" />
     <Compile Include="ServerCore\ScriptingEngineOptions.cs" />
     <Compile Include="ServerCore\ServerBuilderExtensions.cs" />

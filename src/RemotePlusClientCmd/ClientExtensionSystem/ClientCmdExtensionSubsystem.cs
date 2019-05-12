@@ -14,13 +14,14 @@ namespace RemotePlusClientCmd.ClientExtensionSystem
 {
     public class ClientCmdExtensionSubsystem : CommandSubsystem<IClientCmdModule>
     {
+        private ICommandEnvironment _runningEnvironment;
         public ClientCmdExtensionSubsystem(IExtensionLibraryLoader loader) : base(loader)
         {
         }
 
         public override void Cancel()
         {
-            throw new NotImplementedException();
+            _runningEnvironment.Cancel();
         }
 
         public override void Init()
@@ -31,7 +32,26 @@ namespace RemotePlusClientCmd.ClientExtensionSystem
 
         public override Task<CommandPipeline> RunServerCommandAsync(string command, CommandExecutionMode commandMode, IClientContext client)
         {
-            throw new NotImplementedException();
+            _runningEnvironment = IOCContainer.GetService<ICommandEnvironment>();
+            _runningEnvironment.SetOut(Console.Out);
+            _runningEnvironment.SetIn(Console.In);
+            _runningEnvironment.SetError(Console.Error);
+            _runningEnvironment.ClearRequested += (sender, e) => Console.Clear();
+            _runningEnvironment.MultilineEntry += (sender, e) =>
+            {
+                Console.Write(e.Prelude);
+                e.ReceivedValue = Console.ReadLine();
+            };
+            _runningEnvironment.ResetColor += (sender, e) => Colorful.Console.ResetColor();
+            _runningEnvironment.SwitchBackgroundColor += (sender, e) => Colorful.Console.BackgroundColor = e.TextColor;
+            _runningEnvironment.SwitchForegroundColor += (sender, e) => Colorful.Console.ForegroundColor = e.TextColor;
+            var t = _runningEnvironment.ExecuteAsync(command, CommandExecutionMode.Client);
+            t.ContinueWith((blalbalba) =>
+            {
+                _runningEnvironment.Dispose();
+                _runningEnvironment = null;
+            });
+            return t;
         }
     }
 }

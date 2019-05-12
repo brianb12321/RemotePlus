@@ -19,6 +19,10 @@ namespace TestWorkflowExtensionLibrary.Modules
         }
 
         public string WorkflowName => "Hello World Activity";
-        public Activity Activity => new TestWorkflowExtensionLibrary.Workflows.HelloWorldWorkflow();
+
+        public Activity RunActivity()
+        {
+            return new Workflows.HelloWorldWorkflow();
+        }
     }
 }

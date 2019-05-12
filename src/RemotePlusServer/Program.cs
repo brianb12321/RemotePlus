@@ -1,4 +1,4 @@
-﻿ using System;
+﻿using System;
 using System.ServiceModel;
 using System.IO;
 using BetterLogger;
@@ -11,16 +11,16 @@ using RemotePlusLibrary.Configuration.ServerSettings;
 using RemotePlusServer.Core;
 using RemotePlusLibrary.Core.IOC;
 using RemotePlusLibrary.Core.EventSystem;
-using RemotePlusServer.Core.ExtensionSystem;
 using RemotePlusLibrary.Extension;
 using System.Threading.Tasks;
+using RemotePlusLibrary.Core.NodeStartup;
 
-namespace RemotePlusServer
+ namespace RemotePlusServer
 {
     /// <summary>
     /// The class that starts the server.
     /// </summary>
-    public class ServerStartup : IEnvironment
+    public class ServerStartup : IApplication
     {
         static Stopwatch sw = new Stopwatch();
         public NetworkSide ExecutingSide => NetworkSide.Server;
@@ -31,8 +31,8 @@ namespace RemotePlusServer
         [STAThread]
         static void Main(string[] args)
         {
-            IOCContainer.Provider.AddSingleton<IEnvironment>(new ServerStartup());
-            GlobalServices.RunningEnvironment.Start(args).GetAwaiter().GetResult();
+            IOCContainer.Provider.AddSingleton<IApplication>(new ServerStartup());
+            GlobalServices.RunningApplication.Start(args).GetAwaiter().GetResult();
         }
 
         public Task Start(string[] args)
@@ -45,11 +45,18 @@ namespace RemotePlusServer
                 sw = new Stopwatch();
                 sw.Start();
                 Console.WriteLine("Starting server core to setup and initialize services.");
-                var core = LoadServerCoreExtension();
+                var core = NodeCoreLoader.LoadByScan<IServerTaskBuilder>("RemotePlusServer.DefaultServerCore", NetworkSide.Server);
+                core.AddServices(IOCContainer.Provider);
+                ServerTaskBuilder builder = new ServerTaskBuilder();
+                core.InitializeNode(builder);
+                var initializer = builder.Build();
+                initializer.RunTasks();
                 ServerManager.ServerRemoteService.RemoteInterface = new ServerRemoteInterface();
                 if (ServerManager.DefaultSettings.DiscoverySettings.DiscoveryBehavior == ProxyConnectionMode.Connect)
                 {
-                    SetupProxyClient();
+                    var clientCore = NodeCoreLoader.LoadByScan<IClientBuilder>("RemotePlusServer.DefaultServerCore",
+                            NetworkSide.Server);
+                    SetupProxyClient(clientCore);
                 }
                 else
                 {
@@ -91,75 +98,12 @@ namespace RemotePlusServer
 #endif
         }
 
-        private void RunPostServerInitialization(IServerCoreStartup core)
+        private void RunPostServerInitialization(INodeCoreStartup<IServerTaskBuilder> core)
         {
-            ServerBuilder sb = new ServerBuilder();
-            core.PostInitializeServer(sb);
+            ServerTaskBuilder sb = new ServerTaskBuilder();
+            core.PostInitializeNode(sb);
             var postServerInit = sb.Build();
             postServerInit.RunTasks();
-        }
-
-        private static IServerCoreStartup LoadServerCoreExtension()
-        {
-            bool foundCore = false;
-            foreach(string coreFile in Directory.GetFiles(Environment.CurrentDirectory))
-            {
-                if(Path.GetExtension(coreFile) == ".dll")
-                {
-                    var core = ServerCoreLoader.LoadServerCore(Assembly.LoadFile(coreFile));
-                    if(core != null)
-                    {
-                        foundCore = true;
-                        core.AddServices(IOCContainer.Provider);
-                        ServerBuilder sb = new ServerBuilder();
-                        core.InitializeServer(sb);
-                        var serverInit = sb.Build();
-                        serverInit.RunTasks();
-                        return core;
-                    }
-                }
-            }
-            if(foundCore == false)
-            {
-                var embeddedCore = searchEmbeddedServerCore();
-                if(embeddedCore != null)
-                {
-                    embeddedCore.AddServices(new ServiceCollection());
-                    ServerBuilder sb = new ServerBuilder();
-                    embeddedCore.InitializeServer(sb);
-                    var serverInit = sb.Build();
-                    serverInit.RunTasks();
-                    return embeddedCore;
-                }
-                else
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("FATAL ERROR: A server core is not present. Cannot start server.");
-                    Console.ResetColor();
-                    Environment.Exit(-1);
-                    return null;
-                }
-            }
-            return null;
-        }
-
-        private static IServerCoreStartup searchEmbeddedServerCore()
-        {
-            try
-            {
-                Console.WriteLine("Attempting to load server core from embedded resource.");
-                var stream = new BinaryReader(Assembly.GetEntryAssembly().GetManifestResourceStream("RemotePlusServer.DefaultServerCore.dll"));
-                byte[] buffer = new byte[stream.BaseStream.Length];
-                stream.Read(buffer, 0, buffer.Length);
-                return ServerCoreLoader.LoadServerCore(Assembly.Load(buffer));
-            }
-            catch (Exception ex)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine($"ERROR: Unable to load resource: {ex.Message}");
-                Console.ResetColor();
-                return null;
-            }
         }
 
         static bool CheckPrerequisites()
@@ -199,9 +143,10 @@ namespace RemotePlusServer
         public ServerStartup()
         {
         }
-        public static void SetupProxyClient()
+        public static void SetupProxyClient(INodeCoreStartup<IClientBuilder> core)
         {
             proxyChannelFactory = new DuplexChannelFactory<IProxyServerRemote>(new RemoteImpl(), _ConnectionFactory.BuildBinding(), new EndpointAddress(ServerManager.DefaultSettings.DiscoverySettings.Connection.ProxyServerURL));
+            IOCContainer.Provider.AddSingleton(proxyChannelFactory);
             proxyChannel = proxyChannelFactory.CreateChannel();
             IOCContainer.Provider.AddSingleton(proxyChannel);
             IOCContainer.Provider.AddSingleton<IEventBus, ProxyEventBus>();

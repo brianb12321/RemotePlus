@@ -82,6 +82,7 @@
     <Compile Include="ResourceSystem\IResourceManager.cs" />
     <Compile Include="ResourceSystem\Resource.cs" />
     <Compile Include="ResourceSystem\ResourceDirectory.cs" />
+    <Compile Include="ResourceSystem\ResourceManager.cs" />
     <Compile Include="ResourceSystem\ResourceStore.cs" />
     <Compile Include="ResourceSystem\ResourceQuery.cs" />
     <Compile Include="ResourceSystem\ResourceTypes\CommandResource.cs" />
@@ -96,8 +97,8 @@
     <Compile Include="ResourceSystem\ResourceTypes\MemoryResource.cs" />
     <Compile Include="ResourceSystem\ResourceTypes\IOResource.cs" />
     <Compile Include="ResourceSystem\ResourceTypes\StringResource.cs" />
-    <Compile Include="ServerCoreExtensionLibraryAttribute.cs" />
-    <Compile Include="ServerCoreLoader.cs" />
+    <Compile Include="NodeCoreExtensionLibraryAttribute.cs" />
+    <Compile Include="NodeCoreLoader.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\RemotePlusLibrary.Configuration\RemotePlusLibrary.Configuration.csproj">

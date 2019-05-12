@@ -9,7 +9,7 @@ using RemotePlusLibrary.Core;
 
 namespace RemotePlusClient
 {
-    class Program : IEnvironment
+    class Program : IApplication
     {
         public Guid EnvironmentGuid { get; set; } = Guid.NewGuid();
         public NetworkSide ExecutingSide => NetworkSide.Client;
@@ -21,8 +21,8 @@ namespace RemotePlusClient
         [STAThread]
         static void Main()
         {
-            IOCContainer.Provider.AddSingleton<IEnvironment>(new Program());
-            GlobalServices.RunningEnvironment.Start(new string[] { }).GetAwaiter().GetResult();
+            IOCContainer.Provider.AddSingleton<IApplication>(new Program());
+            GlobalServices.RunningApplication.Start(new string[] { }).GetAwaiter().GetResult();
         }
 
         public void Close()

@@ -39,8 +39,6 @@ namespace RemotePlusServer
         ConcurrencyMode = ConcurrencyMode.Multiple,
         UseSynchronizationContext = false,
         MaxItemsInObjectGraph = int.MaxValue)]
-    [GlobalExceptionIOCAttribute]
-    [CustomInstanceProviderBehavior(typeof(WcfInstanceProviderAttribute), typeof(RemoteImpl))]
     [ServiceKnownType("GetKnownTypes", typeof(DefaultKnownTypeManager))]
     public class RemoteImpl : IRemote, IRemoteWithProxy
     {
@@ -139,7 +137,7 @@ namespace RemotePlusServer
                 Client.ClientCallback.ChangePrompt(new RemotePlusLibrary.SubSystem.Command.PromptBuilder()
                 {
                     Path = Environment.CurrentDirectory,
-                    AdditionalData = "Current Path",
+                    AdditionalData = "Shell",
                     CurrentUser = LoggedInUser.Credentials.Username
                 });
             }
@@ -244,20 +242,6 @@ namespace RemotePlusServer
             {
                 return null;
             }
-        }
-
-        public void UpdateServerSettings(ServerSettings Settings)
-        {
-            if (CheckRegistration("UpdateServerSettings"))
-            {
-                GlobalServices.Logger.Log("Updating server settings.", LogLevel.Info);
-                ServerManager.DefaultSettings = Settings;
-                Client.ClientCallback.TellMessage("Saving settings.", LogLevel.Info);
-                ServerManager.DataAccess.SaveConfig(ServerManager.DefaultSettings, ServerSettings.SERVER_SETTINGS_FILE_PATH);
-                Client.ClientCallback.TellMessage("Settings saved.", LogLevel.Info);
-                GlobalServices.Logger.Log("Settings saved.", LogLevel.Info);
-            }
-            // OperationContext.Current.OperationCompleted += (sender, e) => Client.ClientCallback.SendSignal(new SignalMessage(OPERATION_COMPLETED, ""));
         }
 
         public ServerSettings GetServerSettings()

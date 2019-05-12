@@ -15,9 +15,9 @@ using RemotePlusLibrary.Extension;
 [assembly: AssemblyCopyright("Copyright ©  2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
-[assembly: ServerCoreExtensionLibrary(typeof(Startup), "DefaultCore",
+[assembly: NodeCoreExtensionLibrary(typeof(Startup), "DefaultCore",
     FriendlyName = "Default Core",
-    LibraryType = NetworkSide.Server)]
+    LibraryType = NetworkSide.Server | NetworkSide.Client)]
 
 // Setting ComVisible to false makes the types in this assembly not visible
 // to COM components.  If you need to access a type in this assembly from

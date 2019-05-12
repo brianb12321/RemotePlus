@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace RemotePlusLibrary.Extension
 {
-    public class ServerCoreExtensionLibraryAttribute : ExtensionLibraryAttribute
+    public class NodeCoreExtensionLibraryAttribute : ExtensionLibraryAttribute
     {
-        public ServerCoreExtensionLibraryAttribute(Type startup, string name) : base(startup, name)
+        public NodeCoreExtensionLibraryAttribute(Type startup, string name) : base(startup, name)
         {
         }
     }

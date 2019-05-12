@@ -425,31 +425,46 @@ namespace RemotePlusServer.Core.Commands
         [HelpPage("showMessageBox.txt", Source = HelpSourceType.File)]
         public CommandResponse svm_showMessageBox(CommandRequest args, CommandPipeline pipe, ICommandEnvironment currentEnvironment)
         {
+            bool showHelp = false;
+            string tButtons = string.Empty;
+            string tIcon = string.Empty;
             MessageBoxButtons buttons = MessageBoxButtons.OK;
             MessageBoxIcon icon = MessageBoxIcon.None;
             string message = "";
             string caption = "";
-            if (args.Arguments[1].ToString() == "b_OK")
+            OptionSet set = new OptionSet()
+                .Add("buttonType|b=", "The button to show to the message box.", v => tButtons = v)
+                .Add("icon|i=", "The icon to show to the message box.", v => tIcon = v)
+                .Add("caption|c=", "The caption to show to the message box.", v => caption = v)
+                .Add("message|m=", "The message to show to the message box.", v => message = v)
+                .Add("help|?", "Displays the help screen.", v => showHelp = true);
+            set.Parse(args.Arguments.Select(a => a.ToString()));
+            if (showHelp)
+            {
+                set.WriteOptionDescriptions(currentEnvironment.Out);
+                return new CommandResponse((int)CommandStatus.Success);
+            }
+            if (tButtons == "b_OK")
             {
                 buttons = MessageBoxButtons.OK;
             }
-            else if (args.Arguments[1].ToString() == "b_OK_CANCEL")
+            else if (tButtons == "b_OK_CANCEL")
             {
                 buttons = MessageBoxButtons.OKCancel;
             }
-            else if (args.Arguments[1].ToString() == "b_ABORT_RETRY_IGNORE")
+            else if (tButtons == "b_ABORT_RETRY_IGNORE")
             {
                 buttons = MessageBoxButtons.AbortRetryIgnore;
             }
-            else if (args.Arguments[1].ToString() == "b_RETRY_CANCEL")
+            else if (tButtons == "b_RETRY_CANCEL")
             {
                 buttons = MessageBoxButtons.RetryCancel;
             }
-            else if (args.Arguments[1].ToString() == "b_YES_NO")
+            else if (tButtons == "b_YES_NO")
             {
                 buttons = MessageBoxButtons.YesNo;
             }
-            else if (args.Arguments[1].ToString() == "b_YES_NO_CANCEL")
+            else if (tButtons == "b_YES_NO_CANCEL")
             {
                 buttons = MessageBoxButtons.YesNoCancel;
             }
@@ -458,35 +473,35 @@ namespace RemotePlusServer.Core.Commands
                 currentEnvironment.WriteLine(new ConsoleText("Please provide a valid MessageBox button.") { TextColor = Color.Red });
                 return new CommandResponse((int)CommandStatus.Fail) { ReturnData = "Invalid messageBox button." };
             }
-            if (args.Arguments[2].ToString() == "i_WARNING")
+            if (tIcon == "i_WARNING")
             {
                 icon = MessageBoxIcon.Warning;
             }
-            else if (args.Arguments[2].ToString() == "i_STOP")
+            else if (tIcon == "i_STOP")
             {
                 icon = MessageBoxIcon.Stop;
             }
-            else if (args.Arguments[2].ToString() == "i_ERROR")
+            else if (tIcon == "i_ERROR")
             {
                 icon = MessageBoxIcon.Error;
             }
-            else if (args.Arguments[2].ToString() == "i_HAND")
+            else if (tIcon == "i_HAND")
             {
                 icon = MessageBoxIcon.Hand;
             }
-            else if (args.Arguments[2].ToString() == "i_INFORMATION")
+            else if (tIcon == "i_INFORMATION")
             {
                 icon = MessageBoxIcon.Information;
             }
-            else if (args.Arguments[2].ToString() == "i_QUESTION")
+            else if (tIcon == "i_QUESTION")
             {
                 icon = MessageBoxIcon.Question;
             }
-            else if (args.Arguments[2].ToString() == "i_EXCLAMATION")
+            else if (tIcon == "i_EXCLAMATION")
             {
                 icon = MessageBoxIcon.Exclamation;
             }
-            else if (args.Arguments[2].ToString() == "i_ASTERISK")
+            else if (tIcon == "i_ASTERISK")
             {
                 icon = MessageBoxIcon.Asterisk;
             }
@@ -495,8 +510,6 @@ namespace RemotePlusServer.Core.Commands
                 currentEnvironment.WriteLine(new ConsoleText("Please provide a valid MessageBox icon type.") { TextColor = Color.Red });
                 return new CommandResponse((int)CommandStatus.Fail) { ReturnData = "Invalid MessageBox icon" };
             }
-            caption = args.Arguments[3].ToString();
-            message = args.Arguments[4].ToString();
             var dr = _service.RemoteInterface.ShowMessageBox(currentEnvironment.ClientContext, message, caption, icon, buttons);
             CommandResponse response = new CommandResponse((int)CommandStatus.Success);
             response.Metadata.Add("Buttons", buttons.ToString());

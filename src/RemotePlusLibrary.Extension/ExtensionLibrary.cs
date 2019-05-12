@@ -35,7 +35,7 @@ namespace RemotePlusLibrary.Extension
             ExtensionLibraryAttribute attrib = a.GetCustomAttribute<ExtensionLibraryAttribute>();
             if(attrib != null)
             {
-                IEnvironment env = IOCContainer.GetService<IEnvironment>();
+                IApplication env = IOCContainer.GetService<IApplication>();
                 if(!attrib.LibraryType.HasFlag(env.ExecutingSide))
                 {
                     throw new InvalidExtensionLibraryException($"Assembly: \"{a.GetName().FullName}\" could not be loaded: Extension \"{attrib.FriendlyName}\" requires a network side of {attrib.LibraryType.ToString()}");

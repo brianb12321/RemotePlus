@@ -90,6 +90,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClientCallback.cs" />
+    <Compile Include="ClientCommandExecutor.cs" />
     <Compile Include="ClientExtensionSystem\ClientCmdCommands.cs" />
     <Compile Include="ClientExtensionSystem\ClientCmdExtensionSubsystem.cs" />
     <Compile Include="ClientExtensionSystem\IClientCmdModule.cs" />

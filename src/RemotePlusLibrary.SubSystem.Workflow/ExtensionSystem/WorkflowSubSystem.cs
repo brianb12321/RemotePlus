@@ -27,13 +27,13 @@ namespace RemotePlusLibrary.SubSystem.Workflow.ExtensionSystem
         public CommandResponse RunWorkflow(string name, ICommandEnvironment env, object sender)
         {
             Dictionary<string, object> inputs = new Dictionary<string, object>();
-            inputs.Add("EnvGuid", GlobalServices.RunningEnvironment.EnvironmentGuid);
+            inputs.Add("EnvGuid", GlobalServices.RunningApplication.EnvironmentGuid);
             inputs.Add("Sender", sender);
             var modules = base.GetAllModules();
             var rightModule = modules.FirstOrDefault(m => m.WorkflowName == name);
             if (rightModule != null)
             {
-                WorkflowInvoker invoker = new WorkflowInvoker(rightModule.Activity);
+                WorkflowInvoker invoker = new WorkflowInvoker(rightModule.RunActivity());
                 invoker.Extensions.Add(new RemotePlusActivityContext(env, IOCContainer.Provider));
                 invoker.Invoke(inputs);
                 return new CommandResponse((int)CommandStatus.Success);

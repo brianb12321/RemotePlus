@@ -62,7 +62,7 @@ namespace RemotePlusClient
         {
             try
             {
-                GlobalServices.RunningEnvironment.Close();
+                GlobalServices.RunningApplication.Close();
             }
             catch { }
         }

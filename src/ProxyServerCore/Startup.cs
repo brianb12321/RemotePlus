@@ -5,9 +5,13 @@ using ProxyServer;
 using ProxyServer.ExtensionSystem;
 using BetterLogger;
 using RemotePlusLibrary;
+using RemotePlusLibrary.Configuration;
 using RemotePlusLibrary.ServiceArchitecture;
 using RemotePlusLibrary.Core.EventSystem;
 using RemotePlusLibrary.Core;
+using RemotePlusLibrary.Core.Behavior;
+using RemotePlusLibrary.Core.NodeStartup;
+using RemotePlusLibrary.Discovery;
 using RemotePlusLibrary.Extension.ResourceSystem;
 using RemotePlusLibrary.Scripting;
 using RemotePlusLibrary.Extension;
@@ -48,18 +52,24 @@ namespace ProxyServerCore
                     .RouteHostFaultedEvent(ProxyService_HostFaulted)
                     .RouteHostOpenEvent(ProxyService_HostOpened)
                     .RouteHostOpeningEvent(ProxyService_HostOpening)
-                    .RouteUnknownMessageReceivedEvent(ProxyService_UnknownMessageReceived);
+                    .RouteUnknownMessageReceivedEvent(ProxyService_UnknownMessageReceived)
+                    .AddServiceBehavior(new GlobalExceptionBehavior())
+                    .AddContractBehavior<IProxyRemote>(new NetDataContractSerializerBehavior())
+                    .AddContractBehavior<IProxyServerRemote>(new NetDataContractSerializerBehavior())
+                    .AddContractBehavior<IRemoteWithProxy>(new NetDataContractSerializerBehavior());
             });
         }
-        public void InitializeServer(IServerBuilder builder)
+
+        public void InitializeNode(IServerTaskBuilder builder)
         {
-            builder.InitializeKnownTypes()
-                .InitializeGlobals()
+            //builder.InitializeKnownTypes()
+            builder.InitializeGlobals()
                 .LoadGlobalResources();
         }
-        public void PostInitializeServer(IServerBuilder builder)
+
+        public void PostInitializeNode(IServerTaskBuilder builder)
         {
-            builder.BuildServiceHost<ProxyServerRemoteImpl>();
+            builder.BuildServiceHost<IServerTaskBuilder, ProxyServerRemoteImpl>();
         }
         private static void ProxyService_HostFaulted(object sender, EventArgs e)
         {

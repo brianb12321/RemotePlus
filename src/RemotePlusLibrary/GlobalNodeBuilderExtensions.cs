@@ -14,20 +14,13 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using RemotePlusLibrary.Core.NodeStartup;
+using RemotePlusLibrary.Extension;
 
 namespace RemotePlusLibrary
 {
-    public static class GlobalServerBuilderExtensions
+    public static class GlobalNodeBuilderExtensions
     {
-        public static IServerBuilder BuildServiceHost<TRemoteInterface>(this IServerBuilder builder)
-            where TRemoteInterface : new()
-        {
-            return builder.AddTask(() =>
-            {
-                IServiceManager manager = IOCContainer.GetService<IServiceManager>();
-                manager.BuildHost<TRemoteInterface>();
-            });
-        }
         public static void InitializeKnownTypes()
         {
             GlobalServices.Logger.Log("Adding default known types.", LogLevel.Info);
@@ -56,15 +49,56 @@ namespace RemotePlusLibrary
                     DefaultKnownTypeManager.AddType(t);
                 });
         }
-        public static IServerBuilder InitializeKnownTypes(this IServerBuilder builder)
+        public static INodeBuilder<TBuilder> LoadExtensionLibraries<TBuilder>(this INodeBuilder<TBuilder> builder)
+            where TBuilder : INodeBuilder<TBuilder>
         {
-            return builder.AddTask(() => InitializeKnownTypes());
+            return builder.AddTask(() =>
+            {
+                IExtensionLibraryLoader loader = IOCContainer.GetService<IExtensionLibraryLoader>();
+                loader.LoadFromFolder("extensions");
+            });
         }
-        public static IServerBuilder InitializeKnownTypesByNamespace(this IServerBuilder builder, string name)
+        public static INodeBuilder<TBuilder> AddExceptionHandler<TBuilder>(this INodeBuilder<TBuilder> builder,
+            UnhandledExceptionEventHandler handler) where TBuilder : INodeBuilder<TBuilder>
+        {
+            return builder.AddTask(() => { AppDomain.CurrentDomain.UnhandledException += handler; });
+        }
+        public static INodeBuilder<TBuilder> LoadExtensionByType<TBuilder>(this INodeBuilder<TBuilder> builder, Type loadType) where TBuilder : INodeBuilder<TBuilder>
+        {
+            return builder.AddTask(() =>
+            {
+                IOCContainer.GetService<IExtensionLibraryLoader>().LoadFromAssembly(Assembly.GetAssembly(loadType));
+            });
+        }
+        public static INodeBuilder<TBuilder> LoadDefaultExtensionSubsystems<TBuilder, TSubsystem, TModule>(this INodeBuilder<TBuilder> builder)
+            where TBuilder : INodeBuilder<TBuilder>
+            where TSubsystem : IExtensionSubsystem<TModule>
+            where TModule : IExtensionModule
+        {
+            return builder.AddTask(() =>
+            {
+                IOCContainer.Provider.GetService<TSubsystem>().Init();
+            });
+        }
+        public static INodeBuilder<TBuilder> BuildServiceHost<TBuilder, TRemoteInterface>(this INodeBuilder<TBuilder> builder)
+            where TRemoteInterface : new()
+            where TBuilder : INodeBuilder<TBuilder>
+        {
+            return builder.AddTask(() =>
+            {
+                IServiceManager manager = IOCContainer.GetService<IServiceManager>();
+                manager.BuildHost<TRemoteInterface>();
+            });
+        }
+        public static INodeBuilder<TBuilder> InitializeKnownTypes<TBuilder>(this INodeBuilder<TBuilder> builder) where TBuilder : INodeBuilder<TBuilder>
+        {
+            return builder.AddTask(InitializeKnownTypes);
+        }
+        public static INodeBuilder<TBuilder> InitializeKnownTypesByNamespace<TBuilder>(this INodeBuilder<TBuilder> builder, string name) where TBuilder : INodeBuilder<TBuilder>
         {
             return builder.AddTask(() => InitializeKnownTypesByNamespace(name));
         }
-        public static IServerBuilder LoadGlobalResources(this IServerBuilder builder)
+        public static INodeBuilder<TBuilder> LoadGlobalResources<TBuilder>(this INodeBuilder<TBuilder> builder) where TBuilder : INodeBuilder<TBuilder>
         {
             var resourceManager = IOCContainer.GetService<IResourceManager>();
             return builder.AddTask(() =>

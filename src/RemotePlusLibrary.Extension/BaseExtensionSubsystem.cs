@@ -14,7 +14,7 @@ namespace RemotePlusLibrary.Extension
         where TModule : IExtensionModule
     {
         protected IExtensionLibraryLoader ExtensionLoader { get; private set; }
-        public IEnvironment Side => GlobalServices.RunningEnvironment;
+        public IApplication Side => GlobalServices.RunningApplication;
         public IEventBus ModuleEventBus { get; private set; } = new EventBus(GlobalServices.Logger);
         protected BaseExtensionSubsystem(IExtensionLibraryLoader loader)
         {

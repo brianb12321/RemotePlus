@@ -16,9 +16,10 @@ namespace RemotePlusLibrary.ServiceArchitecture
         private Binding _binding;
         private string _address;
         private object _singleTon;
-        public Dictionary<string, CommandDelegate> Commands { get; set; } = new Dictionary<string, CommandDelegate>();
         public TInterface RemoteInterface { get; set; }
-        public List<IServiceBehavior> Behaviors { get; } = new List<IServiceBehavior>();
+        public List<IServiceBehavior> Behaviors { get; set; } = new List<IServiceBehavior>();
+        public Dictionary<Type, List<IEndpointBehavior>> EndpointBehaviors { get; set; }
+        public Dictionary<Type, List<IContractBehavior>> ContractBehaviors { get; set; }
 
         public event EventHandler HostClosed;
         public event EventHandler HostClosing;
@@ -28,13 +29,16 @@ namespace RemotePlusLibrary.ServiceArchitecture
         public event EventHandler<UnknownMessageReceivedEventArgs> HostUnknownMessageReceived;
         public virtual void BuildHost()
         {
-            if (_singleTon == null)
+            if (Host == null)
             {
-                Host = new ServiceHost(_impl);
-            }
-            else
-            {
-                Host = new ServiceHost(_singleTon);
+                if (_singleTon == null)
+                {
+                    Host = new ServiceHost(_impl);
+                }
+                else
+                {
+                    Host = new ServiceHost(_singleTon);
+                }
             }
             Behaviors.ForEach(b => Host.Description.Behaviors.Add(b));
             Host.Closed += HostClosed;
@@ -44,10 +48,24 @@ namespace RemotePlusLibrary.ServiceArchitecture
             Host.Opening += HostOpening;
             Host.UnknownMessageReceived += HostUnknownMessageReceived;
             Host.AddServiceEndpoint(_contract, _binding, _address);
+            foreach (var endpoints in EndpointBehaviors)
+            {
+                foreach (var behavior in endpoints.Value)
+                {
+                    Host.Description.Endpoints.Find(endpoints.Key)?.Behaviors.Add(behavior);
+                }
+            }
+            foreach (var contract in ContractBehaviors)
+            {
+                foreach (var behavior in contract.Value)
+                {
+                    Host.Description.Endpoints.Find(contract.Key)?.Contract.Behaviors.Add(behavior);
+                }
+            }
         }
+
         protected StandordService(Type contract, Type implementation, Binding binding, string address)
         {
-            Commands = new Dictionary<string, CommandDelegate>();
             _contract = contract;
             _impl = implementation;
             _binding = binding;
@@ -55,7 +73,6 @@ namespace RemotePlusLibrary.ServiceArchitecture
         }
         protected StandordService(Type contract, object singleTon, Binding binding, string address)
         {
-            Commands = new Dictionary<string, CommandDelegate>();
             _contract = contract;
             IsSingleton = true;
             _singleTon = singleTon;
@@ -67,6 +84,7 @@ namespace RemotePlusLibrary.ServiceArchitecture
             setupCallback?.Invoke(endpoint);
             Host.AddServiceEndpoint(typeof(TEndpoint), binding, endpointName);
         }
+
         /// <summary>
         /// Starts the server.
         /// </summary>
