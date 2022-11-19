@@ -96,19 +96,6 @@ namespace DefaultServerCore
             });
         }
 
-        public void InitializeClientServices(IServiceCollection services)
-        {
-            DuplexChannelFactory<IProxyServerRemote> channelFactory =
-                services.GetService<DuplexChannelFactory<IProxyServerRemote>>();
-            channelFactory.Endpoint.Contract.Operations.ToList().ForEach(o =>
-            {
-                DataContractSerializerOperationBehavior behavior =
-                    o.Behaviors.Find<DataContractSerializerOperationBehavior>();
-                o.Behaviors.Remove(behavior);
-                o.Behaviors.Add(new NetDataContractOperationBehavior(o));
-            });
-        }
-
         public void InitializeNode(IClientBuilder builder)
         {
             
@@ -116,12 +103,11 @@ namespace DefaultServerCore
 
         public void PostInitializeNode(IClientBuilder builder)
         {
-            throw new NotImplementedException();
         }
 
         public void InitializeNode(IServerTaskBuilder builder)
         {
-            //builder.InitializeKnownTypes()
+            builder.InitializeKnownTypes();
             builder.InitializeDefaultGlobals()
                 .OpenMexForRemotePlus()
                 .OpenMexForFileTransfer()

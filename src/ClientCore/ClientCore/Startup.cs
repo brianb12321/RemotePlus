@@ -89,16 +89,6 @@ namespace ClientCmdCore
         }
         public void PostInitializeNode(IClientBuilder builder)
         {
-            builder.ConfigureEndpointDescription(des =>
-            {
-                des.Contract.Operations.ToList().ForEach(o =>
-                {
-                    DataContractSerializerOperationBehavior behavior =
-                        o.Behaviors.Find<DataContractSerializerOperationBehavior>();
-                    o.Behaviors.Remove(behavior);
-                    o.Behaviors.Add(new NetDataContractOperationBehavior(o));
-                });
-            });
         }
     }
 }

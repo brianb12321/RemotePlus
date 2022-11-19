@@ -13,6 +13,7 @@ using System.Speech.Synthesis;
 using System.Windows.Forms;
 using RemotePlusLibrary.Core;
 using TinyMessenger;
+using System.ServiceModel;
 
 namespace RemotePlusServer
 {

@@ -44,6 +44,7 @@ namespace RemotePlusLibrary.Core
             AddType(typeof(List<string>));
             AddType(typeof(Dictionary<string, string>));
             AddType(typeof(Color));
+            AddType(typeof(Guid));
         }
     }
 }

@@ -53,16 +53,13 @@ namespace ProxyServerCore
                     .RouteHostOpenEvent(ProxyService_HostOpened)
                     .RouteHostOpeningEvent(ProxyService_HostOpening)
                     .RouteUnknownMessageReceivedEvent(ProxyService_UnknownMessageReceived)
-                    .AddServiceBehavior(new GlobalExceptionBehavior())
-                    .AddContractBehavior<IProxyRemote>(new NetDataContractSerializerBehavior())
-                    .AddContractBehavior<IProxyServerRemote>(new NetDataContractSerializerBehavior())
-                    .AddContractBehavior<IRemoteWithProxy>(new NetDataContractSerializerBehavior());
+                    .AddServiceBehavior(new GlobalExceptionBehavior());
             });
         }
 
         public void InitializeNode(IServerTaskBuilder builder)
         {
-            //builder.InitializeKnownTypes()
+            builder.InitializeKnownTypes();
             builder.InitializeGlobals()
                 .LoadGlobalResources();
         }

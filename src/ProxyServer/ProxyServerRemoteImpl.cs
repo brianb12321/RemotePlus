@@ -36,6 +36,7 @@ namespace ProxyServer
         ConcurrencyMode = ConcurrencyMode.Multiple,
         MaxItemsInObjectGraph = int.MaxValue,
         UseSynchronizationContext = false)]
+    [ServiceKnownType("GetKnownTypes", typeof(DefaultKnownTypeManager))]
     public class ProxyServerRemoteImpl : IProxyServerRemote, IProxyRemote
     {
         private IServerListManager _list;
